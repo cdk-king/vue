@@ -11,6 +11,11 @@
 
 <script>
 export default {
+    data(){
+        return {
+        
+        }
+    },
     methods:{
         judgelogin(){ //methods写一个判断是否登录的方法
             // let isLogin = store.state.token; //这里我们从Vuex里取出token，因为登录请求成功后我们会将后台返回的token存储在vuex里方便使用

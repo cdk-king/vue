@@ -1,28 +1,31 @@
 <template>
     <div class="sidebar">
-        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#324157"
-            text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
+        <!-- background-color="#324157" active-text-color="#20a0ff"-->
+        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#fff"
+            text-color="#000" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu :index="item.index" :key="item.index">
+                    <el-submenu :index="item.index" :key="item.index"  >
                         <template slot="title">
-                            <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                            
+                            <i :class="item.icon" ></i><span slot="title">{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+                            <el-submenu    v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
                                 <template slot="title">{{ subItem.title }}</template>
-                                <el-menu-item v-for="(threeItem,i) in subItem.subs" :key="i" :index="threeItem.index">
+                                <el-menu-item class="el-menu-item" v-for="(threeItem,i) in subItem.subs" :key="i" :index="threeItem.index">
                                     {{ threeItem.title }}
+                                    
                                 </el-menu-item>
                             </el-submenu>
-                            <el-menu-item v-else :index="subItem.index" :key="subItem.index">
+                            <el-menu-item class="el-menu-item" v-else :index="subItem.index" :key="subItem.index">
                                 {{ subItem.title }}
                             </el-menu-item>
                         </template>
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.index" :key="item.index">
+                    <el-menu-item class="el-menu-item" :index="item.index" :key="item.index">
                         <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
@@ -57,6 +60,47 @@
                         icon: 'el-icon-lx-cascades',
                         index: 'rightTable',
                         title: '权限管理'
+                    },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: '1',
+                        title: '运营管理',
+                        subs: [
+                            {
+                                index: '1-1',
+                                title: '玩家管理',
+                                subs: [
+                                    {
+                                        index: 'PlayerInfo',
+                                        title: '玩家基本信息'
+                                    },
+                                    {
+                                        index: 'PlayerTalk',
+                                        title: '玩家禁言'
+                                    },
+                                    {
+                                        index: 'PlayerLock',
+                                        title: '封禁/解封玩家账号'
+                                    },
+                                    {
+                                        index: 'disableSendMsg',
+                                        title: '封禁/解封玩家账号'
+                                    },
+                                ]
+                            },
+                            {
+                                index: 'NoticeManagement',
+                                title: '系统公告管理'
+                            },
+                            {
+                                index: 'ApplyGift',
+                                title: '申请福利'
+                            },
+                            {
+                                index: 'GameLogManagement',
+                                title: '游戏日志管理'
+                            },
+                        ]
                     },
                     {
                         icon: 'el-icon-lx-copy',
@@ -136,6 +180,7 @@
             }
         },
         created(){
+            //全局事件总线（Global Event Bus ）
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
@@ -148,10 +193,11 @@
     .sidebar{
         display: block;
         position: absolute;
-        left: 0;
+        left: 0px;
         top: 70px;
         bottom:0;
         overflow-y: scroll;
+        
     }
     .sidebar::-webkit-scrollbar{
         width: 0;
@@ -161,5 +207,8 @@
     }
     .sidebar > ul {
         height:100%;
+    }
+    .el-menu-item{
+        
     }
 </style>

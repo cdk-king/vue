@@ -5,6 +5,29 @@
             <i class="el-icon-menu"></i>
         </div>
         <div class="logo">后台管理系统</div>
+            <!-- <el-select class="el-select" v-model="gameValue" placeholder="请选择游戏">
+                <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select> -->
+            <i class="el-icon-lx-sort el-select"></i>
+            <el-dropdown class="el-select" @command="handleChangGame">
+            
+                <span class="el-dropdown-link" style="">
+                    {{gameLabel}}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu class="el-dropdown-menu" slot="dropdown" >
+                    <el-dropdown-item class="el-dropdown-item" 
+                    :key="item.value" 
+                    :value="item.value"  
+                    v-for="item in options"
+                    :command="item" >
+                    {{item.label}}</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -50,8 +73,26 @@
             return {
                 collapse: false,
                 fullscreen: false,
-                name: 'linxin',
-                message: 2
+                name: 'cdk',
+                message: 2,
+                options: [{
+                value: '1',
+                label: '游戏1'
+                }, {
+                value: '2',
+                label: '游戏2'
+                }, {
+                value: '3',
+                label: '游戏3'
+                }, {
+                value: '4',
+                label: '游戏4'
+                }, {
+                value: '5',
+                label: '游戏5'
+                }],
+                gameValue: '1',
+                gameLabel:"游戏1"
             }
         },
         computed:{
@@ -60,7 +101,26 @@
                 return username ? username : this.name;
             }
         },
+        created() {
+            
+            this.right();
+        },
         methods:{
+            right(){
+                const right = localStorage.getItem('rightTags');
+                
+                if(right.indexOf('User_management_Handle')==-1){
+                    this.handleVisible = false;
+                }else{
+                    this.handleVisible = true;
+                }
+                this.getData();
+                //console.log("this.handleVisible:"+this.handleVisible);
+            },
+            getData(){
+                
+
+            },
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 //用户注销
@@ -103,6 +163,15 @@
                     }
                 }
                 this.fullscreen = !this.fullscreen;
+            },
+            handleChangGame(command){
+                //this.$message('已选择游戏：' + command.label);
+                this.value = command.value;
+                this.gameLabel = command.label;
+                this.$cdk = this.gameLabel;
+                this.$setcdk(this.gameLabel);
+                this.$message(this.$cdk);
+                
             }
         },
         mounted(){
@@ -185,5 +254,19 @@
     }
     .el-dropdown-menu__item{
         text-align: center;
+    }
+    .el-select{
+        top: 20px;
+        font-size:20px;
+        /* border: 1px solid red; */
+
+    }
+    .el-dropdown-menu{
+        width: 100px;
+
+    }
+    .el-dropdown-item{
+        font-size: 15px;
+        
     }
 </style>

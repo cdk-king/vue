@@ -44,6 +44,7 @@ export default {
         return {
         show:false,
         dialogVisible:false,
+        aa:this.$cdk
         }
     },
     components:{
@@ -61,11 +62,25 @@ export default {
     methods:{
         testMessage(){
             this.$message.success('success');
+            this.$message.success(this.$cdk);
+            
         },
         testDialog(){
             this.dialogVisible = true;
         },
 
+    },
+    watch:{
+        aa: function(curVal,oldVal){
+        console.log(curVal);
+        this.$message(curVal);
+        },
+        // cdk:{//深度监听，可监听到对象、数组的变化
+        //     handler(val, oldVal){
+        //         console.log("b.c: "+val.c, oldVal.c);//但是这两个值打印出来却都是一样的
+        //     },
+        //     deep:true
+        // }
     }
 }
 </script>

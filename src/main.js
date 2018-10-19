@@ -23,11 +23,19 @@ import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 import '../static/css/icon.css';
 import "babel-polyfill";
 
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+
+Vue.use(iView);
+
 Vue.use(ElementUI, { size: 'small' });
 //axios.defaults.baseURL = 'http://localhost:8011/'
 Vue.prototype.$axios = axios;
 //测试全局变量
 Vue.prototype.$cdk = "cdk";
+Vue.prototype.$setcdk = function(str){
+    Vue.prototype.$cdk = str;
+};
 
 var router = getRouter();
 

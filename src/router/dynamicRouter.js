@@ -29,7 +29,12 @@ function getchildren() {
     children.push(item);
     item = {}
 
-    const right = localStorage.getItem('rightTags');
+    var right = localStorage.getItem('rightTags');
+    if(right==null){
+        right = "";
+    }else{
+        
+    }
     //console.log("right2:" + right);
     item.path = '/userTable';
     item.component = resolve => require(['../components/page/UserTable.vue'], resolve);
@@ -58,6 +63,16 @@ function getchildren() {
         item.component = resolve => require(['../components/page/RightTable.vue'], resolve);
     }else{
         item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PlayerInfo';
+    item.meta = { title: '玩家基本信息' };
+    if (right.indexOf('Player_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerInfo.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerInfo.vue'], resolve);
     }
     children.push(item);
     item = {}
@@ -130,7 +145,7 @@ function getchildren() {
     for(var i = 0;i<otherItem.length;i++){
         children.push(otherItem[i]);
     }
-    console.log("children:" + children);
+    console.log(children);
     //console.log("router-right-check:" + right);
 
     const dynamicRouter =

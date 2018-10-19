@@ -65,6 +65,10 @@ import getRouter from '../../router/index';
         },
         methods: {          
             submitForm(formName) {
+                //离线环境下测试
+                localStorage.setItem('ms_username',"admin");
+                this.$router.push('/');
+                //表单验证
                 this.$refs[formName].validate((valid) => {
                    //console.log("valid:"+valid);
                     if (valid) {
@@ -78,6 +82,7 @@ import getRouter from '../../router/index';
                             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                             if(successResponse.data.code === 200){
                                 console.log(successResponse.data.message);
+                                this.getUserAllRole(successResponse.data.data.id);
                                 this.getUserAllRight(successResponse.data.data.id);
                                 this.$message.success("登录成功");
                                 localStorage.setItem('ms_username',this.ruleForm.username);
@@ -88,8 +93,16 @@ import getRouter from '../../router/index';
                                 this.$message.error(successResponse.data.message);
                                 console.log('error submit!!');
                                 console.log(this.responseResult);
-                                return false;
-                            }
+                                var router = getRouter();
+                                //重启vue，亲测有效
+                                console.log("Vue重启中。。。");
+                                new Vue({
+                                    router,
+                                    render: h => h(App)
+                                }).$mount('#app');
+                                console.log("Vue重启成功"); 
+                                    return false;
+                                }
                         })
                         .catch(failResponse => {})
                         //
@@ -98,6 +111,34 @@ import getRouter from '../../router/index';
                         return false;
                     }
                 });
+            },
+            getUserAllRole(id){
+                //console.log("id:"+id);
+                this.$axios.post('/getUserAllRole',{
+                    id:id
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        //console.log(successResponse.data.data);
+                        console.log("角色获取成功");
+                        localStorage.setItem('roles',"");
+                        localStorage.setItem('roles',successResponse.data.data);
+                        this.addRouter();
+                        //localStorage.setItem('ms_username',this.ruleForm.username);
+                        //this.$router.replace({path: '/index'})
+
+                    }else{
+                        this.$message.error(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                            
+                        return false;
+                    }
+                })
+                .catch(failResponse => {})
+
             },
             getUserAllRight(id){
                 //console.log("id:"+id);

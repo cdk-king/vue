@@ -188,7 +188,9 @@
 </template>
 
 <script>
-    import draggable from 'vuedraggable'
+
+    import draggable from 'vuedraggable';
+    import Utils from '../../UtilsJs/Utils';
     export default {
         name: 'roleTable',
         data() {
@@ -568,6 +570,7 @@
                         console.log(this.responseResult);
                         //this.$message.success("用户角色添加成功");
                         this.getData();
+                        Utils.getUserAllRight(this.form.id);
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');
@@ -586,9 +589,11 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
+                        console.log("角色权限编辑完成");
                         this.$message.success("角色权限编辑完成");
                         this.getData();
-
+                        //
+                        Utils.getUserAllRight(this.form.id);
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');

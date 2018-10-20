@@ -64,10 +64,25 @@
                     {
                         icon: 'el-icon-lx-calendar',
                         index: '1',
+                        title: '区服管理',
+                        subs: [
+                            {
+                                index: 'gameTable',
+                                title: '游戏管理'
+                            },
+                            {
+                                index: 'platformTable',
+                                title: '平台管理'
+                            },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: '2',
                         title: '运营管理',
                         subs: [
                             {
-                                index: '1-1',
+                                index: '2-1',
                                 title: '玩家管理',
                                 subs: [
                                     {

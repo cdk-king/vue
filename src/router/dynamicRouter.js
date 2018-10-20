@@ -67,6 +67,26 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/gameTable';
+    item.meta = { title: '游戏管理' };
+    if (right.indexOf('Game_management_view') != -1) {
+        item.component = resolve => require(['../components/page/GameTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/platformTable';
+    item.meta = { title: '平台管理' };
+    if (right.indexOf('Platform_management_view') != -1) {
+        item.component = resolve => require(['../components/page/PlatformTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/PlayerInfo';
     item.meta = { title: '玩家基本信息' };
     if (right.indexOf('Player_Info_view') != -1) {

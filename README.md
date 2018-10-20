@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # vue-manage-system #
 基于Vue.js 2.x系列 + Element UI 的后台管理系统解决方案。[线上地址](http://blog.gdfengshuo.com/example/work/)
 
@@ -191,3 +192,6 @@ import 'element-ui/lib/theme-default/index.css';    // 默认主题
 
 ## 项目截图 ##
 
+=======
+# GmWebBrowser
+>>>>>>> c6fd5a6a9ec4e5b4a7d7dfb7879971812f8a72b1

@@ -66,8 +66,8 @@ import getRouter from '../../router/index';
         methods: {          
             submitForm(formName) {
                 //离线环境下测试
-                localStorage.setItem('ms_username',"admin");
-                this.$router.push('/');
+                // localStorage.setItem('ms_username',"admin");
+                // this.$router.push('/');
                 //表单验证
                 this.$refs[formName].validate((valid) => {
                    //console.log("valid:"+valid);
@@ -83,9 +83,13 @@ import getRouter from '../../router/index';
                             if(successResponse.data.code === 200){
                                 console.log(successResponse.data.message);
                                 this.getUserAllRole(successResponse.data.data.id);
-                                this.getUserAllRight(successResponse.data.data.id);
+                                
                                 this.$message.success("登录成功");
                                 localStorage.setItem('ms_username',this.ruleForm.username);
+                                console.log(successResponse.data.data);
+
+                                //只能储存字符串
+                                localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
                                 //localStorage.setItem('ms_username',this.ruleForm.username);
                                 this.$router.push('/');
                                 //this.$router.replace({path: '/index'})
@@ -125,7 +129,7 @@ import getRouter from '../../router/index';
                         console.log("角色获取成功");
                         localStorage.setItem('roles',"");
                         localStorage.setItem('roles',successResponse.data.data);
-                        this.addRouter();
+                        this.getUserAllRight(id);
                         //localStorage.setItem('ms_username',this.ruleForm.username);
                         //this.$router.replace({path: '/index'})
 
@@ -152,6 +156,7 @@ import getRouter from '../../router/index';
                         //console.log(successResponse.data.data);
                         console.log("权限获取成功");
                         localStorage.setItem('rightTags',"");
+                        
                         localStorage.setItem('rightTags',successResponse.data.data);
                         this.addRouter();
                         //localStorage.setItem('ms_username',this.ruleForm.username);

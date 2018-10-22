@@ -74,6 +74,14 @@
                                 index: 'platformTable',
                                 title: '平台管理'
                             },
+                            {
+                                index: 'serverTable',
+                                title: '服务器管理'
+                            },
+                            {
+                                index: 'serverTree',
+                                title: '服务器树形管理'
+                            },
                         ]
                     },
                     {

@@ -31,14 +31,14 @@
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="rightName" label="权限名称" width="160">
+                <el-table-column prop="rightName" label="权限名称" >
                 </el-table-column>
-                <el-table-column prop="rightTag" label="权限标识" width="200">
+                <el-table-column prop="rightTag" label="权限标识" >
                 </el-table-column>
                 
                 <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
                 </el-table-column> -->
-                <el-table-column prop="right_describe" label="描述" width="180">
+                <el-table-column prop="right_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>

@@ -25,21 +25,21 @@
                             <el-input v-model="form.name"></el-input>
                         </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择渠道">
-                            <el-select v-model="value" placeholder="请选择渠道平台">
+                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="item.platformId"
+                                :label="item.platformName"
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                             <span style="margin-left:22px">选择服务器</span>
-                            <el-select v-model="value" placeholder="请选择服务器">
+                            <el-select v-model="serverValue" @change="selectServer" placeholder="请选择服务器">
                                 <el-option
                                 v-for="item in serverOptions"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="item.serverId"
+                                :label="item.serverName"
+                                :value="item.serverId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -255,41 +255,28 @@ export default {
       aa: this.$cdk,
       platformOptions: [
         {
-          value: "1",
-          label: "渠道1"
+          platformId: "1",
+          platformName: "渠道1"
         },
         {
-          value: "2",
-          label: "渠道2"
-        },
-        {
-          value: "3",
-          label: "渠道3"
+          platformId: "2",
+          platformName: "渠道2"
         }
       ],
-      platformValue: "1",
-      platformLabel: "渠道1",
+      platformValue: "",
+      platformLabel: "",
       serverOptions: [
-        {
-          value: "1",
-          label: "服务器1"
-        },
-        {
-          value: "2",
-          label: "服务器2"
-        },
-        {
-          value: "3",
-          label: "服务器3"
-        },
-        {
-          value: "4",
-          label: "服务器4"
-        }
+        // {
+        //   serverId: "1",
+        //   serverName: "服务器1"
+        // }
       ],
-      serverValue: "1",
-      serverLabel: "服务器1",
-      form: {}
+      serverValue: "",
+      serverLabel: "",
+      form: {},
+      id:0,
+      serverIp:""
+      
     };
   },
   components: {
@@ -304,7 +291,74 @@ export default {
       return role;
     }
   },
+  created() {
+            this.getData();
+            //this.right();
+        
+        },
   methods: {
+    getPlatformList(userId){
+       
+        this.$axios.post('/getPlatformListForUser',{
+          id:userId
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("用户渠道列表获取成功");
+                this.platformOptions = successResponse.data.data;
+            
+            }else{
+                this.open4(successResponse.data.message);
+                console.log(this.responseResult);
+                console.log("用户渠道列表获取失败");
+                return false;
+            }
+        })
+        .catch(failResponse => {})
+    },
+    getServerList(platformId){
+      this.$axios.post('/getServerListForUser',{
+          id:platformId
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("渠道服务器列表获取成功");
+                this.serverOptions = successResponse.data.data;
+            
+            }else{
+                this.open4(successResponse.data.message);
+                console.log(this.responseResult);
+                console.log("渠道服务器列表获取失败");
+                return false;
+            }
+        })
+        .catch(failResponse => {})
+    },
+    selectPlatform(){
+        this.getServerList(this.platformValue);
+    },
+    selectServer(){
+        if(this.serverOptions.length>0){
+          for(let  i = 0 ; i <  this.serverOptions.length ; i++){
+              if(this.serverOptions[i].serverId == this.serverValue){
+                   this.serverIp = this.serverOptions[i].serverIp;
+                   console.log("当前serverIp:"+this.serverIp);
+                    this.$message.success("当前serverIp:"+this.serverIp);
+                   return;
+              }
+          }
+        }
+    },
+    getData(){
+        var userData =JSON.parse(localStorage.getItem('userData'));
+        this.id = userData.id;
+        this.getPlatformList(this.id);
+    }
+    ,
     testMessage() {
       this.$message.success("success");
       this.$message.success(this.$cdk);

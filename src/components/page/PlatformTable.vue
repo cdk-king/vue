@@ -6,6 +6,14 @@
             </el-breadcrumb>
         </div>
         <div class="container">
+            <div class="plugins-tips">
+                     备注：
+                    <br/>
+                    一个渠道平台对应一个且唯一的游戏和角色，在添加和修改渠道平台的时候必须指定对应的游戏的角色。
+                    <br/>
+                    </div>
+                
+                <Divider />
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">状态：</span>
@@ -22,6 +30,9 @@
 
                 <span class="grid-content bg-purple-light">平台标识：</span>
                 <el-input v-model="searchKey.platformTag" placeholder="筛选平台标识" class="handle-input " style="width:150px"></el-input>
+
+                <span class="grid-content bg-purple-light">游戏：</span>
+                <el-input v-model="searchKey.gameName" placeholder="筛选游戏" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleAddplatform">添加</el-button>
@@ -318,9 +329,11 @@
                 .catch(failResponse => {})
             },
             right(){
-                const platform = localStorage.getItem('RightTags');
-                
-                if(platform.indexOf('Platform_management_Handle')==-1){
+                const right = localStorage.getItem('rightTags');
+                const username = localStorage.getItem('ms_username');
+                console.log(right);
+                console.log(username);
+                if(right.indexOf('Platform_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -345,7 +358,7 @@
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
-                    platform:this.searchKey.platformName,
+                    platform:this.searchKey.platform,
                     gameId:'',
                     roleId:'',
                     platformTag:this.searchKey.platformTag,
@@ -354,6 +367,7 @@
                     addUser: '',
                     addDatetime: '',
                     state:this.searchKey.state,
+                    gameName:this.searchKey.gameName
                 }).then((res) => {
                     this.tableData = res.data.list;
                     this.total = res.data.total;

@@ -87,6 +87,27 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/serverTable';
+    item.meta = { title: '服务器管理' };
+    if (right.indexOf('Server_management_view') != -1) {
+        item.component = resolve => require(['../components/page/ServerTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/serverTree';
+    item.meta = { title: '服务器树形管理' };
+    // if (right.indexOf('Server_management_view') != -1) {
+    //     item.component = resolve => require(['../components/page/ServerTable.vue'], resolve);
+    // }else{
+    //     item.component = resolve => require(['../components/page/403.vue'], resolve);
+    // }
+    item.component = resolve => require(['../components/page/ServerTree.vue'], resolve);
+    children.push(item);
+    item = {}
+
     item.path = '/PlayerInfo';
     item.meta = { title: '玩家基本信息' };
     if (right.indexOf('Player_Info_view') != -1) {

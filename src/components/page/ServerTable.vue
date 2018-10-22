@@ -2,10 +2,18 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>游戏管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>服务器管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
+            <div class="plugins-tips">
+                     备注：
+                    <br/>
+                    一个服务器对应一个且唯一的渠道平台，在添加和修改服务器的时候必须指定对应的游渠道平台。
+                    <br/>
+                    </div>
+                
+                <Divider />
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">状态：</span>
@@ -17,28 +25,33 @@
                      <el-option key="3" label="未冻结" value="2"></el-option>
                 </el-select>
 
-                <span class="grid-content bg-purple-light">游戏名：</span>
-                <el-input v-model="searchKey.gameName" placeholder="筛选游戏名" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">服务器名：</span>
+                <el-input v-model="searchKey.server" placeholder="筛选服务器名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">游戏标识：</span>
-                <el-input v-model="searchKey.gameTag" placeholder="筛选游戏标识" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">服务器IP：</span>
+                <el-input v-model="searchKey.serverIp" placeholder="筛选服务器IP" class="handle-input " style="width:150px"></el-input>
+
+                <span class="grid-content bg-purple-light">渠道平台：</span>
+                <el-input v-model="searchKey.platform" placeholder="渠道平台" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleAddGame">添加</el-button>
+                <el-button type="primary" icon="search" @click="handleAddServer">添加</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="gameName" label="游戏名称" width="160">
+                <el-table-column prop="server" label="服务器名称" width="160">
                 </el-table-column>
-                <el-table-column prop="gameTag" label="游戏标识" >
+                <el-table-column prop="serverIp" label="服务器IP" >
                 </el-table-column>
                 
-                <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
-                </el-table-column> -->
-                <el-table-column prop="game_describe" label="描述" >
+                <el-table-column prop="gameName" label="所属游戏" width="120">
+                </el-table-column>
+                <el-table-column prop="platform" label="所属渠道" width="120">
+                </el-table-column>
+                <el-table-column prop="server_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>
@@ -65,38 +78,78 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加游戏" :visible.sync="addGameVisible" width="30%">
+        <el-dialog title="添加服务器" :visible.sync="addServerVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="游戏名称">
-                    <el-input v-model="form.gameName"></el-input>
+                <el-form-item label="服务器名称">
+                    <el-input v-model="form.server"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏标识">
-                    <el-input v-model="form.gameTag"></el-input>
+                <el-form-item label="服务器IP">
+                    <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏描述">
-                    <el-input v-model="form.game_describe"></el-input>
+                <el-form-item label="服务器描述">
+                    <el-input v-model="form.server_describe"></el-input>
+                </el-form-item>
+                <!-- <el-form-item label="所属游戏">
+                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
+                        <el-option
+                        v-for="item in gameList"
+                        :key="item.id"
+                        :label="item.gameName"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item> -->
+                <el-form-item label="所属渠道">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
+                        <el-option
+                        v-for="item in platformList"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="addGameVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAddGame">确 定</el-button>
+                <el-button @click="addServerVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAddServer">确 定</el-button>
             </span>
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑游戏" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑服务器" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="游戏名称">
-                    <el-input v-model="form.gameName"></el-input>
+                <el-form-item label="服务器名称">
+                    <el-input v-model="form.server"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏标识">
-                    <el-input v-model="form.gameTag"></el-input>
+                <el-form-item label="服务器IP">
+                    <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏描述">
-                    <el-input v-model="form.game_describe"></el-input>
+                <el-form-item label="服务器描述">
+                    <el-input v-model="form.server_describe"></el-input>
+                </el-form-item>
+                <!-- <el-form-item label="所属游戏">
+                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
+                        <el-option
+                        v-for="item in gameList"
+                        :key="item.id"
+                        :label="item.gameName"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item> -->
+                <el-form-item label="所属渠道">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
+                        <el-option
+                        v-for="item in platformList"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -110,7 +163,7 @@
 
         <!-- 编辑冻结提示框 -->
         <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-            <div class="del-dialog-cnt">冻结后将停止游戏使用，是否确定冻结？</div>
+            <div class="del-dialog-cnt">冻结后将停止服务器使用，是否确定冻结？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
                 <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
@@ -147,10 +200,10 @@
 
 <script>
     export default {
-        name: 'GameTable',
+        name: 'serverTable',
         data() {
             return {
-                url:'/getAllGame',
+                url:'/getAllServer',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -163,38 +216,69 @@
                 editPasswordVisible:false,
                 changeStateToFrozenVisible:false,
                 changeStateToNormalVisible:false,
-                addGameVisible:false,
+                addServerVisible:false,
                 handleVisible:true,
                 delAllVisible:false,
                 total:0,
                 form: {
                     id:'',
-                    gameName:'',
-                    gameTag:'',
-                    game_describe: '',
+                    server:'',
+                    gameId:'',
+                    platformId:'',
+                    serverIP:'',
+                    server_describe: '',
+                    parentId:'',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    gameName:'',
+                    role:'',
                 },
                 searchKey: {
                     id:'',
-                    gameName:'',
-                    gameTag:'',
-                    game_describe: '',
+                    server:'',
+                    serverIp:'',
+                    server_describe: '',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    gameName:'',
+                    platform:''
                 },
                 idx: -1,
                 responseResult:[],
-                id:""
+                id:"",
+                gameList:[
+                    {
+                        id:1,
+                        gameName:"游戏1"
+                    },
+                    {
+                        id:2,
+                        gameName:"游戏2"
+                    },
+                ],
+                platformList:[
+                    {
+                        id:1,
+                        role:"渠道1"
+                    },
+                    {
+                        id:2,
+                        role:"渠道2"
+                    },
+                ],
+                selectGame:"",
+                selectPlatform:""
+
             }
         },
         created() {
             this.getData();
             this.right();
+        
         },
         computed: {
             data() {
@@ -205,12 +289,50 @@
             this.right();
         },
         methods: {
+            getGameList(){
+                this.$axios.post('/getAllGameList',{
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        console.log("游戏列表获取成功");
+                        this.gameList = successResponse.data.data;
+                        //this.gameList
+                        
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log(this.responseResult);
+                        console.log("游戏列表获取失败");
+                        return false;
+                    }
+                })
+                .catch(failResponse => {})
+            },
+            getPlatformList(){
+                this.$axios.post('/getAllPlatformList',{
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        console.log("渠道列表获取成功");
+                        this.platformList = successResponse.data.data;
+                        //this.gameList
+                        
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log(this.responseResult);
+                        console.log("渠道列表获取失败");
+                        return false;
+                    }
+                })
+                .catch(failResponse => {})
+            },
             right(){
                 const right = localStorage.getItem('rightTags');
-                const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
-                if(right.indexOf('Game_management_Handle')==-1){
+                
+                if(right.indexOf('Server_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -235,9 +357,12 @@
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
-                    gameName:this.searchKey.gameName,
-                    gameTag:this.searchKey.gameTag,
-                    game_describe: this.searchKey.game_describe,
+                    server:this.searchKey.server,
+                    gameId:'',
+                    platformId:'', 
+                    platform:this.searchKey.platform, 
+                    serverIp:this.searchKey.serverIp,
+                    server_describe: this.searchKey.server_describe,
                     sort:this.searchKey.sort,
                     addUser: '',
                     addDatetime: '',
@@ -272,17 +397,22 @@
                 return row.tag === value;
             },
             handleEdit(index, row) {
+                //this.getGameList();
+                this.getPlatformList();
                 this.idx = index;
                 const item = this.tableData[index];
                 this.form = {
                     id:item.id,
-                    gameName:item.gameName,
-                    gameTag:item.gameTag,
-                    game_describe: item.game_describe,
+                    server:item.server,
+                    serverIp:item.serverIp,
+                    server_describe: item.server_describe,
                     sort:item.sort,
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
                     state:item.state,
+                    gameId:item.gameId,
+                    roleId:item.roleId,
+                    platformId:item.platformId
                 }
                 this.editVisible = true;
             },
@@ -316,14 +446,14 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllGame',{
+                this.$axios.post('/deleteAllServer',{
                         id: str
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("游戏批量删除完成");
+                        this.$message.success("服务器批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
@@ -331,7 +461,7 @@
                         this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("游戏批量删除失败");
+                        this.$message.error("服务器批量删除失败");
                         return false;
                     }
                 })
@@ -343,74 +473,83 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleAddGame(){
-                this.addGameVisible = true;
+            handleAddServer(){
+                //this.getGameList();
+                this.getPlatformList();
+                this.addServerVisible = true;
                 this.form = {
                     id:'',
-                    GameName:'',
-                    GameTag:'',
-                    Game_describe: '',
-                    GameParentId:'',
-                    GameSort:'',
+                    server:'',
+                    serverTag:'',
+                    server_describe: '',
+                    serverParentId:'',
+                    serverSort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
                 }
+                this.selectGame="";
+                this.selectPlatform="";
+                
             },
-            saveAddGame(){
-                if(this.form.gameName==""){
-                    console.log("游戏名称不能为空");
-                    this.$message.error("游戏名称不能为空");
-                }else if(this.form.gameTag==""){
-                    console.log("游戏标识不能为空");
-                    this.$message.error("游戏标识不能为空");
+            saveAddServer(){
+                if(this.form.server==""){
+                    console.log("服务器名称不能为空");
+                    this.$message.error("服务器名称不能为空");
+                }else if(this.form.platformId==""){
+                    console.log("所属渠道不能为空");
+                    this.$message.error("所属渠道不能为空");
                 }else{
-                    this.$axios.post('/addGame',{ 
+
+                    this.$axios.post('/addServer',{
 
                         id: this.form.id,
-                        gameName:this.form.gameName,
-                        gameTag:this.form.gameTag,
-                        game_describe: this.form.game_describe,
+                        server:this.form.server,
+                        serverIp:this.form.serverIp,
+                        server_describe: this.form.server_describe,
                         sort:this.form.sort,
                         addUser: this.form.addUser,
                         state:this.form.state,
-                        
+                        gameId:"",
+                        platformId:this.form.platformId
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("游戏添加成功");
+                            this.$message.success("服务器添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
                             this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error("游戏添加失败");
+                            this.$message.error("服务器添加失败");
                             return false;
                         }
                     })
                     .catch(failResponse => {})
-                    
+                    this.addServerVisible = false; 
                 }               
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, 1, this.form);
-                this.addGameVisible = false; 
+                
                 
             },
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editGame',{
+                this.$axios.post('/editServer',{
                     id:this.form.id,
-                    gameName:this.form.gameName,
-                    gameTag:this.form.gameTag,
-                    game_describe: this.form.game_describe,
+                    server:this.form.server,
+                    serverIp:this.form.serverIp,
+                    server_describe: this.form.server_describe,
                     sort:this.form.sort,
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
+                    gameId:"",
+                    platformId:this.form.platformId
 
                 })
                 .then(successResponse =>{
@@ -419,13 +558,13 @@
                         console.log(this.responseResult);
                         //this.$router.push('/');
                         //this.$router.replace({path: '/index'})
-                        this.$message.success("游戏信息修改成功");
+                        this.$message.success("服务器信息修改成功");
                         this.getData();
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("游戏信息修改失败");
+                        this.$message.error("服务器信息修改失败");
                         return false;
                     }
                 })
@@ -440,20 +579,20 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Game',{
+                this.$axios.post('/changeStateToFrozen_Server',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`游戏冻结成功`);
+                            this.$message.success(`服务器冻结成功`);
                             this.getData();
                         }else{
                             this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('游戏冻结失败');
+                            this.$message.error('服务器冻结失败');
                             return false;
                         }
                     })
@@ -464,20 +603,20 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Game',{
+                this.$axios.post('/changeStateToNormal_Server',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("游戏解冻成功");
+                            this.$message.success("服务器解冻成功");
                             this.getData();
                         }else{
                             this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('游戏解冻失败');
+                            this.$message.error('服务器解冻失败');
                             return false;
                         }
                     })
@@ -489,21 +628,21 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteGame',{
+                this.$axios.post('/deleteserver',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`游戏删除成功`);
+                            this.$message.success(`服务器删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
                             this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('游戏删除失败');
+                            this.$message.error('服务器删除失败');
                             return false;
                         }
                     })

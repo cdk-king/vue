@@ -100,7 +100,7 @@
                     </el-select>
                 </el-form-item> -->
                 <el-form-item label="所属渠道">
-                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
                         :key="item.id"
@@ -142,7 +142,7 @@
                     </el-select>
                 </el-form-item> -->
                 <el-form-item label="所属渠道">
-                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
                         :key="item.id"

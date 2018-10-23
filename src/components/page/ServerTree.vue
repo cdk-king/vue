@@ -1,9 +1,16 @@
 <template>
-<div class="custom-tree-container">
+    <div class="table">
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>服务器管理</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <div class="container">
+          <div class="custom-tree-container">
   <div class="block">
-    <p>使用 render-content</p>
-    <el-tree
-      :data="data4"
+    <p>树形结构列表</p>
+    <el-tree  class="el-tree"
+      :data="treeData"
       show-checkbox
       node-key="id"
       default-expand-all
@@ -11,34 +18,138 @@
       :render-content="renderContent">
     </el-tree>
   </div>
-  <div class="block">
-    <p>使用 scoped slot</p>
-    <el-tree
-      :data="data5"
-      show-checkbox
-      node-key="id"
-      default-expand-all
-      :expand-on-click-node="false">
-      <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ node.label }}</span>
-        <span>
-          <el-button
-            type="text"
-            size="mini"
-            @click="() => append(data)">
-            Append
-          </el-button>
-          <el-button
-            type="text"
-            size="mini"
-            @click="() => remove(node, data)">
-            Delete
-          </el-button>
-        </span>
-      </span>
-    </el-tree>
-  </div>
 </div>
+
+<el-dialog title="具体信息" :visible.sync="showVisible">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <span>{{form.gameName}}/{{form.platform}}</span>
+                <el-button style="float: right; padding: 3px 0" type="text"></el-button>
+              </div>
+                  <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="服务器名称">
+                    <div v-bind:value="form.server" class="text item">{{form.server}}</div>
+                </el-form-item>
+                <el-form-item label="服务器IP">
+                    <div class="text item">{{form.serverIp}}</div>
+                </el-form-item>
+                <el-form-item label="服务器描述">
+                    <div class="text item">{{form.server_describe}}</div>
+                </el-form-item>
+                <el-form-item label="所属游戏">
+                    <div class="text item">{{form.gameName}}</div>
+                </el-form-item>
+                <el-form-item label="所属渠道">
+                    <div class="text item">{{form.platform}}</div>
+                </el-form-item>
+                <el-form-item label="状态">
+                    <div class="text item" >{{form.state | filters1}}</div>
+                </el-form-item>
+                <el-form-item label="添加人">
+                     <div class="text item">{{form.addUser}}</div>
+                </el-form-item>
+            </el-form>
+
+
+            </el-card>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="showVisible = false">取 消</el-button>
+    <el-button type="primary" @click="showVisible = false">确 定</el-button>
+  </div>
+</el-dialog>
+
+
+        <!-- 编辑弹出框 -->
+        <el-dialog title="编辑服务器" :visible.sync="editVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="服务器名称">
+                    <el-input v-model="form.server"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器IP">
+                    <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器描述">
+                    <el-input v-model="form.server_describe"></el-input>
+                </el-form-item>
+                <el-form-item label="所属渠道">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
+                        <el-option
+                        v-for="item in platformList"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="添加人">
+                    <el-input v-model="form.addUser"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEdit">确 定</el-button>
+            </span>
+        </el-dialog>
+
+
+        <!-- 添加弹出框 -->
+        <el-dialog title="添加服务器" :visible.sync="addServerVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="服务器名称">
+                    <el-input v-model="form.server"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器IP">
+                    <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器描述">
+                    <el-input v-model="form.server_describe"></el-input>
+                </el-form-item>
+                <!-- <el-form-item label="所属游戏">
+                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
+                        <el-option
+                        v-for="item in gameList"
+                        :key="item.id"
+                        :label="item.gameName"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item> -->
+                <el-form-item label="所属渠道">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
+                        <el-option
+                        v-for="item in platformList"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="添加人">
+                    <el-input v-model="form.addUser"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addServerVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAddServer">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 删除提示框 -->
+        <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+            <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="deleteRow">确 定</el-button>
+            </span>
+        </el-dialog>
+
+
+          </div>
+     </div>
+          
+
+
+
 </template>
 
 <script>
@@ -46,7 +157,7 @@ let id = 1000;
 
 export default {
   data() {
-    const data = [
+    var data2 = [
       {
         id: 1,
         label: "一级 1",
@@ -66,141 +177,453 @@ export default {
             ]
           }
         ]
-      },
-      {
-        id: 2,
-        label: "一级 2",
-        children: [
-          {
-            id: 5,
-            label: "二级 2-1"
-          },
-          {
-            id: 6,
-            label: "二级 2-2"
-          }
-        ]
-      },
-      {
-        id: 3,
-        label: "一级 3",
-        children: [
-          {
-            id: 7,
-            label: "二级 3-1"
-          },
-          {
-            id: 8,
-            label: "二级 3-2"
-          }
-        ]
       }
     ];
     return {
-      data4: JSON.parse(JSON.stringify(data)),
-      data5: JSON.parse(JSON.stringify(data)),
-      TreeList:[]
+      TreeList: [],
+      treeData: JSON.parse(JSON.stringify(data2)),
+      showVisible: false,
+      editVisible: false,
+      form: {
+        id: "",
+        server: "",
+        gameId: "",
+        platformId: "",
+        serverIP: "",
+        server_describe: "",
+        parentId: "",
+        sort: "",
+        addUser: "",
+        addDatetime: "",
+        state: "",
+        gameName: "",
+        role: "",
+        platform: "",
+      },
+      tableData: [],
+      platformList: [],
+      addServerVisible:false,
+      delVisible: false,
+      id:"",
     };
   },
   created() {
     this.getData();
-        
   },
   methods: {
-    getData(){
-        this.$axios.post('/getServerTree',{
+    getPlatformList() {
+      this.$axios
+        .post("/getAllPlatformList", {})
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("渠道列表获取成功");
+            this.platformList = successResponse.data.data;
+            //this.gameList
+          } else {
+            this.open4(successResponse.data.message);
+            console.log(this.responseResult);
+            console.log("渠道列表获取失败");
+            return false;
+          }
+        })
+        .catch(failResponse => {});
+    },
+    getData() {
+      this.$axios
+        .post("/getServerTree", {})
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("服务器树状结构获取成功");
+            this.TreeList = successResponse.data.data;
+            this.MapData(this.TreeList);
+          } else {
+            this.open4(successResponse.data.message);
+            console.log(this.responseResult);
+            console.log("服务器树状结构获取失败");
+            return false;
+          }
+        })
+        .catch(failResponse => {});
 
+      this.$axios
+        .post("/getAllServer", {
+          pageNo: "",
+          pageSize: "",
+          isPage: "",
+          id: "",
+          server: "",
+          gameId: "",
+          platformId: "",
+          platform: "",
+          serverIp: "",
+          server_describe: "",
+          sort: "",
+          addUser: "",
+          addDatetime: "",
+          state: ""
+        })
+        .then(res => {
+          this.tableData = res.data.list;
+          console.log(this.tableData);
+        });
+    },
+    MapData(TreeList) {
+      var tags = ["gameId", "platformId", "serverId"];
+      var labels = ["gameName", "platform", "server"];
+      function isHaving(id, tag, list) {
+        for (var i in list) {
+          if (id == list[i]["id"]) {
+            return i;
+          }
+        }
+        return false;
+      }
+      var k = 0;
+      var router = [];
+      for (var i = 0; i < TreeList.length; i++) {
+        var item = TreeList[i];
+        getChildren(router, item, k);
+      }
+      function getChildren(child, item, k) {
+        if (k >= 2) {
+          if (isHaving(item[tags[k]], tags[k], child)) {
+          } else {
+            var map = {};
+            map["id"] = item[tags[k]];
+            map["label"] = item[labels[k]];
+            map["tag"] = labels[k];
+            //console.log(item[tags[k]])
+            child.push(map);
+          }
+        } else {
+          if (isHaving(item[tags[k]], tags[k], child)) {
+            var index = isHaving(item[tags[k]], tags[k], child);
+            getChildren(child[index]["children"], item, k + 1);
+          } else {
+            var map = {};
+            map["id"] = item[tags[k]];
+            map["label"] = item[labels[k]];
+            map["tag"] = labels[k];
+            map["children"] = [];
+
+            getChildren(map["children"], item, k + 1);
+            child.push(map);
+          }
+        }
+      }
+      this.treeData = router;
+      var ob = {};
+      ob["list"] = router;
+      console.log(ob);
+      console.log(Json.stringify(ob));
+      console.log(this.treeData);
+    },
+    // 保存编辑
+    saveEdit() {
+      this.$axios
+        .post("/editServer", {
+          id: this.form.id,
+          server: this.form.server,
+          serverIp: this.form.serverIp,
+          server_describe: this.form.server_describe,
+          sort: this.form.sort,
+          addUser: this.form.addUser,
+          addDatetime: this.form.addDatetime,
+          state: this.form.state,
+          gameId: "",
+          platformId: this.form.platformId
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            //this.$router.push('/');
+            //this.$router.replace({path: '/index'})
+            this.$message.success("服务器信息修改成功");
+            this.getData();
+          } else {
+            this.open4(successResponse.data.message);
+            console.log("error");
+            console.log(this.responseResult);
+            this.$message.error("服务器信息修改失败");
+            return false;
+          }
+        })
+        .catch(failResponse => {});
+      this.editVisible = false;
+    },
+    saveAddServer(){
+    if(this.form.server==""){
+        console.log("服务器名称不能为空");
+        this.$message.error("服务器名称不能为空");
+    }else if(this.form.platformId==""){
+        console.log("所属渠道不能为空");
+        this.$message.error("所属渠道不能为空");
+    }else{
+
+        this.$axios.post('/addServer',{
+
+            id: this.form.id,
+            server:this.form.server,
+            serverIp:this.form.serverIp,
+            server_describe: this.form.server_describe,
+            sort:this.form.sort,
+            addUser: this.form.addUser,
+            state:this.form.state,
+            gameId:"",
+            platformId:this.form.platformId
         })
         .then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
             if(successResponse.data.code === 200){
                 console.log(this.responseResult);
-                console.log("服务器树状结构获取成功");
-                this.TreeList = successResponse.data.data;
-                this.MapData(this.TreeList);
+                this.$message.success("服务器添加成功");
+                this.tableData.push(this.form);
+                this.getData();
             }else{
                 this.open4(successResponse.data.message);
+                console.log('error');
                 console.log(this.responseResult);
-                console.log("服务器树状结构获取失败");
+                this.$message.error("服务器添加失败");
                 return false;
             }
         })
         .catch(failResponse => {})
+        this.addServerVisible = false; 
+    }               
+
     },
-    MapData(TreeList){
-        var tags  = ["gameId","platformId","serverId"];
-        console.log(TreeList[0][tags[0]]);
-        var router = new Array();
-        bb(0,0,router);
-        function bb(i,j,arry){
-            if(j>=3){
-                return;
-            }
-            if(i>TreeList.length){
-                return;  
-            }
-            for(var k  = 0;k<arry.length;k++){
-                if(arry[k].id==TreeList[i][tags[j]]){
-                    bb(i,j+1,arry.children);
+    // 确定删除
+    deleteRow(){
+
+        this.$axios.post('/deleteserver',{
+                id: this.id, 
+            })
+            .then(successResponse =>{
+                this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                if(successResponse.data.code === 200){
+                    console.log(this.responseResult);
+                    this.$message.success(`服务器删除成功`);
+                    //必须异步处理
+                    this.getData();
+                }else{
+                    this.open4(successResponse.data.message);
+                    console.log('error');
+                    console.log(this.responseResult);
+                    this.$message.error('服务器删除失败');
+                    return false;
                 }
-            }
-            var item = new Map();
-            item.id = TreeList[i][tags[j]];
-            item.children  = [];
-            arry.push(item);
-            bb(i+1,j,arry);
-        }
-        console.log(router);
+            })
+            .catch(failResponse => {}) 
+        
+        //this.tableData.splice(this.idx, 1);
+        
+        this.delVisible = false;
+        
     },
     append(data) {
-      const newChild = { id: id++, label: "testtest", children: [] };
-      if (!data.children) {
-        this.$set(data, "children", []);
-      }
-      data.children.push(newChild);
+        this.getPlatformList();
+        this.addServerVisible = true;
+        const platformId = data.platformId;
+        this.form = {
+            id:'',
+            server:'',
+            serverTag:'',
+            server_describe: '',
+            serverParentId:'',
+            serverSort:'',
+            addUser: '',
+            addDatetime: '',
+            state:'',
+            platformId:platformId
+        }
+
     },
 
     remove(node, data) {
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1);
+      //children.splice(index, 1);
+      const id = data.id;
+      this.delVisible = true;
+      this.id = id;
+    },
+
+    watch(node, data) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      const id = data.id;
+      const tag = data.tag;
+      this.showVisible = true;
+      console.log("id:" + id);
+      console.log("tag:" + tag);
+      console.log(JSON.stringify(this.tableData));
+      const item = this.tableData[0];
+      for (var i = 0; i < this.tableData.length; i++) {
+        //console.log(this.tableData[i].id);
+        //console.log(this.tableData[i]['id']);
+        if (this.tableData[i]["id"] == id) {
+          //console.log(this.tableData[i].server);
+          //console.log(this.tableData[i].id);
+          const item = this.tableData[i];
+          this.form = {
+            id: item.id,
+            server: item.server,
+            serverIp: item.serverIp,
+            server_describe: item.server_describe,
+            sort: item.sort,
+            addUser: item.addUser,
+            addDatetime: item.addDatetime,
+            state: item.state,
+            gameId: item.gameId,
+            roleId: item.roleId,
+            platformId: item.platformId,
+            platform: item.platform,
+            gameName: item.gameName
+          };
+          break;
+        }
+      }
+
+      this.showVisible = true;
+    },
+    edit(node, data) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      const id = data.id;
+      const tag = data.tag;
+      console.log("id:" + id);
+
+      const item = this.tableData[0];
+      for (var i = 0; i < this.tableData.length; i++) {
+        if (this.tableData[i]["id"] == id) {
+          const item = this.tableData[i];
+
+          this.form = {
+            id: item.id,
+            server: item.server,
+            serverIp: item.serverIp,
+            server_describe: item.server_describe,
+            sort: item.sort,
+            addUser: item.addUser,
+            addDatetime: item.addDatetime,
+            state: item.state,
+            gameId: item.gameId,
+            roleId: item.roleId,
+            platformId: item.platformId,
+            platform: item.platform,
+            gameName: item.gameName
+          };
+          break;
+        }
+      }
+
+      this.getPlatformList();
+
+      this.editVisible = true;
     },
 
     renderContent(h, { node, data, store }) {
       return (
         <span class="custom-tree-node">
-          <span>{node.label}</span>
+          <span style="font-size:16px">{node.label}</span>
           <span>
             <el-button
+              style="position: absolute;right:350px;font-size:14px;vertical-align: middle;"
+              size="mini"
+              type="text"
+              on-click={() => this.watch(node, data)}
+              icon="el-icon-edit"
+            >
+              查看
+            </el-button>
+            <el-button
+              style="position: absolute;right:250px;font-size:14px;vertical-align: middle;"
+              size="mini"
+              type="text"
+              on-click={() => this.edit(node, data)}
+              icon="el-icon-edit"
+            >
+              编辑
+            </el-button>
+            <el-button
+              style="position: absolute;right:150px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"
               on-click={() => this.append(data)}
+              icon="el-icon-circle-plus-outline"
             >
-              Append
+              添加
             </el-button>
             <el-button
+              style="position: absolute;right:50px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"
               on-click={() => this.remove(node, data)}
+              icon="el-icon-delete"
             >
-              Delete
+              删除
             </el-button>
           </span>
         </span>
       );
+    },
+    formatState: function(row, column, cellValue, index) {
+      return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
+    }
+  },
+  filters: {
+    filters1: function(arg) {
+      console.log("arg:" + arg);
+      if (arg == 1) {
+        return "已冻结";
+      } else {
+        return "正常";
+      }
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
+.handle-box {
+  margin-bottom: 20px;
+}
+
+.handle-select {
+  width: 120px;
+}
+
+.handle-input {
+  width: 300px;
+  display: inline-block;
+}
+.del-dialog-cnt {
+  font-size: 16px;
+  text-align: center;
+}
+.table {
+  width: 100%;
+  font-size: 14px;
+}
+.red {
+  color: #ff0000;
+}
+
 .custom-tree-node {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
+
+  font-size: 20px;
+  padding-right: 50px;
 }
 </style>

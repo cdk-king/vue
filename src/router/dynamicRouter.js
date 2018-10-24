@@ -118,6 +118,17 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/AppleProp';
+    item.meta = { title: '申请道具' };
+    if (right.indexOf('Apple_Prop_view') != -1) {
+        item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };
     item.component = resolve => require(['../components/test/ComponentCommunicationTest.vue'], resolve);

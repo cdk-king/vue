@@ -117,7 +117,17 @@
                             },
                             {
                                 index: 'ApplyGift',
-                                title: '申请福利'
+                                title: '申请福利',
+                                subs: [
+                                    {
+                                        index: 'AppleProp',
+                                        title: '申请道具'
+                                    },
+                                    {
+                                        index: 'ApplyCDK',
+                                        title: '申请激活码'
+                                    }
+                                ]
                             },
                             {
                                 index: 'GameLogManagement',

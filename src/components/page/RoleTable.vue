@@ -322,12 +322,23 @@
                     addUser: this.searchKey.addUser,
                     state:this.searchKey.state,
                     isPage:"isPage"
-                }).then((res) => {
-                    this.tableData =this.mapData(res.data.list);
-                    this.total = res.data.total;
-                    //alert(res.data.list);
-                    //console.log(this.tableData);
+                }).then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("角色列表获取成功");
+                        this.tableData = this.mapData(successResponse.data.data.list);
+                        console.log(this.tableData);
+                        this.total = successResponse.data.data.total;
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("角色列表获取失败");
+                        return false;
+                    }
                 })
+
 
                 this.$axios.post("/getRight", {
                     pageNo: 1,
@@ -569,8 +580,16 @@
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
                         //this.$message.success("用户角色添加成功");
+                        console.log("角色权限添加完成");
+                        
+
                         this.getData();
-                        Utils.getUserAllRight(this.form.id);
+                        console.log("数据更新完成");
+                        //这里要输入用户id
+                        console.log(localStorage.getItem('userData')); 
+                        var userId =JSON.parse(localStorage.getItem('userData')).id;
+                        console.log(userId);
+                        Utils.getUserAllRight(userId);
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');
@@ -592,8 +611,9 @@
                         console.log("角色权限编辑完成");
                         this.$message.success("角色权限编辑完成");
                         this.getData();
-                        //
-                        Utils.getUserAllRight(this.form.id);
+                        console.log("数据更新完成");
+                        var userId =JSON.parse(localStorage.getItem('userData')).id;
+                        Utils.getUserAllRight(userId);
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');

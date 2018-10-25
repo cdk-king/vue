@@ -249,14 +249,9 @@
                                 <el-button type="primary" icon="search" @click="testMessage">申请</el-button>
                                 <el-button type="primary" icon="search" @click="testMessage">重置</el-button>
                     
-                        </el-form-item></el-form>
-
-                        <Divider />
-                        
-
+                        </el-form-item>
+                        <Divider/>
                         </el-form>
-
-
                     </el-tab-pane>
                     <el-tab-pane label="为指定角色申请">为指定角色申请
                         <el-form ref="form" :model="form" label-width="350px">
@@ -321,7 +316,7 @@
                                 <el-button type="primary" icon="search" @click="testMessage">申请</el-button>
                                 <el-button type="primary" icon="search" @click="testMessage">重置</el-button>
                     
-                        </el-form-item></el-form>
+                        </el-form-item>
 
                         <Divider />
                         
@@ -358,7 +353,7 @@
                                 <el-button type="primary" icon="search" @click="testMessage">申请</el-button>
                                 <el-button type="primary" icon="search" @click="testMessage">重置</el-button>
                     
-                        </el-form-item></el-form>
+                        </el-form-item>
 
                         <Divider />
                         
@@ -411,9 +406,8 @@ export default {
       serverValue: "",
       serverLabel: "",
       form: {},
-      id:0,
-      serverIp:""
-      
+      id: 0,
+      serverIp: ""
     };
   },
   components: {
@@ -429,73 +423,70 @@ export default {
     }
   },
   created() {
-            this.getData();
-            //this.right();
-        
-        },
+    this.getData();
+    //this.right();
+  },
   methods: {
-    getPlatformList(userId){
-       
-        this.$axios.post('/getPlatformListForUser',{
-          id:userId
+    getPlatformList(userId) {
+      this.$axios
+        .post("/getPlatformListForUser", {
+          id: userId
         })
-        .then(successResponse =>{
-            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
-            if(successResponse.data.code === 200){
-                console.log(this.responseResult);
-                console.log("用户渠道列表获取成功");
-                this.platformOptions = successResponse.data.data;
-            
-            }else{
-                this.open4(successResponse.data.message);
-                console.log(this.responseResult);
-                console.log("用户渠道列表获取失败");
-                return false;
-            }
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("用户渠道列表获取成功");
+            this.platformOptions = successResponse.data.data;
+          } else {
+            this.open4(successResponse.data.message);
+            console.log(this.responseResult);
+            console.log("用户渠道列表获取失败");
+            return false;
+          }
         })
-        .catch(failResponse => {})
+        .catch(failResponse => {});
     },
-    getServerList(platformId){
-      this.$axios.post('/getServerListForUser',{
-          id:platformId
+    getServerList(platformId) {
+      this.$axios
+        .post("/getServerListForUser", {
+          id: platformId
         })
-        .then(successResponse =>{
-            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
-            if(successResponse.data.code === 200){
-                console.log(this.responseResult);
-                console.log("渠道服务器列表获取成功");
-                this.serverOptions = successResponse.data.data;
-            
-            }else{
-                this.open4(successResponse.data.message);
-                console.log(this.responseResult);
-                console.log("渠道服务器列表获取失败");
-                return false;
-            }
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("渠道服务器列表获取成功");
+            this.serverOptions = successResponse.data.data;
+          } else {
+            this.open4(successResponse.data.message);
+            console.log(this.responseResult);
+            console.log("渠道服务器列表获取失败");
+            return false;
+          }
         })
-        .catch(failResponse => {})
+        .catch(failResponse => {});
     },
-    selectPlatform(){
-        this.getServerList(this.platformValue);
+    selectPlatform() {
+      this.getServerList(this.platformValue);
     },
-    selectServer(){
-        if(this.serverOptions.length>0){
-          for(let  i = 0 ; i <  this.serverOptions.length ; i++){
-              if(this.serverOptions[i].serverId == this.serverValue){
-                   this.serverIp = this.serverOptions[i].serverIp;
-                   console.log("当前serverIp:"+this.serverIp);
-                    this.$message.success("当前serverIp:"+this.serverIp);
-                   return;
-              }
+    selectServer() {
+      if (this.serverOptions.length > 0) {
+        for (let i = 0; i < this.serverOptions.length; i++) {
+          if (this.serverOptions[i].serverId == this.serverValue) {
+            this.serverIp = this.serverOptions[i].serverIp;
+            console.log("当前serverIp:" + this.serverIp);
+            this.$message.success("当前serverIp:" + this.serverIp);
+            return;
           }
         }
+      }
     },
-    getData(){
-        var userData =JSON.parse(localStorage.getItem('userData'));
-        this.id = userData.id;
-        this.getPlatformList(this.id);
-    }
-    ,
+    getData() {
+      var userData = JSON.parse(localStorage.getItem("userData"));
+      this.id = userData.id;
+      this.getPlatformList(this.id);
+    },
     testMessage() {
       this.$message.success("success");
       this.$message.success(this.$cdk);

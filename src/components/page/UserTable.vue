@@ -403,8 +403,6 @@
                 this.getData();
             },
             getData() {
-                //console.log(this.searchKey.state);
-                //console.log(this.searchKey.name);
                 console.log("getting Data...");
                 this.$axios.post(this.url, {
                     pageNo: this.cur_page,
@@ -415,13 +413,21 @@
                     phone: this.form.phone,
                     email:this.form.email,
                     state:this.searchKey.state
-                }).then((res) => {
-                    
-                    //this.tableData = res.data.list;
-                    this.tableData = this.mapData(res.data.list);
-                    this.total = res.data.total;
-                    //alert(res.data.list);
-                    //console.log("userData=>"+this.tableData);
+                }) .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("用户列表获取成功");
+                        this.tableData = this.mapData(successResponse.data.data.list);
+                        console.log(this.tableData);
+                        this.total = successResponse.data.data.total;
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("用户列表获取失败");
+                        return false;
+                    }
                 })
 
                 this.$axios.post("/getRole", {
@@ -813,7 +819,7 @@
                     return false;
                 }else{
                     
-                    this.$axios.post('/editpassword',{
+                    this.$axios.post('/editPassword',{
                         id: this.passwordform.id, 
                         password: this.passwordform.newPassword
                     })

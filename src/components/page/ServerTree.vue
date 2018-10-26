@@ -251,8 +251,8 @@ export default {
 
       this.$axios
         .post("/getAllServer", {
-          pageNo: "",
-          pageSize: "",
+          pageNo: 1,
+          pageSize: 10,
           isPage: "",
           id: "",
           server: "",
@@ -265,11 +265,19 @@ export default {
           addUser: "",
           addDatetime: "",
           state: ""
+        }).then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("所有服务器获取成功");
+            this.tableData = successResponse.data.data.list;
+            console.log(this.tableData);
+          } else {
+            console.log(this.responseResult);
+            console.log("所有服务器获取失败");
+            return false;
+          }
         })
-        .then(res => {
-          this.tableData = res.data.list;
-          console.log(this.tableData);
-        });
     },
     MapData(TreeList) {
       var tags = ["gameId", "platformId", "serverId"];

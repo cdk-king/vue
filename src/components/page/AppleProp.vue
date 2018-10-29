@@ -3,7 +3,7 @@
     <div class="table">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>玩家信息</el-breadcrumb-item>
+                    <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>道具申请</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
             <div class="container">
@@ -93,18 +93,15 @@
                             </el-table>
 
                         </el-form-item>
-
-                        
+               
                         <!-- <el-form-item label="">
                             
                                 <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
                     
                         </el-form-item> -->
-
                         </el-form>
 
                     </div>
-
 
                 <Divider />
 
@@ -289,7 +286,6 @@
                             </el-select>
                         </el-form-item>
                         
-
                         <el-form-item label="物品绑定">
                             <el-radio v-model="radio" label="1">绑定</el-radio>
                             <el-radio v-model="radio" label="2">不绑定</el-radio>
@@ -319,10 +315,7 @@
                         </el-form-item>
 
                         <Divider />
-                        
-
                         </el-form>
-
                     </el-tab-pane>
                     <el-tab-pane label="为全服玩家申请">为全服玩家申请
                         <el-form ref="form" :model="form" label-width="350px">
@@ -349,21 +342,13 @@
                             </el-input>
                         </el-form-item>
                         <el-form-item label="">
-                            
                                 <el-button type="primary" icon="search" @click="testMessage">申请</el-button>
                                 <el-button type="primary" icon="search" @click="testMessage">重置</el-button>
-                    
                         </el-form-item>
-
                         <Divider />
-                        
-
                         </el-form>
-
                     </el-tab-pane>
                     </el-tabs>
-
-                    
             </div>
             <!-- 编辑冻结提示框 -->
             <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>

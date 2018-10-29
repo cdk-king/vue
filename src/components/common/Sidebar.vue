@@ -116,16 +116,38 @@
                                 title: '系统公告管理'
                             },
                             {
-                                index: 'ApplyGift',
-                                title: '申请福利',
+                                index: '2-2',
+                                title: '道具管理',
                                 subs: [
+                                    {
+                                        index: 'PropInfo',
+                                        title: '道具信息'
+                                    },
                                     {
                                         index: 'AppleProp',
                                         title: '申请道具'
                                     },
                                     {
-                                        index: 'ApplyCDK',
-                                        title: '申请激活码'
+                                        index: 'ConfirmAppleProp',
+                                        title: '申请道具审核'
+                                    }
+                                ]
+                            },
+                            {
+                                index: '2-3',
+                                title: '礼包管理',
+                                subs: [
+                                    {
+                                        index: 'GiftInfo',
+                                        title: '礼包信息'
+                                    },
+                                    {
+                                        index: 'AppleGiftCDK',
+                                        title: '申请礼包激活码'
+                                    },
+                                    {
+                                        index: 'CDKUse',
+                                        title: '激活码使用情况'
                                     }
                                 ]
                             },

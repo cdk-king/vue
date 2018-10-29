@@ -30,12 +30,13 @@ function getchildren() {
     item = {}
 
     var right = localStorage.getItem('rightTags');
-    if(right==null){
+    if(null==right){
         right = "";
     }else{
         
     }
-    //console.log("right2:" + right);
+    
+    console.log("right2:" + right);
     item.path = '/userTable';
     item.component = resolve => require(['../components/page/UserTable.vue'], resolve);
     item.meta = { title: '用户管理' };
@@ -118,12 +119,32 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/PropInfo';
+    item.meta = { title: '道具信息' };
+    if (right.indexOf('Prop_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/PropTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PropTable.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/AppleProp';
     item.meta = { title: '申请道具' };
     if (right.indexOf('Apple_Prop_view') != -1) {
         item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
     }else{
         item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AppleGiftCDK';
+    item.meta = { title: '申请礼包激活码' };
+    if (right.indexOf('Apple_GiftCDK_view') != -1) {
+        item.component = resolve => require(['../components/page/AppleGiftCDK.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AppleGiftCDK.vue'], resolve);
     }
     children.push(item);
     item = {}
@@ -135,7 +156,7 @@ function getchildren() {
     children.push(item);
     item = {}
 
-
+    
     var otherItem=[{
             path: '/tabs',
             component: resolve => require(['../components/page/Tabs.vue'], resolve),

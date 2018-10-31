@@ -8,11 +8,11 @@
             </div>
             <div class="container">
                 <div class="plugins-tips">
-                     备注：
+                     备注：{{value}}
                     <br/>
-                    （1）
+                    （1）请先选择渠道平台后在选择礼包
                     <br/>
-                    （2）
+                    （2）渠道平台、礼包、数量为必填项
                 </div>
                 
                 <Divider />
@@ -26,9 +26,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.platformId"
-                                :label="item.platformName"
-                                :value="item.platformId">
+                                :key="item.id"
+                                :label="item.platform"
+                                :value="item.id">
                                 </el-option>
                             </el-select>
 
@@ -101,9 +101,9 @@
                 <Divider />
  
             </div>
-            <!-- 编辑冻结提示框 -->
-            <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
-                <div class="del-dialog-cnt">是否确定？</div>
+            <el-dialog title="提示" :modal="false"  :close-on-click-modal="false" :visible.sync="dialogVisible"   width="300px" center>
+                
+                <div v-for="item in CDKs" :key="item" class="text item">{{item}}</div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -113,11 +113,13 @@
 </template>
 
 <script>
+import bus from '../common/bus';
 import crypto from 'crypto';
 import md5 from 'js-md5';
 import dialog from "../test/dialog.vue";
 export default {
   name: "AppleGiftCDK",
+  props:["value"],
   data() {
     return {
       show: false,
@@ -125,12 +127,12 @@ export default {
       aa: this.$cdk,
       platformOptions: [
         {
-          platformId: "1",
-          platformName: "渠道1"
+          id: "1",
+          platform: "渠道1"
         },
         {
-          platformId: "2",
-          platformName: "渠道2"
+          id: "2",
+          platform: "渠道2"
         }
       ],
       giftOptions: [
@@ -168,7 +170,8 @@ export default {
           endDatetime:''
       },
       id: 0,
-      serverIp: ""
+      serverIp: "",
+      CDKs:[]
     };
   },
   components: {
@@ -176,7 +179,7 @@ export default {
   },
   computed: {
     cdk: function() {
-      return this.$cdk;
+      return this.$store.state.gameId
     },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
@@ -185,9 +188,18 @@ export default {
   },
   created() {
     this.getData();
+    bus.$on('changeGameId',function(obj){
+        console.log(obj.message);
+        this.getData();
+    }.bind(this))
+    
     //this.right();
   },
+   beforeDestroy () {
+    bus.$off('changeGameId')
+  },
   methods: {
+
     generateCDK() {
       //表单验证
       
@@ -203,13 +215,14 @@ export default {
           this.$message.error("请输入生成数量");
           return;
       }
-
+      console.log(this.form.platformId);
+      console.log(this.form.giftId);
       console.log(this.form);
       var type = 0;
       var CouponID = parseInt((this.form.giftId).toString()) * 10000;
       var strCouponID = (CouponID + type ).toString();
       console.log(strCouponID);
-      console.log(this.form.platformId);
+      
       console.log(this.form.couponCount);
       //console.log(this.stringToByte(cdk));
 
@@ -221,7 +234,7 @@ export default {
       //       var a = md51.digest('hex');
       //       console.log(a);
       //正解
-      var sign =  md5.hex("20000"+"2"+"2"+"cdk");
+      var sign =  md5.hex(strCouponID+this.form.platformId.toString()+this.form.couponCount.toString()+"cdk");
       console.log(sign);
         this.$axios 
         .post("/generateCDK", {
@@ -230,7 +243,7 @@ export default {
           giftId:this.form.giftId,
           couponTitle:this.form.couponTitle,
           coupon_describe:this.form.coupon_describe,
-          couponCount:this.form.couponCount,
+          couponCount:this.form.couponCount.trim(),
           startDatetime:this.form.startDatetime,
           endDatetime:this.form.endDatetime,
           addUser:this.form.addUser,
@@ -242,6 +255,12 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("CDK生成成功");
+            this.$message.success("CDK生成成功");
+            var data =  successResponse.data.data;
+            console.log(JSON.stringify(data));
+            this.CDKs = data;
+            this.dialogVisible = true;
+            this.resetForm();
             //this.platformOptions = successResponse.data.data;
           } else {
             this.open4(successResponse.data.message);
@@ -253,8 +272,21 @@ export default {
         .catch(failResponse => {});
     },
     resetForm(){
-
-      
+      bus.$emit("busEmit","bus.$emit('busEmit','')");
+      this.$emit('increment1',"这个位子是可以加参数的");
+      this.form = {
+          id:'',
+          giftId:'',
+          couponTitle:'',
+          couponCount:'',
+          coupon_describe: '',
+          platformId:'',
+          addUser: '',
+          addDatetime: '',
+          startDatetime:'',
+          endDatetime:''
+      }
+      //this.dialogVisible = true;
     },
     stringToByte(str) {  
     var bytes = new Array();
@@ -306,29 +338,32 @@ export default {
     selectGift(){
 
     },
-    getPlatformList(userId) {
+    getPlatformList(gameId) {
+      var userData =JSON.parse(localStorage.getItem('userData'));
       this.$axios
-        .post("/getPlatformListForUser", {
-          id: userId
+        .post("/getPlatformListForUserIdAndGameId", {
+          
+          userId:userData.id,
+          gameId: gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取成功");
-            this.platformOptions = successResponse.data.data;
+            console.log("渠道列表获取成功");
+            this.platformOptions = successResponse.data.data.list;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("渠道列表获取失败");
             return false;
           }
         })
         .catch(failResponse => {});
     },
-    getServerList(platformId) {
+    getGiftList(platformId) {
       this.$axios
-        .post("/getServerListForUser", {
+        .post("/getGiftListForUser", {
           id: platformId
         })
         .then(successResponse => {
@@ -347,7 +382,7 @@ export default {
         .catch(failResponse => {});
     },
     selectPlatform() {
-      this.getServerList(this.platformValue);
+      this.getGiftList(this.platformValue);
     },
     selectServer() {
       if (this.serverOptions.length > 0) {
@@ -362,9 +397,10 @@ export default {
       }
     },
     getData() {
-      var userData = JSON.parse(localStorage.getItem("userData"));
-      this.id = userData.id;
-      this.getPlatformList(this.id);
+      //var userData = JSON.parse(localStorage.getItem("userData"));
+      //this.id = userData.id;
+      console.log("this.$gameId:"+this.$gameId);
+      this.getPlatformList(this.$gameId);
     },
     testMessage() {
       this.$message.success("success");

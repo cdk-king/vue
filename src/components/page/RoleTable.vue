@@ -350,7 +350,8 @@
                     isPage:""
                 }).then((res) => {
                     //this.tableData = res.data.list;
-                    this.rightData = res.data.list;
+                    console.log(JSON.stringify(res.data));
+                    this.rightData = res.data.data.list;
                     //alert(res.data.list);
                     //console.log("rightData=>"+this.rightData);
                 })

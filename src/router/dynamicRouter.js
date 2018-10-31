@@ -129,12 +129,24 @@ function getchildren() {
     children.push(item);
     item = {}
 
+
+
     item.path = '/AppleProp';
     item.meta = { title: '申请道具' };
     if (right.indexOf('Apple_Prop_view') != -1) {
         item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
     }else{
         item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/GiftInfo';
+    item.meta = { title: '礼包信息' };
+    if (right.indexOf('Gift_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/GiftTable.vue'], resolve); 
+    }else{
+        item.component = resolve => require(['../components/page/GiftTable.vue'], resolve);
     }
     children.push(item);
     item = {}

@@ -8,13 +8,18 @@ import dynamicRouter from './router/dynamicRouter';
 import defaultRouter from './router/defaultRouter';
 import getRouter from './router/index';
 
-import vuex from 'vuex'
-Vue.use(vuex);
-var store = new vuex.Store({//store对象
-    state:{
-        show:false
-    }
-})
+import md5 from 'js-md5';
+
+let Base64 = require('js-base64').Base64;
+
+// import vuex from 'vuex'
+// Vue.use(vuex);
+// var store = new vuex.Store({//store对象
+//     state:{
+//         show:false
+//     }
+// })
+import store from './store';
 
 import axios from 'axios';
 import ElementUI from 'element-ui';
@@ -26,6 +31,9 @@ import "babel-polyfill";
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 
+
+
+
 Vue.use(iView);
 
 Vue.use(ElementUI, { size: 'small' });
@@ -36,6 +44,12 @@ Vue.prototype.$cdk = "cdk";
 Vue.prototype.$setcdk = function(str){
     Vue.prototype.$cdk = str;
 };
+
+Vue.prototype.$gameId = 0;
+Vue.prototype.$setGameId = function(id){
+    Vue.prototype.$gameId = id;
+};
+
 
 var router = getRouter();
 

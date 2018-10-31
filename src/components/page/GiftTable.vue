@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>道具管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>礼包管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -27,27 +27,27 @@
                      <el-option key="3" label="未冻结" value="2"></el-option>
                 </el-select>
 
-                <span class="grid-content bg-purple-light">道具名：</span>
-                <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">礼包名：</span>
+                <el-input v-model="searchKey.giftName" placeholder="筛选礼包名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">道具标识：</span>
-                <el-input v-model="searchKey.propTag" placeholder="筛选道具标识" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">礼包标识：</span>
+                <el-input v-model="searchKey.giftTag" placeholder="筛选礼包标识" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleAddprop">添加</el-button>
+                <el-button type="primary" icon="search" @click="handleAddgift">添加</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="propName" label="道具名称" width="160">
+                <el-table-column prop="giftName" label="礼包名称" width="160">
                 </el-table-column>
-                <el-table-column prop="propTag" label="道具标识" >
+                <el-table-column prop="giftTag" label="礼包标识" >
                 </el-table-column>
                 
                 
-                <el-table-column prop="prop_describe" label="描述" >
+                <el-table-column prop="gift_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="platform" label="所在平台" width="120">
                 </el-table-column>
@@ -76,7 +76,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加道具" :visible.sync="addpropVisible" width="30%">
+        <el-dialog title="添加礼包" :visible.sync="addgiftVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
@@ -89,39 +89,39 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="道具名称">
-                    <el-input v-model="form.propName"></el-input>
+                <el-form-item label="礼包名称">
+                    <el-input v-model="form.giftName"></el-input>
                 </el-form-item>
-                <el-form-item label="道具标识">
-                    <el-input v-model="form.propTag"></el-input>
+                <el-form-item label="礼包标识">
+                    <el-input v-model="form.giftTag"></el-input>
                 </el-form-item>
-                <el-form-item label="道具描述">
-                    <el-input v-model="form.prop_describe"></el-input>
+                <el-form-item label="礼包描述">
+                    <el-input v-model="form.gift_describe"></el-input>
                 </el-form-item>
-                <el-form-item label="道具类别">
-                    <el-input v-model="form.propType"></el-input>
+                <el-form-item label="礼包类别">
+                    <el-input v-model="form.giftType"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="addpropVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAddprop">确 定</el-button>
+                <el-button @click="addgiftVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAddgift">确 定</el-button>
             </span>
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑道具" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑礼包" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="道具名称">
-                    <el-input v-model="form.propName"></el-input>
+                <el-form-item label="礼包名称">
+                    <el-input v-model="form.giftName"></el-input>
                 </el-form-item>
-                <el-form-item label="道具标识">
-                    <el-input v-model="form.propTag"></el-input>
+                <el-form-item label="礼包标识">
+                    <el-input v-model="form.giftTag"></el-input>
                 </el-form-item>
-                <el-form-item label="道具描述">
-                    <el-input v-model="form.prop_describe"></el-input>
+                <el-form-item label="礼包描述">
+                    <el-input v-model="form.gift_describe"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -135,7 +135,7 @@
 
         <!-- 编辑冻结提示框 -->
         <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-            <div class="del-dialog-cnt">冻结后将停止道具使用，是否确定冻结？</div>
+            <div class="del-dialog-cnt">冻结后将停止礼包使用，是否确定冻结？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
                 <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
@@ -173,10 +173,10 @@
 <script>
 import bus from '../common/bus';
     export default {
-        name: 'propTable',
+        name: 'giftTable',
         data() {
             return {
-                url:'/getProp',
+                url:'/getGift',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -189,16 +189,16 @@ import bus from '../common/bus';
                 editPasswordVisible:false,
                 changeStateToFrozenVisible:false,
                 changeStateToNormalVisible:false,
-                addpropVisible:false,
+                addgiftVisible:false,
                 handleVisible:true,
                 delAllVisible:false,
                 total:0,
                 form: {
                     id:'',
-                    propName:'',
-                    propTag:'',
-                    prop_describe: '',
-                    propType:'',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
+                    giftType:'',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
@@ -208,9 +208,9 @@ import bus from '../common/bus';
                 },
                 searchKey: {
                     id:'',
-                    propName:'',
-                    propTag:'',
-                    prop_describe: '',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
@@ -263,7 +263,7 @@ import bus from '../common/bus';
                 const username = localStorage.getItem('ms_username');
                 console.log(right);
                 console.log(username);
-                if(right.indexOf('Prop_management_Handle')==-1){
+                if(right.indexOf('Gift_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -281,16 +281,16 @@ import bus from '../common/bus';
                 console.log("page:"+val);
                 this.getData();
             },
-            //筛选当前用户游戏的道具
+            //筛选当前用户游戏的礼包
             getData() {
                 this.$axios.post(this.url, {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
-                    propName:this.searchKey.propName,
-                    propTag:this.searchKey.propTag,
-                    prop_describe: this.searchKey.prop_describe,
+                    giftName:this.searchKey.giftName,
+                    giftTag:this.searchKey.giftTag,
+                    gift_describe: this.searchKey.gift_describe,
                     sort:this.searchKey.sort,
                     addUser: '',
                     addDatetime: '',
@@ -301,8 +301,8 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        console.log("道具列表获取成功");
-                        //this.$message.success("道具列表获取成功");
+                        console.log("礼包列表获取成功");
+                        //this.$message.success("礼包列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -310,7 +310,7 @@ import bus from '../common/bus';
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具列表获取失败");
+                        this.$message.error("礼包列表获取失败");
                         return false;
                     }
                 })
@@ -359,7 +359,7 @@ import bus from '../common/bus';
                 //return row.address;
                 //时间格式化
                     
-                var date = row[column.property];  
+                var date = row[column.gifterty];  
                 if (date == undefined) {  
                     return "";  
                 }
@@ -377,9 +377,9 @@ import bus from '../common/bus';
                 console.log(item.id);
                 this.form = {
                     id:item.id,
-                    propName:item.propName,
-                    propTag:item.propTag,
-                    prop_describe: item.prop_describe,
+                    giftName:item.giftName,
+                    giftTag:item.giftTag,
+                    gift_describe: item.gift_describe,
                     sort:item.sort,
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
@@ -418,14 +418,14 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllProp',{
+                this.$axios.post('/deleteAllGift',{
                         id: str
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("道具批量删除完成");
+                        this.$message.success("礼包批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
@@ -433,7 +433,7 @@ import bus from '../common/bus';
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具批量删除失败");
+                        this.$message.error("礼包批量删除失败");
                         return false;
                     }
                 })
@@ -445,35 +445,35 @@ import bus from '../common/bus';
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleAddprop(){
-                this.addpropVisible = true;
+            handleAddgift(){
+                this.addgiftVisible = true;
                 this.form = {
                     id:'',
-                    propName:'',
-                    propTag:'',
-                    prop_describe: '',
-                    propParentId:'',
-                    propSort:'',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
+                    giftParentId:'',
+                    giftSort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
                 }
             },
-            saveAddprop(){
-                if(this.form.propName==""){
-                    console.log("道具名称不能为空");
-                    this.$message.error("道具名称不能为空");
-                }else if(this.form.propTag==""){
-                    console.log("道具标识不能为空");
-                    this.$message.error("道具标识不能为空");
+            saveAddgift(){
+                if(this.form.giftName==""){
+                    console.log("礼包名称不能为空");
+                    this.$message.error("礼包名称不能为空");
+                }else if(this.form.giftTag==""){
+                    console.log("礼包标识不能为空");
+                    this.$message.error("礼包标识不能为空");
                 }else{
-                    this.$axios.post('/addProp',{ 
+                    this.$axios.post('/addGift',{
 
                         id: this.form.id,
-                        propName:this.form.propName,
-                        propTag:this.form.propTag,
-                        propType:this.form.propType,
-                        prop_describe: this.form.prop_describe,
+                        giftName:this.form.giftName,
+                        giftTag:this.form.giftTag,
+                        giftType:this.form.giftType,
+                        gift_describe: this.form.gift_describe,
                         sort:this.form.sort,
                         addUser: this.form.addUser,
                         state:this.form.state,
@@ -484,14 +484,14 @@ import bus from '../common/bus';
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("道具添加成功");
+                            this.$message.success("礼包添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
                             
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error("道具添加失败");
+                            this.$message.error("礼包添加失败");
                             return false;
                         }
                     })
@@ -500,17 +500,17 @@ import bus from '../common/bus';
                 }               
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, 1, this.form);
-                this.addpropVisible = false; 
+                this.addgiftVisible = false; 
                 
             },
             // 保存编辑
             saveEdit() {
                     console.log(this.form.id);
-                this.$axios.post('/editProp',{
+                this.$axios.post('/editGift',{
                     id:this.form.id,
-                    propName:this.form.propName,
-                    propTag:this.form.propTag,
-                    prop_describe: this.form.prop_describe,
+                    giftName:this.form.giftName,
+                    giftTag:this.form.giftTag,
+                    gift_describe: this.form.gift_describe,
                     sort:this.form.sort,
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
@@ -523,13 +523,13 @@ import bus from '../common/bus';
                         console.log(this.responseResult);
                         //this.$router.push('/');
                         //this.$router.replace({path: '/index'})
-                        this.$message.success("道具信息修改成功");
+                        this.$message.success("礼包信息修改成功");
                         this.getData();
                     }else{
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具信息修改失败");
+                        this.$message.error("礼包信息修改失败");
                         return false;
                     }
                 })
@@ -544,20 +544,20 @@ import bus from '../common/bus';
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Prop',{
+                this.$axios.post('/changeStateToFrozen_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`道具冻结成功`);
+                            this.$message.success(`礼包冻结成功`);
                             this.getData();
                         }else{
                             
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具冻结失败');
+                            this.$message.error('礼包冻结失败');
                             return false;
                         }
                     })
@@ -568,20 +568,20 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Prop',{
+                this.$axios.post('/changeStateToNormal_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("道具解冻成功");
+                            this.$message.success("礼包解冻成功");
                             this.getData();
                         }else{
                             
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具解冻失败');
+                            this.$message.error('礼包解冻失败');
                             return false;
                         }
                     })
@@ -593,21 +593,21 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteProp',{
+                this.$axios.post('/deleteGift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`道具删除成功`);
+                            this.$message.success(`礼包删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
                             
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具删除失败');
+                            this.$message.error('礼包删除失败');
                             return false;
                         }
                     })

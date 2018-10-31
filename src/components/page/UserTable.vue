@@ -418,6 +418,7 @@
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
                         this.$message.success("用户列表获取成功");
+                        console.log("用户列表获取成功");
                         this.tableData = this.mapData(successResponse.data.data.list);
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -426,6 +427,7 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("用户列表获取失败");
+                        console.log("用户列表获取失败");
                         return false;
                     }
                 })
@@ -440,7 +442,10 @@
                     isPage:""
                 }).then((res) => {
                     //this.tableData = res.data.list;
-                    this.roleData = res.data.list;
+                    
+                    console.log("角色列表获取成功");
+                    console.log(JSON.stringify(res.data));
+                    this.roleData = res.data.data.list;
                     //alert(res.data.list);
                     //console.log("roleData=>"+this.roleData);
                 })
@@ -496,13 +501,14 @@
                 this.idx = index;
                 const item = this.tableData[index];
                 var roles= item.roles;
+                console.log(roles);
+                console.log(this.roleData);
                 this.doing = [];
                 this.todo = [];
                 this.done = [];
                 if(roles!=null && roles!=""){
                     //同步任务,异步函数,需要回调
                     //通过将正确的【this】传递到【callback】中来保证最后得到正确的结果
-                    //貌似不需要，懒得改
                     for ( var i = 0; i <roles.length; i++){
                         (function(a,that ){
                             if(roles[a].split){

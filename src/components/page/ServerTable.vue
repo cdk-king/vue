@@ -26,13 +26,16 @@
                 </el-select>
 
                 <span class="grid-content bg-purple-light">服务器名：</span>
-                <el-input v-model="searchKey.server" placeholder="筛选服务器名" class="handle-input " style="width:150px"></el-input>
+                <el-input v-model="searchKey.server" placeholder="筛选服务器名" class="handle-input " style="width:120px"></el-input>
 
                 <span class="grid-content bg-purple-light">服务器IP：</span>
-                <el-input v-model="searchKey.serverIp" placeholder="筛选服务器IP" class="handle-input " style="width:150px"></el-input>
+                <el-input v-model="searchKey.serverIp" placeholder="筛选服务器IP" class="handle-input " style="width:120px"></el-input>
 
                 <span class="grid-content bg-purple-light">渠道平台：</span>
-                <el-input v-model="searchKey.platform" placeholder="渠道平台" class="handle-input " style="width:150px"></el-input>
+                <el-input v-model="searchKey.platform" placeholder="渠道平台" class="handle-input " style="width:120px"></el-input>
+
+                <span class="grid-content bg-purple-light">游戏：</span>
+                <el-input v-model="searchKey.gameName" placeholder="游戏" class="handle-input " style="width:120px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleAddServer">添加</el-button>
@@ -359,6 +362,7 @@
                     id:'',
                     server:this.searchKey.server,
                     gameId:'',
+                    gameName:this.searchKey.gameName,
                     platformId:'', 
                     platform:this.searchKey.platform, 
                     serverIp:this.searchKey.serverIp,

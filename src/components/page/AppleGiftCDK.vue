@@ -10,7 +10,7 @@
                 <div class="plugins-tips">
                      备注：{{value}}
                     <br/>
-                    （1）请先选择渠道平台后在选择礼包
+                    （1）请先选择渠道平台后再选择礼包
                     <br/>
                     （2）渠道平台、礼包、数量为必填项
                 </div>
@@ -37,9 +37,9 @@
                             <el-select v-model="form.giftId" @change="selectGift" placeholder="请选择礼包">
                                 <el-option
                                 v-for="item in giftOptions"
-                                :key="item.giftId"
+                                :key="item.id"
                                 :label="item.giftName"
-                                :value="item.giftId">
+                                :value="item.id">
                                 </el-option>
                         </el-select>
 
@@ -99,6 +99,19 @@
                     </div>
 
                 <Divider />
+
+                <el-form  label-width="150px">
+                        <el-form-item label="激活码">
+                            <el-input style="width:215px"
+                            placeholder="请输入激活码"
+                            v-model="analyseCDK"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="">
+                            <el-button type="primary" @click="exchange">解析</el-button>
+                        </el-form-item>
+                </el-form>
  
             </div>
             <el-dialog title="提示" :modal="false"  :close-on-click-modal="false" :visible.sync="dialogVisible"   width="300px" center>
@@ -107,6 +120,16 @@
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <el-dialog title="提示" :modal="false"  :close-on-click-modal="false" :visible.sync="exchangeVisible"   width="300px" center>
+                
+                <div  class="text item">couponID:{{exchangeResult.couponID}}</div>
+                <div  class="text item">sequenceID:{{exchangeResult.sequenceID}}</div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="exchangeVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="exchangeVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
     </div>
@@ -136,14 +159,11 @@ export default {
         }
       ],
       giftOptions: [
-        {
-          giftId: "1",
-          giftName: "礼包1"
-        },
-        {
-          giftId: "2",
-          giftName: "礼包2"
-        }
+        // {
+        //   id: "1",
+        //   giftName: "礼包1"
+        // },
+
       ],
       platformValue: "",
       platformLabel: "",
@@ -171,7 +191,13 @@ export default {
       },
       id: 0,
       serverIp: "",
-      CDKs:[]
+      CDKs:[],
+      analyseCDK:"7C7JATQB",
+      exchangeVisible:false,
+      exchangeResult:{
+        couponID:"",
+        sequenceID:""
+      }
     };
   },
   components: {
@@ -195,11 +221,32 @@ export default {
     
     //this.right();
   },
-   beforeDestroy () {
+  beforeDestroy () {
     bus.$off('changeGameId')
   },
   methods: {
-
+    exchange(){
+        console.log(this.analyseCDK);
+        this.$axios 
+        .post("/analyseCDK", {
+          analyseCDK: this.analyseCDK,
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("CDK解析成功");
+            this.exchangeResult = successResponse.data.data;
+            this.exchangeVisible = true;
+          } else {
+            this.open4(successResponse.data.message);
+            console.log(this.responseResult);
+            console.log("CDK解析失败");
+            return false;
+          }
+        })
+        .catch(failResponse => {});
+    },
     generateCDK() {
       //表单验证
       
@@ -362,27 +409,28 @@ export default {
         .catch(failResponse => {});
     },
     getGiftList(platformId) {
+      console.log(platformId);
       this.$axios
-        .post("/getGiftListForUser", {
-          id: platformId
+        .post("/getNewGiftListForPlatformId", {
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("渠道服务器列表获取成功");
-            this.serverOptions = successResponse.data.data;
+            console.log("礼包列表获取成功");
+            this.giftOptions = successResponse.data.data.list;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
-            console.log("渠道服务器列表获取失败");
+            console.log("礼包列表获取失败");
             return false;
           }
         })
         .catch(failResponse => {});
     },
     selectPlatform() {
-      this.getGiftList(this.platformValue);
+      this.getGiftList(this.form.platformId);
     },
     selectServer() {
       if (this.serverOptions.length > 0) {

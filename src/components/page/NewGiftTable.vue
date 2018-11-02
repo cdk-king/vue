@@ -2,59 +2,48 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>权限管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>礼包管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-                <span class="grid-content bg-purple-light">状态：</span>
-                
-                <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
-                    <el-option key="1" label="全部" value="0"></el-option>
-                    <el-option key="2" label="冻结" value="1"></el-option>
-                     <el-option key="3" label="未冻结" value="2"></el-option>
+                <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
+                <span class="grid-content bg-purple-light">平台：</span>
+                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠道平台" class="handle-select mr10">
+                        <el-option key="0" label="全部" value="0"></el-option>
+                        <el-option
+                        v-for="item in platformOptions"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
                 </el-select>
 
-                <span class="grid-content bg-purple-light">权限名：</span>
-                <el-input v-model="searchKey.rightName" placeholder="筛选权限名" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">礼包名：</span>
+                <el-input v-model="searchKey.giftName" placeholder="筛选礼包名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">权限标识：</span>
-                <el-input v-model="searchKey.rightTag" placeholder="筛选权限标识" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">礼包标识：</span>
+                <el-input v-model="searchKey.giftTag" placeholder="筛选礼包标识" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleAddRight">添加</el-button>
+                <el-button type="primary" icon="search" @click="handleImportGift">导入</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" align="center">
-                </el-table-column>
+                <!-- <el-table-column type="selection" width="55" align="center">
+                </el-table-column> -->
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="rightName" label="权限名称" >
+                <el-table-column prop="giftName" label="礼包名称" width="160">
                 </el-table-column>
-                <el-table-column prop="rightTag" label="权限标识" >
+                <el-table-column prop="giftTag" label="礼包标识" >
                 </el-table-column>
                 
-                <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
-                </el-table-column> -->
-                <el-table-column prop="right_describe" label="描述" >
+                
+                <el-table-column prop="giftDescribe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
-                </el-table-column>
-                <el-table-column prop="addDatetime" width="170" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
-                </el-table-column>
-                <el-table-column prop="addUser" width="120" label="添加人" >
-                </el-table-column>
-                <el-table-column prop="rightSort" width="50" label="排序" >
-                </el-table-column>
-                <el-table-column label="操作"  align="center" v-if="handleVisible">
-                    <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToFrozen(scope.$index, scope.row)" v-if="scope.row.state!=1">冻结</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToNormal(scope.$index, scope.row)" v-if="scope.row.state==1">解冻</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                    </template>
+                <el-table-column prop="giftValue" label="价值" >
+                </el-table-column> 
+                <el-table-column prop="platform" label="所在平台" width="120">
                 </el-table-column>
 
             </el-table>
@@ -65,44 +54,46 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加权限" :visible.sync="addRightVisible" width="30%">
+        <el-dialog title="添加礼包" :visible.sync="addgiftVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="权限名称">
-                    <el-input v-model="form.rightName"></el-input>
+                <el-form-item label="平台">
+                    <el-select v-model="form.platformId" placeholder="请选择渠道平台">
+                        <!-- @change="selectPlatform"  -->
+                        <el-option
+                        v-for="item in platformOptions"
+                        :key="item.id"
+                        :label="item.platform"
+                        :value="item.id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="权限标识">
-                    <el-input v-model="form.rightTag"></el-input>
+                <el-form-item label="礼包名称">
+                    <el-input v-model="form.giftName"></el-input>
                 </el-form-item>
-                <el-form-item label="权限描述">
-                    <el-input v-model="form.right_describe"></el-input>
+                <el-form-item label="礼包标识">
+                    <el-input v-model="form.giftTag"></el-input>
                 </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
+                <el-form-item label="礼包描述">
+                    <el-input v-model="form.gift_describe"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="addRightVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAddRight">确 定</el-button>
+                <el-button @click="addgiftVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAddgift">确 定</el-button>
             </span>
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑权限" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑礼包" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="权限名称">
-                    <el-input v-model="form.rightName"></el-input>
+                <el-form-item label="礼包名称">
+                    <el-input v-model="form.giftName"></el-input>
                 </el-form-item>
-                <el-form-item label="权限标识">
-                    <el-input v-model="form.rightTag"></el-input>
+                <el-form-item label="礼包标识">
+                    <el-input v-model="form.giftTag"></el-input>
                 </el-form-item>
-                <el-form-item label="权限描述">
-                    <el-input v-model="form.right_describe"></el-input>
-                </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
-                </el-form-item>
-                <el-form-item label="排序">
-                    <el-input v-model="form.rightSort"></el-input>
+                <el-form-item label="礼包描述">
+                    <el-input v-model="form.gift_describe"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -113,7 +104,7 @@
 
         <!-- 编辑冻结提示框 -->
         <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-            <div class="del-dialog-cnt">冻结后将停止权限使用，是否确定冻结？</div>
+            <div class="del-dialog-cnt">冻结后将停止礼包使用，是否确定冻结？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
                 <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
@@ -149,11 +140,12 @@
 </template>
 
 <script>
+import bus from '../common/bus';
     export default {
-        name: 'rightTable',
+        name: 'giftTable',
         data() {
             return {
-                url:'/getRight',
+                url:'/getGiftUpload',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -166,41 +158,62 @@
                 editPasswordVisible:false,
                 changeStateToFrozenVisible:false,
                 changeStateToNormalVisible:false,
-                addRightVisible:false,
+                addgiftVisible:false,
                 handleVisible:true,
                 delAllVisible:false,
                 total:0,
                 form: {
                     id:'',
-                    rightName:'',
-                    rightTag:'',
-                    right_describe: '',
-                    rightParentId:'',
-                    rightSort:'',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
+                    giftType:'',
+                    sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
-                    rightSort:''
+                    platformId:"",
+                    platform:""
                 },
                 searchKey: {
                     id:'',
-                    rightName:'',
-                    rightTag:'',
-                    right_describe: '',
-                    rightParentId:'',
-                    rightSort:'',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
+                    sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
-                    rightSort:''
+                    platformId:"",
+                    platform:""
                 },
+                platformOptions: [
+                    {
+                    id: "1",
+                    platform: "渠道1"
+                    },
+                    {
+                    id: "2",
+                    platform: "渠道2"
+                    }
+                ],
                 idx: -1,
                 responseResult:[],
-                id:""
+                id:"",
+                strPlatform:""
             }
         },
         created() {
-            this.getData();
+            console.log("this.$gameId:"+this.$gameId);
+            this.getPlatformList(this.$gameId);
+            console.log(this.strPlatform);
+
+            bus.$on('changeGameId',function(obj){
+                console.log(obj.message);
+                this.getPlatformList(this.$gameId);
+            }.bind(this))
+            
+            
             this.right();
         },
         computed: {
@@ -214,8 +227,10 @@
         methods: {
             right(){
                 const right = localStorage.getItem('rightTags');
-                
-                if(right.indexOf('Right_management_Handle')==-1){
+                const username = localStorage.getItem('ms_username');
+                console.log(right);
+                console.log(username);
+                if(right.indexOf('Gift_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -233,37 +248,64 @@
                 console.log("page:"+val);
                 this.getData();
             },
+            //筛选当前用户游戏的礼包
             getData() {
-
                 this.$axios.post(this.url, {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
-                    rightName:this.searchKey.rightName,
-                    rightTag:this.searchKey.rightTag,
-                    right_describe: this.searchKey.right_describe,
-                    rightParentId: this.searchKey.rightParentId,
-                    rightSort:this.searchKey.rightSort,
-                    addUser: '',
-                    addDatetime: '',
-                    state:this.searchKey.state,
+                    giftName:this.searchKey.giftName,
+                    giftTag:this.searchKey.giftTag,
+                    platformId:this.searchKey.platformId,
+                    strPlatform:this.strPlatform
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("权限列表获取成功");
+                        console.log("礼包列表获取成功");
+                        //this.$message.success("礼包列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        this.open4(successResponse.data.message);
+                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("权限列表获取失败");
+                        this.$message.error("礼包列表获取失败");
                         return false;
                     }
                 })
+            },
+            //当前游戏的平台
+            getPlatformList(gameId) {
+            var userData =JSON.parse(localStorage.getItem('userData'));
+            this.$axios
+                .post("/getPlatformListForUserIdAndGameId", {
+                userId:userData.id,
+                gameId:gameId
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    console.log("渠道列表获取成功");
+                    this.platformOptions = successResponse.data.data.list;
+                    this.strPlatform = "";
+                    for(var i = 0;i<this.platformOptions.length;i++){
+                        this.strPlatform += this.platformOptions[i].id+",";
+                        
+                    }
+                    this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
+                    this.getData();
+                } else {
+                    
+                    console.log(this.responseResult);
+                    console.log("渠道列表获取失败");
+                    return false;
+                }
+                })
+                .catch(failResponse => {});
             },
             search() {
                 this.is_search = true;
@@ -272,11 +314,14 @@
             stateSelect(){
                  this.getData();
             },
+            selectPlatform(){
+                this.getData();
+            },
             formatter(row, column) {
                 //return row.address;
                 //时间格式化
                     
-                var date = row[column.property];  
+                var date = row[column.gifterty];  
                 if (date == undefined) {  
                     return "";  
                 }
@@ -290,18 +335,19 @@
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
+                console.log("index:"+index);
+                console.log(item.id);
                 this.form = {
                     id:item.id,
-                    rightName:item.rightName,
-                    rightTag:item.rightTag,
-                    right_describe: item.right_describe,
-                    rightParentId:item.rightParentId,
-                    rightSort:item.rightSort,
+                    giftName:item.giftName,
+                    giftTag:item.giftTag,
+                    gift_describe: item.gift_describe,
+                    sort:item.sort,
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
                     state:item.state,
-                    sort:item.sort,
                 }
+                console.log(this.form.id);
                 this.editVisible = true;
             },
             handleChangeStateToFrozen(index, row) {
@@ -334,22 +380,22 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllRight',{
+                this.$axios.post('/deleteAllGift',{
                         id: str
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("权限批量删除完成");
+                        this.$message.success("礼包批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
                     }else{
-                        this.open4(successResponse.data.message);
+                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("权限批量删除失败");
+                        this.$message.error("礼包批量删除失败");
                         return false;
                     }
                 })
@@ -361,52 +407,56 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleAddRight(){
-                this.addRightVisible = true;
+            handleAddgift(){
+                this.addgiftVisible = true;
                 this.form = {
                     id:'',
-                    rightName:'',
-                    rightTag:'',
-                    right_describe: '',
-                    rightParentId:'',
-                    rightSort:'',
+                    giftName:'',
+                    giftTag:'',
+                    gift_describe: '',
+                    giftParentId:'',
+                    giftSort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
                 }
             },
-            saveAddRight(){
-                if(this.form.rightName==""){
-                    console.log("权限名称不能为空");
-                    this.$message.error("权限名称不能为空");
-                }else if(this.form.rightTag==""){
-                    console.log("权限标识不能为空");
-                    this.$message.error("权限标识不能为空");
+            handleImportGift(){
+                this.$router.push('/GiftUpload');
+            },
+            saveAddgift(){
+                if(this.form.giftName==""){
+                    console.log("礼包名称不能为空");
+                    this.$message.error("礼包名称不能为空");
+                }else if(this.form.giftTag==""){
+                    console.log("礼包标识不能为空");
+                    this.$message.error("礼包标识不能为空");
                 }else{
-                    this.$axios.post('/addRight',{ 
+                    this.$axios.post('/addGift',{
 
                         id: this.form.id,
-                        rightName:this.form.rightName,
-                        rightTag:this.form.rightTag,
-                        right_describe: this.form.right_describe,
-                        rightParentId:this.form.rightParentId,
-                        rightSort:this.form.rightSort,
+                        giftName:this.form.giftName,
+                        giftTag:this.form.giftTag,
+                        giftType:this.form.giftType,
+                        gift_describe: this.form.gift_describe,
+                        sort:this.form.sort,
                         addUser: this.form.addUser,
                         state:this.form.state,
+                        platformId:this.form.platformId,
                         
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("权限添加成功");
+                            this.$message.success("礼包添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
+                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error("权限添加失败");
+                            this.$message.error("礼包添加失败");
                             return false;
                         }
                     })
@@ -415,23 +465,22 @@
                 }               
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, 1, this.form);
-                this.addRightVisible = false; 
+                this.addgiftVisible = false; 
                 
             },
             // 保存编辑
             saveEdit() {
-
-                this.$axios.post('/editRight',{
+                    console.log(this.form.id);
+                this.$axios.post('/editGift',{
                     id:this.form.id,
-                    rightName:this.form.rightName,
-                    rightTag:this.form.rightTag,
-                    right_describe: this.form.right_describe,
-                    rightParentId:this.form.rightParentId,
-                    rightSort:this.form.rightSort,
+                    giftName:this.form.giftName,
+                    giftTag:this.form.giftTag,
+                    gift_describe: this.form.gift_describe,
+                    sort:this.form.sort,
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
-                    sort:this.form.sort
+
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -439,13 +488,13 @@
                         console.log(this.responseResult);
                         //this.$router.push('/');
                         //this.$router.replace({path: '/index'})
-                        this.$message.success("权限信息修改成功");
+                        this.$message.success("礼包信息修改成功");
                         this.getData();
                     }else{
-                        this.open4(successResponse.data.message);
+                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("权限信息修改失败");
+                        this.$message.error("礼包信息修改失败");
                         return false;
                     }
                 })
@@ -460,20 +509,20 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Right',{
+                this.$axios.post('/changeStateToFrozen_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`权限冻结成功`);
+                            this.$message.success(`礼包冻结成功`);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
+                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('权限冻结失败');
+                            this.$message.error('礼包冻结失败');
                             return false;
                         }
                     })
@@ -484,20 +533,20 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Right',{
+                this.$axios.post('/changeStateToNormal_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("权限解冻成功");
+                            this.$message.success("礼包解冻成功");
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
+                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('权限解冻失败');
+                            this.$message.error('礼包解冻失败');
                             return false;
                         }
                     })
@@ -509,21 +558,21 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteRight',{
+                this.$axios.post('/deleteGift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`权限删除成功`);
+                            this.$message.success(`礼包删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
+                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('权限删除失败');
+                            this.$message.error('礼包删除失败');
                             return false;
                         }
                     })

@@ -124,6 +124,14 @@
                                         title: '道具信息'
                                     },
                                     {
+                                        index: 'newPropInfo',
+                                        title: '道具信息(导入)'
+                                    },
+                                     {
+                                        index: 'PropUpload',
+                                        title: '道具导入'
+                                    },
+                                    {
                                         index: 'AppleProp',
                                         title: '申请道具'
                                     },
@@ -142,11 +150,19 @@
                                         title: '礼包信息'
                                     },
                                     {
+                                        index: 'newGiftInfo',
+                                        title: '礼包信息(导入)'
+                                    },
+                                    {
+                                        index: 'GiftUpload',
+                                        title: '礼包导入'
+                                    },
+                                    {
                                         index: 'AppleGiftCDK',
                                         title: '申请礼包激活码'
                                     },
                                     {
-                                        index: 'CDKUse',
+                                        index: 'CDK_Use',
                                         title: '激活码使用情况'
                                     }
                                 ]

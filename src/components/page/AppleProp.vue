@@ -10,9 +10,9 @@
                 <div class="plugins-tips">
                      备注：
                     <br/>
-                    （1）三种申请方式（按条件申请、为指定角色申请、为全服玩家申请）只能选择其中的一种；
+                    （1）两种申请方式（为指定角色申请、为全服玩家申请）只能选择其中的一种；
                     <br/>
-                    （2）如果需要发送元宝，请找策划把元宝包装成一个道具，之后通过该接口发送，发送的元宝不会提升玩家的vip等级；
+                    （2）如果需要发送钻石，请找策划把钻石包装成一个道具，之后通过该接口发送，发送的钻石不会提升玩家的vip等级；
                 </div>
                 
                 <Divider />
@@ -106,7 +106,7 @@
                 <Divider />
 
                     <el-tabs type="border-card">
-                    <el-tab-pane label="按条件申请">按条件申请
+                    <!-- <el-tab-pane label="按条件申请">按条件申请
                         
                         <el-form ref="form" :model="form" label-width="350px">
 
@@ -249,21 +249,23 @@
                         </el-form-item>
                         <Divider/>
                         </el-form>
-                    </el-tab-pane>
+                    </el-tab-pane> -->
                     <el-tab-pane label="为指定角色申请">为指定角色申请
                         <el-form ref="form" :model="form" label-width="350px">
 
                         <el-form-item label="玩家账号">
-                            <el-input style="width:215px"
-                            placeholder="请输入玩家账号"
+                            <el-input style="width:515px"
+                            placeholder="请输入玩家账号" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}" 
                             v-model="input10"
                             clearable>
                             </el-input>
                             
                         </el-form-item>
                         <el-form-item label="玩家名称">
-                            <el-input style="width:215px"
-                            placeholder="请输入玩家名称"
+                            <el-input style="width:515px"
+                            placeholder="请输入玩家名称" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
                             v-model="input10"
                             clearable>
                             </el-input>

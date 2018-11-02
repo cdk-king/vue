@@ -95,7 +95,7 @@
                             clearable>
                             </el-input>
 
-                            <span style="margin-left:50px">元宝</span>
+                            <span style="margin-left:50px">钻石</span>
 
                             <el-input style="width:215px"
                             placeholder="最小元宝"

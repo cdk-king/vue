@@ -119,6 +119,76 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/PlayerUpload';
+    item.meta = { title: '玩家信息导入' };
+    if (right.indexOf('Upload_Player_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerUpload.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerUpload.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PlayerProhibitSpeakLog';
+    item.meta = { title: '玩家禁封记录' };
+    if (right.indexOf('Player_ProhibitSpeakLog_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerProhibitSpeakLog.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerProhibitSpeakLog.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PlayerBanLog';
+    item.meta = { title: '玩家禁封记录' };
+    if (right.indexOf('Player_BanLog_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerBanLog.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerBanLog.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/SendEmail';
+    item.meta = { title: '发送邮件' };
+    if (right.indexOf('Send_Email_view') != -1) {
+        item.component = resolve => require(['../components/page/SendEmail.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/SendEmail.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/SendNotice';
+    item.meta = { title: '发送公告' };
+    if (right.indexOf('Send_Notice_view') != -1) {
+        item.component = resolve => require(['../components/page/SendNotice.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/SendNotice.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AllEmail';
+    item.meta = { title: '全服邮件' };
+    if (right.indexOf('All_Email_view') != -1) {
+        item.component = resolve => require(['../components/page/AllEmail.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AllEmail.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AllNotice';
+    item.meta = { title: '全服公告' };
+    if (right.indexOf('All_Notice_view') != -1) {
+        item.component = resolve => require(['../components/page/AllNotice.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AllNotice.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/PropInfo';
     item.meta = { title: '道具信息' };
     if (right.indexOf('Prop_Info_view') != -1) {

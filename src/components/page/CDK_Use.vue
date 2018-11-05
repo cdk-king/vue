@@ -647,17 +647,23 @@ import bus from '../common/bus';
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
                     console.log(this.responseResult);
-                    console.log("CDK解析成功");
+                    console.log("CDK兑换成功");
+                    this.$message.success("CDK兑换成功");
                     this.exchangeResult = successResponse.data.data;
                     this.exchangeVisible = true;
+                    this.getData();
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
-                    console.log("CDK解析失败");
+                    console.log(successResponse.data.message);
+                    this.$message.error(successResponse.data.message);
                     return false;
                 }
                 })
                 .catch(failResponse => {});
+            },
+            resetForm(){
+                this.form.cdk = "";
+                this.form.platformId = "";
             }
         }
     }

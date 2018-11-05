@@ -97,23 +97,41 @@
                                         index: 'PlayerInfo',
                                         title: '玩家基本信息'
                                     },
-                                    {
-                                        index: 'PlayerTalk',
-                                        title: '玩家禁言'
+                                     {
+                                        index: 'PlayerUpload',
+                                        title: '玩家信息导入'
                                     },
                                     {
-                                        index: 'PlayerLock',
-                                        title: '封禁/解封玩家账号'
+                                        index: 'PlayerProhibitSpeakLog',
+                                        title: '玩家禁言记录'
                                     },
                                     {
-                                        index: 'disableSendMsg',
-                                        title: '封禁/解封玩家账号'
+                                        index: 'PlayerBanLog',
+                                        title: '玩家封禁记录'
                                     },
                                 ]
                             },
                             {
                                 index: 'NoticeManagement',
-                                title: '系统公告管理'
+                                title: '系统公告管理',
+                                subs: [
+                                    {
+                                        index: 'SendEmail',
+                                        title: '发送邮件'
+                                    },
+                                     {
+                                        index: 'SendNotice',
+                                        title: '发送公告'
+                                    },
+                                    {
+                                        index: 'AllEmail',
+                                        title: '全服邮件'
+                                    },
+                                    {
+                                        index: 'AllNotice',
+                                        title: '全服公告'
+                                    },
+                                ]
                             },
                             {
                                 index: '2-2',
@@ -173,75 +191,75 @@
                             },
                         ]
                     },
-                    {
-                        icon: 'el-icon-lx-copy',
-                        index: 'CommunicationTest',
-                        title: '测试'
-                    },
-                    {
-                        icon: 'el-icon-lx-copy',
-                        index: 'tabs',
-                        title: 'tab选项卡'
-                    },
-                    {
-                        icon: 'el-icon-lx-calendar',
-                        index: '3',
-                        title: '表单相关',
-                        subs: [
-                            {
-                                index: 'form',
-                                title: '基本表单'
-                            },
-                            {
-                                index: '3-2',
-                                title: '三级菜单',
-                                subs: [
-                                    {
-                                        index: 'editor',
-                                        title: '富文本编辑器'
-                                    },
-                                    {
-                                        index: 'markdown',
-                                        title: 'markdown编辑器'
-                                    },
-                                ]
-                            },
-                            {
-                                index: 'upload',
-                                title: '文件上传'
-                            }
-                        ]
-                    },
-                    {
-                        icon: 'el-icon-lx-emoji',
-                        index: 'icon',
-                        title: '自定义图标'
-                    },
-                    {
-                        icon: 'el-icon-lx-favor',
-                        index: 'charts',
-                        title: 'schart图表'
-                    },
-                    {
-                        icon: 'el-icon-rank',
-                        index: 'drag',
-                        title: '拖拽列表'
-                    },
-                    {
-                        icon: 'el-icon-lx-warn',
-                        index: '6',
-                        title: '错误处理',
-                        subs: [
-                            {
-                                index: 'permission',
-                                title: '权限测试'
-                            },
-                            {
-                                index: '404',
-                                title: '404页面'
-                            }
-                        ]
-                    }
+                    // {
+                    //     icon: 'el-icon-lx-copy',
+                    //     index: 'CommunicationTest',
+                    //     title: '测试'
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-copy',
+                    //     index: 'tabs',
+                    //     title: 'tab选项卡'
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-calendar',
+                    //     index: '3',
+                    //     title: '表单相关',
+                    //     subs: [
+                    //         {
+                    //             index: 'form',
+                    //             title: '基本表单'
+                    //         },
+                    //         {
+                    //             index: '3-2',
+                    //             title: '三级菜单',
+                    //             subs: [
+                    //                 {
+                    //                     index: 'editor',
+                    //                     title: '富文本编辑器'
+                    //                 },
+                    //                 {
+                    //                     index: 'markdown',
+                    //                     title: 'markdown编辑器'
+                    //                 },
+                    //             ]
+                    //         },
+                    //         {
+                    //             index: 'upload',
+                    //             title: '文件上传'
+                    //         }
+                    //     ]
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-emoji',
+                    //     index: 'icon',
+                    //     title: '自定义图标'
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-favor',
+                    //     index: 'charts',
+                    //     title: 'schart图表'
+                    // },
+                    // {
+                    //     icon: 'el-icon-rank',
+                    //     index: 'drag',
+                    //     title: '拖拽列表'
+                    // },
+                    // {
+                    //     icon: 'el-icon-lx-warn',
+                    //     index: '6',
+                    //     title: '错误处理',
+                    //     subs: [
+                    //         {
+                    //             index: 'permission',
+                    //             title: '权限测试'
+                    //         },
+                    //         {
+                    //             index: '404',
+                    //             title: '404页面'
+                    //         }
+                    //     ]
+                    // }
                 ]
             }
         },

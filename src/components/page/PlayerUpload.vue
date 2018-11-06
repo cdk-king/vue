@@ -11,7 +11,7 @@
             <div class="plugins-tips">
                 请将玩家信息按下边规定格式写入到文本文件中
                 一行数据对应一个玩家，示例：
-                玩家编号|玩家名称|玩家标识|玩家描述
+                玩家名|玩家账号|玩家Id|是否在线|最后登录IP|会员等级|钻石|充值金额|战力|是否禁言|是否禁封|注册时间
                </div>
 
             <el-upload
@@ -38,6 +38,15 @@
                         :key="item.id"
                         :label="item.platform"
                         :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <span style="margin-left:22px">选择服务器</span>
+                    <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器">
+                        <el-option
+                        v-for="item in serverOptions"
+                        :key="item.serverId"
+                        :label="item.serverName"
+                        :value="item.serverId">
                         </el-option>
                     </el-select>
                         <el-button type="primary" @click="ImportDatabase">导入数据库</el-button>
@@ -76,8 +85,12 @@
                     // platform: "渠道1"
                     // },
                 ],
+                serverOptions:[
+
+                ],
                 form:{
-                    platformId:0
+                    platformId:0,
+                    serverId:0
                 }
             }
         },
@@ -122,10 +135,31 @@
                 })
                 .catch(failResponse => {});
             },
+            getServerList(platformId) {
+            this.$axios
+                .post("/getServerListForPlatform", {
+                id: platformId
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    console.log("渠道服务器列表获取成功");
+                    this.serverOptions = successResponse.data.data;
+                } else {
+                    this.open4(successResponse.data.message);
+                    console.log(this.responseResult);
+                    console.log("渠道服务器列表获取失败");
+                    return false;
+                }
+                })
+                .catch(failResponse => {});
+            },
             ImportDatabase(){
-                this.$axios.post('/Importplayer',{
+                this.$axios.post('/ImportPlayer',{
                     list: JSON.stringify(this.playerList),
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    serverId:this.form.serverId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -155,10 +189,20 @@
                         for(var i = 0;i<fileText.length;i++){
                             var data = fileText[i].split('|')
                             var map = new Object();
-                            map.playerId = data[0];
-                            map.playerName = data[1];
-                            map.playerTag = data[2];
-                            map.player_describe = data[3];
+                            map.playerName = data[0];
+                            map.playerAccount = data[1];
+                            map.playerId = data[2];
+                            map.isOnline = data[3];
+                            map.lastIp = data[4];
+                            map.vipLevel = data[5];
+                            map.diamond = data[6];
+                            map.rechargeAmount = data[7];
+                            map.level = data[8];
+                            
+                            map.combatPower = data[9];
+                            map.isProhibitSpeak = data[10];
+                            map.isBan = data[11];
+                            map.registrationTime = data[12];
                             this.playerList.push(map);
                             //console.log(fileText[i]);
                         }
@@ -185,10 +229,14 @@
                         }
                     }
             },
+
             selectPlatform() {
                 console.log(this.form.platformId);
+                this.getServerList(this.form.platformId);
             },
-
+            selectServer() {
+                console.log(this.form.serverId);
+            },
         },
         
     }

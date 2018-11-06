@@ -130,7 +130,7 @@ function getchildren() {
     item = {}
 
     item.path = '/PlayerProhibitSpeakLog';
-    item.meta = { title: '玩家禁封记录' };
+    item.meta = { title: '玩家禁言记录' };
     if (right.indexOf('Player_ProhibitSpeakLog_view') != -1) {
         item.component = resolve => require(['../components/page/PlayerProhibitSpeakLog.vue'], resolve);
     }else{

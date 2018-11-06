@@ -279,7 +279,7 @@
             <div class="del-dialog-cnt">是否确定解除禁言？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ChangeProhibitSpeakToNormal">确 定</el-button>
+                <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 编辑禁封提示框 -->
@@ -287,7 +287,7 @@
             <div class="del-dialog-cnt">是否确定禁封？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeToBan = false">取 消</el-button>
-                <el-button type="primary" @click="ChangeToBan">确 定</el-button>
+                <el-button type="primary" @click="ToBan">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -296,7 +296,7 @@
             <div class="del-dialog-cnt">是否确定解除禁封？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeBanToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ChangeBanToNormal">确 定</el-button>
+                <el-button type="primary" @click="BanToNormal">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -337,6 +337,7 @@ export default {
       serverLabel: "",
       form: {},
       id: 0,
+      userId:0,
       idx: 0,
       serverIp: "",
       tableData: [],
@@ -482,8 +483,8 @@ export default {
     getServerIp() {},
     getData() {
       var userData = JSON.parse(localStorage.getItem("userData"));
-      this.id = userData.id;
-      this.getPlatformList(this.id);
+      this.userId = userData.id;
+      this.getPlatformList(this.userId);
     },
     // 分页导航
     handleCurrentChange(val) {
@@ -541,7 +542,8 @@ export default {
             serverId: this.serverValue,
             playerName:this.tableData[this.idx].playerName,
             playerAccount:this.tableData[this.idx].playerAccount,
-            playerId:this.tableData[this.idx].playerId
+            playerId:this.tableData[this.idx].playerId,
+            userId:this.userId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -560,14 +562,15 @@ export default {
         .catch(failResponse => {});
 
     },
-    ChangeProhibitSpeakToNormal() {
+    ProhibitSpeakToNormal() {
         this.$axios
         .post("/ChangeProhibitSpeakToNormal", {
             platformId: this.platformValue,
             serverId: this.serverValue,
-            playerName:"",
-            playerAccount:"",
-            playerId:""
+            playerName:this.tableData[this.idx].playerName,
+            playerAccount:this.tableData[this.idx].playerAccount,
+            playerId:this.tableData[this.idx].playerId,
+            userId:this.userId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -575,6 +578,8 @@ export default {
             console.log(this.responseResult);
             console.log("玩家解除禁言成功");
             this.$message.success("玩家解除禁言成功");
+            this.ChangeProhibitSpeakToNormal = false;
+            this.getPlayer();
           } else {
             console.log(this.responseResult);
             console.log(successResponse.data.message);
@@ -595,14 +600,15 @@ export default {
       this.id = this.tableData[index].id;
       this.ChangeBanToNormal = true;
     },
-    ChangeToBan() {
+    ToBan() {
         this.$axios
         .post("/ChangeToBan", {
             platformId: this.platformValue,
             serverId: this.serverValue,
-            playerName:"",
-            playerAccount:"",
-            playerId:""
+            playerName:this.tableData[this.idx].playerName,
+            playerAccount:this.tableData[this.idx].playerAccount,
+            playerId:this.tableData[this.idx].playerId,
+            userId:this.userId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -610,6 +616,8 @@ export default {
             console.log(this.responseResult);
             console.log("玩家禁封成功");
             this.$message.success("玩家禁封成功");
+            this.ChangeToBan = false;
+            this.getPlayer();
           } else {
             console.log(this.responseResult);
             console.log(successResponse.data.message);
@@ -618,14 +626,15 @@ export default {
         })
         .catch(failResponse => {});
     },
-    ChangeBanToNormal() {
+    BanToNormal() {
         this.$axios
-        .post("/ChangeProhibitSpeakToNormal", {
+        .post("/ChangeBanToNormal", {
             platformId: this.platformValue,
             serverId: this.serverValue,
-            playerName:"",
-            playerAccount:"",
-            playerId:""
+            playerName:this.tableData[this.idx].playerName,
+            playerAccount:this.tableData[this.idx].playerAccount,
+            playerId:this.tableData[this.idx].playerId,
+            userId:this.userId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -633,6 +642,8 @@ export default {
             console.log(this.responseResult);
             console.log("玩家解除禁封成功");
             this.$message.success("玩家解除禁封成功");
+            this.ChangeBanToNormal = false;
+            this.getPlayer();
           } else {
             console.log(this.responseResult);
             console.log(successResponse.data.message);

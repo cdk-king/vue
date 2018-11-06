@@ -62,7 +62,7 @@
                 </el-table-column> -->
                 <el-table-column prop="addDatetime" width="120" label="创建时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
-                <el-table-column prop="lastDatetime" width="120" label="更新时间" :formatter="formatter">
+                <el-table-column prop="lastDatetime" width="120" label="更新时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <!-- <el-table-column prop="date" label="日期" sortable width="100">
                 </el-table-column> -->

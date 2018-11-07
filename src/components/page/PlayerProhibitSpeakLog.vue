@@ -51,7 +51,9 @@
                 </el-table-column>
                 <el-table-column prop="playerId" label="玩家ID" >
                 </el-table-column>
-                <el-table-column prop="isToBan" label="操作类型" :formatter="formatIsToBan">
+                <el-table-column prop="isToBan" label="操作类型" :formatter="formatIsToProhibitSpeak">
+                </el-table-column> 
+                <el-table-column prop="prohibitSpeakTime" label="禁言时间" >
                 </el-table-column> 
                 <el-table-column prop="addDatetime" label="操作时间" :formatter="formatDatetime" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
@@ -270,8 +272,8 @@ import bus from '../common/bus';
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
             },
-            formatIsToBan(row, column, cellValue, index){
-                return row.isToBan == 1 ? '禁言' : '解除禁言';
+            formatIsToProhibitSpeak(row, column, cellValue, index){
+                return row.isToProhibitSpeak == 1 ? '禁言' : '解除禁言';
             }
         }
     }

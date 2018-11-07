@@ -53,6 +53,8 @@
                 </el-table-column>
                 <el-table-column prop="isToBan" label="操作类型" :formatter="formatisToBan">
                 </el-table-column> 
+                <el-table-column prop="banTime" label="禁封时间" >
+                </el-table-column> 
                 <el-table-column prop="addDatetime" label="操作时间" :formatter="formatDatetime" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <el-table-column prop="platform" label="平台" >

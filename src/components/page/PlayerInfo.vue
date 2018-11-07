@@ -200,7 +200,12 @@
                 </el-collapse-item>
                 </el-collapse>
                 <!-- <Divider /> -->
-
+                <div style="margin:15px;">
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakAll">批量禁言</el-button>
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakToNormalAll">批量解除禁言</el-button>
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleBanAll">批量禁封</el-button>
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleBanToNormalAll">批量解除禁封</el-button>
+                </div>
                 <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
@@ -225,13 +230,17 @@
                 <el-table-column prop="isProhibitSpeak"  label="是否禁言" :formatter="formatIsProhibitSpeak"> 
                     	<template slot-scope="scope">
                             <span v-if="scope.row.isProhibitSpeak==0" style="color:#000000">正常</span>
-                            <span v-else style="color: red" >已禁言</span>
+                            <span v-else style="color: red" >已禁言
+                              <p>{{scope.row.prohibitSpeakTime}}</p>
+                            </span>
                         </template>
                 </el-table-column>
                 <el-table-column prop="isBan"  label="是否禁封" :formatter="formatIsBan"> 
                     <template slot-scope="scope">
                             <span v-if="scope.row.isBan==0" style="color:#000000">正常</span>
-                            <span v-else style="color: red" >已禁封</span>
+                            <span v-else style="color: red" >已禁封
+                              <p>{{scope.row.banTime}}</p>
+                            </span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="registrationTime"  :formatter="formatter" label="注册时间" > 
@@ -268,9 +277,24 @@
         <!-- 编辑禁言提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
             <div class="del-dialog-cnt">是否确定禁言？</div>
+
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="禁言时间">
+                    <el-input v-model="form.prohibitSpeakTime"></el-input>
+                </el-form-item>
+            </el-form>
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeToProhibitSpeak = false">取 消</el-button>
                 <el-button type="primary" @click="ToProhibitSpeak">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 编辑批量禁言提示框 -->
+        <el-dialog title="冻结提示" :visible.sync="ChangeAllToProhibitSpeak" width="300px" center>
+            <div class="del-dialog-cnt">是否确定批量禁言？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ChangeAllToProhibitSpeak = false">取 消</el-button>
+                <el-button type="primary" @click="AllToProhibitSpeak">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -282,12 +306,37 @@
                 <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 编辑批量解除禁言提示框 -->
+        <el-dialog title="解冻提示" :visible.sync="ChangeAllProhibitSpeakToNormal" width="300px" center>
+            <div class="del-dialog-cnt">是否确定批量解除禁言？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ChangeAllProhibitSpeakToNormal = false">取 消</el-button>
+                <el-button type="primary" @click="AllProhibitSpeakToNormal">确 定</el-button>
+            </span>
+        </el-dialog>
+
         <!-- 编辑禁封提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
             <div class="del-dialog-cnt">是否确定禁封？</div>
+
+
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="禁封时间">
+                    <el-input v-model="form.banTime"></el-input>
+                </el-form-item>
+            </el-form>
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeToBan = false">取 消</el-button>
                 <el-button type="primary" @click="ToBan">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 编辑批量禁封提示框 -->
+        <el-dialog title="冻结提示" :visible.sync="ChangeAllToBan" width="300px" center>
+            <div class="del-dialog-cnt">是否确定批量禁封？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ChangeAllToBan = false">取 消</el-button>
+                <el-button type="primary" @click="AllToBan">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -297,6 +346,23 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeBanToNormal = false">取 消</el-button>
                 <el-button type="primary" @click="BanToNormal">确 定</el-button>
+            </span>
+        </el-dialog>  
+        <!-- 编辑批量解除禁封提示框 -->
+        <el-dialog title="解冻提示" :visible.sync="ChangeAllBanToNormal" width="300px" center>
+            <div class="del-dialog-cnt">是否确定批量解除禁封？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ChangeAllBanToNormal = false">取 消</el-button>
+                <el-button type="primary" @click="AllBanToNormal">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 批量删除提示框 -->
+        <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
+            <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delAllVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveDelAll">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -312,9 +378,11 @@ export default {
         activeNames: ['1'],
       show: false,
       dialogVisible: false,
+      delAllVisible: false,
       aa: this.$cdk,
       cur_page: 1,
       handleVisible: true,
+      multipleSelection:[],
       platformOptions: [
         {
           platformId: "1",
@@ -345,6 +413,10 @@ export default {
       ChangeProhibitSpeakToNormal: false,
       ChangeToBan: false,
       ChangeBanToNormal: false,
+      ChangeAllToProhibitSpeak: false,
+      ChangeAllProhibitSpeakToNormal: false,
+      ChangeAllToBan: false,
+      ChangeAllBanToNormal: false,
       searchForm: {
         playerName: "",
         playerAccount: "",
@@ -535,6 +607,18 @@ export default {
       this.ChangeProhibitSpeakToNormal = true;
       
     },
+    handleProhibitSpeakAll(){
+        this.ChangeAllToProhibitSpeak = true;
+    },
+    handleProhibitSpeakToNormalAll(){
+        this.ChangeAllProhibitSpeakToNormal = true;
+    },
+    handleBanAll(){
+        this.ChangeAllToBan = true;
+    },
+    handleBanToNormalAll(){
+        this.ChangeAllBanToNormal = true;
+    },
     ToProhibitSpeak() {
         this.$axios
         .post("/ChangeToProhibitSpeak", {
@@ -543,7 +627,8 @@ export default {
             playerName:this.tableData[this.idx].playerName,
             playerAccount:this.tableData[this.idx].playerAccount,
             playerId:this.tableData[this.idx].playerId,
-            userId:this.userId
+            userId:this.userId,
+            prohibitSpeakTime:this.form.prohibitSpeakTime,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -561,6 +646,9 @@ export default {
         })
         .catch(failResponse => {});
 
+    },
+    AllToProhibitSpeak(){
+        this.ChangeAllToProhibitSpeak = false;
     },
     ProhibitSpeakToNormal() {
         this.$axios
@@ -588,6 +676,9 @@ export default {
         })
         .catch(failResponse => {});
     },
+    AllProhibitSpeakToNormal(){
+        this.ChangeAllProhibitSpeakToNormal = false;
+    },
     handleChangeToBan(index, row) {
       this.idx = index;
       const item = this.tableData[index];
@@ -608,7 +699,8 @@ export default {
             playerName:this.tableData[this.idx].playerName,
             playerAccount:this.tableData[this.idx].playerAccount,
             playerId:this.tableData[this.idx].playerId,
-            userId:this.userId
+            userId:this.userId,
+            banTime:this.form.banTime
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -625,6 +717,9 @@ export default {
           }
         })
         .catch(failResponse => {});
+    },
+    AllToBan(){
+        this.ChangeAllToBan = false;
     },
     BanToNormal() {
         this.$axios
@@ -651,6 +746,49 @@ export default {
           }
         })
         .catch(failResponse => {});
+    },
+    AllBanToNormal(){
+        this.ChangeAllBanToNormal = false;
+    },
+    handleSelectionChange(val){
+        this.multipleSelection = val;
+        console.log(this.multipleSelection);
+    },
+    handleDelAll(){
+      this.delAllVisible = true;
+    },
+    saveDelAll(){
+        const length = this.multipleSelection.length;
+        let str = '';
+        for (let i = 0; i < length; i++) {
+            str += this.multipleSelection[i].id + ',';
+        }
+        console.log(str);
+        //批量删除处理
+        this.$axios.post('/',{
+                id: str
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                this.$message.success("公告批量删除完成");
+                this.multipleSelection = []; 
+                this.getNotice();
+
+            }else{
+                this.open4(successResponse.data.message);
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("公告批量删除失败");
+                return false;
+            }
+        })
+        .catch(failResponse => {})
+      
+
+
+      this.delAllVisible = false;
     }
   },
   watch: {

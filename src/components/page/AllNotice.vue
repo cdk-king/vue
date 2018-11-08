@@ -12,13 +12,12 @@
                     <!-- <br/> -->
                 </div>
                 
-                <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <Divider />
+                <!-- <el-collapse v-model="activeNames" @change="handleChange">
                 <el-collapse-item title="折叠" name="1">
                     
-                    <!-- <Divider /> -->
                 </el-collapse-item>
-                </el-collapse>
+                </el-collapse> -->
                 <!-- <Divider /> -->
                 <div style="margin:15px;">
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
@@ -237,7 +236,7 @@
                         
                         <el-form-item label="">
                             
-                            <el-button type="primary" icon="search" @click="submit">提交</el-button>
+                            <el-button type="primary" icon="search" @click="editPlatformNotice">提交</el-button>
                     
                         </el-form-item></el-form>
                     </div>
@@ -559,6 +558,46 @@ export default {
         .catch(failResponse => {});
         
     },
+    editPlatformNotice(){
+        if(this.form.noticeTitle==""){
+              this.$message("请输入正确的公告标题");
+              return;
+        }
+        if(this.form.noticeContent==""){
+              this.$message("请输入正确的公告内容");
+              return;
+        }
+        console.log(JSON.stringify(this.form));
+        console.log(JSON.stringify(this.form.serverList));
+
+        this.$axios
+        .post("/editPlatformNotice", {
+            id:this.form.id,
+            platformId:this.form.platformId,
+            serverList:JSON.stringify(this.form.serverList),
+            noticeTitle: this.form.noticeTitle,
+            noticeContent:this.form.noticeContent,
+            startDatetime:this.form.startDatetime,
+            endDatetime:this.form.endDatetime,
+            addUser:this.userId
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("全服公告编辑成功");
+            this.$message.success("全服公告编辑成功");
+            this.getPlatformNotice();  
+            this.editPlatformNoticeVisible = false;
+          } else {
+            console.log(this.responseResult);
+            console.log("全服公告编辑失败");
+            this.$message.error("全服公告编辑失败");
+            return false;
+          }
+        })
+        .catch(failResponse => {});
+    },
     testDialog() {
       this.dialogVisible = true;
     },
@@ -586,40 +625,85 @@ export default {
         return tt;
     },
     handleSend(index,row){
-      console.log(index);
-          console.log(this.tableData[index].id);
-          this.$axios.post('/sendNotice',{
-            id:this.tableData[index].id
-          })
-          .then(successResponse =>{
-              this.responseResult ="\n"+ JSON.stringify(successResponse.data)
-              if(successResponse.data.code === 200){
-                  console.log(this.responseResult);
-                  this.$message.success("公告发送完成"); 
-                  this.getPlatformNotice();
+        console.log(index);
+        console.log(this.tableData[index].id);
+        this.$axios.post('/sendPlatformNotice',{
+        id:this.tableData[index].id
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                this.$message.success("全服公告发送完成"); 
+                this.getPlatformNotice();
 
-              }else{
-                  this.open4(successResponse.data.message);
-                  console.log('error');
-                  console.log(this.responseResult);
-                  this.$message.error("公告发送失败");
-                  return false;
-              }
-          })
-          .catch(failResponse => {})
+            }else{
+                this.open4(successResponse.data.message);
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("全服公告发送失败");
+                return false;
+            }
+        })
+        .catch(failResponse => {})
+    },
+    handleDelete(index,row){
+                console.log(index);
+        console.log(this.tableData[index].id);
+        this.$axios.post('/deletePlatformNotice',{
+        id:this.tableData[index].id
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                this.$message.success("公告删除完成"); 
+                this.getPlatformNotice();
+
+            }else{
+                this.open4(successResponse.data.message);
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("公告删除失败");
+                return false;
+            }
+        })
+        .catch(failResponse => {})
+    },
+    timestampToStr(timestamp){
+        var d = new Date(timestamp);    //根据时间戳生成的时间对象
+
+        var date = (d.getFullYear()) + "-" + 
+                (d.getMonth() + 1) + "-" +
+                (d.getDate()) + " " + 
+                (d.getHours()) + ":" + 
+                (d.getMinutes()) + ":" + 
+                (d.getSeconds());
+        return date;
+    },
+    strToArray(str){
+        str = str.substring(1,str.length-1);
+        var list = str.split(',');
+        for(var i = 0;i<list.length;i++){
+            list[i] = list[i].substring(1,list[i].length-1);
+        }
+        return list;
     },
     handleEdit(index,row){
         this.idx = index;
         var item = this.tableData[index];
+
         this.form={
+            id:item.id,
             platformId:item.platformId,
-            serverListZ:item.serverList,
+            serverList:this.strToArray(item.serverList),
             noticeTitle:item.noticeTitle,
             noticeContent:item.noticeContent,
-            startDatetime:item.startDatetime,
-            endDatetime:item.endDatetime,
-            
+            startDatetime:this.timestampToStr(item.startDatetime),
+            endDatetime:this.timestampToStr(item.endDatetime),
         }
+        
+        console.log("serverList:"+item.serverList);
         this.getServerList(item.platformId);
         this.editPlatformNoticeVisible = true;
     },
@@ -654,14 +738,14 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllNotice',{
+                this.$axios.post('/deleteAllPlatformNotice',{
                         id: str
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("公告批量删除完成");
+                        this.$message.success("全服公告批量删除完成");
                         this.multipleSelection = []; 
                         this.getNotice();
 
@@ -669,7 +753,7 @@ export default {
                         this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("公告批量删除失败");
+                        this.$message.error("全服公告批量删除失败");
                         return false;
                     }
                 })

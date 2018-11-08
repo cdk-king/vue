@@ -55,6 +55,29 @@ Utils.addRouter = function(){
         }).$mount('#app');
         console.log("Vue重启成功");
 };
-
+Utils.timestampToStr = function(){
+    var newDate = new Date();
+newDate.setTime(timestamp);
+// Wed Jun 18 2014 
+console.log(newDate.toDateString());
+// Wed, 18 Jun 2014 02:33:24 GMT 
+console.log(newDate.toGMTString());
+// 2014-06-18T02:33:24.000Z
+console.log(newDate.toISOString());
+// 2014-06-18T02:33:24.000Z 
+console.log(newDate.toJSON());
+// 2014年6月18日 
+console.log(newDate.toLocaleDateString());
+// 2014年6月18日 上午10:33:24 
+console.log(newDate.toLocaleString());
+// 上午10:33:24 
+console.log(newDate.toLocaleTimeString());
+// Wed Jun 18 2014 10:33:24 GMT+0800 (中国标准时间)
+console.log(newDate.toString());
+// 10:33:24 GMT+0800 (中国标准时间) 
+console.log(newDate.toTimeString());
+// Wed, 18 Jun 2014 02:33:24 GMT
+console.log(newDate.toUTCString());
+}
 
 export default Utils

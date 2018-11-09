@@ -327,7 +327,12 @@ export default {
       serverValue: "",
       serverList: [],
       serverLabel: "",
-      form: {},
+      form: {//默认补全，否则校验过程需要判断是否定义
+          platformId:"",
+          serverList:[],//为多选框定义默认list
+          noticeTitle:"",
+          noticeContent:"",
+      },
       id: 0,
       userId: 0,
       idx: 0,
@@ -396,7 +401,6 @@ export default {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -418,7 +422,6 @@ export default {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -439,7 +442,6 @@ export default {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -514,15 +516,28 @@ export default {
       return tt;
     },
     handleAddPlatformNotice(){
-        this.form = [];
+        this.form = {
+            platformId:"",
+            serverList:[],//为多选框定义默认list
+            noticeTitle:"",
+            noticeContent:"",
+        };
         this.addPlatformNoticeVisible = true;
     },
     submit() {
-        if(this.form.noticeTitle==""){
+        if(this.form.platformId=="" || this.form.platformId==undefined){
+              this.$message("请选择正确的平台");
+              return;
+        }
+        if(this.form.serverList.length==0 || this.form.serverList==undefined){
+              this.$message("请选择正确的服务器");
+              return;
+        }
+        if(this.form.noticeTitle=="" || this.form.noticeTitle==undefined){
               this.$message("请输入正确的公告标题");
               return;
         }
-        if(this.form.noticeContent==""){
+        if(this.form.noticeContent=="" || this.form.noticeContent==undefined){
               this.$message("请输入正确的公告内容");
               return;
         }
@@ -602,7 +617,7 @@ export default {
       this.dialogVisible = true;
     },
     handleCheckedServer() {
-      console.log(this.from.serverList);
+      console.log(this.form.serverList);
     },
     selectSearchKeyPlatform(){
       this.getSearchKeyServerList(this.searchKey.platformId);
@@ -672,7 +687,9 @@ export default {
     },
     timestampToStr(timestamp){
         var d = new Date(timestamp);    //根据时间戳生成的时间对象
-
+        if(timestamp==null){
+            return null;
+        }
         var date = (d.getFullYear()) + "-" + 
                 (d.getMonth() + 1) + "-" +
                 (d.getDate()) + " " + 

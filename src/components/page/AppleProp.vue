@@ -23,16 +23,17 @@
                             <el-input v-model="form.name"></el-input>
                         </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择渠道">
-                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台">
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.platformId"
-                                :label="item.platformName"
-                                :value="item.platformId">
+                                :key="item.id"
+                                :label="item.platform"
+                                :value="item.id">
                                 </el-option>
                             </el-select>
-                            <span style="margin-left:22px">选择服务器</span>
-                            <el-select v-model="serverValue" @change="selectServer" placeholder="请选择服务器">
+                        </el-form-item>
+                        <el-form-item class="el-form-item" label="选择服务器">
+                            <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器" style="width:180px">
                                 <el-option
                                 v-for="item in serverOptions"
                                 :key="item.serverId"
@@ -45,7 +46,7 @@
                         <el-form-item label="标题">
                             <el-input style="width:215px"
                             placeholder="请输入标题"
-                            v-model="input10"
+                            v-model="form.releaseTitle"
                             clearable>
                             </el-input>
                             
@@ -54,32 +55,33 @@
                             <el-input style="width:515px" type="textarea"
                             :autosize="{ minRows:4, maxRows: 10}"
                             placeholder="请输入说明"
-                            v-model="input10"
+                            v-model="form.releaseContent"
                             clearable>
                             </el-input>
                         </el-form-item>
                         <Divider />
                         <el-form-item label="需要发送的道具">
-                            <!-- <el-select v-model="propValue" @change="selectProp" placeholder="请选择道具">
+                            <el-select v-model="form.prop" @change="selectProp" placeholder="请选择道具">
                                 <el-option
                                 v-for="item in propOptions"
-                                :key="item.Id"
-                                :label="item.proName"
-                                :value="item.Id">
+                                :key="item.id"
+                                :label="item.propName"
+                                :value="item">
                                 </el-option>
-                            </el-select> -->
+                            </el-select>
+                            <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
                         </el-form-item>
                         <el-form-item label="已选择道具列表">
 
-                            <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+                            <el-table :data="propData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
 
-                                <el-table-column prop="column1" label="道具名称"  >
+                                <el-table-column prop="propName" label="道具名称"  >
                                 </el-table-column>
-                                <el-table-column prop="column2" label="道具ID"  >
+                                <el-table-column prop="propTag" label="道具ID"  >
                                 </el-table-column>
-                                <el-table-column prop="column3" label="数量" >
+                                <el-table-column prop="propCount" label="数量" >
                                 </el-table-column>
-                                <el-table-column prop="column4" label="	装备属性"  >
+                                <el-table-column prop="propDescribe" label="	装备属性"  >
                                 </el-table-column>
                                 <el-table-column prop="column5" label="	过期时间(秒)" >
                                 </el-table-column>
@@ -94,11 +96,6 @@
 
                         </el-form-item>
                
-                        <!-- <el-form-item label="">
-                            
-                                <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
-                    
-                        </el-form-item> -->
                         </el-form>
 
                     </div>
@@ -106,150 +103,6 @@
                 <Divider />
 
                     <el-tabs type="border-card">
-                    <!-- <el-tab-pane label="按条件申请">按条件申请
-                        
-                        <el-form ref="form" :model="form" label-width="350px">
-
-                        <el-form-item class="el-form-item" label="选择渠道">
-                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台">
-                                <el-option
-                                v-for="item in platformOptions"
-                                :key="item.platformId"
-                                :label="item.platformName"
-                                :value="item.platformId">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <Divider />
-                        <el-form-item label="玩家级别范围">
-                            <el-input style="width:215px"
-                            placeholder="请输入最小等级"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                             <span style="">—</span>
-
-                            <el-input style="width:215px"
-                            placeholder="请输入最大等级"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                            
-                        </el-form-item>
-                        <el-form-item label="VIP级别范围">
-                            <el-input style="width:215px"
-                            placeholder="最小等级"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-
-                            <span style="">—</span>
-
-                            <el-input style="width:215px"
-                            placeholder="最大等级"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="用户注册时间范围">
-                            <el-date-picker style="width:215px" 
-                                v-model="value1"
-                                type="datetime"
-                                placeholder="选择起始日期时间">
-                                </el-date-picker>
-
-                                <span style="">—</span>
-
-                                <el-date-picker style="width:215px"  
-                                v-model="value1"
-                                type="datetime"
-                                placeholder="选择截至日期时间">
-                                </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="最后登录时间">
-                            <el-date-picker style="width:215px" 
-                                v-model="value1"
-                                type="datetime"
-                                placeholder="选择起始日期时间">
-                                </el-date-picker>
-
-                                <span style="">—</span>
-
-                                <el-date-picker style="width:215px"  
-                                v-model="value1"
-                                type="datetime"
-                                placeholder="选择截至日期时间">
-                                </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="是否在线">
-                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台">
-                                <el-option
-                                v-for="item in platformOptions"
-                                :key="item.platformId"
-                                :label="item.platformName"
-                                :value="item.platformId">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="角色性别">
-                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台">
-                                <el-option key="0" label="全部" value="0"></el-option>
-                                <el-option key="1" label="男" value="1"></el-option>
-                                <el-option key="2" label="女" value="2"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="帮派ID">
-                             <el-input style="width:215px"
-                            placeholder="请输入最小等级"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="充值额度">
-                             <el-input style="width:215px"
-                            placeholder="请输入充值额度"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-                         <el-form-item label="version_channel">
-                            <el-input style="width:215px"
-                            placeholder="请输入"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="物品绑定">
-                            <el-radio v-model="radio" label="1">绑定</el-radio>
-                            <el-radio v-model="radio" label="2">不绑定</el-radio>
-                        </el-form-item>
-
-                        <el-form-item label="申请人">
-                            <el-input style="width:215px"
-                            placeholder="请输入"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="申请说明">
-                            <el-input style="width:515px"
-                            placeholder="请输入" type="textarea"
-                            :autosize="{ minRows:4, maxRows: 10}"
-                            v-model="input10"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="">
-                            
-                                <el-button type="primary" icon="search" @click="testMessage">申请</el-button>
-                                <el-button type="primary" icon="search" @click="testMessage">重置</el-button>
-                    
-                        </el-form-item>
-                        <Divider/>
-                        </el-form>
-                    </el-tab-pane> -->
                     <el-tab-pane label="为指定角色申请">为指定角色申请
                         <el-form ref="form" :model="form" label-width="350px">
 
@@ -364,6 +217,7 @@
 </template>
 
 <script>
+import bus from "../common/bus";
 import dialog from "../test/dialog.vue";
 export default {
   name: "AppleProp",
@@ -392,15 +246,27 @@ export default {
       ],
       serverValue: "",
       serverLabel: "",
-      form: {},
+      form: {
+          platformId:"",
+            serverId:"",
+            prop:{},
+
+
+      },
       id: 0,
-      serverIp: ""
+      serverIp: "",
+      checkVisible: false,
+      propOptions:[],
+      propData:[],
     };
   },
   components: {
     "t-dialog": dialog
   },
   computed: {
+    propData() {
+      return this.propData;
+    },
     cdk: function() {
       return this.$cdk;
     },
@@ -411,32 +277,69 @@ export default {
   },
   created() {
     this.getData();
-    //this.right();
+    bus.$on(
+      "changeGameId",
+      function(obj) {
+        var userData = JSON.parse(localStorage.getItem("userData"));
+        this.id = userData.id;
+        this.getPlatformList(this.id);
+      }.bind(this)
+    );
   },
   methods: {
+      selectProp(){
+          console.log(this.form.prop);
+      },
+    addPropToList(){
+        var prop = this.form.prop;
+        this.propData.push(prop);
+    },
+    getPropList() {
+        this.$axios.post("/getPropUplaod", {
+            pageNo: 1,
+            pageSize: 10,
+            isPage:"",
+            platformId:this.form.platformId,
+            strPlatform:this.form.platformId
+        }).then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("道具列表获取成功");
+                //this.$message.success("道具列表获取成功");
+                this.propOptions = successResponse.data.data.list;
+            }else{
+                
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("道具列表获取失败");
+                return false;
+            }
+        })
+    },
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUser", {
-          id: userId
+        .post("/getPlatformListForUserIdAndGameId", {
+          userId: userId,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
-            this.platformOptions = successResponse.data.data;
+            this.platformOptions = successResponse.data.data.list;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForUser", {
+        .post("/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -445,6 +348,7 @@ export default {
             console.log(this.responseResult);
             console.log("渠道服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
+            this.checkVisible = true;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
@@ -455,7 +359,8 @@ export default {
         .catch(failResponse => {});
     },
     selectPlatform() {
-      this.getServerList(this.platformValue);
+      this.getServerList(this.form.platformId);
+      this.getPropList();
     },
     selectServer() {
       if (this.serverOptions.length > 0) {

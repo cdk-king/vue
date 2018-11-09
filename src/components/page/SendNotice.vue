@@ -276,7 +276,16 @@ export default {
       serverValue: "",
       serverList: [],
       serverLabel: "",
-      form: {},
+      form: {
+          platformId:"",
+          serverId:"",
+          sendType:"",
+          noticeType:"",
+          timeInterval:"",
+          cycleTime:"",
+          noticeContent:"",
+
+      },
       id: 0,
       userId: 0,
       idx: 0,

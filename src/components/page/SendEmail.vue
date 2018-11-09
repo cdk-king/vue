@@ -140,24 +140,30 @@
 
                         <el-form-item label="是否在线" style="margin-left:-18px">
                                 <el-select v-model="form.isOnline"  placeholder="请选择是否在线" style="width:180px">
-                                    <el-option key="1" label="全部" value="0"></el-option>
-                                    <el-option key="2" label="在线" value="1"></el-option>
-                                    <el-option key="3" label="离线" value="2"></el-option>
+                                        <el-option
+                                        v-for="item in isOnlineOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                        </el-option>
                                 </el-select>
                         </el-form-item>
 
                         <el-form-item label="性别" style="margin-left:-18px">
                                 <el-select v-model="form.sex"  placeholder="请选择性别" style="width:180px">
-                                    <el-option key="1" label="全部" value="0"></el-option>
-                                    <el-option key="2" label="男" value="1"></el-option>
-                                    <el-option key="3" label="女" value="2"></el-option>
+                                        <el-option
+                                        v-for="item in sexOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                        </el-option>
                                 </el-select>
                         </el-form-item>
 
                         <el-form-item label="">
                             
                             <el-button type="primary" icon="search" @click="submit">提交</el-button>
-                    
+                            <el-button type="primary" icon="search" @click="reset">重置</el-button>
                         </el-form-item>
                         
                     </el-tab-pane>
@@ -167,7 +173,7 @@
                             <el-input style="width:515px"
                             placeholder="请输入玩家账号" type="textarea"
                             :autosize="{ minRows:2, maxRows: 10}" 
-                            v-model="this.form.playerAccountList"
+                            v-model="form.playerAccountList"
                             clearable>
                             </el-input>
                             
@@ -176,7 +182,7 @@
                             <el-input style="width:515px"
                             placeholder="请输入玩家名称" type="textarea"
                             :autosize="{ minRows:2, maxRows: 10}"
-                            v-model="this.form.playerNameList"
+                            v-model="form.playerNameList"
                             clearable>
                             </el-input>
                         </el-form-item>
@@ -184,7 +190,7 @@
                             <el-input style="width:515px"
                             placeholder="请输入" type="textarea"
                             :autosize="{ minRows:2, maxRows: 10}"
-                            v-model="this.form.playerIdList"
+                            v-model="form.playerIdList"
                             clearable>
                             </el-input>
                         </el-form-item>
@@ -192,7 +198,7 @@
                         <el-form-item label="">
                             
                             <el-button type="primary" icon="search" @click="submit">提交</el-button>
-                            <el-button type="primary" icon="search" @click="submit">重置</el-button>
+                            <el-button type="primary" icon="search" @click="reset">重置</el-button>
                     
                         </el-form-item>
                     </el-tab-pane>
@@ -200,7 +206,7 @@
                         <el-form-item label="">
                             
                             <el-button type="primary" icon="search" @click="submit">提交</el-button>
-                            <el-button type="primary" icon="search" @click="submit">重置</el-button>
+                            <el-button type="primary" icon="search" @click="reset">重置</el-button>
                     
                         </el-form-item>
                     </el-tab-pane>
@@ -271,10 +277,10 @@
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
 
-                        <el-button type="text" icon="el-icon-edit" @click="handleSend(scope.$index, scope.row)" v-if="scope.row.sendState!=1">编辑</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleSend(scope.$index, scope.row)" v-if="scope.row.sendState!=1">发送</el-button>
 
-                        <el-button type="text" icon="el-icon-edit" @click="handleSend(scope.$index, scope.row)" v-if="scope.row.sendState!=1">删除</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleDelete(scope.$index, scope.row)" >删除</el-button>
                     </template>
                 </el-table-column>
 
@@ -286,8 +292,165 @@
             </div>
                </div>     
             <!-- 编辑提示框 -->
-            <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
-                <div class="del-dialog-cnt">是否确定？</div>
+            <el-dialog title="提示" :visible.sync="dialogVisible" width="900px" center>
+
+                    <el-form ref="form" :model="form" label-width="250px">
+                        <!-- <el-form-item label="表单名称">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item> -->
+                        <el-form-item class="el-form-item" label="选择平台" >
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
+                                <el-option
+                                v-for="item in platformOptions"
+                                :key="item.id"
+                                :label="item.platform"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="选择服务器">
+                            <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器" style="width:180px">
+                                <el-option
+                                v-for="item in serverOptions"
+                                :key="item.serverId"
+                                :label="item.serverName"
+                                :value="item.serverId">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                       
+                        <el-form-item label="标题">
+                           <el-input style="width:515px"
+                            placeholder="请输入标题"
+                            v-model="form.emailTitle"
+                            clearable>
+                            </el-input>
+                            
+                        </el-form-item>
+                        <el-form-item label="说明(玩家看到)">
+                            <el-input style="width:515px"
+                            placeholder="请输入说明" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            v-model="form.emailContent"
+                            clearable>
+                            </el-input>
+                            
+                        </el-form-item>
+                        <el-form-item label="发送原因">
+                            <el-input style="width:515px"
+                            placeholder="请输入发送原因" type="textarea"
+                            :autosize="{ minRows:1, maxRows: 10}"
+                            v-model="form.sendReason"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+
+                        <div v-if="form.sendType == 1">
+
+                        <el-form-item label="玩家等级" style="margin-left:-18px" >
+                            
+                            <el-input style="width:180px"
+                            placeholder="最小等级"
+                            v-model="form.minLevel"
+                            clearable>
+                            </el-input>
+
+                            <span style="">—</span>
+
+                            <el-input style="width:180px"
+                            placeholder="最大等级"
+                            v-model="form.maxLevel"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="VIP等级" style="margin-left:-18px">
+                            <el-input style="width:180px"
+                            placeholder="最小等级"
+                            v-model="form.minVipLevel"
+                            clearable>
+                            </el-input>
+
+                            <span style="">—</span>
+
+                            <el-input style="width:180px"
+                            placeholder="最大等级"
+                            v-model="form.maxVipLevel"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+
+                        <el-form-item label="注册时间" style="margin-left:-18px">
+                                <el-date-picker style="width:180px" 
+                                v-model="form.minRegistrationTime"
+                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+                                placeholder="选择起始日期时间">
+                                </el-date-picker>
+
+                                <span style="">—</span>
+
+                                <el-date-picker style="width:180px"  
+                                v-model="form.maxRegistrationTime"
+                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+                                placeholder="选择截至日期时间">
+                                </el-date-picker>
+                        </el-form-item>
+
+                        <el-form-item label="是否在线" style="margin-left:-18px">
+                                <el-select v-model="form.isOnline"  placeholder="请选择是否在线" style="width:180px">
+                                        <el-option
+                                        v-for="item in isOnlineOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                        </el-option>
+                                </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="性别" style="margin-left:-18px">
+                                <el-select v-model="form.sex"  placeholder="请选择性别" style="width:180px">
+                                        <el-option
+                                        v-for="item in sexOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                        </el-option>
+                                </el-select>
+                        </el-form-item>
+                        </div>
+                        <div v-if="form.sendType == 2">
+                        <el-form-item label="玩家账号">
+                            <el-input style="width:515px"
+                            placeholder="请输入玩家账号" type="textarea"
+                            :autosize="{ minRows:2, maxRows: 10}" 
+                            v-model="form.playerAccountList"
+                            clearable>
+                            </el-input>
+                            
+                        </el-form-item>
+                        <el-form-item label="玩家名称">
+                            <el-input style="width:515px"
+                            placeholder="请输入玩家名称" type="textarea"
+                            :autosize="{ minRows:2, maxRows: 10}"
+                            v-model="form.playerNameList"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="角色ID">
+                            <el-input style="width:515px"
+                            placeholder="请输入" type="textarea"
+                            :autosize="{ minRows:2, maxRows: 10}"
+                            v-model="form.playerIdList"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        </div>
+                        <el-form-item label="">
+                            
+                            <el-button type="primary" icon="search" @click="saveEdit">提交</el-button> 
+                            <el-button type="primary" icon="search" @click="reset">重置</el-button>
+                    
+                        </el-form-item>
+                    </el-form>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -365,6 +528,34 @@ export default {
           platformName: "渠道2"
         }
       ],
+      isOnlineOptions:[
+          {
+            label:"全部",
+            value:"0"
+          },
+          {
+            label:"在线",
+            value:"1"
+          },
+          {
+            label:"离线",
+            value:"2"
+          }
+      ],
+      sexOptions:[
+          {
+            label:"全部",
+            value:"0"
+          },
+          {
+            label:"男",
+            value:"1"
+          },
+          {
+            label:"女",
+            value:"2"
+          }
+      ],
       platformValue: "",
       platformLabel: "",
       serverOptions: [
@@ -391,6 +582,8 @@ export default {
           playerNameList:"",
           playerAccountList:"",
           playerIdList:"",
+          isOnline:"",
+          sex:""
         
       },
       id: 0,
@@ -541,13 +734,13 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("邮件列表获取成功");
-            this.$message.success("邮件列表获取成功");
+            //this.$message.success("邮件列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.mapDate();
           } else {
             console.log(this.responseResult);
             console.log("邮件列表获取失败");
-            this.$message.error("邮件列表获取失败");
+            //this.$message.error("邮件列表获取失败");
             return false;
           }
         })
@@ -722,11 +915,178 @@ export default {
 
         
     },
+    saveEdit(){
+        var data = {};
+        if(this.form.platformId==""){
+            this.$message("请选择正确的平台");
+            return;
+        }
+        if(this.form.serverId==""){
+            this.$message("请选择正确的服务器");
+            return;
+        }
+        if(this.form.emailTitle==""){
+            this.$message("标题不能为空");
+            return;
+        }
+        if(this.form.emailContent==""){
+            this.$message("内容不能为空");
+            return;
+        }
+        if(this.form.sendType==1){
+            data = {
+                id:this.form.id,
+                platformId:this.form.platformId,
+                serverId:this.form.serverId,
+                emailTitle:this.form.emailTitle,
+                emailContent:this.form.emailContent,
+                sendReason:this.form.sendReason,
+                sendType:1,
+
+                minLevel:this.form.minLevel,
+                maxLevel:this.form.maxLevel,
+
+                minVipLevel:this.form.minVipLevel,
+                maxVipLevel:this.form.maxVipLevel,
+
+                minRegistrationTime:this.form.minRegistrationTime,
+                maxRegistrationTime:this.form.maxRegistrationTime,
+
+                isOnline:this.form.isOnline,
+                sex:this.form.sex,
+
+                addUser:this.userId
+            };
+        }
+        if(this.form.sendType==2){
+            data = {
+                id:this.form.id,
+                platformId:this.form.platformId,
+                serverId:this.form.serverId,
+                emailTitle:this.form.emailTitle,
+                emailContent:this.form.emailContent,
+                sendReason:this.form.sendReason,
+                sendType:2,
+
+                playerNameList:this.form.playerNameList,
+                playerAccountList:this.form.playerAccountList,
+                playerIdList:this.form.playerIdList,
+
+                addUser:this.userId
+            };
+        }
+        if(this.form.sendType==3){
+            data = {
+                id:this.form.id,
+                platformId:this.form.platformId,
+                serverId:this.form.serverId,
+                emailTitle:this.form.emailTitle,
+                emailContent:this.form.emailContent,
+                sendReason:this.form.sendReason,
+                sendType:3,
+
+                addUser:this.userId
+            }; 
+        }
+        console.log(data);
+        this.$axios
+        .post("/editEmail", data)
+        .then(successResponse => {
+        this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("邮件编辑成功");
+            this.$message.success("邮件编辑成功");
+            this.getEmail();   
+        } else {
+            console.log(this.responseResult);
+            console.log("邮件编辑失败");
+            this.$message.error("邮件编辑失败");
+            return false;
+        }
+        })
+        .catch(failResponse => {});
+ 
+    },
     mapDate(){
 
     },
-    testDialog() {
-      this.dialogVisible = true;
+    reset(){
+        this.form = {
+                platformId:"",
+                serverId:"",
+                emailTitle:"",
+                emailContent:"",
+                sendReason:"",
+                sendType:"",
+
+                minLevel:"",
+                maxLevel:"",
+
+                minVipLevel:"",
+                maxVipLevel:"",
+
+                minRegistrationTime:null,
+                maxRegistrationTime:null,
+
+                isOnline:"",
+                sex:"",
+
+                playerAccountList:"",
+                playerNameList:"",
+                playerIdList:"",
+
+                addUser:""
+        }
+    },
+    timestampToStr(timestamp){
+        console.log(timestamp);
+        if(timestamp==null){
+            return null;
+        }
+        var d = new Date(timestamp);    //根据时间戳生成的时间对象
+
+        var date = (d.getFullYear()) + "-" + 
+                (d.getMonth() + 1) + "-" +
+                (d.getDate()) + " " + 
+                (d.getHours()) + ":" + 
+                (d.getMinutes()) + ":" + 
+                (d.getSeconds());
+        return date;
+    },
+    handleEdit(index,row){
+        this.idx = index;
+        var item = this.tableData[index];
+        this.form = {
+                id:item.id,
+                platformId:item.platformId,
+                serverId:item.serverId,
+                emailTitle:item.emailTitle,
+                emailContent:item.emailContent,
+                sendReason:item.sendReason,
+                sendType:item.sendType,
+
+                minLevel:item.minLevel,
+                maxLevel:item.maxLevel,
+
+                minVipLevel:item.minVipLevel,
+                maxVipLevel:item.maxVipLevel,
+
+                minRegistrationTime:this.timestampToStr(item.minRegistrationTime),
+                maxRegistrationTime:this.timestampToStr(item.maxRegistrationTime),
+
+                isOnline:item.isOnline,
+                sex:item.sex,
+
+                playerAccountList:item.playerAccountList,
+                playerNameList:item.playerNameList,
+                playerIdList:item.playerIdList,
+
+                addUser:item.userId
+        }
+        this.getServerList(item.platformId);
+        console.log(JSON.stringify(this.form));
+        this.dialogVisible = true;
     },
     selectSearchKeyPlatform(){
       this.getSearchKeyServerList(this.searchKey.platformId);
@@ -758,7 +1118,7 @@ export default {
               this.responseResult ="\n"+ JSON.stringify(successResponse.data)
               if(successResponse.data.code === 200){
                   console.log(this.responseResult);
-                  this.$message.success("邮件发送完成"); 
+                  this.$message.success("邮件发送完成");
                   this.getEmail();
 
               }else{
@@ -766,6 +1126,29 @@ export default {
                   console.log('error');
                   console.log(this.responseResult);
                   this.$message.error("邮件发送失败");
+                  return false;
+              }
+          })
+          .catch(failResponse => {})
+    },
+    handleDelete(index,row){
+      console.log(index);
+          console.log(this.tableData[index].id);
+          this.$axios.post('/deleteEmail',{
+            id:this.tableData[index].id
+          })
+          .then(successResponse =>{
+              this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+              if(successResponse.data.code === 200){
+                  console.log(this.responseResult);
+                  this.$message.success("邮件删除完成");
+                  this.getEmail();
+
+              }else{
+                  this.open4(successResponse.data.message);
+                  console.log('error');
+                  console.log(this.responseResult);
+                  this.$message.error("邮件删除失败");
                   return false;
               }
           })

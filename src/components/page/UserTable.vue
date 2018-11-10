@@ -62,7 +62,7 @@
                 </el-table-column> -->
                 <el-table-column prop="addDatetime" width="120" label="创建时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
-                <el-table-column prop="lastDatetime" width="120" label="更新时间" :formatter="formatter">
+                <el-table-column prop="lastDatetime" width="120" label="更新时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <!-- <el-table-column prop="date" label="日期" sortable width="100">
                 </el-table-column> -->
@@ -403,8 +403,6 @@
                 this.getData();
             },
             getData() {
-                //console.log(this.searchKey.state);
-                //console.log(this.searchKey.name);
                 console.log("getting Data...");
                 this.$axios.post(this.url, {
                     pageNo: this.cur_page,
@@ -415,13 +413,23 @@
                     phone: this.form.phone,
                     email:this.form.email,
                     state:this.searchKey.state
-                }).then((res) => {
-                    
-                    //this.tableData = res.data.list;
-                    this.tableData = this.mapData(res.data.list);
-                    this.total = res.data.total;
-                    //alert(res.data.list);
-                    //console.log("userData=>"+this.tableData);
+                }) .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("用户列表获取成功");
+                        console.log("用户列表获取成功");
+                        this.tableData = this.mapData(successResponse.data.data.list);
+                        console.log(this.tableData);
+                        this.total = successResponse.data.data.total;
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("用户列表获取失败");
+                        console.log("用户列表获取失败");
+                        return false;
+                    }
                 })
 
                 this.$axios.post("/getRole", {
@@ -434,7 +442,10 @@
                     isPage:""
                 }).then((res) => {
                     //this.tableData = res.data.list;
-                    this.roleData = res.data.list;
+                    
+                    console.log("角色列表获取成功");
+                    console.log(JSON.stringify(res.data));
+                    this.roleData = res.data.data.list;
                     //alert(res.data.list);
                     //console.log("roleData=>"+this.roleData);
                 })
@@ -490,13 +501,14 @@
                 this.idx = index;
                 const item = this.tableData[index];
                 var roles= item.roles;
+                console.log(roles);
+                console.log(this.roleData);
                 this.doing = [];
                 this.todo = [];
                 this.done = [];
                 if(roles!=null && roles!=""){
                     //同步任务,异步函数,需要回调
                     //通过将正确的【this】传递到【callback】中来保证最后得到正确的结果
-                    //貌似不需要，懒得改
                     for ( var i = 0; i <roles.length; i++){
                         (function(a,that ){
                             if(roles[a].split){
@@ -813,7 +825,7 @@
                     return false;
                 }else{
                     
-                    this.$axios.post('/editpassword',{
+                    this.$axios.post('/editPassword',{
                         id: this.passwordform.id, 
                         password: this.passwordform.newPassword
                     })

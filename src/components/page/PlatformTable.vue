@@ -368,11 +368,21 @@
                     addDatetime: '',
                     state:this.searchKey.state,
                     gameName:this.searchKey.gameName
-                }).then((res) => {
-                    this.tableData = res.data.list;
-                    this.total = res.data.total;
-                    //alert(res.data.list);
-                    //console.log(this.tableData);
+                }).then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("平台列表获取成功");
+                        this.tableData = successResponse.data.data.list;
+                        console.log(this.tableData);
+                        this.total = successResponse.data.data.total;
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("平台列表获取失败");
+                        return false;
+                    }
                 })
             },
             search() {

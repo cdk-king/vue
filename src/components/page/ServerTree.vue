@@ -251,8 +251,8 @@ export default {
 
       this.$axios
         .post("/getAllServer", {
-          pageNo: "",
-          pageSize: "",
+          pageNo: 1,
+          pageSize: 10,
           isPage: "",
           id: "",
           server: "",
@@ -265,11 +265,19 @@ export default {
           addUser: "",
           addDatetime: "",
           state: ""
+        }).then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("所有服务器获取成功");
+            this.tableData = successResponse.data.data.list;
+            console.log(this.tableData);
+          } else {
+            console.log(this.responseResult);
+            console.log("所有服务器获取失败");
+            return false;
+          }
         })
-        .then(res => {
-          this.tableData = res.data.list;
-          console.log(this.tableData);
-        });
     },
     MapData(TreeList) {
       var tags = ["gameId", "platformId", "serverId"];
@@ -425,23 +433,29 @@ export default {
         this.delVisible = false;
         
     },
-    append(data) {
+    append(node,data) {
         this.getPlatformList();
-        this.addServerVisible = true;
-        const platformId = data.platformId;
-        this.form = {
-            id:'',
-            server:'',
-            serverTag:'',
-            server_describe: '',
-            serverParentId:'',
-            serverSort:'',
-            addUser: '',
-            addDatetime: '',
-            state:'',
-            platformId:platformId
+         const parent = node.parent;
+         this.form = {
+              id:'',
+              server:'',
+              serverTag:'',
+              server_describe: '',
+              serverParentId:'',
+              serverSort:'',
+              addUser: '',
+              addDatetime: '',
+              state:'',
+              platformId:''
+          }
+        
+        if(parent.data.tag=='platform'){
+          const platformId = parent.data.id;
+          console.log(platformId);
+          this.form.platformId = platformId
         }
-
+        this.addServerVisible = true;
+        console.log(this.form.platformId);
     },
 
     remove(node, data) {
@@ -465,7 +479,8 @@ export default {
       console.log("tag:" + tag);
       console.log(JSON.stringify(this.tableData));
       const item = this.tableData[0];
-      for (var i = 0; i < this.tableData.length; i++) {
+      if(tag=='server'){
+        for (var i = 0; i < this.tableData.length; i++) {
         //console.log(this.tableData[i].id);
         //console.log(this.tableData[i]['id']);
         if (this.tableData[i]["id"] == id) {
@@ -488,8 +503,26 @@ export default {
             gameName: item.gameName
           };
           break;
-        }
+          }
+          } 
+      }else{
+        this.form = {
+            id: "",
+            server: "",
+            serverIp: "",
+            server_describe: "",
+            sort: "",
+            addUser: "",
+            addDatetime: "",
+            state: "",
+            gameId: "",
+            roleId: "",
+            platformId: "",
+            platform: "",
+            gameName: ""
+          };
       }
+      
 
       this.showVisible = true;
     },
@@ -500,9 +533,12 @@ export default {
       const id = data.id;
       const tag = data.tag;
       console.log("id:" + id);
+      console.log("tag:" + tag);
+
 
       const item = this.tableData[0];
-      for (var i = 0; i < this.tableData.length; i++) {
+      if(tag=="server"){
+        for (var i = 0; i < this.tableData.length; i++) {
         if (this.tableData[i]["id"] == id) {
           const item = this.tableData[i];
 
@@ -523,7 +559,25 @@ export default {
           };
           break;
         }
+        }
+      }else{
+        this.form = {
+            id: "",
+            server: "",
+            serverIp: "",
+            server_describe: "",
+            sort: "",
+            addUser: "",
+            addDatetime: "",
+            state: "",
+            gameId: "",
+            roleId: "",
+            platformId: "",
+            platform: "",
+            gameName: ""
+          };
       }
+      
 
       this.getPlatformList();
 
@@ -557,7 +611,7 @@ export default {
               style="position: absolute;right:150px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"
-              on-click={() => this.append(data)}
+              on-click={() => this.append(node,data)}
               icon="el-icon-circle-plus-outline"
             >
               添加

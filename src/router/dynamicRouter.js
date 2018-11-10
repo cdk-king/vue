@@ -30,12 +30,13 @@ function getchildren() {
     item = {}
 
     var right = localStorage.getItem('rightTags');
-    if(right==null){
+    if(null==right){
         right = "";
     }else{
         
     }
-    //console.log("right2:" + right);
+    
+    console.log("right2:" + right);
     item.path = '/userTable';
     item.component = resolve => require(['../components/page/UserTable.vue'], resolve);
     item.meta = { title: '用户管理' };
@@ -118,13 +119,176 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/PlayerUpload';
+    item.meta = { title: '玩家信息导入' };
+    if (right.indexOf('Upload_Player_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerUpload.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerUpload.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PlayerProhibitSpeakLog';
+    item.meta = { title: '玩家禁言记录' };
+    if (right.indexOf('Player_ProhibitSpeakLog_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerProhibitSpeakLog.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerProhibitSpeakLog.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PlayerBanLog';
+    item.meta = { title: '玩家禁封记录' };
+    if (right.indexOf('Player_BanLog_view') != -1) {
+        item.component = resolve => require(['../components/page/PlayerBanLog.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PlayerBanLog.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/SendEmail';
+    item.meta = { title: '发送邮件' };
+    if (right.indexOf('Send_Email_view') != -1) {
+        item.component = resolve => require(['../components/page/SendEmail.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/SendEmail.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/SendNotice';
+    item.meta = { title: '发送公告' };
+    if (right.indexOf('Send_Notice_view') != -1) {
+        item.component = resolve => require(['../components/page/SendNotice.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/SendNotice.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AllEmail';
+    item.meta = { title: '全服邮件' };
+    if (right.indexOf('All_Email_view') != -1) {
+        item.component = resolve => require(['../components/page/AllEmail.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AllEmail.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AllNotice';
+    item.meta = { title: '全服公告' };
+    if (right.indexOf('All_Notice_view') != -1) {
+        item.component = resolve => require(['../components/page/AllNotice.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AllNotice.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/PropInfo';
+    item.meta = { title: '道具信息' };
+    if (right.indexOf('Prop_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/PropTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PropTable.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/newPropInfo';
+    item.meta = { title: '道具信息(导入)' };
+    if (right.indexOf('Prop_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/NewPropTable.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/NewPropTable.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/AppleProp';
+    item.meta = { title: '申请道具' };
+    if (right.indexOf('Apple_Prop_view') != -1) {
+        item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AppleProp.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    
+    item.path = '/PropUpload';
+    item.meta = { title: '道具导入' };
+    if (right.indexOf('Upload_Prop_view') != -1) {
+        item.component = resolve => require(['../components/page/PropUpload.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/PropUpload.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/GiftInfo';
+    item.meta = { title: '礼包信息' };
+    if (right.indexOf('Gift_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/GiftTable.vue'], resolve); 
+    }else{
+        item.component = resolve => require(['../components/page/GiftTable.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/newGiftInfo';
+    item.meta = { title: '礼包信息(导入)' };
+    if (right.indexOf('Gift_Info_view') != -1) {
+        item.component = resolve => require(['../components/page/NewGiftTable.vue'], resolve); 
+    }else{
+        item.component = resolve => require(['../components/page/NewGiftTable.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+
+    item.path = '/GiftUpload';
+    item.meta = { title: '礼包导入' };
+    if (right.indexOf('Upload_Gift_view') != -1) {
+        item.component = resolve => require(['../components/page/GiftUpload.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/GiftUpload.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+
+    item.path = '/AppleGiftCDK';
+    item.meta = { title: '申请礼包激活码' };
+    if (right.indexOf('Apple_GiftCDK_view') != -1) {
+        item.component = resolve => require(['../components/page/AppleGiftCDK.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/AppleGiftCDK.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
+    item.path = '/CDK_Use';
+    item.meta = { title: '激活码使用情况' };
+    if (right.indexOf('CDK_Use_view') != -1) {
+        item.component = resolve => require(['../components/page/CDK_Use.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/CDK_Use.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };
     item.component = resolve => require(['../components/test/ComponentCommunicationTest.vue'], resolve);
     children.push(item);
     item = {}
 
-
+    
     var otherItem=[{
             path: '/tabs',
             component: resolve => require(['../components/page/Tabs.vue'], resolve),

@@ -174,9 +174,9 @@ import getRouter from '../../router/index';
             },
             addRouter(){
                     const right = localStorage.getItem('rightTags');
-                    //console.log("right:"+right);
+                    console.log("right:"+right);
 
-                    var dnmr = dynamicRouter();
+                    //var dnmr = dynamicRouter();
                     //console.log("dynamicRouter:"+JSON.stringify(dnmr));
                     var dfr = defaultRouter();
                     //console.log("defaultRouter:"+JSON.stringify(dfr));

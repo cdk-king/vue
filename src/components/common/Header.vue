@@ -21,11 +21,11 @@
                 </span>
                 <el-dropdown-menu class="el-dropdown-menu" slot="dropdown" >
                     <el-dropdown-item class="el-dropdown-item" 
-                    :key="item.value" 
-                    :value="item.value"  
+                    :key="item.id" 
+                    :value="item.id"  
                     v-for="item in options"
                     :command="item" >
-                    {{item.label}}</el-dropdown-item>
+                    {{item.gameName}}</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         <div class="header-right">
@@ -76,20 +76,20 @@
                 name: 'cdk',
                 message: 2,
                 options: [{
-                value: '1',
-                label: '游戏1'
+                id: '1',
+                gameName: '游戏1'
                 }, {
-                value: '2',
-                label: '游戏2'
+                id: '2',
+                gameName: '游戏2'
                 }, {
-                value: '3',
-                label: '游戏3'
+                id: '3',
+                gameName: '游戏3'
                 }, {
-                value: '4',
-                label: '游戏4'
+                id: '4',
+                gameName: '游戏4'
                 }, {
-                value: '5',
-                label: '游戏5'
+                id: '5',
+                gameName: '游戏5'
                 }],
                 gameValue: '1',
                 gameLabel:"游戏1"
@@ -118,7 +118,27 @@
                 //console.log("this.handleVisible:"+this.handleVisible);
             },
             getData(){
-                
+                var userData = JSON.parse(localStorage.getItem("userData"));
+                this.$axios
+                    .post("/getGameListForUser", {
+                    id: userData.id
+                    })
+                    .then(successResponse => {
+                    this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                    if (successResponse.data.code === 200) {
+                        console.log(this.responseResult);
+                        console.log("用户游戏列表获取成功");
+                        this.options = successResponse.data.data.list;
+                        this.$setGameId(this.options[0].id);
+                        this.$message("已选择游戏："+this.options[0].gameName);
+                    } else {
+                        this.open4(successResponse.data.message);
+                        console.log(this.responseResult);
+                        console.log("用户游戏列表获取失败");
+                        return false;
+                    }
+                    })
+                    .catch(failResponse => {});
 
             },
             // 用户名下拉菜单选择事件
@@ -165,12 +185,19 @@
                 this.fullscreen = !this.fullscreen;
             },
             handleChangGame(command){
-                //this.$message('已选择游戏：' + command.label);
-                this.value = command.value;
-                this.gameLabel = command.label;
-                this.$cdk = this.gameLabel;
-                this.$setcdk(this.gameLabel);
-                this.$message(this.$cdk);
+                //要提前更改gameId
+                this.$setGameId(command.id);
+                bus.$emit('changeGameId', {
+                    gameId:command.id,
+                    message:"你兄弟告诉你要换游戏了"
+                });
+                //this.$emit('increment1',"这个位子是可以加参数的");
+                //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
+                this.$store.state.gameId=command.id;
+                console.log(this.$store.state.gameId);
+                this.gameLabel = command.gameName;
+                
+                this.$message("已选择游戏："+command.gameName);
                 
             }
         },

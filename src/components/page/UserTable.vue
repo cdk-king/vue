@@ -635,7 +635,6 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
                 console.log(this.multipleSelection);
-
             },
             handleAddUser(){
                 this.addUserVisible = true;

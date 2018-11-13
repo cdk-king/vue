@@ -247,6 +247,7 @@ export default {
       dialogVisible: false,
       aa: this.$cdk,
       cur_page: 1,
+      total:0,
       handleVisible: true,
       checkVisible: false,
       platformOptions: [
@@ -437,6 +438,7 @@ export default {
             console.log("公告列表获取成功");
             this.$message.success("公告列表获取成功");
             this.tableData = successResponse.data.data.list;
+            this.total = successResponse.data.data.total;
             this.mapDate();
           } else {
             console.log(this.responseResult);

@@ -33,6 +33,9 @@
                 <el-form-item label="服务器IP">
                     <div class="text item">{{form.serverIp}}</div>
                 </el-form-item>
+                <el-form-item label="服务器端口">
+                    <div class="text item">{{form.serverPort}}</div>
+                </el-form-item>
                 <el-form-item label="服务器描述">
                     <div class="text item">{{form.server_describe}}</div>
                 </el-form-item>
@@ -68,6 +71,9 @@
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
                 </el-form-item>
@@ -100,6 +106,9 @@
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
@@ -190,6 +199,7 @@ export default {
         gameId: "",
         platformId: "",
         serverIP: "",
+        serverPort:"",
         server_describe: "",
         parentId: "",
         sort: "",
@@ -260,6 +270,7 @@ export default {
           platformId: "",
           platform: "",
           serverIp: "",
+          serverPort:"",
           server_describe: "",
           sort: "",
           addUser: "",
@@ -279,6 +290,7 @@ export default {
           }
         })
     },
+    //递归生成树形结构
     MapData(TreeList) {
       var tags = ["gameId", "platformId", "serverId"];
       var labels = ["gameName", "platform", "server"];
@@ -337,6 +349,7 @@ export default {
           id: this.form.id,
           server: this.form.server,
           serverIp: this.form.serverIp,
+          serverPort:this.form.serverPort,
           server_describe: this.form.server_describe,
           sort: this.form.sort,
           addUser: this.form.addUser,
@@ -378,6 +391,7 @@ export default {
             id: this.form.id,
             server:this.form.server,
             serverIp:this.form.serverIp,
+            serverPort:this.form.serverPort,
             server_describe: this.form.server_describe,
             sort:this.form.sort,
             addUser: this.form.addUser,
@@ -408,7 +422,7 @@ export default {
     // 确定删除
     deleteRow(){
 
-        this.$axios.post('/deleteserver',{
+        this.$axios.post('/deleteServer',{
                 id: this.id, 
             })
             .then(successResponse =>{
@@ -440,6 +454,8 @@ export default {
               id:'',
               server:'',
               serverTag:'',
+              serverIp:'',
+              serverPort:'',
               server_describe: '',
               serverParentId:'',
               serverSort:'',
@@ -491,6 +507,7 @@ export default {
             id: item.id,
             server: item.server,
             serverIp: item.serverIp,
+            serverPort:item.serverPort,
             server_describe: item.server_describe,
             sort: item.sort,
             addUser: item.addUser,
@@ -510,6 +527,7 @@ export default {
             id: "",
             server: "",
             serverIp: "",
+            serverPort:"",
             server_describe: "",
             sort: "",
             addUser: "",
@@ -546,6 +564,7 @@ export default {
             id: item.id,
             server: item.server,
             serverIp: item.serverIp,
+            serverPort:item.serverPort,
             server_describe: item.server_describe,
             sort: item.sort,
             addUser: item.addUser,
@@ -565,6 +584,7 @@ export default {
             id: "",
             server: "",
             serverIp: "",
+            serverPort:"",
             server_describe: "",
             sort: "",
             addUser: "",

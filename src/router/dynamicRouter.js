@@ -292,7 +292,7 @@ function getchildren() {
     var otherItem=[{
             path: '/tabs',
             component: resolve => require(['../components/page/Tabs.vue'], resolve),
-            meta: { title: 'tab选项卡' }
+            meta: { title: '消息中心' }
         },
         {
             path: '/form',
@@ -373,21 +373,6 @@ function getchildren() {
         //     path: '/icon',
         //     component: resolve => require(['../components/page/Icon.vue'], resolve),
         //     meta: { title: '自定义图标' }
-        // },
-        // {
-        //     path: '/userTable',
-        //     component: resolve => require(['../components/page/UserTable.vue'], resolve),
-        //     meta: { title: '用户管理' }
-        // },
-        // {
-        //     path: '/roleTable',
-        //     component: resolve => require(['../components/page/RoleTable.vue'], resolve),
-        //     meta: { title: '角色管理' }
-        // },
-        // {
-        //     path: '/rightTable',
-        //     component: resolve => require(['../components/page/RightTable.vue'], resolve),
-        //     meta: { title: '权限管理' }
         // },
         // {
         //     path: '/CommunicationTest',

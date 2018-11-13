@@ -74,7 +74,7 @@
                         </el-form-item>
                         <el-form-item label="已选择道具列表">
 
-                            <el-table :data="propData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+                            <el-table :data="propData" border class="table" ref="multipleTable" >
 
                                 <el-table-column prop="propName" label="道具名称"  >
                                 </el-table-column>
@@ -245,9 +245,9 @@
                 </el-table-column>
                 <el-table-column prop="releaseContent"  label="内容" width="200">
                 </el-table-column>
-                <el-table-column prop="propList" label="道具列表">
+                <el-table-column prop="propList" label="道具列表" width="200">
                     <template slot-scope="scope">
-                      <p style=""  v-for="item in scope.row.propList.split(',')" :key="item"
+                      <p style=""  v-for="item in scope.row.propList" :key="item"
                                 :label="item"
                                 :value="item">{{item}}
                       </p>
@@ -288,6 +288,15 @@
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
+
+                    <!-- 批量删除提示框 -->
+        <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
+            <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delAllVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveDelAll">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -301,6 +310,7 @@ export default {
     return {
         activeNames: ["1"],
         editableTabsValue: '1',
+        multipleSelection:[],
       show: false,
       dialogVisible: false,
       aa: this.$cdk,
@@ -361,7 +371,8 @@ export default {
       propOptions:[],
       propData:[],
       tableData:[],
-      searchKeyServerOptions:[]
+      searchKeyServerOptions:[],
+      delAllVisible:false,
     };
   },
   components: {
@@ -404,27 +415,37 @@ export default {
           this.propData.splice(index,1);
       },
       handleAddPropCount(index,row){
-            this.propData[index].propCount++;
+            var data = this.propData[index];
+            var count = data.propCount+1;
+            data.propCount = count;
+            this.$set(this.propData, index, data);
       },
       handleReducePropCount(index,row){
           if(this.propData[index].propCount>1){
-            this.propData[index].propCount--;
+            var data = this.propData[index];
+            var count = data.propCount-1;
+            data.propCount = count;
+            this.$set(this.propData, index, data);
           }
       },
       selectProp(){
           console.log(this.form.prop);
       },
     addPropToList(){
+        //找到相同项的道具数量加一
         for(var i = 0;i<this.propData.length;i++){
             var item = this.propData[i];
             if(item.id==this.form.propId){
-                var data = this.propData;
-                var count = data[i].propCount+1;
-                Vue.set(data[i], 'propCount', count);
-                this.propData = data;
+                var data = this.propData[i];
+                var count = data.propCount+1;
+                data.propCount = count;
+                //console.log(this.propData[i].propCount);
+                this.$set(this.propData, i, data);
+                //console.log(this.propData[i].propCount);
                 return;
             }
         }
+        //否则添加新的道具 
         for(var j = 0; j<this.propOptions.length;j++){
             var item= this.propOptions[j];
             if(item.id==this.form.propId){
@@ -451,6 +472,7 @@ export default {
                 console.log(this.responseResult);
                 console.log("申请道具列表获取成功");
                 this.tableData = successResponse.data.data.list;
+                this.mapDate();
                 
             }else{
                 
@@ -460,6 +482,28 @@ export default {
                 return false;
             }
         })
+    },
+    mapDate(){
+        var list = [];
+        
+        for(var  i = 0;i<this.tableData.length;i++){
+            var item = this.tableData[i];
+            //this.getPropList(item.platformId);
+            var propList = item.propList.split(',');
+            for(var j = 0;j<propList.length;j++){
+                var propInfo = propList[j].split('-');
+                // for(var k = 0;k<this.propOptions.length;k++){
+                //     console.log(this.propOptions[k].id+"|"+propInfo[0]);
+                //     if(this.propOptions[k].id==propInfo[0]){
+                //         console.log(this.propOptions[k].propName);
+                //         propInfo.push(this.propOptions[k].propName);
+                //     }
+                // }
+                list.push(propInfo)
+            }
+            this.tableData[i].propList = list;
+            list=[];
+        }
     },
     getPlayerTypeList() {
         this.$axios.post("/getPlayerTypeList", {
@@ -478,13 +522,16 @@ export default {
             }
         })
     },
-    getPropList() {
+    handleDelAll(){
+        this.delAllVisible = true;
+    },
+    getPropList(platformId) {
         this.$axios.post("/getPropUplaod", {
             pageNo: 1,
             pageSize: 10,
             isPage:"",
-            platformId:this.form.platformId,
-            strPlatform:this.form.platformId
+            platformId:platformId,
+            strPlatform:platformId
         }).then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
             if(successResponse.data.code === 200){
@@ -565,7 +612,7 @@ export default {
     },
     selectPlatform() {
       this.getServerList(this.form.platformId);
-      this.getPropList();
+      this.getPropList(this.form.platformId);
     },
         selectSearchKeyPlatform(){
       this.getSearchKeyServerList(this.searchKey.platformId);
@@ -633,10 +680,10 @@ export default {
         var list = "";
             for(var i = 0;i<this.propData.length;i++){
                 if((i+1)>=this.propData.length){
-                    list+=this.propData[i].id+"-"+this.propData[i].propName+"-"+this.propData[i].propCount;
+                    list+=this.propData[i].id+"-"+this.propData[i].propCount;
                     break;
                 }
-                list+=this.propData[i].id+"-"+this.propData[i].propName+"-"+this.propData[i].propCount+","
+                list+=this.propData[i].id+"-"+this.propData[i].propCount+","
             }
         if(this.editableTabsValue=="1"){
             console.log("1");
@@ -727,6 +774,41 @@ export default {
             return false;
         }
         })
+    },
+    saveDelAll(){
+                const length = this.multipleSelection.length;
+                let str = '';
+                for (let i = 0; i < length; i++) {
+                    str += this.multipleSelection[i].id + ',';
+                }
+                console.log(str);
+                //批量删除处理
+                this.$axios.post('/deleteAllApplyProp',{
+                        id: str
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("道具申请批量删除完成");
+                        this.multipleSelection = []; 
+                        this.getApplyProp(); 
+
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("道具申请批量删除失败");
+                        return false;
+                    }
+                })
+                .catch(failResponse => {})
+                 
+                this.delAllVisible = false;
+    },
+    handleSelectionChange(val){
+        this.multipleSelection = val;
+        console.log(this.multipleSelection);
     },
     handleNotConfirm(index,row){
         this.$axios

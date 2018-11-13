@@ -49,7 +49,8 @@
                 </el-table-column>
                 <el-table-column prop="serverIp" label="服务器IP" >
                 </el-table-column>
-                
+                <el-table-column prop="serverPort" label="服务器端口" >
+                </el-table-column>
                 <el-table-column prop="gameName" label="所属游戏" width="120">
                 </el-table-column>
                 <el-table-column prop="platform" label="所属渠道" width="120">
@@ -88,6 +89,9 @@
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
@@ -130,6 +134,9 @@
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
@@ -229,6 +236,7 @@
                     gameId:'',
                     platformId:'',
                     serverIP:'',
+                    serverPort:'',
                     server_describe: '',
                     parentId:'',
                     sort:'',
@@ -242,6 +250,7 @@
                     id:'',
                     server:'',
                     serverIp:'',
+                    serverPort:'',
                     server_describe: '',
                     sort:'',
                     addUser: '',
@@ -425,7 +434,8 @@
                     state:item.state,
                     gameId:item.gameId,
                     roleId:item.roleId,
-                    platformId:item.platformId
+                    platformId:item.platformId,
+                    serverPort:item.serverPort
                 }
                 this.editVisible = true;
             },
@@ -500,6 +510,7 @@
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    serverPort:''
                 }
                 this.selectGame="";
                 this.selectPlatform="";
@@ -524,7 +535,8 @@
                         addUser: this.form.addUser,
                         state:this.form.state,
                         gameId:"",
-                        platformId:this.form.platformId
+                        platformId:this.form.platformId,
+                        serverPort:this.form.serverPort
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -559,7 +571,8 @@
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
                     gameId:"",
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    serverPort:this.form.serverPort
 
                 })
                 .then(successResponse =>{

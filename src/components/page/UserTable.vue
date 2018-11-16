@@ -132,7 +132,7 @@
         </el-dialog>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加用户" :visible.sync="addUserVisible" width="30%">
+        <el-dialog title="添加用户" :modal="false"  :close-on-click-modal="false" :visible.sync="addUserVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <!-- <el-form-item label="日期">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
@@ -164,7 +164,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <!-- <el-form-item label="日期">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
@@ -196,7 +196,7 @@
         </el-dialog>
 
         <!-- 编辑密码弹出框 -->
-        <el-dialog title="修改密码" :visible.sync="editPasswordVisible" width="30%">
+        <el-dialog title="修改密码" :modal="false"  :close-on-click-modal="false" :visible.sync="editPasswordVisible" width="30%">
             <el-form ref="form" :model="passwordform" label-width="100px">
                 <!-- <el-form-item label="日期">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
@@ -362,7 +362,7 @@
             draggable
         },
         created() {
-            this.getData();
+            this.getRole();
             this.right();
         },
         computed: {
@@ -402,6 +402,23 @@
                 console.log("page:"+val);
                 this.getData();
             },
+            getRole(){
+                this.$axios.post("/getRole", {
+                    pageNo: 1,
+                    pageSize: 10,
+                    role: "",
+                    role_describe: "",
+                    addUser: "",
+                    state:"",
+                    isPage:""
+                }).then((res) => {
+                    
+                    console.log("角色列表获取成功");
+                    console.log(res.data);
+                    this.roleData = res.data.data.list;
+                    this.getData();
+                })
+            },
             getData() {
                 console.log("getting Data...");
                 this.$axios.post(this.url, {
@@ -431,24 +448,6 @@
                         return false;
                     }
                 })
-
-                this.$axios.post("/getRole", {
-                    pageNo: 1,
-                    pageSize: 10,
-                    role: "",
-                    role_describe: "",
-                    addUser: "",
-                    state:"",
-                    isPage:""
-                }).then((res) => {
-                    //this.tableData = res.data.list;
-                    
-                    console.log("角色列表获取成功");
-                    console.log(JSON.stringify(res.data));
-                    this.roleData = res.data.data.list;
-                    //alert(res.data.list);
-                    //console.log("roleData=>"+this.roleData);
-                })
             },
             //
             mapData(obj){
@@ -460,6 +459,15 @@
                     if(item.roles!=undefined){
                         if(item.roles!=null && item.roles!=""){
                         item.roles = item.roles.split(',');
+                            for(var i = 0;i<item.roles.length;i++){
+                                for(var j = 0;j<this.roleData.length;j++){
+                                    if(this.roleData[j]["id"]==item.roles[i]){
+                                        //
+                                        item.roles[i] = item.roles[i]+"#cdk#"+this.roleData[j]["role"];
+                                    }
+                                }
+                            }
+
                         console.log("Data Mapping...");
                         }
                     }

@@ -93,7 +93,7 @@ import getRouter from '../../router/index';
                             //stringify json => str
                             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                             if(successResponse.data.code === 200){
-                                console.log(successResponse.data.message);
+                                console.log(successResponse.data);
                                 this.getUserAllRole(successResponse.data.data.id);
                                 
                                 this.$message.success("登录成功");

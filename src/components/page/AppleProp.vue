@@ -75,12 +75,20 @@
                         <el-form-item label="已选择道具列表">
 
                             <el-table :data="propData" border class="table" ref="multipleTable" >
-
+                                <el-table-column prop="id" label="道具ID"  >
+                                </el-table-column>
                                 <el-table-column prop="propName" label="道具名称"  >
                                 </el-table-column>
-                                <el-table-column prop="propTag" label="道具ID"  >
+                                <el-table-column prop="propType" label="道具类别"  >
                                 </el-table-column>
                                 <el-table-column prop="propCount" label="数量" >
+                                    <template slot-scope="scope">
+                                        <el-input style="width:215px"
+                                        placeholder="请输入标题" v-on:change="changeCount"
+                                        v-model="propData[scope.$index].propCount"
+                                        clearable>{{scope.row.propCount}}
+                                        </el-input>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column prop="propDescribe" label="道具描述"  >
                                 </el-table-column>
@@ -416,14 +424,14 @@ export default {
       },
       handleAddPropCount(index,row){
             var data = this.propData[index];
-            var count = data.propCount+1;
+            var count = parseInt(data.propCount)+1;
             data.propCount = count;
             this.$set(this.propData, index, data);
       },
       handleReducePropCount(index,row){
           if(this.propData[index].propCount>1){
             var data = this.propData[index];
-            var count = data.propCount-1;
+            var count = parseInt(data.propCount)-1;
             data.propCount = count;
             this.$set(this.propData, index, data);
           }
@@ -621,6 +629,10 @@ export default {
     selectSearchKeyServer(){
             this.getApplyProp();
     },
+    changeCount(value){
+        console.log(value);
+        console.log(this.propData);
+    },
     search(){
         this.getApplyProp();
         //var a = "[{'id':1,'propName':'道具1','propTag':'prop1','propDescribe':'描述1','platformId':1,'platform':'平台1','propCount':1}]";
@@ -763,14 +775,14 @@ export default {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("道具申请添加成功");
-            this.$message.success("道具申请添加成功");
+            console.log("道具申请邮件发送成功");
+            this.$message.success("道具申请邮件发送成功");
             this.getApplyProp(); 
                
         } else {
             console.log(this.responseResult);
-            console.log("道具申请添加失败");
-            this.$message.error("道具申请添加失败");
+            console.log("道具申请邮件发送失败");
+            this.$message.error("道具申请邮件发送失败");
             return false;
         }
         })
@@ -820,14 +832,14 @@ export default {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("道具申请添加成功");
-            this.$message.success("道具申请添加成功");
+            console.log("道具申请不通过处理成功");
+            this.$message.success("道具申请不通过处理成功");
             this.getApplyProp(); 
                
         } else {
             console.log(this.responseResult);
-            console.log("道具申请添加失败");
-            this.$message.error("道具申请添加失败");
+            console.log("道具申请不通过处理失败");
+            this.$message.error("道具申请不通过处理失败");
             return false;
         }
         })

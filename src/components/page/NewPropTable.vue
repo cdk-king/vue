@@ -23,26 +23,33 @@
                 <span class="grid-content bg-purple-light">道具名：</span>
                 <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">道具标识：</span>
-                <el-input v-model="searchKey.propTag" placeholder="筛选道具标识" class="handle-input " style="width:150px"></el-input>
-
+                <span class="grid-content bg-purple-light">道具类别：</span> 
+                <el-select v-model="searchKey.propTypeId" @change="selectPropType" placeholder="请选择道具类别" class="handle-select mr10">
+                        <el-option key="0" label="全部" value="0"></el-option>
+                        <el-option
+                        v-for="item in propTypeList"
+                        :key="item.propTypeId"
+                        :label="item.propType"
+                        :value="item.propTypeId">
+                        </el-option>
+                </el-select>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleImportProp">导入</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" align="center">
                 </el-table-column> -->
-                <el-table-column prop="id" label="ID"  width="80">
+                <el-table-column prop="id" label="ID"  >
                 </el-table-column>
-                <el-table-column prop="propName" label="道具名称" width="160">
+                <el-table-column prop="propName" label="道具名称" >
                 </el-table-column>
-                <el-table-column prop="propTag" label="道具标识" >
+                <el-table-column prop="propTypeName" label="道具类别" >
                 </el-table-column>
                 
                 
                 <el-table-column prop="propDescribe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="platform" label="所在平台" width="120">
+                <el-table-column prop="platform" label="所在平台" >
                 </el-table-column>
             </el-table>
             <div class="pagination">
@@ -185,7 +192,7 @@ import bus from '../common/bus';
                 searchKey: {
                     id:'',
                     propName:'',
-                    propTag:'',
+                    propTypeId:'',
                     prop_describe: '',
                     sort:'',
                     addUser: '',
@@ -207,7 +214,8 @@ import bus from '../common/bus';
                 idx: -1,
                 responseResult:[],
                 id:"",
-                strPlatform:""
+                strPlatform:"",
+                propTypeList:[]
             }
         },
         created() {
@@ -215,11 +223,13 @@ import bus from '../common/bus';
 
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
+            this.getPropTypeList(this.$gameId);
             console.log(this.strPlatform);
 
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
+                this.getPropTypeList(this.$gameId);
             }.bind(this))
             
             
@@ -265,7 +275,7 @@ import bus from '../common/bus';
                     isPage:"isPage",
                     id:'',
                     propName:this.searchKey.propName,
-                    propTag:this.searchKey.propTag,
+                    propType:this.searchKey.propTypeId,
                     platformId:this.searchKey.platformId,
                     strPlatform:this.strPlatform
                 }).then(successResponse =>{
@@ -282,14 +292,13 @@ import bus from '../common/bus';
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具列表获取失败");
-                        return false;
                     }
                 })
             },
             //当前游戏的平台
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
-            this.$axios
+                this.$axios
                 .post("/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
@@ -311,7 +320,27 @@ import bus from '../common/bus';
                     
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
+                }
+                })
+                .catch(failResponse => {});
+            },
+            getPropTypeList(gameId){
+                
+                this.$axios
+                .post("/api/newProp/getPropTypeList", {
+                gameId:gameId
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    console.log("道具类别列表获取成功");
+                    this.propTypeList = successResponse.data.data.list;
+                    this.getData();
+                } else {
+                    
+                    console.log(this.responseResult);
+                    console.log("道具类别列表获取失败");
                 }
                 })
                 .catch(failResponse => {});
@@ -324,6 +353,10 @@ import bus from '../common/bus';
                  this.getData();
             },
             selectPlatform(){
+                
+                this.getData();
+            },
+            selectPropType(){
                 this.getData();
             },
             formatter(row, column) {

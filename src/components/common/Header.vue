@@ -75,24 +75,13 @@
                 fullscreen: false,
                 name: 'cdk',
                 message: 0,
-                options: [{
-                id: '1',
-                gameName: '游戏1'
-                }, {
-                id: '2',
-                gameName: '游戏2'
-                }, {
-                id: '3',
-                gameName: '游戏3'
-                }, {
-                id: '4',
-                gameName: '游戏4'
-                }, {
-                id: '5',
-                gameName: '游戏5'
-                }],
+                // {
+                // id: '1',
+                // gameName: '游戏1'
+                // }
+                options: [],
                 gameValue: '1',
-                gameLabel:"游戏1"
+                gameLabel:"请选择游戏"
             }
         },
         computed:{
@@ -131,6 +120,7 @@
                         this.options = successResponse.data.data.list;
                         this.$setGameId(this.options[0].id);
                         this.$message("已选择游戏："+this.options[0].gameName);
+                        this.gameLabel = this.options[0].gameName;
                     } else {
                         this.open4(successResponse.data.message);
                         console.log(this.responseResult);
@@ -193,8 +183,8 @@
                 });
                 //this.$emit('increment1',"这个位子是可以加参数的");
                 //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
-                this.$store.state.gameId=command.id;
-                console.log(this.$store.state.gameId);
+                //this.$store.state.gameId=command.id;
+                //console.log(this.$store.state.gameId);
                 this.gameLabel = command.gameName;
                 
                 this.$message("已选择游戏："+command.gameName);

@@ -67,7 +67,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加游戏" :visible.sync="addGameVisible" width="30%">
+        <el-dialog title="添加游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="addGameVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
                     <el-input v-model="form.gameName"></el-input>
@@ -92,7 +92,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑游戏" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
                     <el-input v-model="form.gameName"></el-input>

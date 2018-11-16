@@ -82,7 +82,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加服务器" :visible.sync="addServerVisible" width="30%">
+        <el-dialog title="添加服务器" :modal="false"  :close-on-click-modal="false" :visible.sync="addServerVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
@@ -127,7 +127,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑服务器" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑服务器" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>

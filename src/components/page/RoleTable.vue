@@ -28,21 +28,25 @@
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
                 
-                <el-table-column prop="role" label="角色名称" width="200">
+                <el-table-column prop="role" label="角色名称" >
                 </el-table-column>
-                <el-table-column prop="state" label="状态" width="100"  :formatter="formatState">
+                <el-table-column prop="state" label="状态"   :formatter="formatState">
                 </el-table-column>
                 <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
                 </el-table-column> -->
-                <el-table-column prop="role_describe" label="描述" width="200">
+                <el-table-column prop="role_describe" label="描述" >
                 </el-table-column> 
-                <el-table-column  label="权限" width="150">
+                <el-table-column  label="权限" >
                     <template slot-scope="aa">
+                            <el-collapse >
+                            <el-collapse-item title="折叠" name="1">
                             <ul>
-                            <li v-for="item in aa.row.rights" v-bind:key="item">
+                            <li class="li-small" v-for="item in aa.row.rights" v-bind:key="item">
                                 {{ item | filters_rightItem }}      
                             </li>
                             </ul>
+                            </el-collapse-item>
+                            </el-collapse>
                     </template>
                 </el-table-column>
                 <el-table-column prop="addDatetime" width="170" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
@@ -113,7 +117,7 @@
 
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加角色" :visible.sync="addRoleVisible" width="30%">
+        <el-dialog title="添加角色" :modal="false"  :close-on-click-modal="false" :visible.sync="addRoleVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="角色名称">
                     <el-input v-model="form.role"></el-input>
@@ -132,7 +136,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑角色" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑角色" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="角色名称">
                     <el-input v-model="form.role"></el-input>
@@ -197,6 +201,7 @@
             return {
                 //url: './static/vuetable.json',
                 url:'/getRole',
+                
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -277,7 +282,7 @@
             draggable
         },
         created() {
-            this.getData();
+            this.getRight();
             this.right();
         },
         computed: {
@@ -311,6 +316,21 @@
                 console.log("page:"+val);
                 this.getData();
             },
+            getRight(){
+                this.$axios.post("/getRight", {
+                    pageNo: 1,
+                    pageSize: 10,
+                    role: "",
+                    role_describe: "",
+                    addUser: "",
+                    state:"",
+                    isPage:""
+                }).then((res) => {
+                    console.log(res.data);
+                    this.rightData = res.data.data.list;
+                    this.getData();
+                })
+            },
             // 获取 easy-mock 的模拟数据
             getData() {
 
@@ -326,7 +346,7 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("角色列表获取成功");
+                        this.$message.success("角色列表获取成功"); 
                         this.tableData = this.mapData(successResponse.data.data.list);
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -340,21 +360,7 @@
                 })
 
 
-                this.$axios.post("/getRight", {
-                    pageNo: 1,
-                    pageSize: 10,
-                    role: "",
-                    role_describe: "",
-                    addUser: "",
-                    state:"",
-                    isPage:""
-                }).then((res) => {
-                    //this.tableData = res.data.list;
-                    console.log(JSON.stringify(res.data));
-                    this.rightData = res.data.data.list;
-                    //alert(res.data.list);
-                    //console.log("rightData=>"+this.rightData);
-                })
+
             },
             mapData(obj){
                 if(!Array.isArray(obj)){
@@ -365,11 +371,21 @@
                     if(item.rights!=undefined){
                         if(item.rights!=null && item.rights!=""){
                         item.rights = item.rights.split(',');
+                        for(var i = 0;i<item.rights.length;i++){
+                            for(var j = 0;j<this.rightData.length;j++){
+                                if(this.rightData[j]["id"]==item.rights[i]){
+                                    //
+                                    item.rights[i] = item.rights[i]+"#cdk#"+this.rightData[j]["rightName"];
+                                    
+                                }
+                            }
+                        }
                         console.log("Data Mapping...");
                         }
                     }
                     
                 });
+
                 return obj;
             },
             search() {
@@ -395,6 +411,7 @@
                 return row.tag === value;
             },
             handleManageRight(index, row){
+                this.getData();
                 this.idx = index;
                 const item = this.tableData[index];
                 var rights= item.rights;
@@ -411,8 +428,8 @@
                                 that.doing.push(mapObj);
                                 that.done.push(mapObj);
                                 //console.log("this.doing:"+that.doing);
-                            }        
-                        })(i,this)      
+                            }
+                        })(i,this)
                     }
                 }
                 if(this.rightData.length!=0){
@@ -893,5 +910,14 @@
         display: block;
         color: transparent;
         border-style: dashed
+    }
+    .li-small{
+        font-size: 8px;
+    }
+    el-collapse{
+        background: ""
+    }
+    el-collapse-item{
+        background: ""
     }
 </style>

@@ -29,7 +29,7 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
-                <el-table-column prop="id" label="ID"  width="80">
+                <el-table-column prop="id" label="ID"  width="60">
                 </el-table-column>
                 <el-table-column prop="rightName" label="权限名称" >
                 </el-table-column>
@@ -40,11 +40,11 @@
                 </el-table-column> -->
                 <el-table-column prop="right_describe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
+                <el-table-column prop="state" label="状态" width="80" :formatter="formatState">
                 </el-table-column>
                 <el-table-column prop="addDatetime" width="170" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
-                <el-table-column prop="addUser" width="120" label="添加人" >
+                <el-table-column prop="addUser" width="100" label="添加人" >
                 </el-table-column>
                 <el-table-column prop="rightSort" width="50" label="排序" >
                 </el-table-column>
@@ -65,7 +65,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加权限" :visible.sync="addRightVisible" width="30%">
+        <el-dialog title="添加权限" :modal="false"  :close-on-click-modal="false" :visible.sync="addRightVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="权限名称">
                     <el-input v-model="form.rightName"></el-input>
@@ -87,7 +87,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑权限" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑权限" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="权限名称">
                     <el-input v-model="form.rightName"></el-input>

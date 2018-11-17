@@ -59,6 +59,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
+    //assetsPublicPath: '/',
+    //为了方便，如果使用'/dist/'，则需要把整个dist文件夹复制到static目录下
     assetsPublicPath: '/dist/',
 
     /**

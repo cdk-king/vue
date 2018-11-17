@@ -12,7 +12,7 @@
                     <br/>
                     （1）两种申请方式（为指定角色申请、为全服玩家申请）只能选择其中的一种；
                     <br/>
-                    （2）如果需要发送钻石，请找策划把钻石包装成一个道具，之后通过该接口发送，发送的钻石不会提升玩家的vip等级；
+                    （2）申请添加以后需要审核人审核通过后，才能发送道具申请邮件；
                 </div>
                 
                 <!-- <Divider /> -->
@@ -81,16 +81,37 @@
                                 </el-table-column>
                                 <el-table-column prop="propType" label="道具类别"  >
                                 </el-table-column>
+                                <el-table-column prop="propDescribe" label="道具描述"  >
+                                </el-table-column>
                                 <el-table-column prop="propCount" label="数量" >
                                     <template slot-scope="scope">
-                                        <el-input style="width:215px"
+                                        <el-input 
                                         placeholder="请输入标题" v-on:change="changeCount"
                                         v-model="propData[scope.$index].propCount"
                                         clearable>{{scope.row.propCount}}
                                         </el-input>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="propDescribe" label="道具描述"  >
+                                <el-table-column  label="是否绑定" >
+                                    <template slot-scope="scope">     
+                                        <el-radio v-model="propData[scope.$index].propBind" label="0">不绑定</el-radio>
+                                        <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="品质" >
+                                    <template slot-scope="scope">
+                                        <el-select v-model="propData[scope.$index].propQuality"  placeholder="请选择品质">
+                                            <el-option
+                                            v-for="item in propQualityOptions"
+                                            :key="item.propQualityId"
+                                            :label="item.propQuality"
+                                            :value="item.propQualityId">
+                                            </el-option>
+                                        </el-select>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="propCount" label="过期时间" >
+
                                 </el-table-column>
 
 
@@ -103,10 +124,26 @@
                                 </el-table-column>
 
                             </el-table>
-
                         </el-form-item>
-               
-                        </el-form>
+                        <el-form-item  label="货币类别">
+                            <el-select v-model="form.moneyType"  placeholder="请选择货币类别">
+                                <el-option
+                                v-for="item in moneyTypeOptions"
+                                :key="item.moneyId"
+                                :label="item.moneyType"
+                                :value="item.moneyId">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item  label="货币数量">
+                            <el-input style="width:215px"
+                            placeholder="请输入数量"
+                            v-model="form.moneyCount"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+            
+                        <!-- </el-form> -->
 
                     </div>
 
@@ -261,23 +298,31 @@
                       </p>
                     </template>
                 </el-table-column>
+                <el-table-column prop="moneyCount"  label="货币" >
+                    <template slot-scope="scope">
+                      <p>{{scope.row.moneyType+"|"+scope.row.moneyCount}}</p>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="applyType"  label="申请类型" :formatter="formatApplyType">
                 </el-table-column>
                  <el-table-column prop="playerAccountList"  label="玩家账号" >
                 </el-table-column>
                 <el-table-column prop="playerNameList"  label="玩家名称" >
                 </el-table-column>
-                <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter">
+                <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter">
                 </el-table-column>
                 <!-- 0未审核1已通过2未通过 -->
-                <el-table-column prop="sendState"  label="状态" :formatter="formatIsSend">
+                <el-table-column prop="confirmState"  label="审核状态" :formatter="formatIsSend">
+                </el-table-column>
+                <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState">
                 </el-table-column>
                 <el-table-column prop="userName"  label="编辑人" >
                 </el-table-column>
                 <el-table-column label="操作"  align="center" >
                     <template slot-scope="scope">
 
-                        <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" >通过</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleApply(scope.$index, scope.row)" v-if="scope.row.confirmState==1">发送邮件申请</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleNotConfirm(scope.$index, scope.row)" >不通过</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     
@@ -356,6 +401,8 @@ export default {
         playerIdList:"",
         applyUser:"",
         applyReason:"",
+        moneyType:"",
+        moneyCount:""
       },
     searchKey: {
         platformId:"",
@@ -381,6 +428,8 @@ export default {
       tableData:[],
       searchKeyServerOptions:[],
       delAllVisible:false,
+      moneyTypeOptions:[],
+      propQualityOptions:[]
     };
   },
   components: {
@@ -411,6 +460,8 @@ export default {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
         this.getPlatformList(this.id);
+        this.getMoneyTypeList();
+        this.getPropQualityList();
       }.bind(this)
     );
   },
@@ -445,7 +496,7 @@ export default {
             var item = this.propData[i];
             if(item.id==this.form.propId){
                 var data = this.propData[i];
-                var count = data.propCount+1;
+                var count = parseInt(data.propCount)+1;
                 data.propCount = count;
                 //console.log(this.propData[i].propCount);
                 this.$set(this.propData, i, data);
@@ -465,6 +516,40 @@ export default {
         console.log(this.form.prop);
         this.form.prop.propCount = 1;
         this.propData.push(this.form.prop);
+    },
+    getMoneyTypeList(){
+        this.$axios.post("/api/applyProp/getMoneyTypeList", {
+            gameId:this.$gameId
+        }).then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("货币类型列表获取成功");
+                this.moneyTypeOptions = successResponse.data.data.list;
+            }else{
+                
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("货币类型列表获取失败");
+            }
+        })
+    },
+    getPropQualityList(){
+        this.$axios.post("/api/applyProp/getPropQualityList", {
+            gameId:this.$gameId
+        }).then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("品质类型列表获取成功");
+                this.propQualityOptions = successResponse.data.data.list;
+            }else{
+                
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("品质类型列表获取失败");
+            }
+        })
     },
     getApplyProp(){
         this.$axios.post("/getApplyProp", {
@@ -487,7 +572,6 @@ export default {
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("申请道具列表获取失败");
-                return false;
             }
         })
     },
@@ -670,6 +754,8 @@ export default {
       this.id = userData.id;
       this.getPlatformList(this.id);
       this.getPlayerTypeList();
+      this.getMoneyTypeList();
+      this.getPropQualityList();
     },
     addApply(){
         var data = {};
@@ -691,11 +777,38 @@ export default {
         }
         var list = "";
             for(var i = 0;i<this.propData.length;i++){
+                //判断是否最后
                 if((i+1)>=this.propData.length){
+                    
                     list+=this.propData[i].id+"-"+this.propData[i].propCount;
+                    if(this.propData[i].propBind){
+                        list+="-"+this.propData[i].propBind;
+                    }else{
+                        //默认不绑定
+                        list+="-0";
+                    }
+                    if(this.propData[i].propQuality){
+                        list+="-"+this.propData[i].propQuality;
+                    }else{
+                        //默认白品质
+                        list+="-1";
+                    }
                     break;
                 }
-                list+=this.propData[i].id+"-"+this.propData[i].propCount+","
+                console.log(this.propData[i].propBind);
+                    list+=this.propData[i].id+"-"+this.propData[i].propCount;
+                    if(this.propData[i].propBind){
+                        list+="-"+this.propData[i].propBind;
+                    }else{
+                        //默认不绑定
+                        list+="-0";
+                    }
+                    if(this.propData[i].propQuality){
+                        list+="-"+this.propData[i].propQuality+",";
+                    }else{
+                        //默认白品质
+                        list+="-1,";
+                    }
             }
         if(this.editableTabsValue=="1"){
             console.log("1");
@@ -719,7 +832,9 @@ export default {
 
                 applyReason:this.form.applyReason,
 
-                addUser:this.id
+                addUser:this.id,
+                moneyType:this.form.moneyType,
+                moneyCount:this.form.moneyCount
             };
 
         }
@@ -738,7 +853,9 @@ export default {
 
                 applyReason:this.form.applyReason,
 
-                addUser:this.id
+                addUser:this.id,
+                moneyType:this.form.moneyType,
+                moneyCount:this.form.moneyCount
             };
 
         }
@@ -765,11 +882,37 @@ export default {
         console.log(JSON.stringify(data));
         
     },
-    handleConfirm(index,row){
+    handleApply(index,row){
+       var item  = this.tableData[index];
+        var money = "";
+        if(item.moneyType!=null && item.moneyCount!=null){
+            money = item.moneyType+"|"+item.moneyCount;
+        }
+        var itemList = "";
+        var len = item.propList.length;
+        for(var i = 0;i<len;i++){
+            var a = item.propList[i][0];
+            var b = item.propList[i][1];
+            var c = item.propList[i][2];
+            var d = item.propList[i][3];
+            var e = 0;
+            var info = a+"|"+b+"|"+c+"|"+d+"|"+e;
+            itemList +=info+";";
+         }
+         itemList = itemList.substring(0,itemList.length-1);
+         console.log(itemList);
         this.$axios
-        .post("/confirmApplyProp", {
-            id:this.tableData[index].id,
-            addUser:this.id
+        .post("/api/applyProp/confirmApply", {
+            id:item.id,
+            platformId:item.platformId,
+            serverId:item.serverId,
+            IsAllPlayer:parseInt(item.applyType)-1,
+            PlayerID:item.playerIdList,
+            PlayerName:item.playerNameList,
+            Title:item.releaseTitle,
+            Content:item.releaseContent,
+            ItemList:itemList,
+            Money:money
         })
         .then(successResponse => {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -786,6 +929,29 @@ export default {
             return false;
         }
         })
+    },
+    handleConfirm(index,row){
+        this.$axios
+        .post("/confirmApplyProp", {
+            id:this.tableData[index].id,
+            addUser:this.id
+        })
+        .then(successResponse => {
+        this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("道具申请审核通过成功");
+            this.$message.success("道具申请审核通过成功");
+            this.getApplyProp(); 
+               
+        } else {
+            console.log(this.responseResult);
+            console.log("道具申请审核通过失败");
+            this.$message.error("道具申请审核通过失败");
+            return false;
+        }
+        })
+
     },
     saveDelAll(){
                 const length = this.multipleSelection.length;
@@ -832,14 +998,14 @@ export default {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("道具申请不通过处理成功");
-            this.$message.success("道具申请不通过处理成功");
+            console.log("道具申请审核不通过成功");
+            this.$message.success("道具申请审核不通过成功");
             this.getApplyProp(); 
                
         } else {
             console.log(this.responseResult);
-            console.log("道具申请不通过处理失败");
-            this.$message.error("道具申请不通过处理失败");
+            console.log("道具申请审核不通过失败");
+            this.$message.error("道具申请审核不通过失败");
             return false;
         }
         })
@@ -882,12 +1048,16 @@ export default {
         applyUser:"",
         applyReason:"",
       }
+      this.propData = {};
     },
     testDialog() {
       this.dialogVisible = true;
     },
     formatIsSend(row, column, cellValue, index){
-        return row.sendState == 0 ? "未审核" : row.sendState == 1 ? "已通过" : "未通过";
+        return row.confirmState == 0 ? "未审核" : row.confirmState == 1 ? "已通过" : "未通过";
+    },
+    formatApplyState(row, column, cellValue, index){
+        return row.applyState == 1 ? "邮件发送成功" : row.applyState == 2 ? "邮件发送失败" : "邮件未发送";
     },
     formatApplyType(row, column, cellValue, index){
         return row.applyType == 1 ? "角色申请" : "全服申请";

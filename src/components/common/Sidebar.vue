@@ -143,7 +143,7 @@
                                     },
                                     {
                                         index: 'newPropInfo',
-                                        title: '道具信息(导入)'
+                                        title: '道具导入信息'
                                     },
                                      {
                                         index: 'PropUpload',
@@ -169,7 +169,7 @@
                                     },
                                     {
                                         index: 'newGiftInfo',
-                                        title: '礼包信息(导入)'
+                                        title: '礼包导入信息'
                                     },
                                     {
                                         index: 'GiftUpload',

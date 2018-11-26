@@ -78,7 +78,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加平台" :visible.sync="addplatformVisible" width="30%">
+        <el-dialog title="添加平台" :modal="false"  :close-on-click-modal="false" :visible.sync="addplatformVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>
@@ -120,7 +120,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑平台" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑平台" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>

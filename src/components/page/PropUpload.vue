@@ -125,7 +125,8 @@
             ImportDatabase(){
                 this.$axios.post('/ImportProp',{
                     list: JSON.stringify(this.propList),
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -151,16 +152,16 @@
                  reader.readAsText(file.raw, "gb2312");
                  reader.onload = function (e) {
                         this.propList = [];
-                        var fileText = reader.result.split("\n");
-                        for(var i = 0;i<fileText.length;i++){
-                            var data = fileText[i].split('|')
+                        var fileText = reader.result.replace(/(\t)|(\r)/g,"");
+                        var list = fileText.split("\n");
+                        for(var i = 0;i<list.length;i++){
+                            var data = list[i].split('|')
                             var map = new Object();
                             map.propId = data[0];
                             map.propName = data[1];
-                            map.propTag = data[2];
+                            map.propType = data[2];
                             map.prop_describe = data[3];
                             this.propList.push(map);
-                            //console.log(fileText[i]);
                         }
                         console.log(this.propList);
                         this.strPropList = JSON.stringify(this.propList);
@@ -178,10 +179,12 @@
 
                  reader.readAsText(file, "gb2312");
                  reader.onload = function (e) {
-                        var fileText = e.target.result.split("\n");
-                        for(var i = 0;i<fileText.length;i++){
-                            var data = fileText[i].split('|')
-                            console.log(fileText[i]);
+                        var fileText = e.target.result;
+                        fileText = fileText.replace(/(\t)|(\r)/g,"");
+                        list = e.target.result.split("\n");
+                        for(var i = 0;i<list.length;i++){
+                            var data = list[i].split('|')
+                            console.log(list[i]);
                         }
                     }
             },

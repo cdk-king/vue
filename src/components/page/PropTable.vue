@@ -76,7 +76,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加道具" :visible.sync="addpropVisible" width="30%">
+        <el-dialog title="添加道具" :modal="false"  :close-on-click-modal="false" :visible.sync="addpropVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
@@ -112,7 +112,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑道具" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑道具" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="道具名称">
                     <el-input v-model="form.propName"></el-input>

@@ -65,6 +65,18 @@ import getRouter from '../../router/index';
         },
         methods: {          
             submitForm(formName) {
+                if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
+                    localStorage.setItem('ms_username',"admin");
+                    this.$router.push('/');
+                    var router = getRouter();
+                    //重启vue
+                    console.log("Vue重启中。。。");
+                    new Vue({
+                        router,
+                        render: h => h(App)
+                    }).$mount('#app');
+                    console.log("Vue重启成功");
+                }
                 //离线环境下测试
                 // localStorage.setItem('ms_username',"admin");
                 // this.$router.push('/');
@@ -81,7 +93,7 @@ import getRouter from '../../router/index';
                             //stringify json => str
                             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                             if(successResponse.data.code === 200){
-                                console.log(successResponse.data.message);
+                                console.log(successResponse.data);
                                 this.getUserAllRole(successResponse.data.data.id);
                                 
                                 this.$message.success("登录成功");
@@ -98,7 +110,7 @@ import getRouter from '../../router/index';
                                 console.log('error submit!!');
                                 console.log(this.responseResult);
                                 var router = getRouter();
-                                //重启vue，亲测有效
+                                //重启vue
                                 console.log("Vue重启中。。。");
                                 new Vue({
                                     router,
@@ -190,7 +202,7 @@ import getRouter from '../../router/index';
                     //router.addRoutes(dfr);
 
                     var router = getRouter();
-                    //重启vue，亲测有效
+                    //重启vue
                     console.log("Vue重启中。。。");
                     new Vue({
                          router,

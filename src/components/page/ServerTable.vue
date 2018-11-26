@@ -49,7 +49,8 @@
                 </el-table-column>
                 <el-table-column prop="serverIp" label="服务器IP" >
                 </el-table-column>
-                
+                <el-table-column prop="serverPort" label="服务器端口" >
+                </el-table-column>
                 <el-table-column prop="gameName" label="所属游戏" width="120">
                 </el-table-column>
                 <el-table-column prop="platform" label="所属渠道" width="120">
@@ -81,13 +82,16 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加服务器" :visible.sync="addServerVisible" width="30%">
+        <el-dialog title="添加服务器" :modal="false"  :close-on-click-modal="false" :visible.sync="addServerVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
@@ -123,13 +127,16 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑服务器" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑服务器" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器端口">
+                    <el-input v-model="form.serverPort"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
@@ -229,6 +236,7 @@
                     gameId:'',
                     platformId:'',
                     serverIP:'',
+                    serverPort:'',
                     server_describe: '',
                     parentId:'',
                     sort:'',
@@ -242,6 +250,7 @@
                     id:'',
                     server:'',
                     serverIp:'',
+                    serverPort:'',
                     server_describe: '',
                     sort:'',
                     addUser: '',
@@ -425,7 +434,8 @@
                     state:item.state,
                     gameId:item.gameId,
                     roleId:item.roleId,
-                    platformId:item.platformId
+                    platformId:item.platformId,
+                    serverPort:item.serverPort
                 }
                 this.editVisible = true;
             },
@@ -500,6 +510,7 @@
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    serverPort:''
                 }
                 this.selectGame="";
                 this.selectPlatform="";
@@ -524,7 +535,8 @@
                         addUser: this.form.addUser,
                         state:this.form.state,
                         gameId:"",
-                        platformId:this.form.platformId
+                        platformId:this.form.platformId,
+                        serverPort:this.form.serverPort
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -559,7 +571,8 @@
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
                     gameId:"",
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    serverPort:this.form.serverPort
 
                 })
                 .then(successResponse =>{

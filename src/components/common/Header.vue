@@ -53,12 +53,12 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <a href="http://blog.gdfengshuo.com/about/" target="_blank">
+                        <!-- <a href="http://blog.gdfengshuo.com/about/" target="_blank">
                             <el-dropdown-item>关于作者</el-dropdown-item>
                         </a>
                         <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
                             <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a>
+                        </a> -->
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -74,25 +74,14 @@
                 collapse: false,
                 fullscreen: false,
                 name: 'cdk',
-                message: 2,
-                options: [{
-                id: '1',
-                gameName: '游戏1'
-                }, {
-                id: '2',
-                gameName: '游戏2'
-                }, {
-                id: '3',
-                gameName: '游戏3'
-                }, {
-                id: '4',
-                gameName: '游戏4'
-                }, {
-                id: '5',
-                gameName: '游戏5'
-                }],
+                message: 0,
+                // {
+                // id: '1',
+                // gameName: '游戏1'
+                // }
+                options: [],
                 gameValue: '1',
-                gameLabel:"游戏1"
+                gameLabel:"请选择游戏"
             }
         },
         computed:{
@@ -131,6 +120,7 @@
                         this.options = successResponse.data.data.list;
                         this.$setGameId(this.options[0].id);
                         this.$message("已选择游戏："+this.options[0].gameName);
+                        this.gameLabel = this.options[0].gameName;
                     } else {
                         this.open4(successResponse.data.message);
                         console.log(this.responseResult);
@@ -193,8 +183,8 @@
                 });
                 //this.$emit('increment1',"这个位子是可以加参数的");
                 //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
-                this.$store.state.gameId=command.id;
-                console.log(this.$store.state.gameId);
+                //this.$store.state.gameId=command.id;
+                //console.log(this.$store.state.gameId);
                 this.gameLabel = command.gameName;
                 
                 this.$message("已选择游戏："+command.gameName);

@@ -40,6 +40,8 @@
                 </el-table-column> -->
                 <el-table-column prop="game_describe" label="描述" >
                 </el-table-column> 
+                <el-table-column prop="gameEncryptSign" label="加密标识" >
+                </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>
                 <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
@@ -65,7 +67,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加游戏" :visible.sync="addGameVisible" width="30%">
+        <el-dialog title="添加游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="addGameVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
                     <el-input v-model="form.gameName"></el-input>
@@ -75,6 +77,9 @@
                 </el-form-item>
                 <el-form-item label="游戏描述">
                     <el-input v-model="form.game_describe"></el-input>
+                </el-form-item>
+                <el-form-item label="游戏加密标识">
+                    <el-input v-model="form.gameEncryptSign"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -87,7 +92,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑游戏" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
                     <el-input v-model="form.gameName"></el-input>
@@ -97,6 +102,9 @@
                 </el-form-item>
                 <el-form-item label="游戏描述">
                     <el-input v-model="form.game_describe"></el-input>
+                </el-form-item>
+                <el-form-item label="游戏加密标识">
+                    <el-input v-model="form.gameEncryptSign"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -172,6 +180,7 @@
                     gameName:'',
                     gameTag:'',
                     game_describe: '',
+                    gameEncryptSign:'',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
@@ -182,6 +191,7 @@
                     gameName:'',
                     gameTag:'',
                     game_describe: '',
+                    gameEncryptSign:'',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
@@ -293,6 +303,7 @@
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
                     state:item.state,
+                    gameEncryptSign:item.gameEncryptSign
                 }
                 this.editVisible = true;
             },
@@ -365,6 +376,7 @@
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    gameEncryptSign:''
                 }
             },
             saveAddGame(){
@@ -384,6 +396,7 @@
                         sort:this.form.sort,
                         addUser: this.form.addUser,
                         state:this.form.state,
+                        gameEncryptSign:this.form.gameEncryptSign
                         
                     })
                     .then(successResponse =>{
@@ -421,7 +434,7 @@
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
-
+                    gameEncryptSign:this.form.gameEncryptSign
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)

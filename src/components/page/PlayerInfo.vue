@@ -61,37 +61,34 @@
                             v-model="searchForm.playerId"
                             clearable>
                             </el-input>
-                            <span style="margin-left:22px">最后登录IP</span>
-                            <el-input style="width:180px"
-                            placeholder="请输入IP"
-                            v-model="searchForm.lastIp"
-                            clearable>
-                            </el-input> 
                         </el-form-item>
-                        <el-form-item label="是否在线">
-                           <!-- @change="stateSelect" v-model="searchKey.state"-->
-                            <el-select  placeholder="请选择"  v-model="searchForm.isOnline" class="handle-select mr10" style="width:180px">
-                                <!-- @change="stateSelect" -->
+                        <el-form-item label="是否禁言">
+                            <!-- <el-select  placeholder="请选择"  v-model="searchForm.isOnline" class="handle-select mr10" style="width:180px">
                                 <el-option key="1" label="全部" value="0"></el-option>
                                 <el-option key="2" label="在线" value="1"></el-option>
                                 <el-option key="3" label="离线" value="2"></el-option>
                             </el-select>
-                            <span style="margin-left:22px">是否禁言</span>
+                            <span style="margin-left:22px">是否禁言</span> -->
                                 <el-select  placeholder="请选择"  v-model="searchForm.isProhibitSpeak" class="handle-select mr10" style="width:180px">
-                                <!-- @change="stateSelect" -->
                                 <el-option key="1" label="全部" value="0"></el-option>
-                                <el-option key="2" label="未禁言" value="1"></el-option>
-                                <el-option key="3" label="已禁言" value="2"></el-option>
+                                <el-option key="2" label="未禁言" value="0"></el-option>
+                                <el-option key="3" label="已禁言" value="1"></el-option>
                             </el-select>
                             <span style="margin-left:22px">最后禁封</span>
                                 <el-select  placeholder="请选择"  v-model="searchForm.isBan" class="handle-select mr10" style="width:180px">
-                                <!-- @change="stateSelect" -->
                                 <el-option key="1" label="全部" value="0"></el-option>
-                                <el-option key="2" label="未封禁" value="1"></el-option>
-                                <el-option key="3" label="已封禁" value="2"></el-option>
+                                <el-option key="2" label="未封禁" value="0"></el-option>
+                                <el-option key="3" label="已封禁" value="1"></el-option>
                             </el-select>
+                            
                         </el-form-item>
-                        <Divider />
+                        <el-form-item label="">
+                            <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
+                        </el-form-item>
+
+                        
+                        <!-- 
+                        <Divider /> 
                         <el-form-item label="VIP等级">
 
                             <el-input style="width:180px"
@@ -192,10 +189,8 @@
 
                         </el-form-item>
                         <el-form-item label="">
-                            
-                                <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
-                    
-                        </el-form-item></el-form>
+                        </el-form-item> -->
+                        </el-form>
                     </div>
                 </el-collapse-item>
                 </el-collapse>
@@ -215,7 +210,7 @@
                 </el-table-column>
                 <el-table-column prop="playerId" label="玩家Id" >
                 </el-table-column>
-                <el-table-column prop="isOnline" label="是否在线"  :formatter="formatIsOnline">
+                <!-- <el-table-column prop="isOnline" label="是否在线"  :formatter="formatIsOnline">
                 </el-table-column>
                 <el-table-column prop="lastIp" label="最后登录IP" >
                 </el-table-column>
@@ -226,7 +221,7 @@
                 <el-table-column prop="rechargeAmount"  label="充值金额" >
                 </el-table-column>
                 <el-table-column prop="combatPower"  label="战力" >
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="isProhibitSpeak"  label="是否禁言" :formatter="formatIsProhibitSpeak"> 
                     	<template slot-scope="scope">
                             <span v-if="scope.row.isProhibitSpeak==0" style="color:#000000">正常</span>
@@ -243,15 +238,24 @@
                             </span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="registrationTime"  :formatter="formatter" label="注册时间" > 
-                </el-table-column>
+                <!-- <el-table-column prop="registrationTime"  :formatter="formatter" label="注册时间" > 
+                </el-table-column> -->
                 <el-table-column prop="platform"  label="平台" >
+                    <template slot-scope="scope">
+                            <span  style="color:#000000">{{getPlatformName(platformValue)}}</span> 
+
+                    </template>
                 </el-table-column>
                 <el-table-column prop="server"  label="服务器" >
+                    <template slot-scope="scope">
+                            <span style="color:#000000">{{getServerName(serverValue) }}</span>
+                    </template>
                 </el-table-column>
                 
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-edit" @click="handleDetail(scope.$index, scope.row)" >详细信息</el-button>
+                        
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeToProhibitSpeak(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak!=1">禁言</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeProhibitSpeakToNormal(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak==1">解除禁言</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeToBan(scope.$index, scope.row)" v-if="scope.row.isBan!=1">禁封</el-button>
@@ -266,6 +270,150 @@
                 </el-pagination>
             </div>
                </div>     
+
+               <!-- 详细信息框 -->
+            <el-dialog title="详细信息" :visible.sync="detailVisible" width="800px" center>
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span class="span-right">玩家ID:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.PlayerID}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家角色名:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.AccountName}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家账号:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.AccountName}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">总充值金额:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.TotalRecharge}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">总消费金额:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.TotalConsume}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">VIP等级:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Vip}}</span>
+                </div></el-col>
+                </el-row>
+
+                
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家经验:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Exp}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家种族:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Race}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家等级:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Level}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家生命值:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.HP}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家PK值:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.PK}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">玩家战力:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.FightPower}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">所在区域:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Scene}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">钻石数量:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Diamond}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">绑定钻石数量:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.BindDiamond}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">金钱:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Money}}</span>
+                </div></el-col>
+                </el-row>
+
+                <el-row :gutter="20">
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">是否在线:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.Online | filtersIsOnline}}</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span  class="span-right">角色创建时间:</span>
+                </div></el-col>
+                <el-col :span="6"><div class="grid-content bg-purple">
+                    <span>{{detail.CreateTime}}</span>
+                </div></el-col>
+                </el-row>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="detailVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="detailVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
             <!-- 编辑提示框 -->
             <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
                 <div class="del-dialog-cnt">是否确定？</div>
@@ -379,6 +527,7 @@ export default {
       show: false,
       dialogVisible: false,
       delAllVisible: false,
+      detailVisible: false,
       aa: this.$cdk,
       cur_page: 1,
       handleVisible: true,
@@ -404,6 +553,7 @@ export default {
       serverValue: "",
       serverLabel: "",
       form: {},
+      detail:{},
       id: 0,
       userId:0,
       idx: 0,
@@ -454,7 +604,31 @@ export default {
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
+    },
+    getPlatformName(){
+        //用闭包去实现传参
+        return function(platformId){
+            console.log(platformId);
+            console.log(JSON.stringify(this.platformOptions));
+            var item;
+            for(var i = 0;i<this.platformOptions.length;i++){
+                if(this.platformOptions[i].id==platformId){
+                         return this.platformOptions[i].platform;
+                }
+            }
+
+        }
+    },
+    getServerName(){
+        return function(serverId){
+            for(var i = 0;i<this.serverOptions.length;i++){
+                    if(this.serverOptions[i].serverId==serverId){
+                            return this.serverOptions[i].serverName;
+                    }
+            }
+        }
     }
+
   },
   created() {
     this.getData();
@@ -527,30 +701,73 @@ export default {
       this.getPlayer();
     },
     getPlayer() {
+        // this.$axios
+        // .post("/api/player/getPlayer", {
+        //   platformId: this.platformValue,
+        //   serverId: this.serverValue,
+        //   pageNo: this.cur_page,
+        //   pageSize: 10,
+        //   isPage: "isPage",
+        //   searchForm: JSON.stringify(this.searchForm)
+        // })
+        // .then(successResponse => {
+        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        //   if (successResponse.data.code === 200) {
+        //     console.log(this.responseResult);
+        //     console.log("玩家列表获取成功");
+        //     this.$message.success("玩家列表获取成功");
+        //     this.tableData = successResponse.data.data.list;
+        //   } else {
+        //     console.log(this.responseResult);
+        //     console.log("玩家列表获取失败");
+        //     this.$message.error("玩家列表获取失败");
+        //   }
+        // })
+        // .catch(failResponse => {});
+
         this.$axios
-        .post("/getPlayer", {
+        .post("/api/player/getPlayerFromServer", {
           platformId: this.platformValue,
-          serverId: this.serverValue,
+          WorldID: this.serverValue,
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          searchForm: JSON.stringify(this.searchForm)
+          AccountName:this.searchForm.playerAccount,
+          PlayerID:this.searchForm.playerId,
+          PlayerName:this.searchForm.playerName,
+          LoginBan:this.searchForm.isBan,
+          TalkBan:this.searchForm.isProhibitSpeak,
+        
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("玩家列表获取成功");
-            this.$message.success("玩家列表获取成功");
-            this.tableData = successResponse.data.data.list;
+            //this.tableData = successResponse.data.data.list;   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+            this.mapData(successResponse.data.data);
           } else {
             console.log(this.responseResult);
-            console.log("玩家列表获取失败");
+            console.log("玩家列表获取失败"); 
             this.$message.error("玩家列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
+    },
+    mapData(data){
+        data = data.replace(/AccountName/g,"playerAccount");
+        data = data.replace(/PlayerID/g,"playerId");
+        data = data.replace(/PlayerName/g,"playerName");
+        data = data.replace(/TalkBan/g,"isProhibitSpeak");
+        data = data.replace(/TalkBanEndTime/g,"prohibitSpeakTime");
+        data = data.replace(/LoginBan/g,"isBan");
+        data = data.replace(/LoginBanEndTime/g,"banTime");
+        console.log(data);
+        data = JSON.parse(data);
+        console.log(data);
+        console.log(typeof(data));
+        this.tableData = data.PlayerList;
     },
     getServerIp() {},
     getData() {
@@ -593,6 +810,33 @@ export default {
     formatIsProhibitSpeak: function(row, column, cellValue, index) {
       return row.isProhibitSpeak == 1 ? "已禁言" : "正常";
     },
+    handleDetail(index, row){
+        this.detailVisible = true;
+        var item = this.tableData[index];
+        var PlayerID = item.playerId;
+
+        this.$axios
+        .post("/api/player/getPlayerDetailInfo", {
+          platformId: this.platformValue,
+          WorldID: this.serverValue,
+          PlayerID:PlayerID,
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("玩家详细信息获取成功");
+            this.detail = JSON.parse(successResponse.data.data);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+            //this.mapData(successResponse.data.data);
+          } else {
+            console.log(this.responseResult);
+            console.log("玩家详细信息获取失败"); 
+            this.$message.error("玩家详细信息获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
     handleChangeToProhibitSpeak(index, row) {
       this.idx = index;
       const item = this.tableData[index];
@@ -620,15 +864,40 @@ export default {
         this.ChangeAllBanToNormal = true;
     },
     ToProhibitSpeak() {
+        // this.$axios
+        // .post("/ChangeToProhibitSpeak", {
+        //     platformId: this.platformValue,
+        //     serverId: this.serverValue,
+        //     playerName:this.tableData[this.idx].playerName,
+        //     playerAccount:this.tableData[this.idx].playerAccount,
+        //     playerId:this.tableData[this.idx].playerId,
+        //     userId:this.userId,
+        //     prohibitSpeakTime:this.form.prohibitSpeakTime,
+        // })
+        // .then(successResponse => {
+        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        //   if (successResponse.data.code === 200) {
+        //     console.log(this.responseResult);
+        //     console.log("玩家禁言成功");
+        //     this.$message.success("玩家禁言成功");
+        //     this.ChangeToProhibitSpeak = false;
+        //     this.getPlayer();
+        //   } else {
+        //     console.log(this.responseResult);
+        //     console.log(successResponse.data.message);
+        //     this.$message.error(successResponse.data.message);
+        //   }
+        // })
+        // .catch(failResponse => {});
+
         this.$axios
-        .post("/ChangeToProhibitSpeak", {
+        .post("/api/player/talkBan", {
             platformId: this.platformValue,
-            serverId: this.serverValue,
-            playerName:this.tableData[this.idx].playerName,
-            playerAccount:this.tableData[this.idx].playerAccount,
-            playerId:this.tableData[this.idx].playerId,
-            userId:this.userId,
-            prohibitSpeakTime:this.form.prohibitSpeakTime,
+            WorldID: this.serverValue,
+            PlayerID:this.tableData[this.idx].playerId,
+            PlayerName:this.tableData[this.idx].playerName,
+            Remove:0,
+            HowLong:this.form.prohibitSpeakTime,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -646,19 +915,47 @@ export default {
         })
         .catch(failResponse => {});
 
+
+
+
     },
     AllToProhibitSpeak(){
         this.ChangeAllToProhibitSpeak = false;
     },
     ProhibitSpeakToNormal() {
+        // this.$axios
+        // .post("/ChangeProhibitSpeakToNormal", {
+        //     platformId: this.platformValue,
+        //     serverId: this.serverValue,
+        //     playerName:this.tableData[this.idx].playerName,
+        //     playerAccount:this.tableData[this.idx].playerAccount,
+        //     playerId:this.tableData[this.idx].playerId,
+        //     userId:this.userId
+        // })
+        // .then(successResponse => {
+        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        //   if (successResponse.data.code === 200) {
+        //     console.log(this.responseResult);
+        //     console.log("玩家解除禁言成功");
+        //     this.$message.success("玩家解除禁言成功");
+        //     this.ChangeProhibitSpeakToNormal = false;
+        //     this.getPlayer();
+        //   } else {
+        //     console.log(this.responseResult);
+        //     console.log(successResponse.data.message);
+        //     this.$message.error(successResponse.data.message);
+        //   }
+        // })
+        // .catch(failResponse => {});
+
         this.$axios
-        .post("/ChangeProhibitSpeakToNormal", {
+        .post("/api/player/talkBan", {
             platformId: this.platformValue,
-            serverId: this.serverValue,
-            playerName:this.tableData[this.idx].playerName,
-            playerAccount:this.tableData[this.idx].playerAccount,
-            playerId:this.tableData[this.idx].playerId,
-            userId:this.userId
+            WorldID: this.serverValue,
+            PlayerID:this.tableData[this.idx].playerId,
+            PlayerName:this.tableData[this.idx].playerName,
+            Remove:1,
+            HowLong:this.form.prohibitSpeakTime,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -692,15 +989,41 @@ export default {
       this.ChangeBanToNormal = true;
     },
     ToBan() {
+        // this.$axios
+        // .post("/ChangeToBan", {
+        //     platformId: this.platformValue,
+        //     serverId: this.serverValue,
+        //     playerName:this.tableData[this.idx].playerName,
+        //     playerAccount:this.tableData[this.idx].playerAccount,
+        //     playerId:this.tableData[this.idx].playerId,
+        //     userId:this.userId,
+        //     banTime:this.form.banTime
+        // })
+        // .then(successResponse => {
+        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        //   if (successResponse.data.code === 200) {
+        //     console.log(this.responseResult);
+        //     console.log("玩家禁封成功");
+        //     this.$message.success("玩家禁封成功");
+        //     this.ChangeToBan = false;
+        //     this.getPlayer();
+        //   } else {
+        //     console.log(this.responseResult);
+        //     console.log(successResponse.data.message);
+        //     this.$message.error(successResponse.data.message);
+        //   }
+        // })
+        // .catch(failResponse => {});
+
         this.$axios
-        .post("/ChangeToBan", {
+        .post("/api/player/Ban", {
             platformId: this.platformValue,
-            serverId: this.serverValue,
+            WorldID: this.serverValue,
             playerName:this.tableData[this.idx].playerName,
-            playerAccount:this.tableData[this.idx].playerAccount,
-            playerId:this.tableData[this.idx].playerId,
-            userId:this.userId,
-            banTime:this.form.banTime
+            AccountName:this.tableData[this.idx].playerAccount,
+            PlayerIds:this.tableData[this.idx].playerId,
+            Remove:0,
+            HowLong:this.form.banTime,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -722,14 +1045,41 @@ export default {
         this.ChangeAllToBan = false;
     },
     BanToNormal() {
+        // this.$axios
+        // .post("/ChangeBanToNormal", {
+        //     platformId: this.platformValue,
+        //     serverId: this.serverValue,
+        //     playerName:this.tableData[this.idx].playerName,
+        //     playerAccount:this.tableData[this.idx].playerAccount,
+        //     playerId:this.tableData[this.idx].playerId,
+        //     userId:this.userId
+        // })
+        // .then(successResponse => {
+        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        //   if (successResponse.data.code === 200) {
+        //     console.log(this.responseResult);
+        //     console.log("玩家解除禁封成功");
+        //     this.$message.success("玩家解除禁封成功");
+        //     this.ChangeBanToNormal = false;
+        //     this.getPlayer();
+        //   } else {
+        //     console.log(this.responseResult);
+        //     console.log(successResponse.data.message);
+        //     this.$message.error(successResponse.data.message);
+        //   }
+        // })
+        // .catch(failResponse => {});
+
+
         this.$axios
-        .post("/ChangeBanToNormal", {
+        .post("/api/player/Ban", {
             platformId: this.platformValue,
-            serverId: this.serverValue,
+            WorldID: this.serverValue,
             playerName:this.tableData[this.idx].playerName,
-            playerAccount:this.tableData[this.idx].playerAccount,
-            playerId:this.tableData[this.idx].playerId,
-            userId:this.userId
+            AccountName:this.tableData[this.idx].playerAccount,
+            PlayerIds:this.tableData[this.idx].playerId,
+            Remove:1,
+            HowLong:this.form.banTime,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -796,7 +1146,17 @@ export default {
       console.log(curVal);
       this.$message(curVal);
     }
-  }
+  },
+  filters:{
+    //这里不能访问this  
+            filtersIsOnline:function (arg) {
+               return arg == 1 ? "在线" : "离线";
+                
+            },
+            filtersServer:function(arg){
+                
+            }
+    }
 };
 </script>
 
@@ -807,5 +1167,23 @@ export default {
 }
 .form-box {
   width: 100%;
+}
+    /*  */
+ .el-row {
+    margin-bottom: 20px;
+  }
+  .el-row :last-child{
+      margin-bottom: 0;
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+
+.span-right{
+    float: right;
 }
 </style>

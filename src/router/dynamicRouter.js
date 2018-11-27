@@ -148,6 +148,16 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/BanIp';
+    item.meta = { title: 'IP禁封' };
+    if (right.indexOf('Player_BanLog_View') != -1) {
+        item.component = resolve => require(['../components/page/BanIP.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/BanIP.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/SendEmail';
     item.meta = { title: '发送邮件' };
     if (right.indexOf('Send_Email_View') != -1) {

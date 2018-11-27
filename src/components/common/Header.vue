@@ -97,11 +97,11 @@
         methods:{
             right(){
                 const right = localStorage.getItem('rightTags');
-                
+                console.log(right);
                 if(right.indexOf('User_management_Handle')==-1){
-                    this.handleVisible = false;
+                    //this.handleVisible = false;
                 }else{
-                    this.handleVisible = true;
+                    //this.handleVisible = true;
                 }
                 this.getData();
                 //console.log("this.handleVisible:"+this.handleVisible);

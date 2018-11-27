@@ -123,7 +123,7 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-                this.$axios.post('/ImportGift',{
+                this.$axios.post('/api/gift/ImportGift',{
                     list: JSON.stringify(this.giftList),
                     platformId:this.form.platformId
                 })
@@ -151,19 +151,23 @@
                  reader.readAsText(file.raw, "gb2312");
                  reader.onload = function (e) {
                         this.giftList = [];
-                        var fileText = reader.result.split("\n");
-                        for(var i = 0;i<fileText.length;i++){
-                            var data = fileText[i].split('|')
+                        var fileText = reader.result.replace(/(\t)|(\r)/g,"");
+                        var list = fileText.split("\n");
+                        for(var i = 0;i<list.length;i++){
+                            var data = list[i].split('|');
+                            console.log(data.length);
+                            if(data.length>1){
                             var map = new Object();
                             map.giftId = data[0];
-                            map.giftName = data[1];
-                            map.giftTag = data[2];
-                            map.gift_describe = data[3];
-                            map.giftValue = data[4];
+                            map.limit = data[1];
+                            map.expire_time = data[2];
+                            map.goods_prize1 = data[3];
+                            map.value_prize1 = data[4];
                             this.giftList.push(map);
-                            //console.log(fileText[i]);
+                            }
+                            
                         }
-                        console.log(this.giftList);
+                        console.log(this.propList);
                         this.strGiftList = JSON.stringify(this.giftList);
                         console.log(this.strGiftList);
                     }.bind(this)

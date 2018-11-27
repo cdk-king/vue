@@ -255,7 +255,7 @@ import bus from '../common/bus';
                 //return row.address;
                 //时间格式化
                     
-                var date = row[column.playererty];  
+                var date = row[column.property];
                 console.log(date);
                 if (date == undefined) {  
                     return "";  

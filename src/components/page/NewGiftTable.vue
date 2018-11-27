@@ -31,19 +31,19 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" align="center">
                 </el-table-column> -->
-                <el-table-column prop="id" label="ID"  width="80">
+                <el-table-column prop="giftId" label="礼包ID"  >
                 </el-table-column>
-                <el-table-column prop="giftName" label="礼包名称" width="160">
+                <el-table-column prop="limitCount" label="领取限制" >
                 </el-table-column>
-                <el-table-column prop="giftTag" label="礼包标识" >
+                <el-table-column prop="expire_time" label="过期时间" >
                 </el-table-column>
                 
                 
-                <el-table-column prop="giftDescribe" label="描述" >
+                <el-table-column prop="goods_prize1" label="道具内容" >
                 </el-table-column> 
-                <el-table-column prop="giftValue" label="价值" >
+                <el-table-column prop="value_prize1" label="货币" >
                 </el-table-column> 
-                <el-table-column prop="platform" label="所在平台" width="120">
+                <el-table-column prop="platform" label="所在平台" >
                 </el-table-column>
 
             </el-table>

@@ -895,9 +895,11 @@ export default {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             PlayerID:this.tableData[this.idx].playerId,
+            PlayerAccount:this.tableData[this.idx].playerAccount,
             PlayerName:this.tableData[this.idx].playerName,
             Remove:0,
             HowLong:this.form.prohibitSpeakTime,
+            userId:this.userId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -953,9 +955,11 @@ export default {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             PlayerID:this.tableData[this.idx].playerId,
+            PlayerAccount:this.tableData[this.idx].playerAccount,
             PlayerName:this.tableData[this.idx].playerName,
             Remove:1,
             HowLong:this.form.prohibitSpeakTime,
+            userId:this.userId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1024,10 +1028,12 @@ export default {
             PlayerIds:this.tableData[this.idx].playerId,
             Remove:0,
             HowLong:this.form.banTime,
+            userId:this.userId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
+              
             console.log(this.responseResult);
             console.log("玩家禁封成功");
             this.$message.success("玩家禁封成功");
@@ -1080,6 +1086,7 @@ export default {
             PlayerIds:this.tableData[this.idx].playerId,
             Remove:1,
             HowLong:this.form.banTime,
+            userId:this.userId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

@@ -155,13 +155,15 @@
                         var fileText = reader.result.replace(/(\t)|(\r)/g,"");
                         var list = fileText.split("\n");
                         for(var i = 0;i<list.length;i++){
-                            var data = list[i].split('|')
+                            var data = list[i].split('|');
+                            if(data.length>1){
                             var map = new Object();
                             map.propId = data[0];
                             map.propName = data[1];
                             map.propType = data[2];
                             map.prop_describe = data[3];
                             this.propList.push(map);
+                            }
                         }
                         console.log(this.propList);
                         this.strPropList = JSON.stringify(this.propList);

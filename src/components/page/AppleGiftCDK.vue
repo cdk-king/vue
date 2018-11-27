@@ -98,9 +98,9 @@
 
                     </div>
 
-                <Divider />
+                
 
-                <el-form  label-width="150px">
+                <el-form  label-width="150px" v-if="false">
                         <el-form-item label="激活码">
                             <el-input style="width:215px"
                             placeholder="请输入激活码"
@@ -192,7 +192,7 @@ export default {
       id: 0,
       serverIp: "",
       CDKs:[],
-      analyseCDK:"7C7JATQB",
+      analyseCDK:"QVYQCAI",
       exchangeVisible:false,
       exchangeResult:{
         couponID:"",
@@ -266,7 +266,7 @@ export default {
       console.log(this.form.giftId);
       console.log(this.form);
       var type = 0;
-      var CouponID = parseInt((this.form.giftId).toString()) * 10000;
+      var CouponID = parseInt((this.form.giftId).toString()) * 1;
       var strCouponID = (CouponID + type ).toString();
       console.log(strCouponID);
       

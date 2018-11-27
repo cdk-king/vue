@@ -15,9 +15,19 @@
                     </el-input>
                 </el-form-item>
                 <div class="login-btn">
-                    <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+                    <el-button type="primary" @click="submitForm('ruleForm')">登&emsp;录</el-button>
                 </div>
-                <p class="login-tips">Tips : 请输入用户名和密码。</p>
+                
+                <div >
+                    <el-button-group style="width:100%" >
+                    <el-button  class="bottomBtnClass" icon="el-icon-arrow-left" style="" @click="loginInTourist">游客登陆</el-button>
+                    <el-button  class="bottomBtnClass" style="">注册用户<i class="el-icon-arrow-right el-icon--right" ></i></el-button>
+                    </el-button-group>
+                </div>
+                <div>
+                    <p class="login-tips">Tips : 请输入用户名和密码。</p>
+                    
+                </div>
             </el-form>
         </div>
     </div>
@@ -31,6 +41,7 @@ import App from '../../App';
 import defaultRouter from '../../router/defaultRouter';
 import dynamicRouter from '../../router/dynamicRouter';
 import getRouter from '../../router/index';
+import md5 from 'js-md5';
     export default {
         data: function(){
             var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/
@@ -63,11 +74,9 @@ import getRouter from '../../router/index';
                 responseResult:[]
             }
         },
-        methods: {          
-            submitForm(formName) {
-                if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
-                    localStorage.setItem('ms_username',"admin");
-                    this.$router.push('/');
+        methods: {    
+            loginInTourist(){
+                localStorage.setItem('ms_username',"游客");
                     var router = getRouter();
                     //重启vue
                     console.log("Vue重启中。。。");
@@ -76,17 +85,35 @@ import getRouter from '../../router/index';
                         render: h => h(App)
                     }).$mount('#app');
                     console.log("Vue重启成功");
+                    this.$router.push('/');
+            },      
+            submitForm(formName) {
+                if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
+                    localStorage.setItem('ms_username',"admin");
+                    var router = getRouter();
+                    //重启vue
+                    console.log("Vue重启中。。。");
+                    new Vue({
+                        router,
+                        render: h => h(App)
+                    }).$mount('#app');
+                    console.log("Vue重启成功");
+                    this.$router.push('/');
                 }
                 //离线环境下测试
                 // localStorage.setItem('ms_username',"admin");
                 // this.$router.push('/');
+
+                var password1 = md5.hex(this.ruleForm.password+"cdk");
+                var password2 = md5.hex(password1+"cdk");
+                console.log("md5Password:"+password);
                 //表单验证
                 this.$refs[formName].validate((valid) => {
                    //console.log("valid:"+valid);
                     if (valid) {
                         this.$axios.post('/login',{
                             username:this.ruleForm.username,
-                            password:this.ruleForm.password
+                            password:password2
 
                         })
                         .then(successResponse =>{
@@ -215,6 +242,11 @@ import getRouter from '../../router/index';
 </script>
 
 <style scoped>
+    .bottomBtnClass{
+        height:35 px;
+        width:50%;
+        font-size: 14px;
+    }
     .login-wrap{
         position: relative;
         width:100%;
@@ -242,6 +274,8 @@ import getRouter from '../../router/index';
     }
     .ms-content{
         padding: 30px 30px;
+        margin-bottom: 0px;
+        padding-bottom: 12px;
     }
     .login-btn{
         text-align: center;
@@ -250,10 +284,14 @@ import getRouter from '../../router/index';
         width:100%;
         height:36px;
         margin-bottom: 10px;
+        font-size: 16px;
     }
     .login-tips{
+        margin-top: 20px;
+        margin-bottom:  0px;
+        padding: 0px;
         font-size:12px;
-        line-height:30px;
+        line-height:20px;
         color:#fff;
     }
 </style>

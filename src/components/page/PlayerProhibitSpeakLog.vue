@@ -139,6 +139,9 @@ import bus from '../common/bus';
                 this.getPlatformList(this.$gameId);
             }.bind(this))
         },
+        beforeDestroy () {
+            bus.$off('changeGameId');
+        },
         computed: {
             data() {
                 return this.tableData;

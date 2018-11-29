@@ -18,10 +18,10 @@
                     <el-button type="primary" @click="submitForm('ruleForm')">登&emsp;录</el-button>
                 </div>
                 
-                <div >
+                <div v-if="false">
                     <el-button-group style="width:100%" >
                     <el-button  class="bottomBtnClass" icon="el-icon-arrow-left" style="" @click="loginInTourist">游客登陆</el-button>
-                    <el-button  class="bottomBtnClass" style="">注册用户<i class="el-icon-arrow-right el-icon--right" ></i></el-button>
+                    <el-button  class="bottomBtnClass" style="" @click="register">注册用户<i class="el-icon-arrow-right el-icon--right" ></i></el-button>
                     </el-button-group>
                 </div>
                 <div>
@@ -71,34 +71,98 @@ import md5 from 'js-md5';
                         { required: true, message: '请输入密码', trigger: 'blur' }
                     ]
                 },
-                responseResult:[]
+                responseResult:[],
+                url:"http://localhost:8011"
             }
         },
-        methods: {    
+        created(){
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
+
+        },
+        methods: { 
+            getTourist(){
+                this.$axios.post(this.url+'/api/login/getTourist',{
+                })
+                .then(successResponse =>{
+                    //stringify json => str
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data);
+                    if(successResponse.data.code === 200){
+                        console.log(successResponse.data);
+                        
+                        var touristId = successResponse.data.data.split("|")[0];
+                        var touristName = successResponse.data.data.split("|")[1];
+                        console.log("touristId:"+touristId);
+                        console.log("touristName:"+touristName);
+                        if(touristId!="0" && touristId!=""){
+                            this.$setTouristId(parseInt(touristId));
+                            this.$setTouristName(touristName);
+                            console.log("this.$touristId:"+this.$touristId);
+                            console.log("this.$touristName:"+this.$touristName);
+                            //and set Userdata
+                            this.getThisUserInfo(this.$touristName);
+                            this.getUserAllRight(this.$touristId);
+                            this.$router.push('/');
+                        }else{
+                            this.$message.error("游客Id获取失败！");
+                        } 
+
+                    }else{
+                        this.$message.error(successResponse.data.message);
+                        console.log('error submit!!');
+                        console.log(this.responseResult);
+                    }
+                })
+                .catch(failResponse => {});
+            }, 
+            register(){
+                this.$message.info("暂不支持注册");
+                console.log("暂不支持注册");
+                //todo   localStorage.setItem('userData'
+                //路由跳转钩子函数会判断有无ms_username
+                //localStorage.setItem('ms_username',"admin");
+                //this.$router.push('/register');
+            },
             loginInTourist(){
-                localStorage.setItem('ms_username',"游客");
-                    var router = getRouter();
-                    //重启vue
-                    console.log("Vue重启中。。。");
-                    new Vue({
-                        router,
-                        render: h => h(App)
-                    }).$mount('#app');
-                    console.log("Vue重启成功");
+                localStorage.setItem('ms_username',"游客"); 
+                if(this.$touristId==0){
+                    
+                    this.getTourist();
+                }else{
+                    console.log(this.$touristId); 
+                    this.getUserAllRight(this.$touristId);
+                    //and set Userdata
+                    this.getThisUserInfo(this.$touristName);
                     this.$router.push('/');
-            },      
+                }  
+            },
+            getThisUserInfo(name){
+                console.log(name);
+                this.$axios.post(this.url+'/api/login/getThisUserInfo',{
+                    name:name
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        //console.log(this.responseResult);
+                        localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
+                        console.log(localStorage.getItem('userData'));
+                        console.log("当前用户信息获取成功");
+                    }else{
+                        this.$message.error(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                    }
+                })
+                .catch(failResponse => {})
+            },   
             submitForm(formName) {
                 if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
                     localStorage.setItem('ms_username',"admin");
-                    var router = getRouter();
-                    //重启vue
-                    console.log("Vue重启中。。。");
-                    new Vue({
-                        router,
-                        render: h => h(App)
-                    }).$mount('#app');
-                    console.log("Vue重启成功");
+                    //this.getUserAllRight(20);
                     this.$router.push('/');
+                    
                 }
                 //离线环境下测试
                 // localStorage.setItem('ms_username',"admin");
@@ -106,12 +170,12 @@ import md5 from 'js-md5';
 
                 var password1 = md5.hex(this.ruleForm.password+"cdk");
                 var password2 = md5.hex(password1+"cdk");
-                console.log("md5Password:"+password);
+                console.log("md5Password:"+password2);
                 //表单验证
                 this.$refs[formName].validate((valid) => {
                    //console.log("valid:"+valid);
                     if (valid) {
-                        this.$axios.post('/login',{
+                        this.$axios.post(this.url+'/login',{
                             username:this.ruleForm.username,
                             password:password2
 
@@ -128,6 +192,7 @@ import md5 from 'js-md5';
                                 console.log(successResponse.data.data);
 
                                 //只能储存字符串
+                                //roleTable、giftUpload、giftTable...需要获取userId、userName
                                 localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
                                 //localStorage.setItem('ms_username',this.ruleForm.username);
                                 this.$router.push('/');
@@ -157,7 +222,7 @@ import md5 from 'js-md5';
             },
             getUserAllRole(id){
                 //console.log("id:"+id);
-                this.$axios.post('/getUserAllRole',{
+                this.$axios.post(this.url+'/getUserAllRole',{
                     id:id
                 })
                 .then(successResponse =>{
@@ -184,8 +249,8 @@ import md5 from 'js-md5';
 
             },
             getUserAllRight(id){
-                //console.log("id:"+id);
-                this.$axios.post('/getUserAllRight',{
+                console.log("id:"+id);
+                this.$axios.post(this.url+'/getUserAllRight',{
                     id:id
                 })
                 .then(successResponse =>{

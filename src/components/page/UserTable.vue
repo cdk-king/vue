@@ -381,8 +381,9 @@
         methods: {
             right(){
                 const right = localStorage.getItem('rightTags');
-                
-                if(right.indexOf('User_management_Handle')==-1){
+                if(right==null){
+                    this.handleVisible = false;
+                }else if(right.indexOf('User_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;

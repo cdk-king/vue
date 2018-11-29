@@ -16,6 +16,10 @@ function getDefaultRouter() {
       component: resolve => require(['../components/page/Login.vue'], resolve),
     },
     {
+      path: '/register',
+      component: resolve => require(['../components/page/register.vue'], resolve),
+    },
+    {
       path: '/403',
       redirect: '/403'
     },

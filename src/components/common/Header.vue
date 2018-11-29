@@ -81,7 +81,8 @@
                 // }
                 options: [],
                 gameValue: '1',
-                gameLabel:"请选择游戏"
+                gameLabel:"请选择游戏",
+                url:"http://localhost:8011"
             }
         },
         computed:{
@@ -91,25 +92,22 @@
             }
         },
         created() {
-            
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.right();
         },
         methods:{
             right(){
                 const right = localStorage.getItem('rightTags');
-                console.log(right);
-                if(right.indexOf('User_management_Handle')==-1){
-                    //this.handleVisible = false;
-                }else{
-                    //this.handleVisible = true;
-                }
+                console.log("right:"+right);
                 this.getData();
                 //console.log("this.handleVisible:"+this.handleVisible);
             },
             getData(){
                 var userData = JSON.parse(localStorage.getItem("userData"));
                 this.$axios
-                    .post("/getGameListForUser", {
+                    .post(this.url+"/getGameListForUser", {
                     id: userData.id
                     })
                     .then(successResponse => {

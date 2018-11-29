@@ -195,7 +195,7 @@
                 </el-collapse-item>
                 </el-collapse>
                 <!-- <Divider /> -->
-                <div style="margin:15px;">
+                <div style="margin:15px;" v-if="handleVisible">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakAll">批量禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakToNormalAll">批量解除禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleBanAll">批量禁封</el-button>
@@ -530,7 +530,7 @@ export default {
       detailVisible: false,
       aa: this.$cdk,
       cur_page: 1,
-      handleVisible: true,
+      handleVisible: false,
       multipleSelection:[],
       platformOptions: [
         {
@@ -632,16 +632,31 @@ export default {
   },
   created() {
     this.getData();
+    this.right();
     bus.$on(
       "changeGameId",
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
         this.getPlatformList(this.id);
+        this.getPlayer();
       }.bind(this)
     );
   },
+    beforeDestroy () {
+        bus.$off('changeGameId');
+    },
   methods: {
+    right(){
+        const right = localStorage.getItem('rightTags');
+        
+        if(right.indexOf('Player_Info_Handle')==-1){
+            this.handleVisible = false;
+        }else{
+            this.handleVisible = true;
+        }
+        //console.log("this.handleVisible:"+this.handleVisible);
+    },
     getPlatformList(userId) {
       this.$axios
         .post("/getPlatformListForUserIdAndGameId", {

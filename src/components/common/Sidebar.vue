@@ -157,10 +157,10 @@
                                         index: 'AppleProp',
                                         title: '申请道具'
                                     },
-                                    {
-                                        index: 'ConfirmAppleProp',
-                                        title: '申请道具审核'
-                                    }
+                                    // {
+                                    //     index: 'ConfirmAppleProp',
+                                    //     title: '申请道具审核'
+                                    // }
                                 ]
                             },
                             {
@@ -189,10 +189,21 @@
                                     }
                                 ]
                             },
-                            {
-                                index: 'GameLogManagement',
-                                title: '游戏日志管理'
-                            },
+                            // {
+                            //     index: 'GameLogManagement',
+                            //     title: '游戏日志管理'
+                            // },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: 'SystemSet',
+                        title: '系统设置',
+                        subs: [
+                                    {
+                                        index: 'TouristIdSet',
+                                        title: '游客账号设置'
+                                    },
                         ]
                     },
                     // {

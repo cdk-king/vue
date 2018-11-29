@@ -45,11 +45,26 @@ Vue.prototype.$setcdk = function(str){
     Vue.prototype.$cdk = str;
 };
 
+//游戏Id
 Vue.prototype.$gameId = 0;
 Vue.prototype.$setGameId = function(id){
     Vue.prototype.$gameId = id;
 };
-
+//游客Id
+Vue.prototype.$touristId = 0;
+Vue.prototype.$setTouristId = function(id){
+    Vue.prototype.$touristId = id;
+};
+//游客name
+Vue.prototype.$touristName = "游客";
+Vue.prototype.$setTouristName = function(name){
+    Vue.prototype.$touristName = name;
+};
+//url
+Vue.prototype.$url = "http://localhost:8011";
+Vue.prototype.$setUrl = function(url){
+    Vue.prototype.$url = url;
+};
 
 var router = getRouter();
 

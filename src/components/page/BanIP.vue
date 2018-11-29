@@ -15,7 +15,7 @@
                 </div>
                 
                 <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse v-model="activeNames" @change="handleChange" v-if="handleVisible">
                 <el-collapse-item title="折叠" name="1">
                     <div class="form-box">
                     <el-form ref="form" :model="form" label-width="150px">
@@ -89,7 +89,7 @@
             
 
             <div style="margin:15px;">
-                      <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
+                      <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll" v-if="handleVisible">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
                             <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
                                 <el-option key="1" label="全部" value="0"></el-option>
@@ -138,7 +138,7 @@
                 </el-table-column>
                 <el-table-column prop="addUser"  label="编辑人" >
                 </el-table-column>
-                <el-table-column label="操作"  align="center" >
+                <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleBan(scope.$index, scope.row)" v-if="scope.row.banState!=1" >封禁</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleNotBan(scope.$index, scope.row)" v-if="scope.row.banState==1" >解除封禁</el-button>
@@ -230,6 +230,7 @@ export default {
       delAllVisible:false,
       idx:0,
       cur_page: 1,
+      handleVisible:false
     };
   },
   components: {
@@ -245,7 +246,7 @@ export default {
     }
   },
   created() {
-
+      this.right();
     this.getData();
     bus.$on(
       "changeGameId",
@@ -256,8 +257,21 @@ export default {
       }.bind(this)
     );
   },
+    beforeDestroy () {
+      bus.$off('changeGameId');
+  },
   methods: {
-
+    right(){
+        const right = localStorage.getItem('rightTags');
+        if(right==null){
+            this.handleVisible = false;
+        }else if(right.indexOf('Player_BanIp_Handle')==-1){
+            this.handleVisible = false;
+        }else{
+            this.handleVisible = true;
+        }
+        //console.log("this.handleVisible:"+this.handleVisible);
+    },
     handleDelAll(){
         this.delAllVisible = true;
     },

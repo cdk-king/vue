@@ -139,6 +139,9 @@ import bus from '../common/bus';
                 this.getPlatformList(this.$gameId);
             }.bind(this))
         },
+        beforeDestroy () {
+            bus.$off('changeGameId');
+        },
         computed: {
             data() {
                 return this.tableData;
@@ -255,7 +258,7 @@ import bus from '../common/bus';
                 //return row.address;
                 //时间格式化
                     
-                var date = row[column.playererty];  
+                var date = row[column.property];  
                 if (date == undefined) {  
                     return "";  
                 }

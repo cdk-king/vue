@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>礼包管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>激活码使用情况</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -12,11 +12,8 @@
                 </div>
                 
                 <Divider />
-                <div class="form-box">
+                <div class="form-box" v-if="false">
                     <el-form ref="form" :model="form" label-width="150px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择渠道">
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
@@ -40,11 +37,10 @@
                             <el-button type="primary" @click="exchangeCDK">兑换激活码</el-button>
                             <el-button @click="resetForm">重置</el-button>
                         </el-form-item>
-                        </el-form>
+                    </el-form>
 
-                    </div>
+                </div>
 
-                <Divider />
                 <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
                 <span class="grid-content bg-purple-light">平台：</span>
                 <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠道平台" class="handle-select mr10">
@@ -173,8 +169,8 @@
         </el-dialog>
 
         <el-dialog title="提示" :modal="false"  :close-on-click-modal="false" :visible.sync="exchangeVisible"   width="300px" center>     
-            <div  class="text item">couponID:{{exchangeResult.couponID}}</div>
-            <div  class="text item">sequenceID:{{exchangeResult.sequenceID}}</div>
+            <div  class="text item">couponID:{{exchangeResult.couponId}}</div>
+            <div  class="text item">sequenceID:{{exchangeResult.sequenceId}}</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="exchangeVisible = false">取 消</el-button>
                 <el-button type="primary" @click="exchangeVisible = false">确 定</el-button>
@@ -240,8 +236,8 @@ import bus from '../common/bus';
                 strPlatform:"",
                 exchangeVisible:false,
                 exchangeResult:{
-                    couponID:"",
-                    sequenceID:""
+                    couponId:"",
+                    sequenceId:""
                 }
             }
         },
@@ -363,7 +359,7 @@ import bus from '../common/bus';
                 //return row.address;
                 //时间格式化
                     
-                var date = row[column.gifterty];  
+                var date = row[column.property];
                 if (date == undefined) {  
                     return "";  
                 }
@@ -631,7 +627,7 @@ import bus from '../common/bus';
             formatCouponId: function (row, column, cellValue, index) { 
                 console.log();
 
-			return  Math.round(parseInt(row.couponId)/10000).toString();
+			    return  Math.round(parseInt(row.couponId)/1).toString();
             },
             formatIsUsed: function (row, column, cellValue, index) { 
 			return  parseInt(row.isUsed) == 1 ? '已使用' : '未使用？';

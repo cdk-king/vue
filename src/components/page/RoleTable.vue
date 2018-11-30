@@ -914,10 +914,13 @@
     .li-small{
         font-size: 8px;
     }
-    el-collapse{
-        background: ""
+    /* 尝试设置背景颜色透明 */
+    el-collapse {
+        background: rgba(255, 255, 255, 0);
+        background-color:rgba(255, 255, 255, 0)
     }
-    el-collapse-item{
-        background: ""
-    }
+    el-collapse-item {
+        background: rgba(255, 255, 255, 0);
+        background-color:rgba(255, 255, 255, 0)
+    } 
 </style>

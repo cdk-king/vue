@@ -105,7 +105,7 @@
 </template>
 
 <script>
-    import Schart from 'vue-schart';
+    //import Schart from 'vue-schart';
     import bus from '../common/bus';
     export default {
         name: 'dashboard',
@@ -184,7 +184,7 @@
             }
         },
         components: {
-            Schart
+            //Schart
         },
         computed: {
             role() {
@@ -199,8 +199,8 @@
             this.handleListener();
         },
         deactivated(){
-            window.removeEventListener('resize', this.renderChart);
-            bus.$off('collapse', this.handleBus);
+            //window.removeEventListener('resize', this.renderChart);
+            //bus.$off('collapse', this.handleBus);
         },
         methods: {
             changeDate(){
@@ -211,9 +211,9 @@
                 })
             },
             handleListener(){
-                bus.$on('collapse', this.handleBus);
+                //bus.$on('collapse', this.handleBus);
                 // 调用renderChart方法对图表进行重新渲染
-                window.addEventListener('resize', this.renderChart)
+                //window.addEventListener('resize', this.renderChart)
             },
             handleBus(msg){
                 setTimeout(() => {

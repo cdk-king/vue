@@ -97,17 +97,21 @@
                                         index: 'PlayerInfo',
                                         title: '玩家基本信息'
                                     },
-                                     {
-                                        index: 'PlayerUpload',
-                                        title: '玩家信息导入'
-                                    },
+                                    //  {
+                                    //     index: 'PlayerUpload',
+                                    //     title: '玩家信息导入'
+                                    // },
                                     {
                                         index: 'PlayerProhibitSpeakLog',
-                                        title: '玩家禁言记录'
+                                        title: '玩家禁言记录' 
                                     },
                                     {
                                         index: 'PlayerBanLog',
                                         title: '玩家封禁记录'
+                                    },
+                                    {
+                                        index: 'BanIp',
+                                        title: 'IP封禁'
                                     },
                                 ]
                             },
@@ -121,7 +125,7 @@
                                     },
                                      {
                                         index: 'SendNotice',
-                                        title: '发送公告'
+                                        title: '发送广播'
                                     },
                                     {
                                         index: 'AllEmail',
@@ -137,10 +141,10 @@
                                 index: '2-2',
                                 title: '道具管理',
                                 subs: [
-                                    {
-                                        index: 'PropInfo',
-                                        title: '道具信息'
-                                    },
+                                    // {
+                                    //     index: 'PropInfo',
+                                    //     title: '道具信息'
+                                    // },
                                     {
                                         index: 'newPropInfo',
                                         title: '道具导入信息'
@@ -153,20 +157,20 @@
                                         index: 'AppleProp',
                                         title: '申请道具'
                                     },
-                                    {
-                                        index: 'ConfirmAppleProp',
-                                        title: '申请道具审核'
-                                    }
+                                    // {
+                                    //     index: 'ConfirmAppleProp',
+                                    //     title: '申请道具审核'
+                                    // }
                                 ]
                             },
                             {
                                 index: '2-3',
                                 title: '礼包管理',
                                 subs: [
-                                    {
-                                        index: 'GiftInfo',
-                                        title: '礼包信息'
-                                    },
+                                    // {
+                                    //     index: 'GiftInfo',
+                                    //     title: '礼包信息'
+                                    // },
                                     {
                                         index: 'newGiftInfo',
                                         title: '礼包导入信息'
@@ -185,10 +189,21 @@
                                     }
                                 ]
                             },
-                            {
-                                index: 'GameLogManagement',
-                                title: '游戏日志管理'
-                            },
+                            // {
+                            //     index: 'GameLogManagement',
+                            //     title: '游戏日志管理'
+                            // },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: 'SystemSet',
+                        title: '系统设置',
+                        subs: [
+                                    {
+                                        index: 'TouristIdSet',
+                                        title: '游客账号设置'
+                                    },
                         ]
                     },
                     // {

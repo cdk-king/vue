@@ -13,16 +13,120 @@
                     （1）两种申请方式（为指定角色申请、为全服玩家申请）只能选择其中的一种；
                     <br/>
                     （2）申请添加以后需要审核人审核通过后，才能发送道具申请邮件；
+                    <br/>
+                    （3）邮件发送成功后将不能再发送；
                 </div>
                 
                 <!-- <Divider /> -->
                 <el-collapse v-model="activeNames" @change="handleChange">
                 <el-collapse-item title="折叠" name="1">
-                    <div class="form-box">
+
+                </el-collapse-item>
+                </el-collapse>
+            
+
+            <div style="margin:15px;">
+                      <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
+                      <span class="grid-content bg-purple-light">平台：</span>
+                            <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
+                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option
+                                v-for="item in platformOptions"
+                                :key="item.id"
+                                :label="item.platform"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                      <span class="grid-content bg-purple-light">服务器：</span>
+                            <el-select v-model="searchKey.serverId" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
+                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option
+                                v-for="item in searchKeyServerOptions"
+                                :key="item.serverId"
+                                :label="item.serverName"
+                                :value="item.serverId">
+                                </el-option>
+                            </el-select>
+                      <!-- <span class="grid-content bg-purple-light">：</span>
+                      <el-input v-model="searchKey.rightName" placeholder="筛选权限名" class="handle-input " style="width:150px"></el-input> -->
+
+                      <span class="grid-content bg-purple-light">内容：</span>
+                      <el-input v-model="searchKey.releaseContent" placeholder="筛选内容" class="handle-input " style="width:150px"></el-input>
+
+                      <el-button type="primary" icon="search" @click="search">搜索</el-button>
+                      <el-button type="primary" icon="search" @click="handleAdd">添加申请</el-button>
+            </div>
+
+            <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="55" align="center">
+                </el-table-column>
+                <el-table-column prop="platform" label="平台"  >
+                </el-table-column>
+                <!-- <el-table-column prop="serverList" label="服务器" >
+                </el-table-column> -->
+                <el-table-column prop="server" label="服务器" >
+                </el-table-column>
+
+                <el-table-column prop="releaseTitle"  label="标题" >
+                </el-table-column>
+                <el-table-column prop="releaseContent"  label="内容" width="200">
+                </el-table-column>
+                <el-table-column prop="propList" label="道具列表" width="200">
+                    <template slot-scope="scope">
+                      <p style=""  v-for="item in scope.row.propList.split(',')" :key="item"
+                                :label="item"
+                                :value="item">{{item}}
+                      </p>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="moneyCount"  label="货币" >
+                    <template slot-scope="scope">
+                        <p style=""  v-for="item in scope.row.moneyList.split(';')" :key="item"
+                                :label="item"
+                                :value="item">{{item}}
+                      </p>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="applyType"  label="申请类型" :formatter="formatApplyType">
+                </el-table-column>
+                 <el-table-column prop="playerAccountList"  label="玩家账号" >
+                </el-table-column>
+                <el-table-column prop="playerNameList"  label="玩家名称" >
+                </el-table-column>
+                <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter">
+                </el-table-column>
+                <!-- 0未审核1已通过2未通过 -->
+                <el-table-column prop="confirmState"  label="审核状态" :formatter="formatIsSend">
+                </el-table-column>
+                <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState">
+                </el-table-column>
+                <el-table-column prop="userName"  label="编辑人" >
+                </el-table-column>
+                <el-table-column label="操作"  align="center" >
+                    <template slot-scope="scope">
+
+                        <el-button type="text" icon="el-icon-edit" @click="handleApply(scope.$index, scope.row)" v-if="scope.row.confirmState==1 && scope.row.applyState!=1">发送邮件申请</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >编辑</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleNotConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=2 && scope.row.applyState!=1" >不通过</el-button>
+                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    
+                    </template>
+                </el-table-column>
+
+            </el-table>
+            <div class="pagination">
+                <!-- layout="prev, pager, next" :total="500"-->
+                <el-pagination background @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper" :page-sizes="[ 5, 10, 15, 20]" :page-size="10"  :total="this.total">
+                </el-pagination>
+            </div>
+            </div>
+
+            <!-- 添加提示框 -->
+            <el-dialog title="添加" :visible.sync="addVisible" width="1100px" center>
+                
+                <div class="form-box">
                     <el-form ref="form" :model="form" label-width="150px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择渠道">
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
@@ -86,7 +190,7 @@
                                 <el-table-column prop="propCount" label="数量" >
                                     <template slot-scope="scope">
                                         <el-input 
-                                        placeholder="请输入标题" v-on:change="changeCount"
+                                        placeholder="请输入标题" v-on:change="changePropCount"
                                         v-model="propData[scope.$index].propCount"
                                         clearable>{{scope.row.propCount}}
                                         </el-input>
@@ -98,7 +202,7 @@
                                         <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
                                     </template>
                                 </el-table-column>
-                                <el-table-column label="品质" >
+                                <!-- <el-table-column label="品质" >
                                     <template slot-scope="scope">
                                         <el-select v-model="propData[scope.$index].propQuality"  placeholder="请选择品质">
                                             <el-option
@@ -111,10 +215,7 @@
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="propCount" label="过期时间" >
-
-                                </el-table-column>
-
-
+                                </el-table-column> -->
                                 <el-table-column label="操作"  align="center" >
                                     <template slot-scope="scope">
                                         <el-button type="text" icon="el-icon-edit" @click="handleAddPropCount(scope.$index, scope.row)" >添加</el-button>
@@ -134,34 +235,39 @@
                                 :value="item.moneyId">
                                 </el-option>
                             </el-select>
+                            <el-button type="primary" icon="search" @click="addMoneyToList">添加货币</el-button>
+                            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">暂时只支持系统金子</span>
                         </el-form-item>
-                        <el-form-item  label="货币数量">
-                            <el-input style="width:215px"
-                            placeholder="请输入数量"
-                            v-model="form.moneyCount"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-            
-                        <!-- </el-form> -->
+                         <el-form-item label="已选择货币列表">
 
+                            <el-table :data="moneyList" border class="table" ref="multipleTable" >
+                                <el-table-column prop="moneyType" label="货币类型"   :formatter="formatMoneyTypeName">>
+                                </el-table-column>
+                                <el-table-column prop="moneyCount" label="数量" >
+                                    <template slot-scope="scope">
+                                        <el-input 
+                                        placeholder="请输入数量" v-on:change="changeMoneyCount"
+                                        v-model="moneyList[scope.$index].moneyCount"
+                                        clearable>{{scope.row.moneyCount}}
+                                        </el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作"  align="center" >
+                                    <template slot-scope="scope">
+                                        <el-button type="text" icon="el-icon-edit" @click="handleAddMoneyCount(scope.$index, scope.row)" >添加</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleReduceMoneyCount(scope.$index, scope.row)" >减小</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleDelMoneyItem(scope.$index, scope.row)" >删除</el-button>
+                                    </template>
+                                </el-table-column>
+
+                            </el-table>
+                        </el-form-item>
+                        </el-form>
                     </div>
-
                 <Divider />
-
-                    <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
+                <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
                     <el-tab-pane label="为指定角色申请" name="1">
-                        <el-form ref="form" :model="form" label-width="350px">
-
-                        <el-form-item label="玩家账号">
-                            <el-input style="width:515px"
-                            placeholder="请输入玩家账号" type="textarea"
-                            :autosize="{ minRows:4, maxRows: 10}" 
-                            v-model="form.playerAccountList"
-                            clearable>
-                            </el-input>
-                            
-                        </el-form-item>
+                        <el-form ref="form" :model="form" label-width="200px">
                         <el-form-item label="玩家名称">
                             <el-input style="width:515px"
                             placeholder="请输入玩家名称" type="textarea"
@@ -169,10 +275,11 @@
                             v-model="form.playerNameList"
                             clearable>
                             </el-input>
+                            <p class="grid-content bg-purple-light" style="margin:20px;color:#888888">玩家名称和角色ID至少填写一项，','分隔</p>
                         </el-form-item>
                         <el-form-item label="角色ID">
                             <el-input style="width:515px"
-                            placeholder="请输入" type="textarea"
+                            placeholder="请输入角色ID" type="textarea"
                             :autosize="{ minRows:4, maxRows: 10}"
                             v-model="form.playerIdList"
                             clearable>
@@ -215,7 +322,7 @@
                         </el-form>
                     </el-tab-pane>
                     <el-tab-pane label="为全服玩家申请" name="2">
-                        <el-form ref="form" :model="form" label-width="350px">
+                        <el-form ref="form" :model="form" label-width="200px">
                         
 
                         <el-form-item label="申请人">
@@ -241,15 +348,19 @@
                         </el-form>
                     </el-tab-pane>
                     </el-tabs>
-                </el-collapse-item>
-                </el-collapse>
-            
 
-            <div style="margin:15px;">
-                      <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
-                      <span class="grid-content bg-purple-light">平台：</span>
-                            <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="addVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 编辑提示框 -->
+            <el-dialog title="编辑" :visible.sync="editVisible" width="1100px" center>
+                                    <div class="form-box">
+                    <el-form ref="form" :model="form" label-width="150px">
+                        <el-form-item class="el-form-item" label="选择渠道">
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -257,81 +368,209 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
-                      <span class="grid-content bg-purple-light">服务器：</span>
-                            <el-select v-model="searchKey.serverId" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                        </el-form-item>
+                        <el-form-item class="el-form-item" label="选择服务器">
+                            <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器" >
                                 <el-option
-                                v-for="item in searchKeyServerOptions"
+                                v-for="item in serverOptions"
                                 :key="item.serverId"
                                 :label="item.serverName"
                                 :value="item.serverId">
                                 </el-option>
                             </el-select>
-                      <!-- <span class="grid-content bg-purple-light">：</span>
-                      <el-input v-model="searchKey.rightName" placeholder="筛选权限名" class="handle-input " style="width:150px"></el-input> -->
+                        </el-form-item>
+                        <Divider />
+                        <el-form-item label="标题">
+                            <el-input style="width:215px"
+                            placeholder="请输入标题"
+                            v-model="form.releaseTitle"
+                            clearable>
+                            </el-input>
+                            
+                        </el-form-item>
+                        <el-form-item  label="说明（玩家看到）">
+                            <el-input style="width:515px" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            placeholder="请输入说明"
+                            v-model="form.releaseContent"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <Divider />
+                        <el-form-item label="需要发送的道具">
+                            <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
+                                <el-option
+                                v-for="item in propOptions"
+                                :key="item.id"
+                                :label="item.propName"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                            <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+                        </el-form-item>
+                        <el-form-item label="已选择道具列表">
 
-                      <span class="grid-content bg-purple-light">内容：</span>
-                      <el-input v-model="searchKey.releaseContent" placeholder="筛选内容" class="handle-input " style="width:150px"></el-input>
+                            <el-table :data="propData" border class="table" ref="multipleTable" >
+                                <el-table-column prop="id" label="道具ID"  >
+                                </el-table-column>
+                                <el-table-column prop="propName" label="道具名称"  >
+                                </el-table-column>
+                                <el-table-column prop="propType" label="道具类别"  >
+                                </el-table-column>
+                                <el-table-column prop="propDescribe" label="道具描述"  >
+                                </el-table-column>
+                                <el-table-column prop="propCount" label="数量" >
+                                    <template slot-scope="scope">
+                                        <el-input 
+                                        placeholder="请输入标题" v-on:change="changePropCount"
+                                        v-model="propData[scope.$index].propCount"
+                                        clearable>{{scope.row.propCount}}
+                                        </el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column  label="是否绑定" >
+                                    <template slot-scope="scope">     
+                                        <el-radio v-model="propData[scope.$index].propBind" label="0">不绑定</el-radio>
+                                        <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作"  align="center" >
+                                    <template slot-scope="scope">
+                                        <el-button type="text" icon="el-icon-edit" @click="handleAddPropCount(scope.$index, scope.row)" >添加</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleReducePropCount(scope.$index, scope.row)" >减小</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleDelProp(scope.$index, scope.row)" >删除</el-button>
+                                    </template>
+                                </el-table-column>
 
-                      <el-button type="primary" icon="search" @click="search">搜索</el-button>
-            </div>
+                            </el-table>
+                        </el-form-item>
+                        <el-form-item  label="货币类别">
+                            <el-select v-model="form.moneyType"  placeholder="请选择货币类别">
+                                <el-option
+                                v-for="item in moneyTypeOptions"
+                                :key="item.moneyId"
+                                :label="item.moneyType"
+                                :value="item.moneyId">
+                                </el-option>
+                            </el-select>
+                            <el-button type="primary" icon="search" @click="addMoneyToList">添加货币</el-button>
+                            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">暂时只支持系统金子</span>
+                        </el-form-item>
+                         <el-form-item label="已选择货币列表">
 
-            <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" align="center">
-                </el-table-column>
-                <el-table-column prop="platform" label="平台"  >
-                </el-table-column>
-                <!-- <el-table-column prop="serverList" label="服务器" >
-                </el-table-column> -->
-                <el-table-column prop="server" label="服务器" >
-                </el-table-column>
+                            <el-table :data="moneyList" border class="table" ref="multipleTable" >
+                                <el-table-column prop="moneyType" label="货币类型"   :formatter="formatMoneyTypeName">>
+                                </el-table-column>
+                                <el-table-column prop="moneyCount" label="数量" >
+                                    <template slot-scope="scope">
+                                        <el-input 
+                                        placeholder="请输入数量" v-on:change="changeMoneyCount"
+                                        v-model="moneyList[scope.$index].moneyCount"
+                                        clearable>{{scope.row.moneyCount}}
+                                        </el-input>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作"  align="center" >
+                                    <template slot-scope="scope">
+                                        <el-button type="text" icon="el-icon-edit" @click="handleAddMoneyCount(scope.$index, scope.row)" >添加</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleReduceMoneyCount(scope.$index, scope.row)" >减小</el-button>
+                                        <el-button type="text" icon="el-icon-edit" @click="handleDelMoneyItem(scope.$index, scope.row)" >删除</el-button>
+                                    </template>
+                                </el-table-column>
 
-                <el-table-column prop="releaseTitle"  label="标题" >
-                </el-table-column>
-                <el-table-column prop="releaseContent"  label="内容" width="200">
-                </el-table-column>
-                <el-table-column prop="propList" label="道具列表" width="200">
-                    <template slot-scope="scope">
-                      <p style=""  v-for="item in scope.row.propList" :key="item"
-                                :label="item"
-                                :value="item">{{item}}
-                      </p>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="moneyCount"  label="货币" >
-                    <template slot-scope="scope">
-                      <p>{{scope.row.moneyType+"|"+scope.row.moneyCount}}</p>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="applyType"  label="申请类型" :formatter="formatApplyType">
-                </el-table-column>
-                 <el-table-column prop="playerAccountList"  label="玩家账号" >
-                </el-table-column>
-                <el-table-column prop="playerNameList"  label="玩家名称" >
-                </el-table-column>
-                <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter">
-                </el-table-column>
-                <!-- 0未审核1已通过2未通过 -->
-                <el-table-column prop="confirmState"  label="审核状态" :formatter="formatIsSend">
-                </el-table-column>
-                <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState">
-                </el-table-column>
-                <el-table-column prop="userName"  label="编辑人" >
-                </el-table-column>
-                <el-table-column label="操作"  align="center" >
-                    <template slot-scope="scope">
+                            </el-table>
+                        </el-form-item>
+                        </el-form>
+                    </div>
+                <Divider />
+                    <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
+                    <el-tab-pane label="为指定角色申请" name="1">
+                        <el-form ref="form" :model="form" label-width="200px">
+                        <el-form-item label="玩家名称">
+                            <el-input style="width:515px"
+                            placeholder="请输入玩家名称" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            v-model="form.playerNameList"
+                            clearable>
+                            </el-input>
+                            <p class="grid-content bg-purple-light" style="margin:20px;color:#888888">玩家名称和角色ID至少填写一项，','分隔</p>
+                        </el-form-item>
+                        <el-form-item label="角色ID">
+                            <el-input style="width:515px"
+                            placeholder="请输入角色ID" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            v-model="form.playerIdList"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="玩家类型">
+                            <el-select v-model="form.playerType" @change="selectPlayerType" placeholder="请选择玩家类型">
+                                <el-option
+                                v-for="item in playerTypeOptions"
+                                :key="item.id"
+                                :label="item.playerType"
+                                :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>    
 
-                        <el-button type="text" icon="el-icon-edit" @click="handleApply(scope.$index, scope.row)" v-if="scope.row.confirmState==1">发送邮件申请</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleNotConfirm(scope.$index, scope.row)" >不通过</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        <el-form-item label="申请人">
+                            <el-input style="width:215px"
+                            placeholder="请输入"
+                            v-model="form.applyUser"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+
+                        <el-form-item label="申请说明">
+                            <el-input style="width:515px"
+                            placeholder="请输入" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            v-model="form.applyReason"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="">
+                            
+                                <el-button type="primary" icon="search" @click="editApply">申请</el-button>
+                                <el-button type="primary" icon="search" @click="resetForm">重置</el-button>
                     
-                    </template>
-                </el-table-column>
+                        </el-form-item>
+                        </el-form>
+                    </el-tab-pane>
+                    <el-tab-pane label="为全服玩家申请" name="2">
+                        <el-form ref="form" :model="form" label-width="200px">
+                        
 
-            </el-table>
+                        <el-form-item label="申请人">
+                            <el-input style="width:215px"
+                            placeholder="请输入"
+                            v-model="form.applyUser"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
 
-            </div>
+                        <el-form-item label="申请说明">
+                            <el-input style="width:515px"
+                            placeholder="请输入" type="textarea"
+                            :autosize="{ minRows:4, maxRows: 10}"
+                            v-model="form.applyReason"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="">
+                                <el-button type="primary" icon="search" @click="editApply">编辑</el-button>
+                                <el-button type="primary" icon="search" @click="resetForm">重置</el-button>
+                        </el-form-item>
+                        </el-form>
+                    </el-tab-pane>
+                    </el-tabs>
+            
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="editVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="editVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
             
             <!-- 编辑冻结提示框 -->
             <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
@@ -348,6 +587,15 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delAllVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveDelAll">确 定</el-button>
+            </span>
+        </el-dialog>
+
+              <!-- 发送道具申请邮件提示框 -->
+        <el-dialog title="批量删除提示" :visible.sync="showApplyVisible" width="300px" center>
+            <div class="del-dialog-cnt">道具申请邮件申请后将不可撤销，是否确定发送？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="showApplyVisible = false">取 消</el-button>
+                <el-button type="primary" @click="Apply">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -429,7 +677,14 @@ export default {
       searchKeyServerOptions:[],
       delAllVisible:false,
       moneyTypeOptions:[],
-      propQualityOptions:[]
+      propQualityOptions:[],
+      moneyList:[],
+      showApplyVisible:false,
+      idx:0,
+      cur_page:1,
+      total:0,
+      editVisible:false,
+      addVisible:false
     };
   },
   components: {
@@ -473,11 +728,20 @@ export default {
       handleDelProp(index,row){
           this.propData.splice(index,1);
       },
+      handleDelMoneyItem(index,row){
+          this.moneyList.splice(index,1);
+      },
       handleAddPropCount(index,row){
             var data = this.propData[index];
             var count = parseInt(data.propCount)+1;
             data.propCount = count;
             this.$set(this.propData, index, data);
+      },
+      handleAddMoneyCount(index,row){
+            var data = this.moneyList[index];
+            var count = parseInt(data.moneyCount)+1;
+            data.moneyCount = count;
+            this.$set(this.moneyList, index, data);
       },
       handleReducePropCount(index,row){
           if(this.propData[index].propCount>1){
@@ -487,8 +751,41 @@ export default {
             this.$set(this.propData, index, data);
           }
       },
+        handleReduceMoneyCount(index,row){
+          if(this.moneyList[index].moneyCount>1){
+            var data = this.moneyList[index];
+            var count = parseInt(data.moneyCount)-1;
+            data.moneyCount = count;
+            this.$set(this.moneyList, index, data);
+          }
+      },
       selectProp(){
           console.log(this.form.prop);
+      },
+      addMoneyToList(){
+          //找到相同项的货币数量加一
+        for(var i = 0;i<this.moneyList.length;i++){
+            var item = this.moneyList[i];
+            if(item.moneyType==this.form.moneyType){
+                var data = this.moneyList[i];
+                var count = parseInt(data.moneyCount)+1;
+                data.moneyCount = count;
+                //console.log(this.propData[i].propCount);
+                this.$set(this.moneyList, i, data);
+                //console.log(this.propData[i].propCount);
+                return;
+            }
+        }
+            //否则添加新的货币 
+          var moneyType = this.form.moneyType;
+          var moneyCount = 1;
+          var  item = {};
+          item.moneyType = moneyType;
+          item.moneyCount = moneyCount;
+        
+          //var item = moneyType+"|"+moneyCount;
+          this.moneyList.push(item);
+          console.log(this.moneyList);
       },
     addPropToList(){
         //找到相同项的道具数量加一
@@ -513,9 +810,10 @@ export default {
             }
 
         }
-        console.log(this.form.prop);
+        
         this.form.prop.propCount = 1;
         this.propData.push(this.form.prop);
+        console.log(this.propData);
     },
     getMoneyTypeList(){
         this.$axios.post("/api/applyProp/getMoneyTypeList", {
@@ -555,7 +853,7 @@ export default {
         this.$axios.post("/getApplyProp", {
                 platformId:this.searchKey.platformId,
                 serverId:this.searchKey.serverId,
-                pageNo: 1,
+                pageNo: this.cur_page,
                 pageSize: 10,
                 isPage:"isPage",
 
@@ -565,7 +863,8 @@ export default {
                 console.log(this.responseResult);
                 console.log("申请道具列表获取成功");
                 this.tableData = successResponse.data.data.list;
-                this.mapDate();
+                this.total = successResponse.data.data.total;
+                //this.mapDate();
                 
             }else{
                 
@@ -591,7 +890,7 @@ export default {
                 //         propInfo.push(this.propOptions[k].propName);
                 //     }
                 // }
-                list.push(propInfo)
+                list.push(propInfo);
             }
             this.tableData[i].propList = list;
             list=[];
@@ -616,6 +915,12 @@ export default {
     },
     handleDelAll(){
         this.delAllVisible = true;
+    },
+        // 分页导航
+    handleCurrentChange(val) {
+        this.cur_page = val;
+        console.log("page:"+val);
+        this.getApplyProp();
     },
     getPropList(platformId) {
         this.$axios.post("/getPropUplaod", {
@@ -713,9 +1018,12 @@ export default {
     selectSearchKeyServer(){
             this.getApplyProp();
     },
-    changeCount(value){
+    changePropCount(value){
         console.log(value);
         console.log(this.propData);
+    },
+    changeMoneyCount(value){
+        console.log(value);
     },
     search(){
         this.getApplyProp();
@@ -810,6 +1118,11 @@ export default {
                         list+="-1,";
                     }
             }
+            var moneyList = "";
+            for(var j = 0;j<this.moneyList.length;j++){
+                moneyList += this.moneyList[j].moneyType+"|"+this.moneyList[j].moneyCount +";"
+            }
+            moneyList = moneyList.substring(0,moneyList.length-1);
         if(this.editableTabsValue=="1"){
             console.log("1");
             
@@ -819,22 +1132,15 @@ export default {
                 releaseTitle:this.form.releaseTitle,
                 releaseContent:this.form.releaseContent,
                 applyType:1,
-                //
                 propList:list,
-
                 playerNameList:this.form.playerNameList,
                 playerAccountList:this.form.playerAccountList,
                 playerIdList:this.form.playerIdList,
-
                 playerType:this.form.playerType,
-
                 applyUser:this.form.applyUser,
-
                 applyReason:this.form.applyReason,
-
                 addUser:this.id,
-                moneyType:this.form.moneyType,
-                moneyCount:this.form.moneyCount
+                moneyList:moneyList
             };
 
         }
@@ -854,8 +1160,7 @@ export default {
                 applyReason:this.form.applyReason,
 
                 addUser:this.id,
-                moneyType:this.form.moneyType,
-                moneyCount:this.form.moneyCount
+                moneyList:moneyList
             };
 
         }
@@ -882,14 +1187,172 @@ export default {
         console.log(JSON.stringify(data));
         
     },
-    handleApply(index,row){
-       var item  = this.tableData[index];
-        var money = "";
-        if(item.moneyType!=null && item.moneyCount!=null){
-            money = item.moneyType+"|"+item.moneyCount;
+    handleEdit(index,row){
+        
+        var item = this.tableData[index];
+        this.form={
+            id:item.id,
+            platformId:item.platformId,
+            serverId:item.serverId,
+            releaseTitle:item.releaseTitle,
+            releaseContent:item.releaseContent,
+            applyType:item.applyType,
+            playerNameList:item.playerNameList,
+            playerAccountList:item.playerAccountList,
+            playerIdList:item.playerIdList,
+            applyUser:item.applyUser,
+            applyReason:item.applyReason,
         }
+        this.getPropList(this.form.platformId);
+        this.editVisible = true;
+    },
+    editApply(){
+        var data = {};
+        if(this.form.platformId==""){
+            this.$message("请选择正确的平台");
+            return;
+        }
+        if(this.form.serverId==""){
+            this.$message("请选择正确的服务器");
+            return;
+        }
+        if(this.form.releaseTitle==""){
+            this.$message("标题不能为空");
+            return;
+        }
+        if(this.form.releaseContent==""){
+            this.$message("内容不能为空");
+            return;
+        }
+        var list = "";
+        console.log("this.propData:"+this.propData);
+        console.log("this.propData.length:"+this.propData.length);
+            for(var i = 0;i<this.propData.length;i++){
+                //判断是否是最后一个元素
+                if((i+1)>=this.propData.length){
+                    
+                    list+=this.propData[i].id+"-"+this.propData[i].propCount;
+                    if(this.propData[i].propBind){
+                        list+="-"+this.propData[i].propBind;
+                    }else{
+                        //默认不绑定
+                        list+="-0";
+                    }
+                    if(this.propData[i].propQuality){
+                        list+="-"+this.propData[i].propQuality;
+                    }else{
+                        //默认白品质
+                        list+="-1";
+                    }
+                    break;
+                }
+                console.log(this.propData[i].propBind);
+                    list+=this.propData[i].id+"-"+this.propData[i].propCount;
+                    if(this.propData[i].propBind){
+                        list+="-"+this.propData[i].propBind;
+                    }else{
+                        //默认不绑定
+                        list+="-0";
+                    }
+                    if(this.propData[i].propQuality){
+                        list+="-"+this.propData[i].propQuality+",";
+                    }else{
+                        //默认白品质
+                        list+="-1,";
+                    }
+            }
+            var moneyList = "";
+            for(var j = 0;j<this.moneyList.length;j++){
+                moneyList += this.moneyList[j].moneyType+"|"+this.moneyList[j].moneyCount +";"
+            }
+            moneyList = moneyList.substring(0,moneyList.length-1);
+        if(this.editableTabsValue=="1"){
+            console.log("1");
+            
+            data = {
+                id:this.form.id,
+                platformId:this.form.platformId,
+                serverId:this.form.serverId,
+                releaseTitle:this.form.releaseTitle,
+                releaseContent:this.form.releaseContent,
+                applyType:1,
+                propList:list,
+                playerNameList:this.form.playerNameList,
+                playerAccountList:this.form.playerAccountList,
+                playerIdList:this.form.playerIdList,
+                playerType:this.form.playerType,
+                applyUser:this.form.applyUser,
+                applyReason:this.form.applyReason,
+                addUser:this.id,
+                moneyList:moneyList
+            };
+
+        }
+        if(this.editableTabsValue=="2"){
+                console.log("2");
+            data = {
+                id:this.form.id,
+                platformId:this.form.platformId,
+                serverId:this.form.serverId,
+                releaseTitle:this.form.releaseTitle,
+                releaseContent:this.form.releaseContent,
+                applyType:2,
+                propList:list,
+                applyUser:this.form.applyUser,
+                applyReason:this.form.applyReason,
+                addUser:this.id,
+                moneyList:moneyList
+            };
+
+        }
+        this.$axios
+        .post("/api/apply/editApplyProp", data)
+        .then(successResponse => {
+        this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("道具申请修改成功");
+            this.$message.success("道具申请修改成功");
+            this.getApplyProp(); 
+            this.editVisible = false;
+               
+        } else {
+            console.log(this.responseResult);
+            console.log("道具申请修改失败");
+            this.$message.error("道具申请修改失败");
+        }
+        })
+        .catch(failResponse => {});
+        console.log(this.form);
+        console.log(data);
+    },
+    handleAdd(){
+        this.form={
+            platformId:"",
+            serverId:"",
+            releaseTitle:"",
+            releaseContent:"",
+            applyType:"",
+            playerNameList:"",
+            playerAccountList:"",
+            playerIdList:"",
+            applyUser:"",
+            applyReason:"",
+        }
+        this.addVisible = true;
+    },
+    handleApply(index,row){
+        this.idx = index;
+        this.showApplyVisible = true;
+    },
+    Apply(){
+       var item  = this.tableData[this.idx];
+        var money = item.moneyList;
+        console.log(money);
+        console.log(item.propList);
         var itemList = "";
         var len = item.propList.length;
+        console.log(len);
         for(var i = 0;i<len;i++){
             var a = item.propList[i][0];
             var b = item.propList[i][1];
@@ -921,12 +1384,11 @@ export default {
             console.log("道具申请邮件发送成功");
             this.$message.success("道具申请邮件发送成功");
             this.getApplyProp(); 
-               
+            this.showApplyVisible = false;
         } else {
             console.log(this.responseResult);
             console.log("道具申请邮件发送失败");
             this.$message.error("道具申请邮件发送失败");
-            return false;
         }
         })
     },
@@ -1061,6 +1523,14 @@ export default {
     },
     formatApplyType(row, column, cellValue, index){
         return row.applyType == 1 ? "角色申请" : "全服申请";
+    },
+    formatMoneyTypeName(row, column, cellValue, index){
+        for(var i = 0;i<this.moneyTypeOptions.length;i++){
+            if(row.moneyType==this.moneyTypeOptions[i].moneyId){
+                return this.moneyTypeOptions[i].moneyType;
+            }
+        }
+
     }
   },
   watch: {

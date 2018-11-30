@@ -338,6 +338,9 @@ export default {
     console.log();
 
   },
+  beforeDestroy () {
+      bus.$off('changeGameId');
+  },
   methods: {
     getPlatformList(userId) {
       this.$axios

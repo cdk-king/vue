@@ -59,9 +59,15 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
+    //默认
     //assetsPublicPath: '/',
+
     //为了方便，如果使用'/dist/'，则需要把整个dist文件夹复制到static目录下
     assetsPublicPath: '/dist/',
+    
+    //打包后打开空白解决方法：
+    //assetsPublicPath: './', 
+    //router/index.js路由配置里边默认模式是hash，改成history会造成打开空白
 
     /**
      * Source Maps

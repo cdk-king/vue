@@ -253,7 +253,8 @@
 </template>
 
 <script>
-    import draggable from 'vuedraggable'
+    import draggable from 'vuedraggable';
+    import md5 from 'js-md5';
     export default {
         name: 'usertable',
         data() {
@@ -380,8 +381,9 @@
         methods: {
             right(){
                 const right = localStorage.getItem('rightTags');
-                
-                if(right.indexOf('User_management_Handle')==-1){
+                if(right==null){
+                    this.handleVisible = false;
+                }else if(right.indexOf('User_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -831,10 +833,11 @@
                     this.$message.error("密码不一致");
                     return false;
                 }else{
-                    
+                    var password1 = md5.hex(this.passwordform.newPassword+"cdk");
+                    var password2 = md5.hex(password1+"cdk");
                     this.$axios.post('/editPassword',{
                         id: this.passwordform.id, 
-                        password: this.passwordform.newPassword
+                        password: password2
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)

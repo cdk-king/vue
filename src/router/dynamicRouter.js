@@ -148,6 +148,16 @@ function getchildren() {
     children.push(item);
     item = {}
 
+    item.path = '/BanIp';
+    item.meta = { title: 'IP禁封' };
+    if (right.indexOf('Player_BanIp_View') != -1) {
+        item.component = resolve => require(['../components/page/BanIP.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
+    children.push(item);
+    item = {}
+
     item.path = '/SendEmail';
     item.meta = { title: '发送邮件' };
     if (right.indexOf('Send_Email_View') != -1) {
@@ -284,6 +294,16 @@ function getchildren() {
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };
     item.component = resolve => require(['../components/test/ComponentCommunicationTest.vue'], resolve);
+    children.push(item);
+    item = {}
+
+    item.path = '/TouristIdSet';
+    item.meta = { title: '游客账号设置' };
+    if (right.indexOf('TouristId_Set_View') != -1) {
+        item.component = resolve => require(['../components/page/TouristIdSet.vue'], resolve);
+    }else{
+        item.component = resolve => require(['../components/page/403.vue'], resolve);
+    }
     children.push(item);
     item = {}
 

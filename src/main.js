@@ -1,5 +1,6 @@
 //import Vue from "../node_modules/vue/dist/vue.js";
 import Vue from 'vue';
+
 //import App from './App.vue';
 import App from './App';
 //import router from './route.js';
@@ -64,6 +65,12 @@ Vue.prototype.$setTouristName = function(name){
 Vue.prototype.$url = "http://localhost:8011";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
+};
+
+//router
+Vue.prototype.$defaultRouter = "router";
+Vue.prototype.$setDefaultRouter = function(router){
+    Vue.prototype.$defaultRouter = router;
 };
 
 var router = getRouter();

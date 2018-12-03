@@ -331,8 +331,8 @@
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
+                //console.log(right);
+                //console.log(username);
                 if(right.indexOf('Platform_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{

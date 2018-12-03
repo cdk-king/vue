@@ -53,6 +53,8 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="center">个人中心</el-dropdown-item>
+  
                         <!-- <a href="http://blog.gdfengshuo.com/about/" target="_blank">
                             <el-dropdown-item>关于作者</el-dropdown-item>
                         </a>
@@ -106,6 +108,7 @@
             },
             getData(){
                 var userData = JSON.parse(localStorage.getItem("userData"));
+                
                 this.$axios
                     .post(this.url+"/getGameListForUser", {
                     id: userData.id
@@ -123,7 +126,6 @@
                         this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("用户游戏列表获取失败");
-                        return false;
                     }
                     })
                     .catch(failResponse => {});
@@ -138,6 +140,10 @@
                     localStorage.removeItem('rightTags')
                     //跳转到登录界面
                     this.$router.push('/login');
+                }
+                if(command=="center"){
+                    this.$router.push('/center');
+
                 }
             },
             // 侧边栏折叠

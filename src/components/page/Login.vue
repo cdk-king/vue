@@ -18,7 +18,7 @@
                     <el-button type="primary" @click="submitForm('ruleForm')">登&emsp;录</el-button>
                 </div>
                 
-                <div v-if="false">
+                <div v-if="footVisible">
                     <el-button-group style="width:100%" >
                     <el-button  class="bottomBtnClass" icon="el-icon-arrow-left" style="" @click="loginInTourist">游客登陆</el-button>
                     <el-button  class="bottomBtnClass" style="" @click="register">注册用户<i class="el-icon-arrow-right el-icon--right" ></i></el-button>
@@ -72,7 +72,8 @@ import md5 from 'js-md5';
                     ]
                 },
                 responseResult:[],
-                url:"http://localhost:8011"
+                url:"http://localhost:8011",
+                footVisible:false
             }
         },
         created(){
@@ -194,8 +195,11 @@ import md5 from 'js-md5';
                                 //只能储存字符串
                                 //roleTable、giftUpload、giftTable...需要获取userId、userName
                                 localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
-                                //localStorage.setItem('ms_username',this.ruleForm.username);
-                                this.$router.push('/');
+
+
+                                
+                                this.getUserAllRole(successResponse.data.data.id);
+                                
                                 //this.$router.replace({path: '/index'})
                             }else{
                                 this.$message.error(successResponse.data.message);
@@ -234,8 +238,6 @@ import md5 from 'js-md5';
                         localStorage.setItem('roles',"");
                         localStorage.setItem('roles',successResponse.data.data);
                         this.getUserAllRight(id);
-                        //localStorage.setItem('ms_username',this.ruleForm.username);
-                        //this.$router.replace({path: '/index'})
 
                     }else{
                         this.$message.error(successResponse.data.message);
@@ -263,8 +265,6 @@ import md5 from 'js-md5';
                         
                         localStorage.setItem('rightTags',successResponse.data.data);
                         this.addRouter();
-                        //localStorage.setItem('ms_username',this.ruleForm.username);
-                        //this.$router.replace({path: '/index'})
 
                     }else{
                         this.$message.error(successResponse.data.message);
@@ -296,11 +296,18 @@ import md5 from 'js-md5';
                     var router = getRouter();
                     //重启vue
                     console.log("Vue重启中。。。");
+                    
                     new Vue({
                          router,
-                        render: h => h(App)
+                        render: h => h(App),
+                        mounted:function(){
+                            this.$router.push('/');
+                        }
                     }).$mount('#app');
+                    
                     console.log("Vue重启成功");
+                    //this.$router.push('/');
+                    
             }
         }
     }

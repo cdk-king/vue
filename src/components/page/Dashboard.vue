@@ -4,14 +4,14 @@
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:252px;">
                     <div class="user-info">
-                        <img src="dist/static/img/img.jpg" class="user-avator" alt="">
+                        <img src="dist/static/img/img.jpg" @click="goCenter" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
+                            <div class="user-info-name hoverCursor" @click="goCenter">{{name}}</div>
                             <div>{{role}}</div>
                         </div>
                     </div>
-                    <div class="user-info-list">上次登录时间：<span>2018-01-01</span></div>
-                    <div class="user-info-list">上次登录地点：<span>深圳</span></div>
+                    <div class="user-info-list">上次登录时间：<span>{{date}}</span></div>
+                    <div class="user-info-list">上次登录地点：<span>{{cityName}}</span></div>
                 </el-card>
                 <!-- <el-card shadow="hover" style="height:252px;">
                     <div slot="header" class="clearfix">
@@ -101,11 +101,16 @@
                 </el-card>
             </el-col>
         </el-row> -->
+        
+  <div id="allmap" class="map">
+    
+  </div>
     </div>
 </template>
 
 <script>
     //import Schart from 'vue-schart';
+    
     import bus from '../common/bus';
     export default {
         name: 'dashboard',
@@ -180,20 +185,32 @@
                     bgColor: '#F5F8FD',
                     bottomPadding: 30,
                     topPadding: 30
-                }
+                },
+                date:"2019-01-01",
+                cityName:"深圳市",
+                role:"普通用户",
+                roleId:0,
+                url:"http://localhost:8011",
             }
         },
         components: {
             //Schart
         },
         computed: {
-            role() {
-                return this.name === 'admin' ? '超级管理员' : '普通用户';
-            }
+            // role() {
+            //     return this.name === 'admin' ? '超级管理员' : '普通用户';
+            // }
         },
         created(){
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.handleListener();
-            this.changeDate();
+            this.changeDate(); 
+            this.date = (new Date()).toLocaleDateString() + " " + (new Date()).toLocaleTimeString();
+            this.roleId = localStorage.getItem('roles').split(",")[0];
+            console.log(localStorage.getItem('roles'));
+            this.getRoleName();
         },
         activated(){
             this.handleListener();
@@ -202,7 +219,50 @@
             //window.removeEventListener('resize', this.renderChart);
             //bus.$off('collapse', this.handleBus);
         },
+        
+        mounted(){
+            this.readyBaiduMap();
+                
+        },
         methods: {
+            getRoleName(){
+                this.$axios
+                .post(this.url+"/api/role/getRoleById", {
+                        id:this.roleId
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    console.log("角色信息获取成功"); 
+                    this.role = successResponse.data.data[0].role;
+                } else {
+                    console.log(this.responseResult);
+                    console.log(successResponse.data.message);
+                }
+                })
+                .catch(failResponse => {});
+            },
+            readyBaiduMap(){
+                //初始化index.html里引入的api要在这里的mounted生命周期的钩子函数中就初始化
+                //创建地图对象，在mounted生命周期调用；
+                var map = new BMap.Map("allmap");
+                var point = new BMap.Point(116.331398,39.897445);
+                map.centerAndZoom(point,12);
+                var selt = this;
+                function myFun(result){
+                    var cityName = result.name;
+                    map.setCenter(cityName);
+                    //alert("当前定位城市:"+cityName);
+                    selt.cityName = cityName;
+                }
+                var myCity = new BMap.LocalCity();
+                myCity.get(myFun); 
+                
+            },
+            goCenter(){
+                this.$router.push("/center");
+            },
             changeDate(){
                 const now = new Date().getTime();
                 this.data.forEach((item, index) => {
@@ -212,7 +272,7 @@
             },
             handleListener(){
                 //bus.$on('collapse', this.handleBus);
-                // 调用renderChart方法对图表进行重新渲染
+                //调用renderChart方法对图表进行重新渲染
                 //window.addEventListener('resize', this.renderChart)
             },
             handleBus(msg){
@@ -299,6 +359,16 @@
         height: 120px;
         border-radius: 50%;
     }
+    .user-avator:hover{
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        cursor:pointer;
+    }
+
+    .hoverCursor:hover{
+        cursor:pointer;
+    }
 
     .user-info-cont {
         padding-left: 50px;
@@ -339,5 +409,9 @@
         width: 100%;
         height: 300px;
     }
-
+    .map{
+        width: 50%;
+        height: 300px;
+        display: none;
+    }
 </style>

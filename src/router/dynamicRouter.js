@@ -7,8 +7,6 @@ function getchildren() {
         item.path = pathkey;
         item.meta = { title: titlekey };
         if (right!=""  && right.indexOf(rightkey) != -1) {
-            let requireUrl = "../components/page/"+pagekey;
-            console.log(requireUrl);
             item.component = resolve => require(['../components/page/'+pagekey], resolve);
             item.isRight = 1;
         }else{

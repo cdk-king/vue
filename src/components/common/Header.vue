@@ -46,7 +46,7 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="dist/static/img/img.jpg"></div>
+                <div class="user-avator hoverCursor" @click="goCenter"><img src="dist/static/img/img.jpg"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
@@ -145,6 +145,9 @@
                     this.$router.push('/center');
 
                 }
+            },
+            goCenter(){
+                this.$router.push("/center");
             },
             // 侧边栏折叠
             collapseChage(){
@@ -289,5 +292,8 @@
     .el-dropdown-item{
         font-size: 15px;
         
+    }
+    .hoverCursor:hover{
+        cursor:pointer;
     }
 </style>

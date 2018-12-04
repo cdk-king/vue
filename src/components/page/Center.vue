@@ -57,6 +57,17 @@
                     </p>
                 </div>
                 <div v-show="show2" class="div-box">
+                    <div class="plugins-tips">
+                        <el-form  ref="userOptions"  :model="userOptions" label-width="100px" style="width:100%">
+                            <el-form-item label="用户名">
+                                <span  style="width:300px;text-align:left;float:left;">{{userOptions.name}}</span>
+                            </el-form-item>
+                            <el-form-item label="手机号码">
+                                <span  style="width:300px;text-align:left;float:left;">{{userOptions.phone}}</span>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <Divider />
                     <el-form ref="form" :model="form" label-width="100px" style="width:100%">
                         <!-- <el-form-item label="日期">
                             <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
@@ -81,6 +92,7 @@
 <script>
     import bus from '../common/bus';
     import md5 from 'js-md5';
+    
     export default {
         name: 'center',
         data: function(){
@@ -94,9 +106,9 @@
                 fileList: [],
                 playerList: [],
                 strplayerList: "",
-                userOptions: [
+                userOptions: {
 
-                ],
+                },
                 serverOptions:[
 
                 ],
@@ -109,14 +121,15 @@
                 },
                 userId:0,
                 userName:"",
-                show1: true,
-                show2: false,
+                show1: false,
+                show2: true,
                 passwordform:{
                     id:"",
                     newPassword:"",
                     checkPassword:""
                 },
-                activeIndex: '5'
+                activeIndex: '4',
+                info:[]
 
             }
         },
@@ -132,6 +145,7 @@
                 console.log(obj.message);
                 this.getData();
             }.bind(this))
+            this.getUserInfo();
         },
         beforeDestroy () {
             bus.$off('changeGameId');
@@ -184,13 +198,29 @@
                 }
             },
             saveEditInfo(){
+                var userId =JSON.parse(localStorage.getItem('userData')).id;
+                var name = this.userOptions.name;
+                var phone = this.userOptions.phone;
+                var email = this.userOptions.email;
+                //Undefined判断
+                if(this.form.name!=undefined){
+                    if(this.form.name.trim()!=""){
+                    name = this.form.name;
+                    }
+                }
+                if(this.form.phone!=undefined){
+                    if(this.form.phone.trim()!=""){
+                        phone = this.form.phone;
+                    }
+                }
+                
                 this.$axios.post(this.url+'/editUser',{
-                    id: this.form.id, 
-                    account: this.form.name,
-                    name: this.form.name,
+                    id: userId,
+                    account: name,
+                    name: name,
                     type: "",
-                    phone: this.form.phone,
-                    email:this.form.email
+                    phone: phone,
+                    email:email
 
                 })
                 .then(successResponse =>{
@@ -201,6 +231,7 @@
                         //this.$router.replace({path: '/index'})
                         this.$message.success("用户信息编辑成功");
                         this.form={};
+                        this.getUserInfo();
                     }else{
                         this.open4(successResponse.data.message);
                         console.log('error');
@@ -213,87 +244,28 @@
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
-            getData(){
-                //每次需要显示游客Id时，会设置一次this.$touristId和touristName
-                this.getTourist();
-               
+            getData(){            
                 console.log("this.$gameId:"+this.$gameId);
-                this.getAllUserList();
-            },
-            getTourist(){
-                this.$axios.post(this.url+'/api/login/getTourist',{
-                })
-                .then(successResponse =>{
-                    //stringify json => str
-                    this.responseResult ="\n"+ JSON.stringify(successResponse.data);
-                    if(successResponse.data.code === 200){
-                        console.log(successResponse.data);
-                        
-                        var touristId = successResponse.data.data.split("|")[0];
-                        var touristName = successResponse.data.data.split("|")[1];
-                        console.log("touristId:"+touristId);
-                        console.log("touristName:"+touristName);
-                        if(touristId!="0" && touristId!=""){
-                            this.$setTouristId(parseInt(touristId));
-                            this.$setTouristName(parseInt(touristName));
-                             this.userId = this.$touristId;
-                             
-                        }else{
-                            this.$message.error("游客Id获取失败！");
-                        } 
 
-                    }else{
-                        this.$message.error(successResponse.data.message);
-                        console.log('error submit!!');
-                        console.log(this.responseResult);
-                    }
-                })
-                .catch(failResponse => {});
-            }, 
-            setTourist(){
-                
-                this.setUserName();
-                //保存在数据库
-                this.$axios
-                .post(this.url+"/api/login/setTourist", {
-                    userId:this.form.userId,
-                    name:this.userName
-                })
-                .then(successResponse => {
-                this.responseResult = "\n" + JSON.stringify(successResponse.data);
-                if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
-                    console.log("用户列表获取成功");
-                    //再次设置this.$touristId
-                    this.$setTouristId(this.form.userId);
-                    this.userId = this.$touristId;
-                    
-                } else {
-                    this.open4(successResponse.data.message);
-                    console.log(this.responseResult);
-                    console.log("用户列表获取失败");
-                }
-                })
-                .catch(failResponse => {});
             },
-            getAllUserList() {
+            getUserInfo() {
                 var userData =JSON.parse(localStorage.getItem('userData'));
-
+                console.log(userData);
                 this.$axios
-                .post(this.url+"/api/user/getAllUser", {
-
+                .post(this.url+"/api/user/getUserById", {
+                        id:userData.id
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
                     console.log(this.responseResult);
-                    console.log("用户列表获取成功");
-                    this.userOptions = successResponse.data.data.list;
-                   this.setUserName();
+                    console.log("用户获取成功");
+                    this.userOptions = successResponse.data.data.list[0];
+                    localStorage.setItem('userData',JSON.stringify(successResponse.data.data.list[0]));
                 } else {
                     this.open4(successResponse.data.message);
                     console.log(this.responseResult);
-                    console.log("用户列表获取失败");
+                    console.log("用户获取失败");
                 }
                 })
                 .catch(failResponse => {});
@@ -303,14 +275,6 @@
                 console.log(this.form.userId);
                  
             },
-            setUserName(){
-                for(var i = 0;i<this.userOptions.length;i++){
-                    if(this.userId == this.userOptions[i].id){
-                        this.userName = this.userOptions[i].name;
-                        break;
-                    }
-                }
-            }
         },
         
     }
@@ -375,5 +339,8 @@
         -ms-user-select:none;
 
         user-select:none;
+  }
+  .plugins-tips{
+      background: #fff
   }
 </style>

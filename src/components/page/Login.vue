@@ -60,8 +60,8 @@ import md5 from 'js-md5';
 
             return {
                 ruleForm: {
-                    username: 'admin',
-                    password: '123456'
+                    username: '',
+                    password: ''
                 },
                 rules: {
                     username: [
@@ -73,7 +73,7 @@ import md5 from 'js-md5';
                 },
                 responseResult:[],
                 url:"http://localhost:8011",
-                footVisible:false
+                footVisible:true
             }
         },
         created(){
@@ -126,6 +126,9 @@ import md5 from 'js-md5';
                 //this.$router.push('/register');
             },
             loginInTourist(){
+                this.$message.info("暂不支持游客登录");
+                if(false){
+                //todo
                 localStorage.setItem('ms_username',"游客"); 
                 if(this.$touristId==0){
                     
@@ -137,6 +140,7 @@ import md5 from 'js-md5';
                     this.getThisUserInfo(this.$touristName);
                     this.$router.push('/');
                 }  
+                }
             },
             getThisUserInfo(name){
                 console.log(name);
@@ -236,6 +240,7 @@ import md5 from 'js-md5';
                         //console.log(successResponse.data.data);
                         console.log("角色获取成功");
                         localStorage.setItem('roles',"");
+                        //找不到引用
                         localStorage.setItem('roles',successResponse.data.data);
                         this.getUserAllRight(id);
 

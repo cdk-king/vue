@@ -195,7 +195,7 @@
                 </el-collapse-item>
                 </el-collapse>
                 <!-- <Divider /> -->
-                <div style="margin:15px;" v-if="handleVisible">
+                <div style="margin:15px;" v-if="false">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakAll">批量禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakToNormalAll">批量解除禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleBanAll">批量禁封</el-button>

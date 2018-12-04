@@ -102,7 +102,7 @@
                     <template slot-scope="scope">
                         <p style=""  v-for="item in (scope.row.errorList!=null ? scope.row.errorList.split(','):[])" :key="item"
                                 :label="item"
-                                :value="item">{{item}}
+                                :value="item" >{{item}}
                       </p>
                     </template>
                 </el-table-column>
@@ -1099,7 +1099,7 @@ export default {
                 var error = successResponse.data.data.error;
                 if(error.length!=0){
                     //发送失败，返回失败服务器ID列表
-                    this.$message.success("公告重新发送失败");
+                    this.$message.error("公告重新发送失败");
                 }else{
                     this.$message.success("公告重新发送完成");
                 }

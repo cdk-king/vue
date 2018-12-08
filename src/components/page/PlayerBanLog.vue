@@ -18,7 +18,7 @@
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">选择服务器</span>
-                <el-select v-model="serverValue" @change="selectServer" placeholder="请选择服务器" style="width:150px">
+                <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="请选择服务器" style="width:150px">
                     <el-option
                     v-for="item in serverOptions"
                     :key="item.serverId"
@@ -74,11 +74,12 @@
 
 <script>
 import bus from '../common/bus';
+import setLocalThisUrl from '../../code/setLocalThisUrl';
     export default {
         name: 'playerLogTable',
         data() {
             return {
-                url:'/getPlayerBan',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -130,6 +131,7 @@ import bus from '../common/bus';
             }
         },
         created() {
+            setLocalThisUrl(this);
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             console.log(this.strPlatform);
@@ -155,7 +157,7 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的玩家
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getPlayerBan', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -188,7 +190,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
             this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -216,7 +218,7 @@ import bus from '../common/bus';
             },
             getServerList(platformId) {
                 this.$axios
-                .post("/getServerListForPlatform", {
+                .post(this.url+"/getServerListForPlatform", {
                 id: platformId
                 })
                 .then(successResponse => {

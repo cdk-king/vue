@@ -10,6 +10,7 @@
             <div class="content-title">礼包导入</div>
             <div class="plugins-tips">
                 请将礼包信息按下边规定格式写入到文本文件中
+                <br/>
                 一行数据对应一个礼包，示例：
                 礼包编号|礼包名称|礼包标识|礼包描述
                </div>
@@ -78,13 +79,18 @@
                 ],
                 form:{
                     platformId:0
-                }
+                },
+                loading:null,
+                url:"http://localhost:8011",
             }
         },
         components: {
             
         },
         created(){
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -102,7 +108,7 @@
             getPlatformList(gameId) {
                 var userData =JSON.parse(localStorage.getItem('userData'));
                 this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 
                 userId:userData.id,
                 gameId: gameId
@@ -123,7 +129,13 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-                this.$axios.post('/api/gift/ImportGift',{
+                this.loading = this.$loading({
+                        lock: true,
+                        text: '数据导入中...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                this.$axios.post(this.url+'/api/gift/ImportGift',{
                     list: JSON.stringify(this.giftList),
                     platformId:this.form.platformId
                 })
@@ -131,14 +143,19 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
+                        this.loading.close();
                         this.$message.success("礼包导入成功");
                     }else{
                         console.log('error');
                         console.log(this.responseResult);
+                        this.loading.close();
                         this.$message.error("礼包导入失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                    this.loading.close();
+                    console.log('error');
+                })
             },
             handlePreview(file){
                 //console.log(file);

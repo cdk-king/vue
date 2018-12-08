@@ -92,7 +92,7 @@
             getData(){
                 //每次需要显示游客Id时，会设置一次this.$touristId和touristName
                 this.getTourist();
-               
+                
                 console.log("this.$gameId:"+this.$gameId);
                 this.getAllUserList();
             },
@@ -113,7 +113,7 @@
                             this.$setTouristId(parseInt(touristId));
                             this.$setTouristName(parseInt(touristName));
                              this.userId = this.$touristId;
-                             
+                             this.setUserName();
                         }else{
                             this.$message.error("游客Id获取失败！");
                         } 

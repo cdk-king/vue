@@ -159,7 +159,7 @@ import bus from '../common/bus';
         name: 'newPropTable',
         data() {
             return {
-                url:'/getPropUplaod',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -220,7 +220,9 @@ import bus from '../common/bus';
         },
         created() {
             
-
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             this.getPropTypeList(this.$gameId);
@@ -269,7 +271,7 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的道具
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+"/getPropUplaod", {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -299,7 +301,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
                 this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -327,7 +329,7 @@ import bus from '../common/bus';
             getPropTypeList(gameId){
                 
                 this.$axios
-                .post("/api/newProp/getPropTypeList", {
+                .post(this.url+"/api/newProp/getPropTypeList", {
                 gameId:gameId
                 })
                 .then(successResponse => {
@@ -422,7 +424,7 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllProp',{
+                this.$axios.post(this.url+'/deleteAllProp',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -474,7 +476,7 @@ import bus from '../common/bus';
                     console.log("道具标识不能为空");
                     this.$message.error("道具标识不能为空");
                 }else{
-                    this.$axios.post('/addProp',{ 
+                    this.$axios.post(this.url+'/addProp',{ 
 
                         id: this.form.id,
                         propName:this.form.propName,
@@ -513,7 +515,7 @@ import bus from '../common/bus';
             // 保存编辑
             saveEdit() {
                     console.log(this.form.id);
-                this.$axios.post('/editProp',{
+                this.$axios.post(this.url+'/editProp',{
                     id:this.form.id,
                     propName:this.form.propName,
                     propTag:this.form.propTag,
@@ -551,7 +553,7 @@ import bus from '../common/bus';
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Prop',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Prop',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -575,7 +577,7 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Prop',{
+                this.$axios.post(this.url+'/changeStateToNormal_Prop',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -600,7 +602,7 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteProp',{
+                this.$axios.post(this.url+'/deleteProp',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

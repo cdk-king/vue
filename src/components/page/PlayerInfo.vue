@@ -10,13 +10,11 @@
                 <div class="plugins-tips">
                      备注：
                     <br/>
-                    （1）平台和服务器为必选，平台账号/角色ID/角色名/最后登录ip这四项必选其中一项，方可查询。
-                    <br/>
-                    （2）通过角色名查询，支持模糊匹配查询。
+                    平台和服务器为必选，请选择平台后再选择服务器
                 </div>
                 
                 <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse v-model="activeNames" >
                 <el-collapse-item title="折叠" name="1">
                         <div class="form-box">
                     <el-form ref="form" :model="form" label-width="100px">
@@ -530,6 +528,7 @@ export default {
       detailVisible: false,
       aa: this.$cdk,
       cur_page: 1,
+      pageSize:10,
       handleVisible: false,
       multipleSelection:[],
       platformOptions: [
@@ -586,8 +585,11 @@ export default {
         minRegistrationTime: "",
         maxRegistrationTime: "",
         minCombatPower: "",
-        maxCombatPower: ""
-      }
+        maxCombatPower: "",
+        
+      },
+      url:"http://localhost:8011",
+      total:0
     };
   },
   components: {
@@ -631,6 +633,9 @@ export default {
 
   },
   created() {
+    if(this.$url!=null){
+         this.url = this.$url;
+    }
     this.getData();
     this.right();
     bus.$on(
@@ -659,7 +664,7 @@ export default {
     },
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -680,7 +685,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -706,8 +711,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
-            this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
@@ -741,7 +744,7 @@ export default {
         // .catch(failResponse => {});
 
         this.$axios
-        .post("/api/player/getPlayerFromServer", {
+        .post(this.url+"/api/player/getPlayerFromServer", {
           platformId: this.platformValue,
           WorldID: this.serverValue,
           pageNo: this.cur_page,
@@ -783,6 +786,10 @@ export default {
         console.log(data);
         console.log(typeof(data));
         this.tableData = data.PlayerList;
+        
+        this.total = this.tableData.length;
+        //特殊分页技巧
+        this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
     },
     getServerIp() {},
     getData() {
@@ -794,7 +801,7 @@ export default {
     handleCurrentChange(val) {
       this.cur_page = val;
       console.log("page:" + val);
-      this.selectServer();
+      this.getPlayer();
     },
     formatter(row, column) {
       //return row.address;
@@ -831,7 +838,7 @@ export default {
         var PlayerID = item.playerId;
 
         this.$axios
-        .post("/api/player/getPlayerDetailInfo", {
+        .post(this.url+"/api/player/getPlayerDetailInfo", {
           platformId: this.platformValue,
           WorldID: this.serverValue,
           PlayerID:PlayerID,
@@ -906,7 +913,7 @@ export default {
         // .catch(failResponse => {});
 
         this.$axios
-        .post("/api/player/talkBan", {
+        .post(this.url+"/api/player/talkBan", {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             PlayerID:this.tableData[this.idx].playerId,
@@ -966,7 +973,7 @@ export default {
         // .catch(failResponse => {});
 
         this.$axios
-        .post("/api/player/talkBan", {
+        .post(this.url+"/api/player/talkBan", {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             PlayerID:this.tableData[this.idx].playerId,
@@ -1035,7 +1042,7 @@ export default {
         // .catch(failResponse => {});
 
         this.$axios
-        .post("/api/player/Ban", {
+        .post(this.url+"/api/player/Ban", {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             playerName:this.tableData[this.idx].playerName,
@@ -1093,7 +1100,7 @@ export default {
 
 
         this.$axios
-        .post("/api/player/Ban", {
+        .post(this.url+"/api/player/Ban", {
             platformId: this.platformValue,
             WorldID: this.serverValue,
             playerName:this.tableData[this.idx].playerName,

@@ -15,7 +15,7 @@
                 </div>
                 
                 <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
+                <el-collapse v-model="activeNames" >
                 <el-collapse-item title="折叠" name="1">
                         <div class="form-box">
                     <el-form ref="form" :model="form" label-width="250px">
@@ -456,41 +456,6 @@
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
-        <!-- 编辑禁言提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToProhibitSpeak = false">取 消</el-button>
-                <el-button type="primary" @click="ToProhibitSpeak">确 定</el-button>
-            </span>
-        </el-dialog>
-
-        <!-- 编辑解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 编辑禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToBan = false">取 消</el-button>
-                <el-button type="primary" @click="ToBan">确 定</el-button>
-            </span>
-        </el-dialog>
-
-        <!-- 编辑解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeBanToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="BanToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-
         <!-- 批量删除提示框 -->
         <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
             <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
@@ -637,6 +602,9 @@ export default {
 
     console.log();
 
+  },
+  beforeDestroy () {
+    bus.$off('changeGameId');
   },
   methods: {
     getPlatformList(userId) {
@@ -791,8 +759,8 @@ export default {
       var userData = JSON.parse(localStorage.getItem("userData"));
       this.userId = userData.id;
       this.getPlatformList(this.userId);
-      this.getEmailType();
-      this.getSendType();
+      //this.getEmailType();
+      //this.getSendType();
       this.getEmail();
     },
     // 分页导航

@@ -155,9 +155,6 @@
 
           </div>
      </div>
-          
-
-
 
 </template>
 
@@ -215,15 +212,19 @@ export default {
       addServerVisible:false,
       delVisible: false,
       id:"",
+      url:"http://localhost:8011",
     };
   },
   created() {
+    if(this.$url!=null){
+      this.url = this.$url;
+    }
     this.getData();
   },
   methods: {
     getPlatformList() {
       this.$axios
-        .post("/getAllPlatformList", {})
+        .post(this.url+"/getAllPlatformList", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -242,7 +243,7 @@ export default {
     },
     getData() {
       this.$axios
-        .post("/getServerTree", {})
+        .post(this.url+"/getServerTree", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -260,7 +261,7 @@ export default {
         .catch(failResponse => {});
 
       this.$axios
-        .post("/getAllServer", {
+        .post(this.url+"/getAllServer", {
           pageNo: 1,
           pageSize: 10,
           isPage: "",
@@ -345,7 +346,7 @@ export default {
     // 保存编辑
     saveEdit() {
       this.$axios
-        .post("/editServer", {
+        .post(this.url+"/editServer", {
           id: this.form.id,
           server: this.form.server,
           serverIp: this.form.serverIp,
@@ -386,7 +387,7 @@ export default {
         this.$message.error("所属渠道不能为空");
     }else{
 
-        this.$axios.post('/addServer',{
+        this.$axios.post(this.url+'/addServer',{
 
             id: this.form.id,
             server:this.form.server,
@@ -422,7 +423,7 @@ export default {
     // 确定删除
     deleteRow(){
 
-        this.$axios.post('/deleteServer',{
+        this.$axios.post(this.url+'/deleteServer',{
                 id: this.id, 
             })
             .then(successResponse =>{

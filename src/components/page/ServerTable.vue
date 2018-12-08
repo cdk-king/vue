@@ -213,7 +213,7 @@
         name: 'serverTable',
         data() {
             return {
-                url:'/getAllServer',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -288,6 +288,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             this.right();
         
@@ -302,7 +305,7 @@
         },
         methods: {
             getGameList(){
-                this.$axios.post('/getAllGameList',{
+                this.$axios.post(this.url+'/getAllGameList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -322,7 +325,7 @@
                 .catch(failResponse => {})
             },
             getPlatformList(){
-                this.$axios.post('/getAllPlatformList',{
+                this.$axios.post(this.url+'/getAllPlatformList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -365,7 +368,7 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getAllServer', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -470,7 +473,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllServer',{
+                this.$axios.post(this.url+'/deleteAllServer',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -526,7 +529,7 @@
                     this.$message.error("所属渠道不能为空");
                 }else{
 
-                    this.$axios.post('/addServer',{
+                    this.$axios.post(this.url+'/addServer',{
 
                         id: this.form.id,
                         server:this.form.server,
@@ -562,7 +565,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editServer',{
+                this.$axios.post(this.url+'/editServer',{
                     id:this.form.id,
                     server:this.form.server,
                     serverIp:this.form.serverIp,
@@ -603,7 +606,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Server',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Server',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -627,7 +630,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Server',{
+                this.$axios.post(this.url+'/changeStateToNormal_Server',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -652,7 +655,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteserver',{
+                this.$axios.post(this.url+'/deleteserver',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

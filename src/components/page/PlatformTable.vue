@@ -203,7 +203,7 @@
         name: 'platformTable',
         data() {
             return {
-                url:'/getAllPlatform',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -275,6 +275,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             this.right();
         
@@ -289,7 +292,7 @@
         },
         methods: {
             getGameList(){
-                this.$axios.post('/getAllGameList',{
+                this.$axios.post(this.url+'/getAllGameList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -309,7 +312,7 @@
                 .catch(failResponse => {})
             },
             getRoleList(){
-                this.$axios.post('/getAllRoleList',{
+                this.$axios.post(this.url+'/getAllRoleList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -353,7 +356,7 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getAllPlatform', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -456,7 +459,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllPlatform',{
+                this.$axios.post(this.url+'/deleteAllPlatform',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -554,7 +557,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editPlatform',{
+                this.$axios.post(this.url+'/editPlatform',{
                     id:this.form.id,
                     platform:this.form.platform,
                     platformTag:this.form.platformTag,
@@ -594,7 +597,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Platform',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Platform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -618,7 +621,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Platform',{
+                this.$axios.post(this.url+'/changeStateToNormal_Platform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -643,7 +646,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deletePlatform',{
+                this.$axios.post(this.url+'/deletePlatform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

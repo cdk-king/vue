@@ -80,6 +80,7 @@
                              <br/>
                             描述：{{form.role_describe}}
                             
+                             
                         </div>
                         <div class="drag-box">
                             <div class="drag-box-item">
@@ -93,7 +94,7 @@
                                 </draggable>
                             </div>
                             <div class="drag-box-item">
-                                <div class="item-title">用户角色</div>
+                                <div class="item-title">用户权限</div>
                                 <draggable v-model="doing" @remove="removeHandle" :options="dragOptions">
                                     <transition-group tag="div" id="doing" class="item-ul">
                                         <div v-for="(item,index) in doing" class="drag-list" :key="index">
@@ -109,6 +110,7 @@
                 <el-form-item label="">
                 </el-form-item>
             </el-form>
+            <p >Tips : 可拖拽权限列表进行管理</p>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ManageRightVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveManageRight">确 定</el-button>
@@ -199,9 +201,7 @@
         name: 'roleTable',
         data() {
             return {
-                //url: './static/vuetable.json',
-                url:'/getRole',
-                
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -282,6 +282,9 @@
             draggable
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getRight();
             this.right();
         },
@@ -303,7 +306,6 @@
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -317,7 +319,7 @@
                 this.getData();
             },
             getRight(){
-                this.$axios.post("/getRight", {
+                this.$axios.post(this.url+"/getRight", {
                     pageNo: 1,
                     pageSize: 10,
                     role: "",
@@ -333,8 +335,7 @@
             },
             // 获取 easy-mock 的模拟数据
             getData() {
-
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+"/getRole", {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     role: this.searchKey.role,
@@ -346,7 +347,7 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("角色列表获取成功"); 
+                        //this.$message.success("角色列表获取成功"); 
                         this.tableData = this.mapData(successResponse.data.data.list);
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -504,7 +505,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllRole',{
+                this.$axios.post(this.url+'/deleteAllRole',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -589,7 +590,7 @@
                 this.doing = oldDoing;
                 this.done = olddone;    
                 //添加角色处理
-                this.$axios.post('/InsertRoleRights',{
+                this.$axios.post(this.url+'/InsertRoleRights',{
                         id: this.form.id,
                         InsertRoleRights:InsertRoleRights
                 })
@@ -618,7 +619,7 @@
                 })
                 .catch(failResponse => {})
                 //删除角色处理
-                this.$axios.post('/deleteRoleRights',{
+                this.$axios.post(this.url+'/deleteRoleRights',{
                         id: this.form.id,
                         deleteRoleRights:deleteRoleRights
                 })
@@ -649,7 +650,7 @@
                     console.log("角色名称不能为空");
                     this.$message.error("角色名称不能为空");
                 }else{
-                    this.$axios.post('/addRole',{ 
+                    this.$axios.post(this.url+'/addRole',{ 
                         id: this.form.id,
                         role: this.form.role,
                         role_describe: this.form.role_describe,
@@ -674,7 +675,6 @@
                     .catch(failResponse => {})
                     
                 }
-
                 
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, 1, this.form);
@@ -685,7 +685,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editRole',{
+                this.$axios.post(this.url+'/editRole',{
                     id: this.form.id, 
                     role: this.form.role,
                     role_describe: this.form.role_describe,
@@ -721,7 +721,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Role',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Role',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -745,7 +745,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Role',{
+                this.$axios.post(this.url+'/changeStateToNormal_Role',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -770,7 +770,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteRole',{
+                this.$axios.post(this.url+'/deleteRole',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -795,10 +795,6 @@
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
             },
@@ -810,9 +806,7 @@
         filters:{
             
             filters_rightItem:function(arg){
-                //console.log("arg:"+arg)
                 if(arg!=null && arg!=""){
-                   //  Array str = arg.split(','); 
                    var arr = arg.split('#cdk#');
                     return arr[1];
                 }else{

@@ -125,6 +125,7 @@
                 <el-form-item label="">
                 </el-form-item>
             </el-form>
+            <p >Tips : 可拖拽权限列表进行管理</p>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ManageRoleVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveManageRole">确 定</el-button>
@@ -259,8 +260,7 @@
         name: 'usertable',
         data() {
             return {
-                //url: './static/vuetable.json',
-                url:'/getUser',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -363,6 +363,9 @@
             draggable
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getRole();
             this.right();
         },
@@ -405,7 +408,7 @@
                 this.getData();
             },
             getRole(){
-                this.$axios.post("/getRole", {
+                this.$axios.post(this.url+"/getRole", {
                     pageNo: 1,
                     pageSize: 10,
                     role: "",
@@ -423,7 +426,7 @@
             },
             getData() {
                 console.log("getting Data...");
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getUser', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     account: this.searchKey.account,
@@ -704,7 +707,7 @@
                 this.doing = oldDoing;
                 this.done = olddone;    
                 //添加角色处理
-                this.$axios.post('/insertUserRoles',{
+                this.$axios.post(this.url+'/insertUserRoles',{
                         id: this.form.id,
                         InsertUserRoles:InsertUserRoles
                 })
@@ -724,7 +727,7 @@
                 })
                 .catch(failResponse => {})
                 //删除角色处理
-                this.$axios.post('/deleteUserRoles',{
+                this.$axios.post(this.url+'/deleteUserRoles',{
                         id: this.form.id,
                         deleteUserRoles:deleteUserRoles
                 })
@@ -755,7 +758,7 @@
                 }else if(this.form.name==""){
                     this.$message.error("用户名不能为空");
                 }else{
-                    this.$axios.post('/addUser',{
+                    this.$axios.post(this.url+'/addUser',{
                         id: this.form.id,
                         account: this.form.account,
                         name: this.form.name,
@@ -791,7 +794,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editUser',{
+                this.$axios.post(this.url+'/editUser',{
                     id: this.form.id, 
                     account: this.form.account,
                     name: this.form.name,
@@ -835,7 +838,7 @@
                 }else{
                     var password1 = md5.hex(this.passwordform.newPassword+"cdk");
                     var password2 = md5.hex(password1+"cdk");
-                    this.$axios.post('/editPassword',{
+                    this.$axios.post(this.url+'/editPassword',{
                         id: this.passwordform.id, 
                         password: password2
                     })
@@ -859,7 +862,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_User',{
+                this.$axios.post(this.url+'/changeStateToFrozen_User',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -883,7 +886,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_User',{
+                this.$axios.post(this.url+'/changeStateToNormal_User',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -908,7 +911,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteUser',{
+                this.$axios.post(this.url+'/deleteUser',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

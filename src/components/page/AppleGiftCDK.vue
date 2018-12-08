@@ -34,7 +34,7 @@
 
                         </el-form-item>
                         <el-form-item class="el-form-item" label="选择礼包">
-                            <el-select v-model="form.giftId" @change="selectGift" placeholder="请选择礼包">
+                            <el-select v-model="form.giftId" filterable @change="selectGift" placeholder="请选择礼包">
                                 <el-option
                                 v-for="item in giftOptions"
                                 :key="item.id"
@@ -98,7 +98,26 @@
 
                     </div>
 
+                <el-table :data="tableData" border class="table" ref="multipleTable" >
+                <el-table-column prop="couponId" label="ID"  >
+                </el-table-column>
+                <el-table-column prop="couponCount" label="数量" >
+                </el-table-column>
+                <el-table-column prop="couponTitle" label="标题" >
+                </el-table-column>
                 
+                
+                <el-table-column prop="coupon_describe" label="描述" >
+                </el-table-column> 
+                <el-table-column prop="platform" label="平台" >
+                </el-table-column> 
+                <el-table-column prop="fileUrl" label="文件名" >
+                </el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <el-pagination background @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper" :total="this.total">
+                    </el-pagination>
+                </div>
 
                 <el-form  label-width="150px" v-if="false">
                         <el-form-item label="激活码">
@@ -146,6 +165,7 @@ export default {
   data() {
     return {
       show: false,
+      tableData: [],
       dialogVisible: false,
       aa: this.$cdk,
       platformOptions: [
@@ -189,6 +209,9 @@ export default {
           startDatetime:'',
           endDatetime:''
       },
+      searchKey:{
+        platformId:0
+      },
       id: 0,
       serverIp: "",
       CDKs:[],
@@ -197,7 +220,11 @@ export default {
       exchangeResult:{
         couponID:"",
         sequenceID:""
-      }
+      },
+      url:"http://localhost:8011",
+      strPlatform:"",
+      cur_page: 1,
+      total:0
     };
   },
   components: {
@@ -213,6 +240,9 @@ export default {
     }
   },
   created() {
+    if(this.$url!=null){
+       this.url = this.$url;
+    }
     this.getData();
     bus.$on('changeGameId',function(obj){
         console.log(obj.message);
@@ -228,7 +258,7 @@ export default {
     exchange(){
         console.log(this.analyseCDK);
         this.$axios 
-        .post("/analyseCDK", {
+        .post(this.url+"/analyseCDK", {
           analyseCDK: this.analyseCDK,
         })
         .then(successResponse => {
@@ -284,7 +314,7 @@ export default {
       var sign =  md5.hex(strCouponID+this.form.platformId.toString()+this.form.couponCount.toString()+"cdk");
       console.log(sign);
         this.$axios 
-        .post("/generateCDK", {
+        .post(this.url+"/generateCDK", {
           id: this.form.id,
           platformId:this.form.platformId,
           giftId:this.form.giftId,
@@ -308,12 +338,13 @@ export default {
             this.CDKs = data;
             this.dialogVisible = true;
             this.resetForm();
+            this.getCoupon();
             //this.platformOptions = successResponse.data.data;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("CDK生成失败");
-            return false;
+            this.getCoupon();
           }
         })
         .catch(failResponse => {});
@@ -359,6 +390,12 @@ export default {
     }  
     return bytes;  
     },
+        // 分页导航
+    handleCurrentChange(val) {
+        this.cur_page = val;
+        console.log("page:"+val);
+        this.getData();
+    },
     byteToString(arr) {  
         if(typeof arr === 'string') {  
             return arr;  
@@ -388,7 +425,7 @@ export default {
     getPlatformList(gameId) {
       var userData =JSON.parse(localStorage.getItem('userData'));
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           
           userId:userData.id,
           gameId: gameId
@@ -398,7 +435,15 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("渠道列表获取成功");
+            this.strPlatform = "";
+            for(var i = 0;i<this.platformOptions.length;i++){
+                this.strPlatform += this.platformOptions[i].id+",";
+                
+            }
+            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
             this.platformOptions = successResponse.data.data.list;
+            console.log(this.strPlatform);
+            this.getCoupon();
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
@@ -411,7 +456,7 @@ export default {
     getGiftList(platformId) {
       console.log(platformId);
       this.$axios
-        .post("/getNewGiftListForPlatformId", {
+        .post(this.url+"/getNewGiftListForPlatformId", {
           platformId: platformId
         })
         .then(successResponse => {
@@ -449,6 +494,29 @@ export default {
       //this.id = userData.id;
       console.log("this.$gameId:"+this.$gameId);
       this.getPlatformList(this.$gameId);
+    },
+    getCoupon(){
+        this.$axios.post(this.url+"/api/cdk/getCoupon", {
+            pageNo: this.cur_page,
+            pageSize: 10,
+            isPage:"isPage",
+            platformId:this.searchKey.platformId,
+            strPlatform:this.strPlatform
+        }).then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                console.log("列表获取成功");
+                //this.$message.success("列表获取成功");
+                this.tableData = successResponse.data.data.list;
+                console.log(this.tableData);
+                this.total = successResponse.data.data.total;
+            }else{
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("列表获取失败");
+            }
+        })
     },
     testMessage() {
       this.$message.success("success");

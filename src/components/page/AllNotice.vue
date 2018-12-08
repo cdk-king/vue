@@ -18,12 +18,6 @@
                 </div>
                 
                 <Divider />
-                <!-- <el-collapse v-model="activeNames" @change="handleChange">
-                <el-collapse-item title="折叠" name="1">
-                    
-                </el-collapse-item>
-                </el-collapse> -->
-                <!-- <Divider /> -->
                 <div style="margin:15px;">
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
@@ -145,12 +139,6 @@
                         </el-form-item>
                         <el-form-item label="选择服务器">
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
-                                    <!-- 全选 -->
-                                   <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-                                    <div style="margin: 15px 0;"></div>
-                                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                                    </el-checkbox-group> -->
 
                             <el-checkbox-group v-model="form.serverList" @change="handleCheckedServer" v-show="checkVisible">
                                 <el-checkbox v-for="item in serverOptions" :label="item.serverId+'-'+item.serverName" :key="item.serverId"></el-checkbox>
@@ -176,7 +164,7 @@
                         </el-form-item>
 
                         <el-form-item label="需要发送的道具">
-                            <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
+                            <el-select v-model="form.propId" placeholder="请选择道具" filterable>
                                 <el-option
                                 v-for="item in propOptions"
                                 :key="item.id"
@@ -193,12 +181,12 @@
                                 </el-table-column>
                                 <el-table-column prop="propName" label="道具名称"  >
                                 </el-table-column>
-                                <el-table-column prop="propType" label="道具类别"  >
+                                <el-table-column prop="propType" label="道具类别"  :formatter="formatPropTypeName">
                                 </el-table-column>
                                 <el-table-column prop="propCount" label="数量" >
                                     <template slot-scope="scope">
                                         <el-input 
-                                        placeholder="请输入标题" v-on:change="changePropCount"
+                                        placeholder="请输入数量" 
                                         v-model="propData[scope.$index].propCount"
                                         clearable>{{scope.row.propCount}}
                                         </el-input>
@@ -334,7 +322,7 @@
                         </el-form-item>
 
                         <el-form-item label="需要发送的道具">
-                            <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
+                            <el-select v-model="form.propId" placeholder="请选择道具">
                                 <el-option
                                 v-for="item in propOptions"
                                 :key="item.id"
@@ -356,7 +344,7 @@
                                 <el-table-column prop="propCount" label="数量" >
                                     <template slot-scope="scope">
                                         <el-input 
-                                        placeholder="请输入标题" v-on:change="changePropCount"
+                                        placeholder="请输入数量" 
                                         v-model="propData[scope.$index].propCount"
                                         clearable>{{scope.row.propCount}}
                                         </el-input>
@@ -442,31 +430,9 @@
             </span>
         </el-dialog>
 
-        <!-- 编辑解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 编辑禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToBan = false">取 消</el-button>
-                <el-button type="primary" @click="ToBan">确 定</el-button>
-            </span>
-        </el-dialog>
 
-        <!-- 编辑解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeBanToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="BanToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
+
+
 
         <!-- 批量删除提示框 -->
         <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
@@ -486,7 +452,6 @@ export default {
   name: "PlayerInfo",
   data() {
     return {
-      activeNames: ["1"],
       multipleSelection: [],
       show: false,
       dialogVisible: false,
@@ -539,10 +504,6 @@ export default {
       tableData: [],
       sendTypeList: [],
       noticeTypeList: [],
-      ChangeToProhibitSpeak: false,
-      ChangeProhibitSpeakToNormal: false,
-      ChangeToBan: false,
-      ChangeBanToNormal: false,
       searchKey: {
         timeInterval:"",
         cycleTime:"",
@@ -557,15 +518,14 @@ export default {
       propQualityOptions:[],
       moneyList:[],
       errorList:[],
+      propTypeList:[],
+      url:"http://localhost:8011",
     };
   },
   components: {
     "t-dialog": dialog
   },
     computed: {
-    propData() {
-      return this.propData;
-    },
     data() {
       return this.tableData;
     },
@@ -578,7 +538,11 @@ export default {
     }
   },
   created() {
+      if(this.$url!=null){
+       this.url = this.$url;
+    }
     this.getMoneyTypeList(this.$gameId);
+    this.getPropTypeList(this.$gameId);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -587,6 +551,7 @@ export default {
         this.id = userData.id;
         this.getPlatformList(this.id);
         this.getMoneyTypeList(this.$gameId);
+        this.getPropTypeList(this.$gameId);
       }.bind(this)
     );
 
@@ -629,7 +594,7 @@ export default {
           }
       },
     getMoneyTypeList(){
-        this.$axios.post("/api/prize/getValueTypeList", {
+        this.$axios.post(this.url+"/api/prize/getValueTypeList", {
             gameId:this.$gameId,
             allow:"1,4"
         }).then(successResponse =>{
@@ -646,10 +611,29 @@ export default {
             }
         })
     },
-
+    getPropTypeList(gameId){
+        
+        this.$axios
+        .post(this.url+"/api/newProp/getPropTypeList", {
+        gameId:gameId
+        })
+        .then(successResponse => {
+        this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        if (successResponse.data.code === 200) {
+            console.log(this.responseResult);
+            console.log("道具类别列表获取成功");
+            this.propTypeList = successResponse.data.data.list;
+        } else {
+            
+            console.log(this.responseResult);
+            console.log("道具类别列表获取失败");
+        }
+        })
+        .catch(failResponse => {});
+    },
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -669,7 +653,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -690,7 +674,7 @@ export default {
     },
     getSearchKeyServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -709,7 +693,7 @@ export default {
         .catch(failResponse => {});
     },
     getPropList(platformId) {
-        this.$axios.post("/getPropUplaod", {
+        this.$axios.post(this.url+"/getPropUplaod", {
             pageNo: 1,
             pageSize: 10,
             isPage:"",
@@ -751,7 +735,7 @@ export default {
     },
     getPlatformNotice() {
       this.$axios
-        .post("/getPlatformNotice", {
+        .post(this.url+"/getPlatformNotice", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
           noticeContent:this.searchKey.noticeContent,
@@ -934,7 +918,7 @@ export default {
         }
 
         this.$axios
-        .post("/addPlatformNotice", {
+        .post(this.url+"/addPlatformNotice", {
             platformId:this.form.platformId,
             serverList:JSON.stringify(this.form.serverList),
             noticeTitle: this.form.noticeTitle,
@@ -1009,7 +993,7 @@ export default {
                         list+="|"+this.propData[i].propQuality;
                     }else{
                         //默认白品质
-                        list+="-1";
+                        list+="|1";
                     }
                     list+="|0;";
             }
@@ -1023,7 +1007,7 @@ export default {
         }
 
         this.$axios
-        .post("/editPlatformNotice", {
+        .post(this.url+"/editPlatformNotice", {
             id:this.form.id,
             platformId:this.form.platformId,
             serverList:JSON.stringify(this.form.serverList),
@@ -1082,7 +1066,7 @@ export default {
         var item = this.tableData[index];
         var serverList = item.errorList;
         
-        this.$axios.post('/api/notice/sendNotice',{
+        this.$axios.post(this.url+'/api/notice/sendNotice',{
             id:item.id,
             platformId:item.platformId,
             serverList:serverList,
@@ -1126,7 +1110,7 @@ export default {
         strServerList = strServerList.substring(0,strServerList.length-1);
         //console.log(strServerList);
         //console.log(this.tableData[index].id);
-        this.$axios.post('/api/notice/sendNotice',{
+        this.$axios.post(this.url+'/api/notice/sendNotice',{
             id:item.id,
             platformId:item.platformId,
             serverList:strServerList,
@@ -1168,7 +1152,7 @@ export default {
     handleDelete(index,row){
                 console.log(index);
         console.log(this.tableData[index].id);
-        this.$axios.post('/deletePlatformNotice',{
+        this.$axios.post(this.url+'/deletePlatformNotice',{
         id:this.tableData[index].id
         })
         .then(successResponse =>{
@@ -1262,7 +1246,7 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllPlatformNotice',{
+                this.$axios.post(this.url+'/deleteAllPlatformNotice',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -1295,8 +1279,14 @@ export default {
                 return this.moneyTypeOptions[i].ValueTypeName;
             }
         }
-
-    }
+    },
+    formatPropTypeName(row, column, cellValue, index){
+        for(var i = 0;i<this.propTypeList.length;i++){
+            if(row.propType==this.propTypeList[i].propTypeId){
+                return this.propTypeList[i].propType;
+            }
+        }
+    },
   },
   watch: {
     aa: function(curVal, oldVal) {

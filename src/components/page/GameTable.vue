@@ -158,7 +158,7 @@
         name: 'GameTable',
         data() {
             return {
-                url:'/getAllGame',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -203,6 +203,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+            this.url = this.$url;
+            }
             this.getData();
             this.right();
         },
@@ -240,7 +243,7 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getAllGame', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -336,7 +339,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllGame',{
+                this.$axios.post(this.url+'/deleteAllGame',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -386,7 +389,7 @@
                     console.log("游戏标识不能为空");
                     this.$message.error("游戏标识不能为空");
                 }else{
-                    this.$axios.post('/addGame',{ 
+                    this.$axios.post(this.url+'/addGame',{ 
 
                         id: this.form.id,
                         gameName:this.form.gameName,
@@ -424,7 +427,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editGame',{
+                this.$axios.post(this.url+'/editGame',{
                     id:this.form.id,
                     gameName:this.form.gameName,
                     gameTag:this.form.gameTag,
@@ -462,7 +465,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Game',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Game',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -486,7 +489,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Game',{
+                this.$axios.post(this.url+'/changeStateToNormal_Game',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -511,7 +514,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteGame',{
+                this.$axios.post(this.url+'/deleteGame',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

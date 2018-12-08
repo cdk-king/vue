@@ -145,7 +145,6 @@ import bus from '../common/bus';
         name: 'giftTable',
         data() {
             return {
-                url:'/getGiftUpload',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -200,10 +199,14 @@ import bus from '../common/bus';
                 idx: -1,
                 responseResult:[],
                 id:"",
-                strPlatform:""
+                strPlatform:"",
+                url:"http://localhost:8011",
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             console.log(this.strPlatform);
@@ -250,7 +253,7 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的礼包
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+"/getGiftUpload", {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -281,7 +284,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
             this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -380,7 +383,7 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllGift',{
+                this.$axios.post(this.url+'/deleteAllGift',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -432,7 +435,7 @@ import bus from '../common/bus';
                     console.log("礼包标识不能为空");
                     this.$message.error("礼包标识不能为空");
                 }else{
-                    this.$axios.post('/addGift',{
+                    this.$axios.post(this.url+'/addGift',{
 
                         id: this.form.id,
                         giftName:this.form.giftName,
@@ -471,7 +474,7 @@ import bus from '../common/bus';
             // 保存编辑
             saveEdit() {
                     console.log(this.form.id);
-                this.$axios.post('/editGift',{
+                this.$axios.post(this.url+'/editGift',{
                     id:this.form.id,
                     giftName:this.form.giftName,
                     giftTag:this.form.giftTag,
@@ -509,7 +512,7 @@ import bus from '../common/bus';
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Gift',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -533,7 +536,7 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Gift',{
+                this.$axios.post(this.url+'/changeStateToNormal_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -558,7 +561,7 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteGift',{
+                this.$axios.post(this.url+'/deleteGift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

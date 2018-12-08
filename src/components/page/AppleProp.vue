@@ -16,13 +16,7 @@
                     <br/>
                     （3）邮件发送成功后将不能再发送；
                 </div>
-                
-                <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
-                <el-collapse-item title="折叠" name="1">
-
-                </el-collapse-item>
-                </el-collapse>
+            
             
 
             <div style="margin:15px;">
@@ -165,8 +159,8 @@
                             </el-input>
                         </el-form-item>
                         <Divider />
-                        <el-form-item label="需要发送的道具">
-                            <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
+                        <el-form-item label="需要发送的道具" >
+                            <el-select v-model="form.propId" @change="selectProp" filterable placeholder="请选择道具">
                                 <el-option
                                 v-for="item in propOptions"
                                 :key="item.id"
@@ -202,20 +196,6 @@
                                         <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
                                     </template>
                                 </el-table-column>
-                                <!-- <el-table-column label="品质" >
-                                    <template slot-scope="scope">
-                                        <el-select v-model="propData[scope.$index].propQuality"  placeholder="请选择品质">
-                                            <el-option
-                                            v-for="item in propQualityOptions"
-                                            :key="item.propQualityId"
-                                            :label="item.propQuality"
-                                            :value="item.propQualityId">
-                                            </el-option>
-                                        </el-select>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column prop="propCount" label="过期时间" >
-                                </el-table-column> -->
                                 <el-table-column label="操作"  align="center" >
                                     <template slot-scope="scope">
                                         <el-button type="text" icon="el-icon-edit" @click="handleAddPropCount(scope.$index, scope.row)" >添加</el-button>
@@ -286,7 +266,7 @@
                             </el-input>
                         </el-form-item>
                         <el-form-item label="玩家类型">
-                            <el-select v-model="form.playerType" @change="selectPlayerType" placeholder="请选择玩家类型">
+                            <el-select v-model="form.playerType"  placeholder="请选择玩家类型">
                                 <el-option
                                 v-for="item in playerTypeOptions"
                                 :key="item.id"
@@ -504,7 +484,7 @@
                             </el-input>
                         </el-form-item>
                         <el-form-item label="玩家类型">
-                            <el-select v-model="form.playerType" @change="selectPlayerType" placeholder="请选择玩家类型">
+                            <el-select v-model="form.playerType" placeholder="请选择玩家类型">
                                 <el-option
                                 v-for="item in playerTypeOptions"
                                 :key="item.id"
@@ -609,8 +589,7 @@ export default {
   name: "AppleProp",
   data() {
     return {
-        activeNames: ["1"],
-        editableTabsValue: '1',
+        editableTabsValue: "1",
         multipleSelection:[],
       show: false,
       dialogVisible: false,
@@ -684,16 +663,14 @@ export default {
       cur_page:1,
       total:0,
       editVisible:false,
-      addVisible:false
+      addVisible:false,
+      url:"http://localhost:8011",
     };
   },
   components: {
     "t-dialog": dialog
   },
   computed: {
-    propData() {
-      return this.propData;
-    },
     data() {
       return this.tableData;
     },
@@ -706,7 +683,9 @@ export default {
     }
   },
   created() {
-
+    if(this.$url!=null){
+       this.url = this.$url;
+    }
     this.getData();
     this.getApplyProp();
     bus.$on(
@@ -816,7 +795,7 @@ export default {
         console.log(this.propData);
     },
     getMoneyTypeList(){
-        this.$axios.post("/api/applyProp/getMoneyTypeList", {
+        this.$axios.post(this.url+"/api/applyProp/getMoneyTypeList", {
             gameId:this.$gameId
         }).then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -833,7 +812,7 @@ export default {
         })
     },
     getPropQualityList(){
-        this.$axios.post("/api/applyProp/getPropQualityList", {
+        this.$axios.post(this.url+"/api/applyProp/getPropQualityList", {
             gameId:this.$gameId
         }).then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -850,7 +829,7 @@ export default {
         })
     },
     getApplyProp(){
-        this.$axios.post("/getApplyProp", {
+        this.$axios.post(this.url+"/getApplyProp", {
                 platformId:this.searchKey.platformId,
                 serverId:this.searchKey.serverId,
                 pageNo: this.cur_page,
@@ -897,7 +876,7 @@ export default {
         }
     },
     getPlayerTypeList() {
-        this.$axios.post("/getPlayerTypeList", {
+        this.$axios.post(this.url+"/getPlayerTypeList", {
         }).then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
             if(successResponse.data.code === 200){
@@ -923,7 +902,7 @@ export default {
         this.getApplyProp();
     },
     getPropList(platformId) {
-        this.$axios.post("/getPropUplaod", {
+        this.$axios.post(this.url+"/getPropUplaod", {
             pageNo: 1,
             pageSize: 10,
             isPage:"",
@@ -947,7 +926,7 @@ export default {
     },
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -967,7 +946,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -988,7 +967,7 @@ export default {
     },
     getSearchKeyServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -1165,7 +1144,7 @@ export default {
 
         }
         this.$axios
-        .post("/addApplyProp", data)
+        .post(this.url+"/addApplyProp", data)
         .then(successResponse => {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
@@ -1173,12 +1152,11 @@ export default {
             console.log("道具申请添加成功");
             this.$message.success("道具申请添加成功");
             this.getApplyProp(); 
-               
+            this.addVisible = false;
         } else {
             console.log(this.responseResult);
             console.log("道具申请添加失败");
             this.$message.error("道具申请添加失败");
-            return false;
         }
         })
         .catch(failResponse => {});
@@ -1306,7 +1284,7 @@ export default {
 
         }
         this.$axios
-        .post("/api/apply/editApplyProp", data)
+        .post(this.url+"/api/apply/editApplyProp", data)
         .then(successResponse => {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
@@ -1348,16 +1326,18 @@ export default {
     Apply(){
        var item  = this.tableData[this.idx];
         var money = item.moneyList;
+        var propList = item.propList;
         console.log(money);
-        console.log(item.propList);
+        console.log(propList);
+        propList = propList.split(",")
         var itemList = "";
-        var len = item.propList.length;
+        var len = propList.length;
         console.log(len);
         for(var i = 0;i<len;i++){
-            var a = item.propList[i][0];
-            var b = item.propList[i][1];
-            var c = item.propList[i][2];
-            var d = item.propList[i][3];
+            var a = propList[i].split("-")[0];
+            var b = propList[i].split("-")[1];
+            var c = propList[i].split("-")[2];
+            var d = propList[i].split("-")[3];
             var e = 0;
             var info = a+"|"+b+"|"+c+"|"+d+"|"+e;
             itemList +=info+";";
@@ -1365,7 +1345,7 @@ export default {
          itemList = itemList.substring(0,itemList.length-1);
          console.log(itemList);
         this.$axios
-        .post("/api/applyProp/confirmApply", {
+        .post(this.url+"/api/applyProp/confirmApply", {
             id:item.id,
             platformId:item.platformId,
             serverId:item.serverId,
@@ -1394,7 +1374,7 @@ export default {
     },
     handleConfirm(index,row){
         this.$axios
-        .post("/confirmApplyProp", {
+        .post(this.url+"/confirmApplyProp", {
             id:this.tableData[index].id,
             addUser:this.id
         })
@@ -1423,7 +1403,7 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllApplyProp',{
+                this.$axios.post(this.url+'/deleteAllApplyProp',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -1452,7 +1432,7 @@ export default {
     },
     handleNotConfirm(index,row){
         this.$axios
-        .post("/notConfirmApplyProp", {
+        .post(this.url+"/notConfirmApplyProp", {
             id:this.tableData[index].id,
             addUser:this.id
         })
@@ -1474,7 +1454,7 @@ export default {
     },
     handleDelete(index,row){
         this.$axios
-        .post("/deleteApplyProp", {
+        .post(this.url+"/deleteApplyProp", {
             id:this.tableData[index].id,
             addUser:this.id
         })

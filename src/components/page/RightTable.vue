@@ -46,8 +46,8 @@
                 </el-table-column>
                 <el-table-column prop="addUser" width="100" label="添加人" >
                 </el-table-column>
-                <el-table-column prop="rightSort" width="50" label="排序" >
-                </el-table-column>
+                <!-- <el-table-column prop="rightSort" width="50" label="排序" >
+                </el-table-column> -->
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -153,7 +153,7 @@
         name: 'rightTable',
         data() {
             return {
-                url:'/getRight',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -200,6 +200,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             this.right();
         },
@@ -235,7 +238,7 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getRight', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -334,7 +337,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllRight',{
+                this.$axios.post(this.url+'/deleteAllRight',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -383,7 +386,7 @@
                     console.log("权限标识不能为空");
                     this.$message.error("权限标识不能为空");
                 }else{
-                    this.$axios.post('/addRight',{ 
+                    this.$axios.post(this.url+'/addRight',{ 
 
                         id: this.form.id,
                         rightName:this.form.rightName,
@@ -421,7 +424,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editRight',{
+                this.$axios.post(this.url+'/editRight',{
                     id:this.form.id,
                     rightName:this.form.rightName,
                     rightTag:this.form.rightTag,
@@ -460,7 +463,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Right',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Right',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -484,7 +487,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Right',{
+                this.$axios.post(this.url+'/changeStateToNormal_Right',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -509,7 +512,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteRight',{
+                this.$axios.post(this.url+'/deleteRight',{
                         id: this.id, 
                     })
                     .then(successResponse =>{

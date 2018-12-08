@@ -10,6 +10,7 @@
             <div class="content-title">道具导入</div>
             <div class="plugins-tips">
                 请将道具信息按下边规定格式写入到文本文件中
+                <br/>
                 一行数据对应一个道具，示例：
                 道具编号|道具名称|道具标识|道具描述
                </div>
@@ -78,13 +79,19 @@
                 ],
                 form:{
                     platformId:0
-                }
+                },
+                fullscreenLoading: false,
+                url:"http://localhost:8011",
+                loading:null
             }
         },
         components: {
             
         },
         created(){
+                if(this.$url!=null){
+                this.url = this.$url;
+                }
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -102,7 +109,7 @@
             getPlatformList(gameId) {
                 var userData =JSON.parse(localStorage.getItem('userData'));
                 this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 
                 userId:userData.id,
                 gameId: gameId
@@ -123,7 +130,15 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-                this.$axios.post('/ImportProp',{
+
+                //this.fullscreenLoading = true;
+                this.loading = this.$loading({
+                        lock: true,
+                        text: '数据导入中...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                this.$axios.post(this.url+'/ImportProp',{
                     list: JSON.stringify(this.propList),
                     platformId:this.form.platformId,
                     gameId:this.$gameId
@@ -132,14 +147,20 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
+                        //this.fullscreenLoading = false;
+                        this.loading.close();
                         this.$message.success("道具导入成功");
                     }else{
                         console.log('error');
+                        this.loading.close();
                         console.log(this.responseResult);
                         this.$message.error("道具导入失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                    this.loading.close();
+                    console.log('error');
+                })
             },
             handlePreview(file){
                 //console.log(file);

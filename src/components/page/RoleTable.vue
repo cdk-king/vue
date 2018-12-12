@@ -87,7 +87,7 @@
                                 <div class="item-title">权限列表</div>
                                 <draggable v-model="todo" @remove="removeHandle" :options="dragOptions">
                                     <transition-group tag="div" id="todo" class="item-ul">
-                                        <div v-for="(item,index) in todo" class="drag-list" :key="index">
+                                        <div v-for="item in todo" class="drag-list" :key="item.id">
                                             {{item.content}}
                                         </div>
                                     </transition-group>
@@ -97,7 +97,7 @@
                                 <div class="item-title">用户权限</div>
                                 <draggable v-model="doing" @remove="removeHandle" :options="dragOptions">
                                     <transition-group tag="div" id="doing" class="item-ul">
-                                        <div v-for="(item,index) in doing" class="drag-list" :key="index">
+                                        <div v-for="item in doing" class="drag-list" :key="item.id">
                                             {{item.content}}
                                         </div>
                                     </transition-group>
@@ -906,7 +906,7 @@
         border-style: dashed
     }
     .li-small{
-        font-size: 8px;
+        font-size: 12px;
     }
     /* 尝试设置背景颜色透明 */
     el-collapse {

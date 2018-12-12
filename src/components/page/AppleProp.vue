@@ -23,7 +23,7 @@
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
                             <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -33,7 +33,7 @@
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
                             <el-select v-model="searchKey.serverId" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in searchKeyServerOptions"
                                 :key="item.serverId"

@@ -40,7 +40,7 @@
                 </el-table-column> -->
                 <el-table-column  label="角色" width="120">
                     <template slot-scope="aa">
-                            <ul>
+                            <ul >
                             <li v-for="item in aa.row.roles" v-bind:key="item">
                                 {{ item | filters_roleItem }}       
                             </li>
@@ -102,7 +102,7 @@
                                 <div class="item-title">角色列表</div>
                                 <draggable v-model="todo" @remove="removeHandle" :options="dragOptions">
                                     <transition-group tag="div" id="todo" class="item-ul">
-                                        <div v-for="(item,index) in todo" class="drag-list" :key="index">
+                                        <div v-for="item in todo" class="drag-list" :key="item.id">
                                             {{item.content}}
                                         </div>
                                     </transition-group>
@@ -112,7 +112,7 @@
                                 <div class="item-title">用户角色</div>
                                 <draggable v-model="doing" @remove="removeHandle" :options="dragOptions">
                                     <transition-group tag="div" id="doing" class="item-ul">
-                                        <div v-for="(item,index) in doing" class="drag-list" :key="index">
+                                        <div v-for="item in doing" class="drag-list" :key="item.id">
                                             {{item.content}}
                                         </div>
                                     </transition-group>
@@ -1062,5 +1062,8 @@
         display: block;
         color: transparent;
         border-style: dashed
+    }
+    ul{
+        list-style:none;
     }
 </style>

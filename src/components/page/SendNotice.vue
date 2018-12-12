@@ -3,28 +3,24 @@
     <div class="table">
             <div class="crumbs">
                 <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>发送公告</el-breadcrumb-item>
+                    <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>发送广播</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
             <div class="container">
                 <div class="plugins-tips">
                      备注：
                     <br/>
-                    （1）输入内容发送；不显示已下线的区服，已合服的只显示主服。未到开服时间的区服将不会发送公告。
+                    （1）输入内容发送；不显示已下线的区服，已合服的只显示主服。未到开服时间的区服将不会发送广播。
                     <br/>
                     （2）只发送一次，如果发送失败，系统将持续发送24小时，直到成功或超过24小时；在没有发送成功时，管理员也可以取消发送；
                     <br/>
-                    （3）设置了公告后，这些公告不会在日后开的新服生效，新服要单独设置公告。
+                    （3）设置了广播后，这些广播不会在日后开的新服生效，新服要单独设置广播。
                 </div>
-                
-                <!-- <Divider /> -->
-                <el-collapse v-model="activeNames" @change="handleChange">
+
+                <el-collapse v-model="activeNames">
                 <el-collapse-item title="折叠" name="1">
                         <div class="form-box">
                     <el-form ref="form" :model="form" label-width="250px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
@@ -39,7 +35,7 @@
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
                             
                             <el-checkbox-group v-model="serverList" @change="handleCheckedServer" v-show="checkVisible">
-                                <el-checkbox v-for="item in serverOptions" :label="item.serverName" :key="item.serverId"></el-checkbox>
+                                <el-checkbox v-for="item in serverOptions" :label="item.serverId+'-'+item.serverName" :key="item.serverId"></el-checkbox>
                             </el-checkbox-group>
                         </el-form-item>
                         <el-form-item label="消息类型">
@@ -52,8 +48,8 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="发放类型">
-                            <el-select v-model="form.sendType"  placeholder="请选择发放类型" style="width:180px">
+                        <el-form-item label="发送类型">
+                            <el-select v-model="form.sendType"  placeholder="请选择发送类型" style="width:180px">
                                 <el-option
                                 v-for="item in sendTypeList"
                                 :key="item.id"
@@ -106,7 +102,7 @@
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
                             <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -116,7 +112,7 @@
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
                             <el-select v-model="searchKey.serverName" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in searchKeyServerOptions"
                                 :key="item.serverName"
@@ -124,8 +120,6 @@
                                 :value="item.serverName">
                                 </el-option>
                             </el-select>
-                      <!-- <span class="grid-content bg-purple-light">：</span>
-                      <el-input v-model="searchKey.rightName" placeholder="筛选权限名" class="handle-input " style="width:150px"></el-input> -->
 
                       <span class="grid-content bg-purple-light">内容：</span>
                       <el-input v-model="searchKey.noticeContent" placeholder="筛选内容" class="handle-input " style="width:150px"></el-input>
@@ -151,13 +145,11 @@
                 
                 <el-table-column prop="noticeType" label="消息类型"  :formatter="formatNoticeType">
                 </el-table-column>
-                <el-table-column prop="sendType" label="发放类型" :formatter="formatSendType">
+                <el-table-column prop="sendType" label="发送类型" :formatter="formatSendType">
                 </el-table-column>
                 <el-table-column prop="timeInterval" label="发送时间间隔" >
                 </el-table-column>
-                <el-table-column prop="startDatetime" label="开始时间" :formatter="formatter" >
-                </el-table-column>
-                <el-table-column prop="endDatetime" label="结束时间" :formatter="formatter">
+                <el-table-column prop="cycleTime" label="循环次数" >
                 </el-table-column>
                 <el-table-column prop="noticeContent"  label="内容" >
                 </el-table-column>
@@ -188,40 +180,8 @@
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
-        <!-- 编辑禁言提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToProhibitSpeak = false">取 消</el-button>
-                <el-button type="primary" @click="ToProhibitSpeak">确 定</el-button>
-            </span>
-        </el-dialog>
 
-        <!-- 编辑解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 编辑禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToBan = false">取 消</el-button>
-                <el-button type="primary" @click="ToBan">确 定</el-button>
-            </span>
-        </el-dialog>
 
-        <!-- 编辑解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeBanToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="BanToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
 
         <!-- 批量删除提示框 -->
         <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
@@ -237,6 +197,7 @@
 <script>
 import bus from "../common/bus";
 import dialog from "../test/dialog.vue";
+import setLocalThisUrl from '../../code/setLocalThisUrl';
 export default {
   name: "PlayerInfo",
   data() {
@@ -263,14 +224,7 @@ export default {
       platformValue: "",
       platformLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "4",
-        //   serverName: "服务器1"
-        // },
-        // {
-        //   serverId: "5",
-        //   serverName: "服务器2"
-        // },
+
 
       ],
       searchKeyServerOptions:[],
@@ -306,6 +260,7 @@ export default {
         noticeContent:""
       },
       delAllVisible:false,
+      url:"http://localhost:8011",
     };
   },
   components: {
@@ -325,6 +280,7 @@ export default {
     }
   },
   created() {
+    setLocalThisUrl(this);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -344,7 +300,7 @@ export default {
   methods: {
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -365,7 +321,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -387,7 +343,7 @@ export default {
     },
     getSearchKeyServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -425,7 +381,7 @@ export default {
     },
     getNotice() {
       this.$axios
-        .post("/getNotice", {
+        .post(this.url+"/getNotice", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
           noticeContent:this.searchKey.noticeContent,
@@ -454,7 +410,7 @@ export default {
     },
     getSendType() {
       this.$axios
-        .post("/getSendNoticeSendType", {})
+        .post(this.url+"/getSendNoticeSendType", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -473,7 +429,7 @@ export default {
     },
     getNoticeType() {
       this.$axios
-        .post("/getSendNoticeNoticeType", {})
+        .post(this.url+"/getSendNoticeNoticeType", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -543,7 +499,7 @@ export default {
         console.log(JSON.stringify(this.serverList));
 
         this.$axios
-        .post("/addNotice", {
+        .post(this.url+"/addNotice", {
             platformId:this.platformValue,
             serverList:JSON.stringify(this.serverList),
             sendType:this.form.sendType,
@@ -557,13 +513,13 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("公告添加成功");
-            this.$message.success("公告添加成功");
+            console.log("广播添加成功");
+            this.$message.success("广播添加成功");
             this.getNotice();    
           } else {
             console.log(this.responseResult);
-            console.log("公告添加失败");
-            this.$message.error("公告添加失败");
+            console.log("广播添加失败");
+            this.$message.error("广播添加失败");
             return false;
           }
         })
@@ -600,33 +556,53 @@ export default {
         return tt;
     },
     handleSend(index,row){
+        var item = this.tableData[index];
+        var serverList = item.serverList.substring(1,item.serverList.length-1).split(",");
+        var strServerList = "";
+        for(var i = 0;i<serverList.length;i++){
+            serverList[i]=serverList[i].substring(1,serverList[i].length).split("-")[0];
+            strServerList+=serverList[i]+",";
+        }
+        strServerList = strServerList.substring(0,strServerList.length-1);
       console.log(index);
           console.log(this.tableData[index].id);
-          this.$axios.post('/sendNotice',{
-            id:this.tableData[index].id
+          this.$axios.post(this.url+'/sendNotice',{
+            id:this.tableData[index].id,
+            platformId:this.tableData[index].platformId,
+            serverList:strServerList,
+            sendType:item.sendType,
+            noticeType:item.noticeType,
+            timeInterval:item.timeInterval,
+            cycleTime:item.cycleTime,
+            Content:item.noticeContent,
           })
           .then(successResponse =>{
               this.responseResult ="\n"+ JSON.stringify(successResponse.data)
-              if(successResponse.data.code === 200){
-                  console.log(this.responseResult);
-                  this.$message.success("公告发送完成"); 
-                  this.getNotice();
+              // if(successResponse.data.code === 200){
+              //     console.log(this.responseResult);
+              //     this.$message.success("公告发送完成"); 
+              //     this.getNotice();
 
-              }else{
-                  this.open4(successResponse.data.message);
-                  console.log('error');
-                  console.log(this.responseResult);
-                  this.$message.error("公告发送失败");
-                  return false;
-              }
+              // }else{
+              //     this.open4(successResponse.data.message);
+              //     console.log('error');
+              //     console.log(this.responseResult);
+              //     this.$message.error("公告发送失败");
+              // }
+              console.log("公告已发送");
+              this.$message.success("公告已发送");
+              this.getNotice();
           })
-          .catch(failResponse => {})
+          .catch(failResponse => {
+            console.log("公告发送失败");
+            this.$message.error("公告发送失败");
+          })
     },
     search(){
       this.getNotice();
     },
     formatIsSend(row, column, cellValue, index){
-        return row.sendState == 1 ? "已发送" : "未发送";
+        return row.sendState == 1 ? "已发送" : row.sendState == 2 ? "发送失败" : "未发送";
     },
     formatNoticeType(row, column, cellValue, index){
         for(var i = 0;i<this.noticeTypeList.length;i++){
@@ -653,7 +629,7 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllNotice',{
+                this.$axios.post(this.url+'/deleteAllNotice',{
                         id: str
                 })
                 .then(successResponse =>{

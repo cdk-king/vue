@@ -12,7 +12,7 @@
                 </div>
                 
                 <Divider />
-                <div class="form-box" v-if="false">
+                <div class="form-box" v-if="true">
                     <el-form ref="form" :model="form" label-width="150px">
                         <el-form-item class="el-form-item" label="选择渠道">
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
@@ -34,7 +34,7 @@
 
                         </el-form-item>
                         <el-form-item label="">
-                            <el-button type="primary" @click="exchangeCDK">兑换激活码</el-button>
+                            <el-button type="primary" @click="checkCDKIsUse">查询是否有效</el-button>
                             <el-button @click="resetForm">重置</el-button>
                         </el-form-item>
                     </el-form>
@@ -659,6 +659,32 @@ import bus from '../common/bus';
                 }
                 })
                 .catch(failResponse => {});
+            },
+            checkCDKIsUse(){
+                console.log(this.form.cdk);
+                this.$axios 
+                .post(this.url+"/api/cdk/checkCDKIsUse", {
+                    cdk: this.form.cdk,
+                    platformId:this.form.platformId
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    console.log("CDK校验通过");
+                    this.$message.success("CDK校验通过");
+                    this.exchangeResult = successResponse.data.data;
+                    this.exchangeVisible = true;
+                    this.getData();
+                } else {
+                    console.log(this.responseResult);
+                    console.log(successResponse.data.message);
+                    this.$message.error(successResponse.data.message);
+                }
+                })
+                .catch(failResponse => {
+                    this.$message.error("CDK解析出错");
+                });
             },
             resetForm(){
                 this.form.cdk = "";

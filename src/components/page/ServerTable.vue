@@ -15,14 +15,16 @@
                 
                 <Divider />
             <div class="handle-box">
-                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+                <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
-                    <el-option key="1" label="全部" value="0"></el-option>
-                    <el-option key="2" label="冻结" value="1"></el-option>
-                     <el-option key="3" label="未冻结" value="2"></el-option>
+                        <el-option key="-1" label="全部" value="-1"></el-option>
+                        <el-option key="0" label="未开启" value="0"></el-option>
+                        <el-option key="1" label="维护" value="1"></el-option>
+                        <el-option key="2" label="新服" value="2"></el-option>
+                        <el-option key="3" label="良好" value="3"></el-option>
+                        <el-option key="4" label="爆满" value="4"></el-option>
                 </el-select>
 
                 <span class="grid-content bg-purple-light">服务器名：</span>
@@ -38,7 +40,9 @@
                 <el-input v-model="searchKey.gameName" placeholder="游戏" class="handle-input " style="width:120px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleAddServer">添加</el-button>
+                <el-button type="primary" icon="search" @click="handleAddServer" v-if="false">添加</el-button>
+                <el-button type="primary" icon="search" @click="handleSyn">同步</el-button>
+                <el-button type="primary" icon="search" @click="handleGetList">获取列表</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
@@ -55,6 +59,8 @@
                 </el-table-column>
                 <el-table-column prop="platform" label="所属渠道" width="120">
                 </el-table-column>
+                <el-table-column prop="platformTag" label="渠道标识" width="120">
+                </el-table-column>
                 <el-table-column prop="server_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
@@ -63,14 +69,17 @@
                 </el-table-column>
                 <el-table-column prop="addUser"  label="添加人" >
                 </el-table-column>
-                <el-table-column prop="sort" width="50" label="排序" >
+                <el-table-column prop="isDefault" width="50" label="是否默认" :formatter="formatIsDefault" >
                 </el-table-column>
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+
+                        <el-button type="text" icon="el-icon-edit" @click="handleChangeState(scope.$index, scope.row)">设置状态</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleSetDefault(scope.$index, scope.row)">设置默认</el-button>
+                        <!-- <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToFrozen(scope.$index, scope.row)" v-if="scope.row.state!=1">冻结</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToNormal(scope.$index, scope.row)" v-if="scope.row.state==1">解冻</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
                     </template>
                 </el-table-column>
 
@@ -96,16 +105,6 @@
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属游戏">
-                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
-                        <el-option
-                        v-for="item in gameList"
-                        :key="item.id"
-                        :label="item.gameName"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
                 <el-form-item label="所属渠道">
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
@@ -141,16 +140,6 @@
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属游戏">
-                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
-                        <el-option
-                        v-for="item in gameList"
-                        :key="item.id"
-                        :label="item.gameName"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
                 <el-form-item label="所属渠道">
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
@@ -203,6 +192,32 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delAllVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveDelAll">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 设置服务器状态提示框 -->
+        <el-dialog title="提示" :visible.sync="ChangeStateVisible" width="400px" center>
+            <el-form ref="form" :model="form" label-width="150px">
+                <el-form-item class="el-form-item" label="设置服务器状态：" >
+                    <el-select v-model="form.state" placeholder="设置服务器状态"  class="handle-select mr10">
+                        <el-option key="0" label="未开启" value="0"></el-option>
+                        <el-option key="1" label="维护" value="1"></el-option>
+                        <el-option key="2" label="新服" value="2"></el-option>
+                        <el-option key="3" label="良好" value="3"></el-option>
+                        <el-option key="4" label="爆满" value="4"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ChangeStateVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveChangeState">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 设置默认服务器提示框 -->
+        <el-dialog title="提示" :visible.sync="SetDefaultVisible" width="300px" center>
+            <div class="del-dialog-cnt">是否确定设置默认服务器？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="SetDefaultVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveSetDefault">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -283,7 +298,10 @@
                     },
                 ],
                 selectGame:"",
-                selectPlatform:""
+                selectPlatform:"",
+                synServerList:[],
+                ChangeStateVisible:false,
+                SetDefaultVisible:false,
 
             }
         },
@@ -304,6 +322,36 @@
             this.right();
         },
         methods: {
+            handleGetList(){
+                this.$axios.post(this.url+"/api/server/getServerList",{
+                    platform:"test"
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data!=""){
+                        console.log(this.responseResult);
+                        console.log(successResponse.data);
+                        console.log("服务器列表获取成功");
+                    }
+                })
+                .catch(failResponse => {})
+            },
+            handleSyn(){
+                this.$axios.post(this.url+"/api/server/SynServerList",{
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data!=""){
+                        console.log(successResponse.data);
+                        console.log("服务器列表获取成功");
+                        this.synServerList = JSON.parse(successResponse.data.data);
+                        console.log(this.synServerList);
+                        this.getData();
+                    }
+                })
+                .catch(failResponse => {})
+
+            },
             getGameList(){
                 this.$axios.post(this.url+'/getAllGameList',{
                 })
@@ -442,6 +490,65 @@
                     serverPort:item.serverPort
                 }
                 this.editVisible = true;
+            },
+            handleChangeState(index, row){
+                this.idx = index;
+                const item = this.tableData[index];
+                this.id = this.tableData[index].id;
+                this.ChangeStateVisible = true;
+            },
+            handleSetDefault(index, row){
+                this.idx = index;
+                const item = this.tableData[index];
+                this.id = this.tableData[index].id;
+                this.SetDefaultVisible = true;
+            },
+            saveSetDefault(){
+                this.$axios.post(this.url+'/api/server/setDefaultServer',{
+                        id: this.id
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("默认服务器设置成功");
+                        this.multipleSelection = []; 
+                        this.SetDefaultVisible = false;
+                        this.getData();
+
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("默认服务器设置失败");
+                    }
+                })
+                .catch(failResponse => {})
+                
+            },
+            saveChangeState(){
+                console.log(this.form.state);
+                this.$axios.post(this.url+'/api/server/ChangeState',{
+                        id: this.id,
+                        state:this.form.state
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("设置服务器状态成功");
+                        this.multipleSelection = []; 
+                        this.ChangeStateVisible = false;
+                        this.getData();
+
+                    }else{
+                        this.open4(successResponse.data.message);
+                        console.log('error');
+                        console.log(this.responseResult);
+                        this.$message.error("设置服务器状态失败");
+                    }
+                })
+                this.ChangeStateVisible = false;
             },
             handleChangeStateToFrozen(index, row) {
                 this.idx = index;
@@ -680,12 +787,28 @@
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
+            formatIsDefault: function (row, column, cellValue, index) {
+			return row.isDefault == 1 ? '默认' :  '';
+            }
+            ,
             formatState: function (row, column, cellValue, index) { 
-			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
+                var label = "";
+                if(row.state == 0){
+                    label="未开启";
+                }
+                if(row.state == 1){
+                    label = "维护";
+                }
+                if(row.state == 2){
+                    label = "新服";
+                }
+                if(row.state == 3){
+                    label = "良好";
+                }
+                if(row.state == 4){
+                    label = "爆满";
+                }
+			    return label;
 		    }
         }
     }

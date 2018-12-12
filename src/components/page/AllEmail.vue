@@ -23,7 +23,7 @@
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
                             <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -33,7 +33,7 @@
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
                             <el-select v-model="searchKey.serverName" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in searchKeyServerOptions"
                                 :key="item.serverName"
@@ -41,9 +41,6 @@
                                 :value="item.serverName">
                                 </el-option>
                             </el-select>
-                      <!-- <span class="grid-content bg-purple-light">：</span>
-                      <el-input v-model="searchKey.rightName" placeholder="筛选权限名" class="handle-input " style="width:150px"></el-input> -->
-
                       <span class="grid-content bg-purple-light">内容：</span>
                       <el-input v-model="searchKey.EmailContent" placeholder="筛选内容" class="handle-input " style="width:150px"></el-input>
 
@@ -117,12 +114,6 @@
                         </el-form-item>
                         <el-form-item label="选择服务器">
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
-                                    <!-- 全选 -->
-                                   <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-                                    <div style="margin: 15px 0;"></div>
-                                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                                    </el-checkbox-group> -->
 
                             <el-checkbox-group v-model="form.serverList" @change="handleCheckedServer" v-show="checkVisible">
                                 <el-checkbox v-for="item in serverOptions" :label="item.serverName" :key="item.serverId"></el-checkbox>
@@ -186,9 +177,7 @@
         <el-dialog title="编辑" :visible.sync="editPlatformEmailVisible" width="900px" center :modal="false"  :close-on-click-modal="false">
             <div class="form-box">
                     <el-form ref="form" :model="form" label-width="250px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
+
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
@@ -201,12 +190,6 @@
                         </el-form-item>
                         <el-form-item label="选择服务器">
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
-                                    <!-- 全选 -->
-                                   <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-                                    <div style="margin: 15px 0;"></div>
-                                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                                        <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-                                    </el-checkbox-group> -->
 
                             <el-checkbox-group v-model="form.serverList" @change="handleCheckedServer" v-show="checkVisible">
                                 <el-checkbox v-for="item in serverOptions" :label="item.serverName" :key="item.serverId"></el-checkbox>
@@ -266,32 +249,6 @@
             </span>
         </el-dialog>
 
-        <!-- 编辑解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁言？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 编辑禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeToBan = false">取 消</el-button>
-                <el-button type="primary" @click="ToBan">确 定</el-button>
-            </span>
-        </el-dialog>
-
-        <!-- 编辑解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
-            <div class="del-dialog-cnt">是否确定解除禁封？</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="ChangeBanToNormal = false">取 消</el-button>
-                <el-button type="primary" @click="BanToNormal">确 定</el-button>
-            </span>
-        </el-dialog>
-
         <!-- 批量删除提示框 -->
         <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
             <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
@@ -306,6 +263,7 @@
 <script>
 import bus from "../common/bus";
 import dialog from "../test/dialog.vue";
+import setLocalThisUrl from '../../code/setLocalThisUrl';
 export default {
   name: "PlayerInfo",
   data() {
@@ -374,6 +332,7 @@ export default {
         emailContent:""
       },
       delAllVisible:false,
+      url:"http://localhost:8011",
     };
   },
   components: {
@@ -393,6 +352,7 @@ export default {
     }
   },
   created() {
+      setLocalThisUrl(this);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -409,7 +369,7 @@ export default {
   methods: {
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -429,7 +389,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -451,7 +411,7 @@ export default {
     },
     getSearchKeyServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -489,7 +449,7 @@ export default {
     },
     getPlatformEmail() {
       this.$axios
-        .post("/getPlatformEmail", {
+        .post(this.url+"/getPlatformEmail", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
           EmailContent:this.searchKey.EmailContent,
@@ -561,7 +521,7 @@ export default {
         console.log(JSON.stringify(this.form.serverList));
 
         this.$axios
-        .post("/addPlatformEmail", {
+        .post(this.url+"/addPlatformEmail", {
             platformId:this.form.platformId,
             serverList:JSON.stringify(this.form.serverList),
             emailTitle: this.form.emailTitle,
@@ -610,7 +570,7 @@ export default {
         console.log(JSON.stringify(this.form.serverList));
 
         this.$axios
-        .post("/editPlatformEmail", {
+        .post(this.url+"/editPlatformEmail", {
             id:this.form.id,
             platformId:this.form.platformId,
             serverList:JSON.stringify(this.form.serverList),
@@ -667,7 +627,7 @@ export default {
     handleSend(index,row){
         console.log(index);
         console.log(this.tableData[index].id);
-        this.$axios.post('/sendPlatformEmail',{
+        this.$axios.post(this.url+'/sendPlatformEmail',{
         id:this.tableData[index].id
         })
         .then(successResponse =>{
@@ -690,7 +650,7 @@ export default {
     handleDelete(index,row){
                 console.log(index);
         console.log(this.tableData[index].id);
-        this.$axios.post('/deletePlatformEmail',{
+        this.$axios.post(this.url+'/deletePlatformEmail',{
         id:this.tableData[index].id
         })
         .then(successResponse =>{
@@ -781,7 +741,7 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllPlatformEmail',{
+                this.$axios.post(this.url+'/deleteAllPlatformEmail',{
                         id: str
                 })
                 .then(successResponse =>{

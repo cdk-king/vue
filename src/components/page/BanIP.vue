@@ -83,7 +83,7 @@
           placeholder="请选择渠道平台"
           style="width:150px"
         >
-          <el-option key="1" label="全部" value="0"></el-option>
+          <el-option key="0" label="全部" value="0"></el-option>
           <el-option
             v-for="item in platformOptions"
             :key="item.id"
@@ -98,7 +98,7 @@
           placeholder="请选择服务器"
           style="width:150px"
         >
-          <el-option key="1" label="全部" value="0"></el-option>
+          <el-option key="0" label="全部" value="0"></el-option>
           <el-option
             v-for="item in searchKeyServerOptions"
             :key="item.serverId"

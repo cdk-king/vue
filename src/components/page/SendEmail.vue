@@ -73,7 +73,7 @@
 
 
                     <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
-                    <el-tab-pane label="按条件发送"  name="1">
+                    <el-tab-pane label="按条件发送"  name="1" v-if="false">
                         <el-form-item label="玩家等级" style="margin-left:-18px">
                             
                             <el-input style="width:180px"
@@ -122,21 +122,6 @@
                                 </el-date-picker>
                         </el-form-item>
 
-                        <!-- <el-form-item label="最后登录时间" style="margin-left:-18px">
-                                <el-date-picker style="width:180px" 
-                                v-model="form.minLastTime"
-                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择起始日期时间">
-                                </el-date-picker>
-
-                                <span style="">—</span>
-
-                                <el-date-picker style="width:180px"  
-                                v-model="form.maxLastTime"
-                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择截至日期时间">
-                                </el-date-picker>
-                        </el-form-item> -->
 
                         <el-form-item label="是否在线" style="margin-left:-18px">
                                 <el-select v-model="form.isOnline"  placeholder="请选择是否在线" style="width:180px">
@@ -224,7 +209,7 @@
                       <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleDelAll">批量删除</el-button>
                       <span class="grid-content bg-purple-light">平台：</span>
                             <el-select v-model="searchKey.platformId" @change="selectSearchKeyPlatform" placeholder="请选择渠道平台" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -234,7 +219,7 @@
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
                             <el-select v-model="searchKey.serverName" @change="selectSearchKeyServer"  placeholder="请选择服务器" style="width:150px">
-                                <el-option key="1" label="全部" value="0"></el-option>
+                                <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in searchKeyServerOptions"
                                 :key="item.serverName"
@@ -256,8 +241,6 @@
                 </el-table-column>
                 <el-table-column prop="platform" label="平台"  >
                 </el-table-column>
-                <!-- <el-table-column prop="serverList" label="服务器" >
-                </el-table-column> -->
                 <el-table-column prop="server" label="服务器" >
                 </el-table-column>
                 <el-table-column prop="sendType"  label="发送类型" :formatter="formatterSendType">
@@ -295,9 +278,6 @@
             <el-dialog title="提示" :visible.sync="dialogVisible" width="900px" center>
 
                     <el-form ref="form" :model="form" label-width="250px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
@@ -470,12 +450,13 @@
 <script>
 import bus from "../common/bus";
 import dialog from "../test/dialog.vue";
+import setLocalThisUrl from '../../code/setLocalThisUrl';
 export default {
   name: "PlayerInfo",
   data() {
     return {
       activeNames: ["1"],
-      editableTabsValue: '1',
+      editableTabsValue: '2',
       multipleSelection: [],
       show: false,
       dialogVisible: false,
@@ -525,14 +506,6 @@ export default {
       platformValue: "",
       platformLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "4",
-        //   serverName: "服务器1"
-        // },
-        // {
-        //   serverId: "5",
-        //   serverName: "服务器2"
-        // },
 
       ],
       searchKeyServerOptions:[],
@@ -571,6 +544,7 @@ export default {
         EmailContent:""
       },
       delAllVisible:false,
+      url:"http://localhost:8011",
     };
   },
   components: {
@@ -590,6 +564,7 @@ export default {
     }
   },
   created() {
+    setLocalThisUrl(this);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -609,7 +584,7 @@ export default {
   methods: {
     getPlatformList(userId) {
       this.$axios
-        .post("/getPlatformListForUserIdAndGameId", {
+        .post(this.url+"/getPlatformListForUserIdAndGameId", {
           userId: userId,
           gameId: this.$gameId
         })
@@ -630,7 +605,7 @@ export default {
     },
     getServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -651,7 +626,7 @@ export default {
     },
     getSearchKeyServerList(platformId) {
       this.$axios
-        .post("/getServerListForPlatform", {
+        .post(this.url+"/getServerListForPlatform", {
           id: platformId
         })
         .then(successResponse => {
@@ -689,7 +664,7 @@ export default {
     },
     getEmail() {
       this.$axios
-        .post("/getEmail", {
+        .post(this.url+"/getEmail", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
           EmailContent:this.searchKey.EmailContent,
@@ -718,7 +693,7 @@ export default {
     },
     getSendType() {
       this.$axios
-        .post("/getSendEmailSendType", {})
+        .post(this.url+"/getSendEmailSendType", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -737,7 +712,7 @@ export default {
     },
     getEmailType() {
       this.$axios
-        .post("/getSendEmailEmailType", {})
+        .post(this.url+"/getSendEmailEmailType", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -862,7 +837,7 @@ export default {
 
         }
         this.$axios
-        .post("/addEmail", data)
+        .post(this.url+"/addEmail", data)
         .then(successResponse => {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
@@ -960,7 +935,7 @@ export default {
         }
         console.log(data);
         this.$axios
-        .post("/editEmail", data)
+        .post(this.url+"/editEmail", data)
         .then(successResponse => {
         this.responseResult = "\n" + JSON.stringify(successResponse.data);
         if (successResponse.data.code === 200) {
@@ -972,7 +947,6 @@ export default {
             console.log(this.responseResult);
             console.log("邮件编辑失败");
             this.$message.error("邮件编辑失败");
-            return false;
         }
         })
         .catch(failResponse => {});
@@ -1079,10 +1053,19 @@ export default {
         return tt;
     },
     handleSend(index,row){
+        var item = this.tableData[index];
       console.log(index);
           console.log(this.tableData[index].id);
-          this.$axios.post('/sendEmail',{
-            id:this.tableData[index].id
+          this.$axios.post(this.url+'/sendEmail',{
+            id:this.tableData[index].id,
+            platformId:this.tableData[index].platformId,
+            serverId:item.serverId,
+            emailTitle:item.emailTitle,
+            emailContent:item.emailContent,
+            sendType:item.sendType,
+            playerNameList:item.playerNameList,
+            playerIdList:item.playerIdList,
+
           })
           .then(successResponse =>{
               this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -1104,7 +1087,7 @@ export default {
     handleDelete(index,row){
       console.log(index);
           console.log(this.tableData[index].id);
-          this.$axios.post('/deleteEmail',{
+          this.$axios.post(this.url+'/deleteEmail',{
             id:this.tableData[index].id
           })
           .then(successResponse =>{
@@ -1131,7 +1114,7 @@ export default {
         return row.sendType== 1 ? "范围" : row.sendType== 2 ? "玩家" : "全服";
     },
     formatIsSend(row, column, cellValue, index){
-        return row.sendState == 1 ? "已发送" : "未发送";
+        return row.sendState == 1 ? "已发送" : row.sendState == 2 ? "发送失败" : "未发送";
     },
     formatEmailType(row, column, cellValue, index){
         for(var i = 0;i<this.EmailTypeList.length;i++){
@@ -1158,7 +1141,7 @@ export default {
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllEmail',{
+                this.$axios.post(this.url+'/deleteAllEmail',{
                         id: str
                 })
                 .then(successResponse =>{

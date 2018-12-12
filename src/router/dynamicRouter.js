@@ -63,7 +63,7 @@ function getchildren() {
      setRouterItem("/PlayerBanLog","玩家禁封记录","Player_BanLog_View","PlayerBanLog.vue",children,right);
      setRouterItem("/BanIp","IP禁封","Player_BanIp_View","BanIP.vue",children,right);
      setRouterItem("/SendEmail","发送邮件","Send_Email_View","SendEmail.vue",children,right);
-     setRouterItem("/SendNotice","发送公告","Send_Notice_View","SendNotice.vue",children,right);
+     setRouterItem("/SendNotice","发送广播","Send_Notice_View","SendNotice.vue",children,right);
      setRouterItem("/AllEmail","全服邮件","All_Email_View","AllEmail.vue",children,right);
      setRouterItem("/AllNotice","全服公告","All_Notice_View","AllNotice.vue",children,right);
      setRouterItem("/PropInfo","道具信息","Prop_Info_View","PropTable.vue",children,right);
@@ -77,6 +77,7 @@ function getchildren() {
      setRouterItem("/CDK_Use","激活码使用情况","CDK_Use_View","CDK_Use.vue",children,right);
      setRouterItem("/TouristIdSet","游客账号设置","TouristId_Set_View","TouristIdSet.vue",children,right);
      setRouterItem("/Center","用户中心","Center_View","Center.vue",children,right);
+     //setRouterItem("/Upload","文件上传","Upload_View","Uploadfile.vue",children,right);
 
     // item.path = '/userTable';
     // item.meta = { title: '用户管理' };
@@ -126,6 +127,11 @@ function getchildren() {
             path: '/upload',
             component: resolve => require(['../components/page/Upload.vue'], resolve),
             meta: { title: '文件上传' }   
+        },
+        {
+            path: '/fileUpload',
+            component: resolve => require(['../components/page/UploadFile.vue'], resolve),
+            meta: { title: '文件上传' }
         },
         {
             // vue-schart组件

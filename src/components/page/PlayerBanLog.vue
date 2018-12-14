@@ -172,8 +172,8 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        console.log("日志列表获取成功");
-                        //this.$message.success("玩家列表获取成功");
+                        console.log("禁封记录获取成功");
+                        //this.$message.success("禁封记录获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -181,8 +181,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("日志列表获取失败");
-                        return false;
+                        this.$message.error("禁封记录获取成功");
                     }
                 })
             },

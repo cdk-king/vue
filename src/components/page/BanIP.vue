@@ -11,11 +11,10 @@
     <div class="container">
       <div class="plugins-tips">备注：
         <br>
-
         （1）封禁物理IP地址；
+        <br>
+        （2）封禁操作为永久禁封,请谨慎操作；
       </div>
-
-      <!-- <Divider /> -->
       <el-collapse v-model="activeNames"  v-if="handleVisible">
         <el-collapse-item title="折叠" name="1">
           <div class="form-box">
@@ -362,13 +361,14 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("封禁IP列表获取成功");
-
+            console.log("IP封禁列表获取成功");
+            //this.$message.success("IP封禁列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
             console.log(this.responseResult);
-            console.log("封禁IP列表获取失败");
+            console.log("IP封禁列表获取失败");
+            this.$message.error("IP封禁列表获取成功");
           }
         })
         .catch(failResponse => {});

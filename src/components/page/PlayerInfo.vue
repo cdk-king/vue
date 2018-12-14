@@ -10,7 +10,9 @@
                 <div class="plugins-tips">
                      备注：
                     <br/>
-                    平台和服务器为必选，请选择平台后再选择服务器
+                    （1）平台和服务器为必选，请选择平台后再选择服务器
+                    <br/>
+                    （2）禁封和禁言操作不输入时间则为永久操作
                 </div>
                 
                 <!-- <Divider /> -->
@@ -18,11 +20,8 @@
                 <el-collapse-item title="折叠" name="1">
                         <div class="form-box">
                     <el-form ref="form" :model="form" label-width="100px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
-                        <el-form-item class="el-form-item" label="选择渠道" >
-                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
+                        <el-form-item class="el-form-item" label="选择平台" >
+                            <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -41,9 +40,9 @@
                             </el-select>
                         </el-form-item>
                         <Divider />
-                        <el-form-item label="平台账号">
+                        <el-form-item label="玩家账号">
                             <el-input style="width:180px"
-                            placeholder="请输入平台账号"
+                            placeholder="请输入玩家账号"
                             v-model="searchForm.playerAccount"
                             clearable>
                             </el-input>
@@ -72,7 +71,7 @@
                                 <el-option key="2" label="未禁言" value="0"></el-option>
                                 <el-option key="3" label="已禁言" value="1"></el-option>
                             </el-select>
-                            <span style="margin-left:22px">最后禁封</span>
+                            <span style="margin-left:22px">是否禁封</span>
                                 <el-select  placeholder="请选择"  v-model="searchForm.isBan" class="handle-select mr10" style="width:180px">
                                 <el-option key="1" label="全部" value="0"></el-option>
                                 <el-option key="2" label="未封禁" value="0"></el-option>
@@ -202,11 +201,12 @@
                 <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
-                <el-table-column prop="playerName" label="玩家名"  >
-                </el-table-column>
+
                 <el-table-column prop="playerAccount" label="玩家账号"  >
                 </el-table-column>
-                <el-table-column prop="playerId" label="玩家Id" >
+                <el-table-column prop="playerName" label="角色名"  >
+                </el-table-column>
+                <el-table-column prop="playerId" label="角色Id" >
                 </el-table-column>
                 <!-- <el-table-column prop="isOnline" label="是否在线"  :formatter="formatIsOnline">
                 </el-table-column>
@@ -762,6 +762,7 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("玩家列表获取成功");
+            //this.$message.success("玩家列表获取成功");
             //this.tableData = successResponse.data.data.list;   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
             this.mapData(successResponse.data.data);

@@ -69,7 +69,7 @@
                             clearable>
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="开始时间">
+                        <!-- <el-form-item label="开始时间">
                                 <el-date-picker style="width:215px" 
                                 v-model="form.startDatetime"
                                 type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
@@ -82,7 +82,7 @@
                                 type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择截至日期时间">
                                 </el-date-picker>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="申请人">
                             <el-input style="width:215px"
                             placeholder="请输入申请人"

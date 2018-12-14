@@ -12,9 +12,7 @@
                     <br/>
                     （1）两种申请方式（为指定角色申请、为全服玩家申请）只能选择其中的一种；
                     <br/>
-                    （2）申请添加以后需要审核人审核通过后，才能发送道具申请邮件；
-                    <br/>
-                    （3）邮件发送成功后将不能再发送；
+                    （2）道具参数格式：道具id-道具数量-是否绑定-品质
                 </div>
             
             
@@ -63,9 +61,9 @@
 
                 <el-table-column prop="releaseTitle"  label="标题" >
                 </el-table-column>
-                <el-table-column prop="releaseContent"  label="内容" width="200">
+                <el-table-column prop="releaseContent"  label="内容" >
                 </el-table-column>
-                <el-table-column prop="propList" label="道具列表" width="200">
+                <el-table-column prop="propList" label="道具列表" >
                     <template slot-scope="scope">
                       <p style=""  v-for="item in scope.row.propList.split(',')" :key="item"
                                 :label="item"
@@ -90,8 +88,8 @@
                 <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter">
                 </el-table-column>
                 <!-- 0未审核1已通过2未通过 -->
-                <el-table-column prop="confirmState"  label="审核状态" :formatter="formatIsSend">
-                </el-table-column>
+                <!-- <el-table-column prop="confirmState"  label="审核状态" :formatter="formatIsSend">
+                </el-table-column> -->
                 <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState">
                 </el-table-column>
                 <el-table-column prop="userName"  label="编辑人" >
@@ -99,10 +97,10 @@
                 <el-table-column label="操作"  align="center" >
                     <template slot-scope="scope">
 
-                        <el-button type="text" icon="el-icon-edit" @click="handleApply(scope.$index, scope.row)" v-if="scope.row.confirmState==1 && scope.row.applyState!=1">发送邮件申请</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >编辑</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleNotConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=2 && scope.row.applyState!=1" >不通过</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleApply(scope.$index, scope.row)" v-if="scope.row.applyState!=1">发送邮件申请</el-button>
+                        <!-- <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button> -->
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.applyState!=1" >编辑</el-button>
+                        <!-- <el-button type="text" icon="el-icon-edit" @click="handleNotConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=2 && scope.row.applyState!=1" >不通过</el-button> -->
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     
                     </template>
@@ -121,8 +119,8 @@
                 
                 <div class="form-box">
                     <el-form ref="form" :model="form" label-width="150px">
-                        <el-form-item class="el-form-item" label="选择渠道">
-                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+                        <el-form-item class="el-form-item" label="选择平台">
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -150,10 +148,10 @@
                             </el-input>
                             
                         </el-form-item>
-                        <el-form-item  label="说明（玩家看到）">
+                        <el-form-item  label="道具邮件内容">
                             <el-input style="width:515px" type="textarea"
                             :autosize="{ minRows:4, maxRows: 10}"
-                            placeholder="请输入说明"
+                            placeholder="请输入邮件内容"
                             v-model="form.releaseContent"
                             clearable>
                             </el-input>
@@ -255,7 +253,7 @@
                             v-model="form.playerNameList"
                             clearable>
                             </el-input>
-                            <p class="grid-content bg-purple-light" style="margin:20px;color:#888888">玩家名称和角色ID至少填写一项，','分隔</p>
+                            <p class="grid-content bg-purple-light" style="color:#888888">玩家名称和角色ID至少填写一项，多个玩家请用','分隔</p>
                         </el-form-item>
                         <el-form-item label="角色ID">
                             <el-input style="width:515px"
@@ -265,7 +263,7 @@
                             clearable>
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="玩家类型">
+                        <!-- <el-form-item label="玩家类型">
                             <el-select v-model="form.playerType"  placeholder="请选择玩家类型">
                                 <el-option
                                 v-for="item in playerTypeOptions"
@@ -274,7 +272,7 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
-                        </el-form-item>
+                        </el-form-item> -->
                     
 
                         <el-form-item label="申请人">
@@ -339,8 +337,8 @@
             <el-dialog title="编辑" :visible.sync="editVisible" width="1100px" center>
                                     <div class="form-box">
                     <el-form ref="form" :model="form" label-width="150px">
-                        <el-form-item class="el-form-item" label="选择渠道">
-                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+                        <el-form-item class="el-form-item" label="选择平台">
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -368,10 +366,10 @@
                             </el-input>
                             
                         </el-form-item>
-                        <el-form-item  label="说明（玩家看到）">
+                        <el-form-item  label="道具邮件内容">
                             <el-input style="width:515px" type="textarea"
                             :autosize="{ minRows:4, maxRows: 10}"
-                            placeholder="请输入说明"
+                            placeholder="请输入邮件内容"
                             v-model="form.releaseContent"
                             clearable>
                             </el-input>
@@ -483,7 +481,7 @@
                             clearable>
                             </el-input>
                         </el-form-item>
-                        <el-form-item label="玩家类型">
+                        <!-- <el-form-item label="玩家类型">
                             <el-select v-model="form.playerType" placeholder="请选择玩家类型">
                                 <el-option
                                 v-for="item in playerTypeOptions"
@@ -492,7 +490,7 @@
                                 :value="item.id">
                                 </el-option>
                             </el-select>
-                        </el-form-item>    
+                        </el-form-item>     -->
 
                         <el-form-item label="申请人">
                             <el-input style="width:215px"

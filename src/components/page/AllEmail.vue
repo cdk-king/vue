@@ -9,7 +9,10 @@
             <div class="container">
                 <div class="plugins-tips">
                      备注：
-                    <!-- <br/> -->
+                    <br/>
+                    (1)选择多个服务器发送邮件，系统会依次向每个服务器发送更新请求 
+                    <br/>
+                    (2)发送失败后会显示失败服务器的id，点击重新发送会对失败的服务器重新发送邮件
                 </div>
                 
                 <Divider />
@@ -53,8 +56,6 @@
                 </el-table-column>
                 <el-table-column prop="platform" label="平台"  >
                 </el-table-column>
-                <!-- <el-table-column prop="serverList" label="服务器" >
-                </el-table-column> -->
                 <el-table-column prop="serverList" label="服务器" >
                   <template slot-scope="scope">
                       <p style=""  v-for="item in scope.row.serverList.substring(1,scope.row.serverList.length-1).split(',') " :key="item"
@@ -66,7 +67,7 @@
 
                 <el-table-column prop="emailTitle"  label="标题" >
                 </el-table-column>
-                <el-table-column prop="emailContent"  label="内容" width="400">
+                <el-table-column prop="emailContent"  label="内容" width="250">
                 </el-table-column>
                 <el-table-column prop="sendReason"  label="原因" >
                 </el-table-column>
@@ -78,11 +79,20 @@
                 </el-table-column>
                 <el-table-column prop="userName"  label="编辑人" >
                 </el-table-column>
+                <el-table-column prop="errorList"  label="错误列表" >
+                    <template slot-scope="scope">
+                        <p style=""  v-for="item in (scope.row.errorList!=null ? scope.row.errorList.split(','):[])" :key="item"
+                                :label="item"
+                                :value="item" >{{ formatServer(item,scope.row.platformId) }}
+                      </p>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
 
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleSend(scope.$index, scope.row)" v-if="scope.row.sendState!=1">发送</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleSend(scope.$index, scope.row)" v-if="scope.row.sendState!=1 && scope.row.sendState!=2">发送</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleReSend(scope.$index, scope.row)" v-if="scope.row.sendState==2">重新发送</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     
                     </template>
@@ -116,7 +126,7 @@
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
 
                             <el-checkbox-group v-model="form.serverList" @change="handleCheckedServer" v-show="checkVisible">
-                                <el-checkbox v-for="item in serverOptions" :label="item.serverName" :key="item.serverId"></el-checkbox>
+                                <el-checkbox v-for="item in serverOptions" :label="item.serverId+'-'+item.serverName" :key="item.serverId"></el-checkbox>
                             </el-checkbox-group>
                         </el-form-item>
                         <el-form-item label="标题">
@@ -192,7 +202,7 @@
                             <span class="grid-content bg-purple-light" style="margin:16px;color:#888888" v-show="!checkVisible">请先选择服务器</span>
 
                             <el-checkbox-group v-model="form.serverList" @change="handleCheckedServer" v-show="checkVisible">
-                                <el-checkbox v-for="item in serverOptions" :label="item.serverName" :key="item.serverId"></el-checkbox>
+                                <el-checkbox v-for="item in serverOptions" :label="item.serverId+'-'+item.serverName" :key="item.serverId"></el-checkbox>
                             </el-checkbox-group>
                         </el-form-item>
                         <el-form-item label="标题">
@@ -292,14 +302,6 @@ export default {
       platformValue: "",
       platformLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "4",
-        //   serverName: "服务器1"
-        // },
-        // {
-        //   serverId: "5",
-        //   serverName: "服务器2"
-        // },
 
       ],
       searchKeyServerOptions:[],
@@ -349,11 +351,13 @@ export default {
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
-    }
+    },
   },
   created() {
       setLocalThisUrl(this);
+      this.getAllServer();
     this.getData();
+    
     bus.$on(
       "changeGameId",
       function(obj) {
@@ -363,10 +367,31 @@ export default {
       }.bind(this)
     );
 
-    console.log();
-
   },
   methods: {
+      formatServer(item,platformId){
+            console.log(JSON.stringify(this.allServerList));
+            for(var i = 0;i<this.allServerList.length;i++){
+                if(this.allServerList[i].id == item){
+                    return this.allServerList[i].server;
+                }
+            }
+        },
+        getAllServer(){
+                this.$axios
+                .post(this.url+"/getAllServer", {
+                })
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                if (successResponse.data.code === 200) {
+                    console.log(this.responseResult);
+                    this.allServerList = successResponse.data.data.list;
+                } else {
+                    console.log(this.responseResult);
+                }
+                })
+                .catch(failResponse => {});
+        },
     getPlatformList(userId) {
       this.$axios
         .post(this.url+"/getPlatformListForUserIdAndGameId", {
@@ -380,7 +405,6 @@ export default {
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
@@ -401,10 +425,8 @@ export default {
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -422,10 +444,8 @@ export default {
 
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -463,7 +483,7 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("邮件列表获取成功");
-            this.$message.success("邮件列表获取成功");
+            //this.$message.success("邮件列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
@@ -625,10 +645,27 @@ export default {
         return tt;
     },
     handleSend(index,row){
-        console.log(index);
-        console.log(this.tableData[index].id);
+        var item = this.tableData[index];
+  
+        console.log(item.serverList);
+        var serverList = item.serverList.substring(1,item.serverList.length-1).split(",");
+        var strServerList = "";
+        for(var i = 0;i<serverList.length;i++){
+            serverList[i]=serverList[i].substring(1,serverList[i].length).split("-")[0];
+            strServerList+=serverList[i]+",";
+        }
+        strServerList = strServerList.substring(0,strServerList.length-1); 
+        console.log(strServerList);
         this.$axios.post(this.url+'/sendPlatformEmail',{
-        id:this.tableData[index].id
+            id:item.id,
+            platformId:item.platformId,
+            serverList:strServerList,
+            emailTitle: item.emailTitle,
+            emailContent:item.emailContent,
+            sendReason:item.sendReason,
+            startDatetime:item.startDatetime,
+            endDatetime:item.endDatetime,
+            addUser:item.userId
         })
         .then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -638,11 +675,38 @@ export default {
                 this.getPlatformEmail();
 
             }else{
-                this.open4(successResponse.data.message);
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("全服邮件发送失败");
-                return false;
+            }
+        })
+        .catch(failResponse => {})
+    },
+        handleReSend(index,row){
+        var item = this.tableData[index];
+        console.log(item.errorList);
+        this.$axios.post(this.url+'/sendPlatformEmail',{
+            id:item.id,
+            platformId:item.platformId,
+            serverList:item.errorList,
+            emailTitle: item.emailTitle,
+            emailContent:item.emailContent,
+            sendReason:item.sendReason,
+            startDatetime:item.startDatetime,
+            endDatetime:item.endDatetime,
+            addUser:item.userId
+        })
+        .then(successResponse =>{
+            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+            if(successResponse.data.code === 200){
+                console.log(this.responseResult);
+                this.$message.success("重新发送完成"); 
+                this.getPlatformEmail();
+
+            }else{
+                console.log('error');
+                console.log(this.responseResult);
+                this.$message.error("重新发送失败");
             }
         })
         .catch(failResponse => {})
@@ -661,7 +725,6 @@ export default {
                 this.getPlatformEmail();
 
             }else{
-                this.open4(successResponse.data.message);
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("全服邮件批量删除失败");
@@ -753,7 +816,6 @@ export default {
                         this.getPlatformEmail();
 
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("全服邮件批量删除失败");

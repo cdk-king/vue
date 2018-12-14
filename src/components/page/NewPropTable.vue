@@ -281,7 +281,7 @@ import bus from '../common/bus';
                     platformId:this.searchKey.platformId,
                     strPlatform:this.strPlatform
                 }).then(successResponse =>{
-                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data);
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
                         console.log("道具列表获取成功");

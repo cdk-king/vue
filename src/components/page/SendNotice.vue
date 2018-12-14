@@ -395,7 +395,7 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("公告列表获取成功");
-            this.$message.success("公告列表获取成功");
+            //this.$message.success("公告列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
             this.mapDate();
@@ -416,7 +416,6 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("公告发送类别获取成功");
-            this.$message.success("公告发送类别获取成功");
             this.sendTypeList = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
@@ -435,7 +434,6 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("公告消息类别获取成功");
-            this.$message.success("公告消息类别获取成功");
             this.noticeTypeList = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);

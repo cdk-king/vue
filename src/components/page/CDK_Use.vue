@@ -236,8 +236,6 @@ import bus from '../common/bus';
                 strPlatform:"",
                 exchangeVisible:false,
                 exchangeResult:{
-                    couponId:"",
-                    sequenceId:""
                 }
             }
         },
@@ -673,8 +671,8 @@ import bus from '../common/bus';
                     console.log(this.responseResult);
                     console.log("CDK校验通过");
                     this.$message.success("CDK校验通过");
-                    this.exchangeResult = successResponse.data.data;
-                    this.exchangeVisible = true;
+                    //this.exchangeResult = successResponse.data.data;
+                    //this.exchangeVisible = true;
                     this.getData();
                 } else {
                     console.log(this.responseResult);

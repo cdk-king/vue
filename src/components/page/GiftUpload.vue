@@ -9,10 +9,11 @@
         <div class="container">
             <div class="content-title">礼包导入</div>
             <div class="plugins-tips">
-                请将礼包信息按下边规定格式写入到文本文件中
+                请将礼包信息按下边规定格式写入到Excel文件中
                 <br/>
                 一行数据对应一个礼包，示例：
-                礼包编号|礼包名称|礼包标识|礼包描述
+                id、limit、expire_time、goods_prize1、value_prize1
+
                </div>
 
             <el-upload
@@ -20,11 +21,11 @@
                 drag
                 action="XXX"
                 :auto-upload="false"
-                :on-change="handleChange"
+                :on-change="handleChangeXlsx"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传txt文件，且不超过500kb</div>
+                <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件</div>
             </el-upload>
 
             <Divider />
@@ -59,6 +60,7 @@
 
 <script>
     import bus from '../common/bus';
+    import XLSX from 'xlsx';
     export default {
         name: 'upload',
         data: function(){
@@ -188,6 +190,57 @@
                         this.strGiftList = JSON.stringify(this.giftList);
                         console.log(this.strGiftList);
                     }.bind(this)
+            },
+            handleChangeXlsx(file,fileList){
+                console.log(file); 
+                 var self = this;
+                // 导入excel
+                var f = file.raw;
+                var reader = new FileReader();
+                let $t = this;
+                //定义onload事件
+                reader.onload = function(e) {
+                    console.log(e);
+                    var data = e.target.result;
+                    
+                    if ($t.rABS) {
+                        $t.wb = XLSX.read(btoa(this.fixdata(data)), {
+                        // 手动转化
+                        type: "base64"
+                        });
+                    } else {
+                        $t.wb = XLSX.read(data, {
+                        type: "binary"
+                        });
+                    }
+                    let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    //self.result = JSON.stringify(json);
+                    $t.dealFile(json); // analyzeData: 解析导入数据
+                }
+                if (this.rABS) {
+                    
+                    reader.readAsArrayBuffer(f);
+                } else {
+                    //执行读取操作
+                    reader.readAsBinaryString(f);
+                }
+            },
+            dealFile(json){
+                //第一个对象是类型
+                console.log(json.length);
+                for(var i = 2;i<json.length;i++){
+                    var map = new Object();
+                        map.giftId = json[i].id;
+                        map.limit = json[i].limit;
+                        map.expire_time = json[i].expire_time;
+                        map.goods_prize1 = json[i].goods_prize1;
+                        map.value_prize1 = json[i].value_prize1;
+                    this.giftList.push(map);
+                }
+                this.strGiftList = JSON.stringify(this.giftList);
+                console.log(JSON.stringify(this.giftList))
             },
             upload(e){
                 

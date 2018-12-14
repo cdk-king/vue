@@ -86,9 +86,7 @@
                       </p>
                     </template>
                 </el-table-column>
-                <el-table-column prop="startDatetime" label="开始时间" :formatter="formatter" >
-                </el-table-column>
-                <el-table-column prop="endDatetime" label="结束时间" :formatter="formatter">
+                <el-table-column prop="startDatetime" label="发送时间" :formatter="formatter" >
                 </el-table-column>
                 <el-table-column prop="sendState"  label="状态" :formatter="formatIsSend">
                 </el-table-column>
@@ -228,7 +226,7 @@
                                 <el-table-column prop="moneyCount" label="数量" >
                                     <template slot-scope="scope">
                                         <el-input 
-                                        placeholder="请输入数量" v-on:change="changeMoneyCount"
+                                        placeholder="请输入数量" 
                                         v-model="moneyList[scope.$index].moneyCount"
                                         clearable>{{scope.row.moneyCount}}
                                         </el-input>
@@ -245,20 +243,20 @@
                             </el-table>
                         </el-form-item>
 
-                       <el-form-item label="开始时间">
+                       <!-- <el-form-item label="开始时间">
                                 <el-date-picker style="width:215px" 
                                 v-model="form.startDatetime"
                                 type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择起始日期时间">
                                 </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="结束时间">
+                        </el-form-item> -->
+                        <!-- <el-form-item label="结束时间">
                                 <el-date-picker style="width:215px"  
                                 v-model="form.endDatetime"
                                 type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择截至日期时间">
                                 </el-date-picker>
-                        </el-form-item>
+                        </el-form-item> -->
                         
                         <el-form-item label="">
                             
@@ -386,7 +384,7 @@
                                 <el-table-column prop="moneyCount" label="数量" >
                                     <template slot-scope="scope">
                                         <el-input 
-                                        placeholder="请输入数量" v-on:change="changeMoneyCount"
+                                        placeholder="请输入数量" 
                                         v-model="moneyList[scope.$index].moneyCount"
                                         clearable>{{scope.row.moneyCount}}
                                         </el-input>
@@ -403,7 +401,7 @@
                             </el-table>
                         </el-form-item>
 
-                       <el-form-item label="开始时间">
+                       <!-- <el-form-item label="开始时间">
                                 <el-date-picker style="width:215px" 
                                 v-model="form.startDatetime"
                                 type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
@@ -416,7 +414,7 @@
                                 type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择截至日期时间">
                                 </el-date-picker>
-                        </el-form-item>
+                        </el-form-item> -->
                         
                         <el-form-item label="">
                             

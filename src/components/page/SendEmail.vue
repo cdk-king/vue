@@ -10,8 +10,11 @@
                 <div class="plugins-tips">
                      备注：
                     <br/>
-                    （1）三种发送方式（按条件发送、为指定角色发送、为全服玩家发送）只能选择其中的一种。
-        
+                    （1）两种发送方式（为指定角色发送、为全服玩家发送）只能选择其中的一种。
+                    <br/>
+                    （2）指定角色发送当中输入的角色Id和角色名，只会生效一种
+                    <br/>
+                    （3）输入多个角色Id和角色名，请用","分隔
                 </div>
                 
                 <!-- <Divider /> -->
@@ -23,7 +26,7 @@
                             <el-input v-model="form.name"></el-input>
                         </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择平台" >
-                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
+                            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
                                 :key="item.id"
@@ -49,17 +52,15 @@
                             v-model="form.emailTitle"
                             clearable>
                             </el-input>
-                            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
-                            
                         </el-form-item>
-                        <el-form-item label="说明(玩家看到)">
+                        <el-form-item label="邮件内容">
                             <el-input style="width:515px"
                             placeholder="请输入说明" type="textarea"
                             :autosize="{ minRows:4, maxRows: 10}"
                             v-model="form.emailContent"
                             clearable>
                             </el-input>
-                            
+                            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
                         </el-form-item>
                         <el-form-item label="发送原因">
                             <el-input style="width:515px"
@@ -154,7 +155,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="按角色发送" name="2" >
 
-                        <el-form-item label="玩家账号">
+                        <!-- <el-form-item label="玩家账号">
                             <el-input style="width:515px"
                             placeholder="请输入玩家账号" type="textarea"
                             :autosize="{ minRows:2, maxRows: 10}" 
@@ -162,23 +163,24 @@
                             clearable>
                             </el-input>
                             
-                        </el-form-item>
-                        <el-form-item label="玩家名称">
-                            <el-input style="width:515px"
-                            placeholder="请输入玩家名称" type="textarea"
-                            :autosize="{ minRows:2, maxRows: 10}"
-                            v-model="form.playerNameList"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
+                        </el-form-item> -->
                         <el-form-item label="角色ID">
                             <el-input style="width:515px"
-                            placeholder="请输入" type="textarea"
+                            placeholder="请输入角色ID" type="textarea"
                             :autosize="{ minRows:2, maxRows: 10}"
                             v-model="form.playerIdList"
                             clearable>
                             </el-input>
                         </el-form-item>
+                        <el-form-item label="角色名称">
+                            <el-input style="width:515px"
+                            placeholder="请输入角色名称" type="textarea"
+                            :autosize="{ minRows:2, maxRows: 10}"
+                            v-model="form.playerNameList"
+                            clearable>
+                            </el-input>
+                        </el-form-item>
+
                         
                         <el-form-item label="">
                             

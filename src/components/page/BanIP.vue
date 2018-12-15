@@ -23,9 +23,9 @@
                 <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                   <el-option
                     v-for="item in platformOptions"
-                    :key="item.id"
+                    :key="item.platformId"
                     :label="item.platform"
-                    :value="item.id"
+                    :value="item.platformId"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -302,7 +302,7 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -321,7 +321,7 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -343,7 +343,7 @@ export default {
     getBanIp() {
       var strPlatform = "";
       for (var i = 0; i < this.platformOptions.length; i++) {
-        strPlatform += this.platformOptions[i].id + ",";
+        strPlatform += this.platformOptions[i].platformId + ",";
       }
       strPlatform = strPlatform.substring(0, strPlatform.length - 1);
       console.log(strPlatform);

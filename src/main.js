@@ -64,8 +64,8 @@ Vue.prototype.$setTouristName = function(name){
 };
 //url
 //Vue.prototype.$url = "http://127.0.0.1:19998";
-//Vue.prototype.$url = "http://127.0.0.1:8011";
-Vue.prototype.$url = "";
+Vue.prototype.$url = "http://127.0.0.1:8011";
+//Vue.prototype.$url = "";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
 };

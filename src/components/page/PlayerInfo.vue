@@ -24,9 +24,9 @@
                             <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                             <span style="margin-left:22px">选择服务器</span>
@@ -544,10 +544,6 @@ export default {
       platformValue: "",
       platformLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "1",
-        //   serverName: "服务器1"
-        // }
       ],
       serverValue: "",
       serverLabel: "",
@@ -686,24 +682,27 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("渠道服务器列表获取成功");
+             this.serverOptions = [];
             this.serverOptions = successResponse.data.data;
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道服务器列表获取失败");
-            return false;
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            this.serverOptions = [];
+        });
     },
     selectPlatform() {
+        this.serverValue = "";
       this.getServerList(this.platformValue);
     },
     selectServer() {
@@ -714,11 +713,21 @@ export default {
             break;
           }
         }
+      }else{
+          this.serverIp = "";
       }
 
       this.getPlayer();
     },
     getPlayer() {
+        if(this.platformValue==null || this.platformValue==""){
+                this.$message.error("请选择正确的平台");
+                return;
+            }
+         if(this.serverValue==null || this.serverValue==""){
+                this.$message.error("请选择正确的服务器");
+                return;
+            }
         // this.$axios
         // .post("/api/player/getPlayer", {
         //   platformId: this.platformValue,
@@ -772,7 +781,12 @@ export default {
             this.$message.error("玩家列表获取失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            this.tableData = [];
+            if(this.serverValue==null || this.serverValue==""){
+                this.$message.error("请选择正确的服务器");
+            }
+        });
     },
     mapData(data){
         data = data.replace(/AccountName/g,"playerAccount");

@@ -13,9 +13,9 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
 
@@ -31,6 +31,8 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <!-- <el-table-column type="selection" width="55" align="center">
                 </el-table-column> -->
+                <el-table-column prop="id" label="ID"  >
+                </el-table-column>
                 <el-table-column prop="giftId" label="礼包ID"  >
                 </el-table-column>
                 <el-table-column prop="limitCount" label="领取限制" >
@@ -61,9 +63,9 @@
                         <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -188,11 +190,11 @@ import bus from '../common/bus';
                 },
                 platformOptions: [
                     {
-                    id: "1",
+                    platformId: "1",
                     platform: "渠道1"
                     },
                     {
-                    id: "2",
+                    platformId: "2",
                     platform: "渠道2"
                     }
                 ],
@@ -276,7 +278,6 @@ import bus from '../common/bus';
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -296,7 +297,7 @@ import bus from '../common/bus';
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].id+",";
+                        this.strPlatform += this.platformOptions[i].platformId+",";
                         
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
@@ -305,7 +306,6 @@ import bus from '../common/bus';
                     
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});

@@ -26,9 +26,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
 
@@ -37,9 +37,9 @@
                             <el-select v-model="form.giftId" filterable @change="selectGift" placeholder="请选择礼包">
                                 <el-option
                                 v-for="item in giftOptions"
-                                :key="item.id"
+                                :key="item.giftId"
                                 :label="item.giftName"
-                                :value="item.id">
+                                :value="item.giftId">
                                 </el-option>
                         </el-select>
 
@@ -170,19 +170,16 @@ export default {
       aa: this.$cdk,
       platformOptions: [
         {
-          id: "1",
+          platformId: "1",
           platform: "渠道1"
         },
         {
-          id: "2",
+          platformId: "2",
           platform: "渠道2"
         }
       ],
       giftOptions: [
-        // {
-        //   id: "1",
-        //   giftName: "礼包1"
-        // },
+
 
       ],
       platformValue: "",
@@ -190,10 +187,7 @@ export default {
       giftValue: "",
       giftLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "1",
-        //   serverName: "服务器1"
-        // }
+
       ],
       serverValue: "",
       serverLabel: "",
@@ -426,7 +420,6 @@ export default {
       var userData =JSON.parse(localStorage.getItem('userData'));
       this.$axios
         .post(this.url+"/getPlatformListForUserIdAndGameId", {
-          
           userId:userData.id,
           gameId: gameId
         })
@@ -435,14 +428,13 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("渠道列表获取成功");
+            this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for(var i = 0;i<this.platformOptions.length;i++){
-                this.strPlatform += this.platformOptions[i].id+",";
-                
+                this.strPlatform += this.platformOptions[i].platformId+",";
             }
-            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
-            this.platformOptions = successResponse.data.data.list;
             console.log(this.strPlatform);
+            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
             this.getCoupon();
           } else {
             this.open4(successResponse.data.message);

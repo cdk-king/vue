@@ -49,6 +49,8 @@
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
+                <el-table-column prop="serverId" label="服务器ID"  width="80">
+                </el-table-column>
                 <el-table-column prop="server" label="服务器名称" width="160">
                 </el-table-column>
                 <el-table-column prop="serverIp" label="服务器IP" >
@@ -96,6 +98,9 @@
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
@@ -109,9 +114,9 @@
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -131,6 +136,9 @@
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
@@ -144,9 +152,9 @@
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -247,6 +255,7 @@
                 total:0,
                 form: {
                     id:'',
+                    serverId:'',
                     server:'',
                     gameId:'',
                     platformId:'',
@@ -264,6 +273,7 @@
                 searchKey: {
                     id:'',
                     server:'',
+                    serverId:'',
                     serverIp:'',
                     serverPort:'',
                     server_describe: '',
@@ -289,11 +299,11 @@
                 ],
                 platformList:[
                     {
-                        id:1,
+                        platformId:1,
                         role:"渠道1"
                     },
                     {
-                        id:2,
+                        platformId:2,
                         role:"渠道2"
                     },
                 ],
@@ -367,7 +377,6 @@
                         this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("游戏列表获取失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -477,6 +486,7 @@
                 const item = this.tableData[index];
                 this.form = {
                     id:item.id,
+                    serverId:item.serverId,
                     server:item.server,
                     serverIp:item.serverIp,
                     server_describe: item.server_describe,
@@ -615,6 +625,7 @@
                     id:'',
                     server:'',
                     serverTag:'',
+                    serverId:'',
                     server_describe: '',
                     serverParentId:'',
                     serverSort:'',
@@ -638,7 +649,7 @@
 
                     this.$axios.post(this.url+'/addServer',{
 
-                        id: this.form.id,
+                        serverId: this.form.serverId,
                         server:this.form.server,
                         serverIp:this.form.serverIp,
                         server_describe: this.form.server_describe,
@@ -674,6 +685,7 @@
 
                 this.$axios.post(this.url+'/editServer',{
                     id:this.form.id,
+                    serverId:this.form.serverId,
                     server:this.form.server,
                     serverIp:this.form.serverIp,
                     server_describe: this.form.server_describe,

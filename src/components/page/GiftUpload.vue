@@ -9,11 +9,12 @@
         <div class="container">
             <div class="content-title">礼包导入</div>
             <div class="plugins-tips">
-                请将礼包信息按下边规定格式写入到Excel文件中
+                请将礼包信息按下边规定表头格式写入到Excel文件中
                 <br/>
                 一行数据对应一个礼包，示例：
                 id、limit、expire_time、goods_prize1、value_prize1
-
+                <br/>
+                默认从第四行开始读取数据
                </div>
 
             <el-upload
@@ -37,9 +38,9 @@
                     <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                         <el-button type="primary" @click="ImportDatabase">导入数据库</el-button>
@@ -74,10 +75,6 @@
                 giftList: [],
                 strGiftList: "",
                 platformOptions: [
-                    // {
-                    // id: "1",
-                    // platform: "渠道1"
-                    // },
                 ],
                 form:{
                     platformId:0
@@ -125,7 +122,6 @@
                     this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -139,7 +135,8 @@
                         });
                 this.$axios.post(this.url+'/api/gift/ImportGift',{
                     list: JSON.stringify(this.giftList),
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)

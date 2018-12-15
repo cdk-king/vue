@@ -25,9 +25,9 @@
                             <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -105,9 +105,9 @@
                                 <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
@@ -261,6 +261,7 @@ export default {
       },
       delAllVisible:false,
       url:"http://localhost:8011",
+      strPlatform:""
     };
   },
   components: {
@@ -310,19 +311,27 @@ export default {
             console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
+            this.strPlatform = "";
+            for(var i = 0;i<this.platformOptions.length;i++){
+                this.strPlatform += this.platformOptions[i].platformId+",";
+            }
+            console.log(this.strPlatform);
+            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
+            this.getNotice();
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
-            return false;
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          
+        });
     },
     getServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -336,15 +345,17 @@ export default {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.serverList = "";
+          this.serverOptions = [];
+        });
     },
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -388,6 +399,7 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
+          strPlatform:this.strPlatform
           //searchKey: JSON.stringify(this.searchKey)
         })
         .then(successResponse => {
@@ -451,7 +463,7 @@ export default {
       this.getPlatformList(this.userId);
       this.getNoticeType();
       this.getSendType();
-      this.getNotice();
+      
     },
     // 分页导航
     handleCurrentChange(val) {

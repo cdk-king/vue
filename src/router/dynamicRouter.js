@@ -77,7 +77,7 @@ function getchildren() {
      setRouterItem("/CDK_Use","激活码使用情况","CDK_Use_View","CDK_Use.vue",children,right);
      setRouterItem("/TouristIdSet","游客账号设置","TouristId_Set_View","TouristIdSet.vue",children,right);
      setRouterItem("/Center","用户中心","Center_View","Center.vue",children,right);
-     setRouterItem("/Upload","文件上传","Upload_View","Uploadfile.vue",children,right);
+     setRouterItem("/Upload","文件上传","Upload_View","UploadFile.vue",children,right);
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
 
     // item.path = '/userTable';

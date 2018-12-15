@@ -13,9 +13,9 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">状态：</span>
@@ -40,6 +40,8 @@
                 <!-- <el-table-column type="selection" width="55" align="center">
                 </el-table-column> -->
                 <el-table-column prop="id" label="ID"  >
+                </el-table-column>
+                <el-table-column prop="propId" label="道具ID"  >
                 </el-table-column>
                 <el-table-column prop="propName" label="道具名称" >
                 </el-table-column>
@@ -66,9 +68,9 @@
                         <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -178,6 +180,7 @@ import bus from '../common/bus';
                 total:0,
                 form: {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTag:'',
                     prop_describe: '',
@@ -191,6 +194,7 @@ import bus from '../common/bus';
                 },
                 searchKey: {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTypeId:'',
                     prop_describe: '',
@@ -203,11 +207,11 @@ import bus from '../common/bus';
                 },
                 platformOptions: [
                     {
-                    id: "1",
+                    platformId: "1",
                     platform: "渠道1"
                     },
                     {
-                    id: "2",
+                    platformId: "2",
                     platform: "渠道2"
                     }
                 ],
@@ -276,6 +280,7 @@ import bus from '../common/bus';
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
+                    propId:'',
                     propName:this.searchKey.propName,
                     propType:this.searchKey.propTypeId,
                     platformId:this.searchKey.platformId,
@@ -313,7 +318,7 @@ import bus from '../common/bus';
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].id+",";
+                        this.strPlatform += this.platformOptions[i].platformId+",";
                         
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
@@ -383,6 +388,7 @@ import bus from '../common/bus';
                 console.log(item.id);
                 this.form = {
                     id:item.id,
+                    propId:item.id,
                     propName:item.propName,
                     propTag:item.propTag,
                     prop_describe: item.prop_describe,
@@ -455,6 +461,7 @@ import bus from '../common/bus';
                 this.addpropVisible = true;
                 this.form = {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTag:'',
                     prop_describe: '',
@@ -479,6 +486,7 @@ import bus from '../common/bus';
                     this.$axios.post(this.url+'/addProp',{ 
 
                         id: this.form.id,
+                        propId:this.form.propId,
                         propName:this.form.propName,
                         propTag:this.form.propTag,
                         propType:this.form.propType,
@@ -517,6 +525,7 @@ import bus from '../common/bus';
                     console.log(this.form.id);
                 this.$axios.post(this.url+'/editProp',{
                     id:this.form.id,
+                    propId:this.form.propId,
                     propName:this.form.propName,
                     propTag:this.form.propTag,
                     prop_describe: this.form.prop_describe,

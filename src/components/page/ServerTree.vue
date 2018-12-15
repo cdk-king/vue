@@ -68,6 +68,9 @@
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
@@ -81,9 +84,9 @@
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -103,6 +106,9 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
                 </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
@@ -127,9 +133,9 @@
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -233,7 +239,6 @@ export default {
             this.platformList = successResponse.data.data;
             //this.gameList
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
             return false;
@@ -252,10 +257,8 @@ export default {
             this.TreeList = successResponse.data.data;
             this.MapData(this.TreeList);
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器树状结构获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -267,6 +270,7 @@ export default {
           isPage: "",
           id: "",
           server: "",
+          serverId: "",
           gameId: "",
           platformId: "",
           platform: "",
@@ -287,7 +291,6 @@ export default {
           } else {
             console.log(this.responseResult);
             console.log("所有服务器获取失败");
-            return false;
           }
         })
     },
@@ -349,6 +352,7 @@ export default {
         .post(this.url+"/editServer", {
           id: this.form.id,
           server: this.form.server,
+          serverId: this.form.serverId,
           serverIp: this.form.serverIp,
           serverPort:this.form.serverPort,
           server_describe: this.form.server_describe,
@@ -391,6 +395,7 @@ export default {
 
             id: this.form.id,
             server:this.form.server,
+            serverId:this.form.serverId,
             serverIp:this.form.serverIp,
             serverPort:this.form.serverPort,
             server_describe: this.form.server_describe,
@@ -454,6 +459,7 @@ export default {
          this.form = {
               id:'',
               server:'',
+              serverId:'',
               serverTag:'',
               serverIp:'',
               serverPort:'',
@@ -500,13 +506,14 @@ export default {
         for (var i = 0; i < this.tableData.length; i++) {
         //console.log(this.tableData[i].id);
         //console.log(this.tableData[i]['id']);
-        if (this.tableData[i]["id"] == id) {
+        if (this.tableData[i]["serverId"] == id) {
           //console.log(this.tableData[i].server);
           //console.log(this.tableData[i].id);
           const item = this.tableData[i];
           this.form = {
             id: item.id,
             server: item.server,
+            serverId: item.serverId,
             serverIp: item.serverIp,
             serverPort:item.serverPort,
             server_describe: item.server_describe,
@@ -527,6 +534,7 @@ export default {
         this.form = {
             id: "",
             server: "",
+            serverId: "",
             serverIp: "",
             serverPort:"",
             server_describe: "",
@@ -558,12 +566,13 @@ export default {
       const item = this.tableData[0];
       if(tag=="server"){
         for (var i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i]["id"] == id) {
+        if (this.tableData[i]["serverId"] == id) {
           const item = this.tableData[i];
 
           this.form = {
             id: item.id,
             server: item.server,
+            serverId: item.serverId,
             serverIp: item.serverIp,
             serverPort:item.serverPort,
             server_describe: item.server_describe,
@@ -584,6 +593,7 @@ export default {
         this.form = {
             id: "",
             server: "",
+            serverId: "",
             serverIp: "",
             serverPort:"",
             server_describe: "",

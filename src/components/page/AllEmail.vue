@@ -29,9 +29,9 @@
                                 <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
@@ -71,9 +71,7 @@
                 </el-table-column>
                 <el-table-column prop="sendReason"  label="原因" >
                 </el-table-column>
-                <el-table-column prop="startDatetime" label="开始时间" :formatter="formatter" >
-                </el-table-column>
-                <el-table-column prop="endDatetime" label="结束时间" :formatter="formatter">
+                <el-table-column prop="startDatetime" label="发送时间" :formatter="formatter" >
                 </el-table-column>
                 <el-table-column prop="sendState"  label="状态" :formatter="formatIsSend">
                 </el-table-column>
@@ -116,9 +114,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -156,7 +154,7 @@
                             </el-input>
                             
                         </el-form-item>
-                       <el-form-item label="开始时间">
+                       <!-- <el-form-item label="开始时间">
                                 <el-date-picker style="width:215px" 
                                 v-model="form.startDatetime"
                                 type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
@@ -169,7 +167,7 @@
                                 type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择截至日期时间">
                                 </el-date-picker>
-                        </el-form-item>
+                        </el-form-item> -->
                         
                         <el-form-item label="">
                             
@@ -192,9 +190,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台" style="width:180px">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -232,7 +230,7 @@
                             </el-input>
                             
                         </el-form-item>
-                       <el-form-item label="开始时间">
+                       <!-- <el-form-item label="开始时间">
                                 <el-date-picker style="width:215px" 
                                 v-model="form.startDatetime"
                                 type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
@@ -245,7 +243,7 @@
                                 type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择截至日期时间">
                                 </el-date-picker>
-                        </el-form-item>
+                        </el-form-item> -->
                         
                         <el-form-item label="">
                             
@@ -335,6 +333,7 @@ export default {
       },
       delAllVisible:false,
       url:"http://localhost:8011",
+      strPlatform:""
     };
   },
   components: {
@@ -404,17 +403,26 @@ export default {
             console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
+            this.strPlatform = "";
+            for(var i = 0;i<this.platformOptions.length;i++){
+                this.strPlatform += this.platformOptions[i].platformId+",";
+            }
+            console.log(this.strPlatform);
+            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
+            this.getPlatformEmail();
           } else {
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            
+        });
     },
     getServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -429,12 +437,15 @@ export default {
             console.log("服务器列表获取失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            this.form.serverList = "";
+            this.serverOptions = [];
+        });
     },
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -451,6 +462,8 @@ export default {
         .catch(failResponse => {});
     },
     selectPlatform() {
+        this.form.serverList = "";
+        this.serverOptions = [];
       this.getServerList(this.form.platformId);
     },
     selectServer() {
@@ -476,6 +489,7 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
+          strPlatform:this.strPlatform
           //searchKey: JSON.stringify(this.searchKey)
         })
         .then(successResponse => {
@@ -499,7 +513,7 @@ export default {
       var userData = JSON.parse(localStorage.getItem("userData"));
       this.userId = userData.id;
       this.getPlatformList(this.userId);
-      this.getPlatformEmail();
+      
     },
     // 分页导航
     handleCurrentChange(val) {

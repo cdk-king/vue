@@ -17,9 +17,9 @@
                     <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
 
@@ -27,8 +27,8 @@
                 <el-form-item class="el-form-item fileInputBox-out" label="" >
 
                     <div class="fileInputBox" >
-                    <el-button   type="primary">选取文件</el-button>
-                    <input id="inputFile" class="fileInput" type="file" @change="getFile($event)">
+                    <el-button   type="primary" @click="clickInputFile">选取文件</el-button>
+                    <input id="inputFile" class="fileInput" type="file"  @change="getFile($event)">
                     <el-button type="success" @click="fileUpload">文件上传</el-button>
                     <label style="margin-left:20px" for="" >{{fileName | filterFileName}}</label>
                     <label style="margin-left:20px" for="" >{{fileSize | filterFileSize}}</label>
@@ -125,6 +125,7 @@
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
+                inputFile:""
             }
         },
         components: {
@@ -147,7 +148,13 @@
         beforeDestroy () {
             bus.$off('changeGameId')
         },
+        mounted() {
+        this.inputFile = document.getElementById("inputFile");
+        },
         methods:{
+            clickInputFile(){
+                this.inputFile.click();
+            },
             getData(){
                 console.log("this.$gameId:"+this.$gameId);
                 this.getPlatformList(this.$gameId);
@@ -404,6 +411,7 @@
         opacity: 0;
         padding: 0;
         margin: 0;
+        display: none;
     }
     .fileInputBox{ 
     }

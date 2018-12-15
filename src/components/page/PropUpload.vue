@@ -38,9 +38,9 @@
                     <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                         <el-button type="primary" @click="ImportDatabase">导入数据库</el-button>
@@ -75,10 +75,6 @@
                 propList: [],
                 strPropList: "",
                 platformOptions: [
-                    // {
-                    // id: "1",
-                    // platform: "渠道1"
-                    // },
                 ],
                 form:{
                     platformId:0

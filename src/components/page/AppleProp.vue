@@ -24,9 +24,9 @@
                                 <el-option key="0" label="全部" value="0"></el-option>
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                       <span class="grid-content bg-purple-light">服务器：</span>
@@ -123,9 +123,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -161,9 +161,9 @@
                             <el-select v-model="form.propId" @change="selectProp" filterable placeholder="请选择道具">
                                 <el-option
                                 v-for="item in propOptions"
-                                :key="item.id"
+                                :key="item.propId"
                                 :label="item.propName"
-                                :value="item.id">
+                                :value="item.propId">
                                 </el-option>
                             </el-select>
                             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
@@ -341,9 +341,9 @@
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                                 <el-option
                                 v-for="item in platformOptions"
-                                :key="item.id"
+                                :key="item.platformId"
                                 :label="item.platform"
-                                :value="item.id">
+                                :value="item.platformId">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -379,9 +379,9 @@
                             <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
                                 <el-option
                                 v-for="item in propOptions"
-                                :key="item.id"
+                                :key="item.propId"
                                 :label="item.propName"
-                                :value="item.id">
+                                :value="item.propId">
                                 </el-option>
                             </el-select>
                             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
@@ -594,21 +594,17 @@ export default {
       aa: this.$cdk,
       platformOptions: [
         {
-          id: "1",
+          platformId: "1",
           platform: "渠道1"
         },
         {
-          id: "2",
+          platformId: "2",
           platform: "渠道2"
         }
       ],
       platformValue: "",
       platformLabel: "",
       serverOptions: [
-        // {
-        //   serverId: "1",
-        //   serverName: "服务器1"
-        // }
       ],
       serverValue: "",
       serverLabel: "",
@@ -663,6 +659,7 @@ export default {
       editVisible:false,
       addVisible:false,
       url:"http://localhost:8011",
+      strPlatform:""
     };
   },
   components: {
@@ -685,7 +682,7 @@ export default {
        this.url = this.$url;
     }
     this.getData();
-    this.getApplyProp();
+    
     bus.$on(
       "changeGameId",
       function(obj) {
@@ -833,6 +830,7 @@ export default {
                 pageNo: this.cur_page,
                 pageSize: 10,
                 isPage:"isPage",
+                strPlatform:this.strPlatform
 
         }).then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -934,6 +932,13 @@ export default {
             console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
+            this.strPlatform = "";
+            for(var i = 0;i<this.platformOptions.length;i++){
+                this.strPlatform += this.platformOptions[i].platformId+",";
+            }
+            console.log(this.strPlatform);
+            this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
+            this.getApplyProp();
           } else {
             this.open4(successResponse.data.message);
             console.log(this.responseResult);
@@ -945,7 +950,7 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -966,7 +971,7 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url+"/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

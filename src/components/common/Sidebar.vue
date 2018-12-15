@@ -204,10 +204,10 @@
                                         index: 'TouristIdSet',
                                         title: '游客账号设置'
                                     },
-                                    //  {
-                                    //     index: 'fileUpload',
-                                    //     title: '文件上传'
-                                    // },
+                                     {
+                                        index: 'Upload',
+                                        title: '文件上传'
+                                    },
                                     {
                                         index:'Xlsx',
                                         title:'Xlsx',

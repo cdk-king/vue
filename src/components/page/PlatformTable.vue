@@ -42,6 +42,8 @@
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
+                <el-table-column prop="platformId" label="平台ID"  width="80">
+                </el-table-column>
                 <el-table-column prop="platform" label="平台名称" width="160">
                 </el-table-column>
                 <el-table-column prop="platformTag" label="平台标识" >
@@ -82,6 +84,9 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>
+                </el-form-item>
+                <el-form-item label="平台ID">
+                    <el-input v-model="form.platformId"></el-input>
                 </el-form-item>
                 <el-form-item label="平台标识">
                     <el-input v-model="form.platformTag"></el-input>
@@ -124,6 +129,9 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>
+                </el-form-item>
+                <el-form-item label="平台ID">
+                    <el-input v-model="form.platformId"></el-input>
                 </el-form-item>
                 <el-form-item label="平台标识">
                     <el-input v-model="form.platformTag"></el-input>
@@ -222,6 +230,7 @@
                 total:0,
                 form: {
                     id:'',
+                    platformId:'',
                     platform:'',
                     gameId:'',
                     roleId:'',
@@ -237,6 +246,7 @@
                 },
                 searchKey: {
                     id:'',
+                    platformId:'',
                     platform:'',
                     platformTag:'',
                     platform_describe: '',
@@ -360,6 +370,7 @@
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
+                    platformId:'',
                     id:'',
                     platform:this.searchKey.platform,
                     gameId:'',
@@ -384,7 +395,6 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -417,6 +427,7 @@
                 const item = this.tableData[index];
                 this.form = {
                     id:item.id,
+                    platformId:item.platformId,
                     platform:item.platform,
                     platformTag:item.platformTag,
                     platform_describe: item.platform_describe,
@@ -492,6 +503,7 @@
                 this.addplatformVisible = true;
                 this.form = {
                     id:'',
+                    platformId: '',
                     platformName:'',
                     platformTag:'',
                     platform_describe: '',
@@ -519,9 +531,9 @@
                     console.log(this.selectGame);
                     console.log(this.selectRole);
 
-                    this.$axios.post('/addPlatform',{
+                    this.$axios.post(this.url+'/addPlatform',{
 
-                        id: this.form.id,
+                        platformId: this.form.platformId,
                         platform:this.form.platform,
                         platformTag:this.form.platformTag,
                         platform_describe: this.form.platform_describe,
@@ -559,6 +571,7 @@
 
                 this.$axios.post(this.url+'/editPlatform',{
                     id:this.form.id,
+                    platformId: this.form.platformId,
                     platform:this.form.platform,
                     platformTag:this.form.platformTag,
                     platform_describe: this.form.platform_describe,

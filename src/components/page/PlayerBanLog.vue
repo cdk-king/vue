@@ -28,7 +28,6 @@
                 </el-select>
                 <span class="grid-content bg-purple-light">是否禁封：</span>
                     <el-select  placeholder="请选择" @change="selectisToBan"  v-model="searchKey.isToBan" class="handle-select mr10" style="width:150px">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="未禁封" value="1"></el-option>
                     <el-option key="3" label="已禁封" value="2"></el-option>
@@ -253,15 +252,12 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 this.getData();
             },
             formatDatetime(row, column) {
-                //return row.address;
-                //时间格式化
-                    
+                //时间格式化               
                 var date = row[column.property];
                 console.log(date);
                 if (date == undefined) {  
                     return "";  
                 }
-
                 var tt=new Date(parseInt(date)).toLocaleString();
                 return tt;
             },

@@ -29,8 +29,6 @@
                 <el-button type="primary" icon="search" @click="handleImportGift">导入</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <!-- <el-table-column type="selection" width="55" align="center">
-                </el-table-column> -->
                 <el-table-column prop="id" label="ID"  >
                 </el-table-column>
                 <el-table-column prop="giftId" label="礼包ID"  >
@@ -60,7 +58,6 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
-                        <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
                         :key="item.platformId"
@@ -240,7 +237,6 @@ import bus from '../common/bus';
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -321,7 +317,6 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.gifterty];  
@@ -466,8 +461,6 @@ import bus from '../common/bus';
                     .catch(failResponse => {})
                     
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addgiftVisible = false; 
                 
             },
@@ -489,8 +482,6 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("礼包信息修改成功");
                         this.getData();
                     }else{
@@ -586,10 +577,6 @@ import bus from '../common/bus';
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

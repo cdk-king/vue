@@ -3,15 +3,10 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-lx-calendar"></i>用户中心</el-breadcrumb-item>
-                <!-- <el-breadcrumb-item>游客账号设置</el-breadcrumb-item> -->
             </el-breadcrumb>
         </div>
         <div class="container " >
-            <!-- <div class="content-title">用户中心</div>
-            <div class="plugins-tips">
-                测试
-            </div>
-            <Divider /> -->
+
             <el-menu
                 :default-active="activeIndex"
                 class="el-menu-demo notoselect"
@@ -40,9 +35,6 @@
             <Divider />
                 <div v-show="show1" class="div-box">
                     <el-form ref="form" :model="passwordform" label-width="100px" style="width:100%">
-                        <!-- <el-form-item label="日期">
-                            <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                        </el-form-item> -->
                         <el-form-item label="输入新密码">
                             <el-input v-model="passwordform.newPassword" style="width:300px;float:left"></el-input>
                         </el-form-item>
@@ -69,9 +61,6 @@
                     </div>
                     <Divider />
                     <el-form ref="form" :model="form" label-width="100px" style="width:100%">
-                        <!-- <el-form-item label="日期">
-                            <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                        </el-form-item> -->
                         <el-form-item label="用户名">
                             <el-input v-model="form.name" style="width:300px;float:left"></el-input>
                         </el-form-item>
@@ -227,8 +216,6 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("用户信息编辑成功");
                         this.form={};
                         this.getUserInfo();
@@ -271,7 +258,6 @@
                 .catch(failResponse => {});
             },
             selectUser() {
-                //this.form.userId = 
                 console.log(this.form.userId);
                  
             },
@@ -341,6 +327,6 @@
         user-select:none;
   }
   .plugins-tips{
-      background: #fff
+      background: #fff;
   }
 </style>

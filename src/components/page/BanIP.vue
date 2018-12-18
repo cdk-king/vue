@@ -274,7 +274,6 @@ export default {
       } else {
         this.handleVisible = true;
       }
-      //console.log("this.handleVisible:"+this.handleVisible);
     },
     handleDelAll() {
       this.delAllVisible = true;
@@ -583,7 +582,6 @@ export default {
 
 <style scoped>
 .el-form-item {
-  /* border: 1px solid red; */
   width: 100%;
 }
 .form-box {

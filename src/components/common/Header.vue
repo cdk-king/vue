@@ -5,14 +5,6 @@
             <i class="el-icon-menu"></i>
         </div>
         <div class="logo">后台管理系统</div>
-            <!-- <el-select class="el-select" v-model="gameValue" placeholder="请选择游戏">
-                <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-            </el-select> -->
             <i class="el-icon-lx-sort el-select"></i>
             <el-dropdown class="el-select" @command="handleChangGame">
             
@@ -54,13 +46,6 @@
                     </span>
                     <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="center">个人中心</el-dropdown-item>
-  
-                        <!-- <a href="http://blog.gdfengshuo.com/about/" target="_blank">
-                            <el-dropdown-item>关于作者</el-dropdown-item>
-                        </a>
-                        <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
-                            <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a> -->
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -77,10 +62,6 @@
                 fullscreen: false,
                 name: 'cdk',
                 message: 0,
-                // {
-                // id: '1',
-                // gameName: '游戏1'
-                // }
                 options: [],
                 gameValue: '1',
                 gameLabel:"请选择游戏",
@@ -104,7 +85,6 @@
                 const right = localStorage.getItem('rightTags');
                 console.log("right:"+right);
                 this.getData();
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             getData(){
                 var userData = JSON.parse(localStorage.getItem("userData"));
@@ -123,13 +103,11 @@
                         this.$message("已选择游戏："+this.options[0].gameName);
                         this.gameLabel = this.options[0].gameName;
                     } else {
-                        this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("用户游戏列表获取失败");
                     }
                     })
                     .catch(failResponse => {});
-
             },
             // 用户名下拉菜单选择事件
             handleCommand(command) {
@@ -143,7 +121,6 @@
                 }
                 if(command=="center"){
                     this.$router.push('/center');
-
                 }
             },
             goCenter(){
@@ -192,10 +169,8 @@
                 //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
                 //this.$store.state.gameId=command.id;
                 //console.log(this.$store.state.gameId);
-                this.gameLabel = command.gameName;
-                
-                this.$message("已选择游戏："+command.gameName);
-                
+                this.gameLabel = command.gameName;               
+                this.$message("已选择游戏："+command.gameName);       
             }
         },
         mounted(){
@@ -282,8 +257,6 @@
     .el-select{
         top: 20px;
         font-size:20px;
-        /* border: 1px solid red; */
-
     }
     .el-dropdown-menu{
         width: 100px;

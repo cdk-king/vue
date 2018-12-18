@@ -14,14 +14,10 @@
                     <br/>
                     （2）渠道平台、礼包、数量为必填项
                 </div>
-                
                 <Divider />
 
                     <div class="form-box">
                     <el-form ref="form" :model="form" label-width="150px">
-                        <!-- <el-form-item label="表单名称">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item> -->
                         <el-form-item class="el-form-item" label="选择渠道">
                             <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                                 <el-option
@@ -69,20 +65,6 @@
                             clearable>
                             </el-input>
                         </el-form-item>
-                        <!-- <el-form-item label="开始时间">
-                                <el-date-picker style="width:215px" 
-                                v-model="form.startDatetime"
-                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择起始日期时间">
-                                </el-date-picker>
-                        </el-form-item>
-                        <el-form-item label="结束时间">
-                                <el-date-picker style="width:215px"  
-                                v-model="form.endDatetime"
-                                type="datetime"  value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择截至日期时间">
-                                </el-date-picker>
-                        </el-form-item> -->
                         <el-form-item label="申请人">
                             <el-input style="width:215px"
                             placeholder="请输入申请人"
@@ -95,7 +77,6 @@
                             <el-button @click="resetForm">重置</el-button>
                         </el-form-item>
                         </el-form>
-
                     </div>
 
                 <el-table :data="tableData" border class="table" ref="multipleTable" >
@@ -243,7 +224,6 @@ export default {
         this.getData();
     }.bind(this))
     
-    //this.right();
   },
   beforeDestroy () {
     bus.$off('changeGameId')
@@ -295,16 +275,6 @@ export default {
       console.log(strCouponID);
       
       console.log(this.form.couponCount);
-      //console.log(this.stringToByte(cdk));
-
-      // var md51 = crypto.createHash("md5");
-      //       md51.update('20000');
-      //       md51.update('2');
-      //       md51.update('2');
-      //       md51.update('cdk');
-      //       var a = md51.digest('hex');
-      //       console.log(a);
-      //正解
       var sign =  md5.hex(strCouponID+this.form.platformId.toString()+this.form.couponCount.toString()+"cdk");
       console.log(sign);
         this.$axios 
@@ -358,7 +328,6 @@ export default {
           startDatetime:'',
           endDatetime:''
       }
-      //this.dialogVisible = true;
     },
     stringToByte(str) {  
     var bytes = new Array();
@@ -384,7 +353,7 @@ export default {
     }  
     return bytes;  
     },
-        // 分页导航
+    // 分页导航
     handleCurrentChange(val) {
         this.cur_page = val;
         console.log("page:"+val);
@@ -499,7 +468,6 @@ export default {
             if(successResponse.data.code === 200){
                 console.log(this.responseResult);
                 console.log("列表获取成功");
-                //this.$message.success("列表获取成功");
                 this.tableData = successResponse.data.data.list;
                 console.log(this.tableData);
                 this.total = successResponse.data.data.total;
@@ -529,7 +497,6 @@ export default {
 
 <style scoped>
 .el-form-item {
-  /* border: 1px solid red; */
   width: 100%;
 }
 .form-box {

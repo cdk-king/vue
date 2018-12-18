@@ -11,7 +11,6 @@
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -32,8 +31,6 @@
                 </el-table-column>
                 <el-table-column prop="state" label="状态"   :formatter="formatState">
                 </el-table-column>
-                <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
-                </el-table-column> -->
                 <el-table-column prop="role_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column  label="权限" >
@@ -275,7 +272,6 @@
                         id:2
                     }
                 ]
-
             }
         },
         components:{
@@ -309,8 +305,6 @@
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -352,22 +346,17 @@
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色列表获取失败");
                         return false;
                     }
                 })
-
-
-
             },
             mapData(obj){
                 if(!Array.isArray(obj)){
                 return;
                 }
-
                 obj.map( (item) =>{
                     if(item.rights!=undefined){
                         if(item.rights!=null && item.rights!=""){
@@ -397,14 +386,12 @@
                  this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
                 if (date == undefined) {  
                     return "";  
                 }
-
                 var tt=new Date(parseInt(date)).toLocaleString();
                 return tt;
             },
@@ -428,7 +415,6 @@
                                 mapObj['id'] = rights[a].split("#cdk#")[0];
                                 that.doing.push(mapObj);
                                 that.done.push(mapObj);
-                                //console.log("this.doing:"+that.doing);
                             }
                         })(i,this)
                     }
@@ -440,7 +426,6 @@
                             mapObj['content'] = that.rightData[a]["rightName"];
                             mapObj['id'] = that.rightData[a]["id"];
                             that.todo.push(mapObj);
-                            //console.log("this.todo:"+that.todo);
                         })(j,this)
                     }
                 }
@@ -517,7 +502,6 @@
                         this.getData();
 
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色批量删除失败");
@@ -551,9 +535,6 @@
                 //储存操作前的数据
                 var oldDoing = this.doing;
                 var olddone = this.done;
-               
-                //console.log("this.doing:"+this.doing);
-                //console.log("this.done:"+this.done);
 
                 for(var i = 0;i<this.doing.length;i++){ 
                     for(var j = 0;j<this.done.length;j ++){
@@ -562,13 +543,11 @@
                             this.done.splice(j, 1);
                             i--;
                             j=this.done.length;
-                            //console.log("i:"+i +"|j:"+j);
                         }
                     }
                 }
 
                 for(i=0;i<this.doing.length;i++){
-                    //InsertUserRoles.push(this.doing[i]['id']);     
                     InsertRoleRights += this.doing[i]['id'];
                     if(i!=this.doing.length-1){
                         InsertRoleRights +=","
@@ -576,7 +555,6 @@
                 }
 
                 for(i=0;i<this.done.length;i++){
-                    //deleteUserRoles.push(this.done[i]['id']);
                     deleteRoleRights += this.done[i]['id']; 
                     if(i!=this.done.length-1){
                         deleteRoleRights +=","
@@ -600,8 +578,6 @@
                         console.log(this.responseResult);
                         //this.$message.success("用户角色添加成功");
                         console.log("角色权限添加完成");
-                        
-
                         this.getData();
                         console.log("数据更新完成");
                         //这里要输入用户id
@@ -610,7 +586,6 @@
                         console.log(userId);
                         Utils.getUserAllRight(userId);
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色权限添加失败");
@@ -634,7 +609,6 @@
                         var userId =JSON.parse(localStorage.getItem('userData')).id;
                         Utils.getUserAllRight(userId);
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色权限删除失败");
@@ -665,7 +639,6 @@
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("角色添加失败");
@@ -675,12 +648,7 @@
                     .catch(failResponse => {})
                     
                 }
-                
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addRoleVisible = false;
-                
-                
             },
             // 保存编辑
             saveEdit() {
@@ -698,12 +666,9 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("角色信息修改成功");
                         this.getData();
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色信息修改失败");
@@ -711,13 +676,10 @@
                     }
                 })
                 .catch(failResponse => {})
-
                 //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;
-                
-                
             },
             // 确定冻结
             changeStateToFrozen(){
@@ -731,7 +693,6 @@
                             this.$message.success(`角色冻结成功`);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色冻结失败');
@@ -740,8 +701,7 @@
                     })
                     .catch(failResponse => {})
                 this.changeStateToFrozenVisible = false;
-                this.rest();
-                
+                this.rest();      
             },
             // 确定解冻
             changeStateToNormal(){
@@ -755,7 +715,6 @@
                             this.$message.success("角色解冻成功");
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色解冻失败');
@@ -764,8 +723,7 @@
                     })
                     .catch(failResponse => {})
                 this.changeStateToNormalVisible = false;
-                this.rest();
-                
+                this.rest();  
             },
             // 确定删除
             deleteRow(){
@@ -781,7 +739,6 @@
                             //必须异步处理
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色删除失败');
@@ -792,8 +749,7 @@
                 
                 this.tableData.splice(this.idx, 1);
                 
-                this.delVisible = false;
-                
+                this.delVisible = false; 
             },
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
@@ -844,25 +800,21 @@
     }
 
     /* DragList */
-
     .drag-box{
         display: inline-flex;
         user-select: none;
         width: 100%;
         max-width: 1500px;
         min-width: 100px;
-        /* border: 1px solid red; */
     }
     .drag-box-item {
         flex: 1;
-        /* max-width: 530px;
-        min-width: 200px; */
+
         background-color: #eff1f5;
         margin-right: 8px;
         margin-left: 8px;
         border-radius: 6px;
         border: 1px #e1e4e8 solid;
-        /* border: 1px solid red; */
     }
     .item-title{
         padding: 8px 8px 8px 12px;

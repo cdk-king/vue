@@ -129,11 +129,6 @@ function getchildren() {
             component: resolve => require(['../components/page/Upload.vue'], resolve),
             meta: { title: '文件上传' }   
         },
-        // {
-        //     path: '/fileUpload',
-        //     component: resolve => require(['../components/page/UploadFile.vue'], resolve),
-        //     meta: { title: '文件上传' }
-        // },
         {
             // vue-schart组件
             path: '/charts',
@@ -163,11 +158,8 @@ function getchildren() {
         children.push(otherItem[i]);
     }
     console.log(children);
-    //console.log("router-right-check:" + right);
     
-
     const dynamicRouter =
-
     {
         path: '/',
         //加载组件

@@ -11,7 +11,6 @@
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -35,9 +34,6 @@
                 </el-table-column>
                 <el-table-column prop="gameTag" label="游戏标识" >
                 </el-table-column>
-                
-                <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
-                </el-table-column> -->
                 <el-table-column prop="game_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="gameEncryptSign" label="加密标识" >
@@ -221,14 +217,11 @@
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                //console.log(right); 
-                //console.log(username);
                 if(right.indexOf('Game_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -279,7 +272,6 @@
                  this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
@@ -539,10 +531,6 @@
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

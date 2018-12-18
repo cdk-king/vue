@@ -14,8 +14,6 @@
                     <br/>
                     （2）禁封和禁言操作不输入时间则为永久操作
                 </div>
-                
-                <!-- <Divider /> -->
                 <el-collapse v-model="activeNames" >
                 <el-collapse-item title="折叠" name="1">
                         <div class="form-box">
@@ -60,12 +58,6 @@
                             </el-input>
                         </el-form-item>
                         <el-form-item label="是否禁言">
-                            <!-- <el-select  placeholder="请选择"  v-model="searchForm.isOnline" class="handle-select mr10" style="width:180px">
-                                <el-option key="1" label="全部" value="0"></el-option>
-                                <el-option key="2" label="在线" value="1"></el-option>
-                                <el-option key="3" label="离线" value="2"></el-option>
-                            </el-select>
-                            <span style="margin-left:22px">是否禁言</span> -->
                                 <el-select  placeholder="请选择"  v-model="searchForm.isProhibitSpeak" class="handle-select mr10" style="width:180px">
                                 <el-option key="1" label="全部" value="0"></el-option>
                                 <el-option key="2" label="未禁言" value="0"></el-option>
@@ -82,116 +74,10 @@
                         <el-form-item label="">
                             <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
                         </el-form-item>
-
-                        
-                        <!-- 
-                        <Divider /> 
-                        <el-form-item label="VIP等级">
-
-                            <el-input style="width:180px"
-                            placeholder="最小等级"
-                            v-model="searchForm.minVipLevel"
-                            clearable>
-                            </el-input>
-
-                            <span style="">—</span>
-
-                            <el-input style="width:180px"
-                            placeholder="最大等级"
-                            v-model="searchForm.maxVipLevel"
-                            clearable>
-                            </el-input>
-
-                            <span style="margin-left:50px">钻石</span>
-
-                            <el-input style="width:180px"
-                            placeholder="最小元宝"
-                            v-model="searchForm.minDiamond"
-                            clearable>
-                            </el-input>
-
-                            <span style="">—</span>
-
-                            <el-input style="width:180px"
-                            placeholder="最大元宝"
-                            v-model="searchForm.maxDiamond"
-                            clearable>
-                            </el-input>
-
-                        </el-form-item>
-                        <el-form-item label="充值金额">
-
-                            <el-input style="width:180px"
-                            placeholder="最小金额"
-                            v-model="searchForm.minRechargeAmount"
-                            clearable>
-                            </el-input>
-
-                            <span style="">—</span>
-
-                            <el-input style="width:180px"
-                            placeholder="最大金额"
-                            v-model="searchForm.maxRechargeAmount"
-                            clearable>
-                            </el-input>
-
-                            <span style="margin-left:50px">等级</span>
-                            
-                            <el-input style="width:180px"
-                            placeholder="最小等级"
-                            v-model="searchForm.minLevel"
-                            clearable>
-                            </el-input>
-
-                            <span style="">—</span>
-
-                            <el-input style="width:180px"
-                            placeholder="最大等级"
-                            v-model="searchForm.maxLevel"
-                            clearable>
-                            </el-input>
-
-                        </el-form-item>
-
-                        <el-form-item label="注册时间">
-                                <el-date-picker style="width:180px" 
-                                v-model="searchForm.minRegistrationTime"
-                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择起始日期时间">
-                                </el-date-picker>
-
-                                <span style="">—</span>
-
-                                <el-date-picker style="width:180px"  
-                                v-model="searchForm.maxRegistrationTime"
-                                type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                                placeholder="选择截至日期时间">
-                                </el-date-picker>
-
-                                <span style="margin-left:50px">战力</span>
-
-                                <el-input style="width:180px"
-                                placeholder="最小战力"
-                                v-model="searchForm.minCombatPower"
-                                clearable>
-                                </el-input>
-
-                                <span style="">—</span>
-
-                                <el-input style="width:180px"
-                                placeholder="最大战力"
-                                v-model="searchForm.maxCombatPower"
-                                clearable>
-                                </el-input>
-
-                        </el-form-item>
-                        <el-form-item label="">
-                        </el-form-item> -->
                         </el-form>
                     </div>
                 </el-collapse-item>
                 </el-collapse>
-                <!-- <Divider /> -->
                 <div style="margin:15px;" v-if="false">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakAll">批量禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakToNormalAll">批量解除禁言</el-button>
@@ -208,18 +94,6 @@
                 </el-table-column>
                 <el-table-column prop="playerId" label="角色Id" >
                 </el-table-column>
-                <!-- <el-table-column prop="isOnline" label="是否在线"  :formatter="formatIsOnline">
-                </el-table-column>
-                <el-table-column prop="lastIp" label="最后登录IP" >
-                </el-table-column>
-                <el-table-column prop="vipLevel" label="会员等级" >
-                </el-table-column>
-                <el-table-column prop="diamond"  label="钻石" >
-                </el-table-column>
-                <el-table-column prop="rechargeAmount"  label="充值金额" >
-                </el-table-column>
-                <el-table-column prop="combatPower"  label="战力" >
-                </el-table-column> -->
                 <el-table-column prop="isProhibitSpeak"  label="是否禁言" :formatter="formatIsProhibitSpeak"> 
                     	<template slot-scope="scope">
                             <span v-if="scope.row.isProhibitSpeak==0" style="color:#000000">正常</span>
@@ -236,8 +110,6 @@
                             </span>
                     </template>
                 </el-table-column>
-                <!-- <el-table-column prop="registrationTime"  :formatter="formatter" label="注册时间" > 
-                </el-table-column> -->
                 <el-table-column prop="platform"  label="平台" >
                     <template slot-scope="scope">
                             <span  style="color:#000000">{{getPlatformName(platformValue)}}</span> 
@@ -656,7 +528,6 @@ export default {
         }else{
             this.handleVisible = true;
         }
-        //console.log("this.handleVisible:"+this.handleVisible);
     },
     getPlatformList(userId) {
       this.$axios
@@ -728,29 +599,7 @@ export default {
                 this.$message.error("请选择正确的服务器");
                 return;
             }
-        // this.$axios
-        // .post("/api/player/getPlayer", {
-        //   platformId: this.platformValue,
-        //   serverId: this.serverValue,
-        //   pageNo: this.cur_page,
-        //   pageSize: 10,
-        //   isPage: "isPage",
-        //   searchForm: JSON.stringify(this.searchForm)
-        // })
-        // .then(successResponse => {
-        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        //   if (successResponse.data.code === 200) {
-        //     console.log(this.responseResult);
-        //     console.log("玩家列表获取成功");
-        //     this.$message.success("玩家列表获取成功");
-        //     this.tableData = successResponse.data.data.list;
-        //   } else {
-        //     console.log(this.responseResult);
-        //     console.log("玩家列表获取失败");
-        //     this.$message.error("玩家列表获取失败");
-        //   }
-        // })
-        // .catch(failResponse => {});
+
 
         this.$axios
         .post(this.url+"/api/player/getPlayerFromServer", {
@@ -770,10 +619,7 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            console.log("玩家列表获取成功");
-            //this.$message.success("玩家列表获取成功");
-            //this.tableData = successResponse.data.data.list;   
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+            console.log("玩家列表获取成功");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             this.mapData(successResponse.data.data);
           } else {
             console.log(this.responseResult);
@@ -819,14 +665,12 @@ export default {
       this.getPlayer();
     },
     formatter(row, column) {
-      //return row.address;
       //时间格式化
 
       var date = row[column.property];
       if (date == undefined) {
         return "";
       }
-
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
@@ -864,8 +708,6 @@ export default {
             console.log(this.responseResult);
             console.log("玩家详细信息获取成功");
             this.detail = JSON.parse(successResponse.data.data);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-            //this.mapData(successResponse.data.data);
           } else {
             console.log(this.responseResult);
             console.log("玩家详细信息获取失败"); 
@@ -901,32 +743,6 @@ export default {
         this.ChangeAllBanToNormal = true;
     },
     ToProhibitSpeak() {
-        // this.$axios
-        // .post("/ChangeToProhibitSpeak", {
-        //     platformId: this.platformValue,
-        //     serverId: this.serverValue,
-        //     playerName:this.tableData[this.idx].playerName,
-        //     playerAccount:this.tableData[this.idx].playerAccount,
-        //     playerId:this.tableData[this.idx].playerId,
-        //     userId:this.userId,
-        //     prohibitSpeakTime:this.form.prohibitSpeakTime,
-        // })
-        // .then(successResponse => {
-        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        //   if (successResponse.data.code === 200) {
-        //     console.log(this.responseResult);
-        //     console.log("玩家禁言成功");
-        //     this.$message.success("玩家禁言成功");
-        //     this.ChangeToProhibitSpeak = false;
-        //     this.getPlayer();
-        //   } else {
-        //     console.log(this.responseResult);
-        //     console.log(successResponse.data.message);
-        //     this.$message.error(successResponse.data.message);
-        //   }
-        // })
-        // .catch(failResponse => {});
-
         this.$axios
         .post(this.url+"/api/player/talkBan", {
             platformId: this.platformValue,
@@ -962,31 +778,6 @@ export default {
         this.ChangeAllToProhibitSpeak = false;
     },
     ProhibitSpeakToNormal() {
-        // this.$axios
-        // .post("/ChangeProhibitSpeakToNormal", {
-        //     platformId: this.platformValue,
-        //     serverId: this.serverValue,
-        //     playerName:this.tableData[this.idx].playerName,
-        //     playerAccount:this.tableData[this.idx].playerAccount,
-        //     playerId:this.tableData[this.idx].playerId,
-        //     userId:this.userId
-        // })
-        // .then(successResponse => {
-        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        //   if (successResponse.data.code === 200) {
-        //     console.log(this.responseResult);
-        //     console.log("玩家解除禁言成功");
-        //     this.$message.success("玩家解除禁言成功");
-        //     this.ChangeProhibitSpeakToNormal = false;
-        //     this.getPlayer();
-        //   } else {
-        //     console.log(this.responseResult);
-        //     console.log(successResponse.data.message);
-        //     this.$message.error(successResponse.data.message);
-        //   }
-        // })
-        // .catch(failResponse => {});
-
         this.$axios
         .post(this.url+"/api/player/talkBan", {
             platformId: this.platformValue,
@@ -1030,31 +821,6 @@ export default {
       this.ChangeBanToNormal = true;
     },
     ToBan() {
-        // this.$axios
-        // .post("/ChangeToBan", {
-        //     platformId: this.platformValue,
-        //     serverId: this.serverValue,
-        //     playerName:this.tableData[this.idx].playerName,
-        //     playerAccount:this.tableData[this.idx].playerAccount,
-        //     playerId:this.tableData[this.idx].playerId,
-        //     userId:this.userId,
-        //     banTime:this.form.banTime
-        // })
-        // .then(successResponse => {
-        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        //   if (successResponse.data.code === 200) {
-        //     console.log(this.responseResult);
-        //     console.log("玩家禁封成功");
-        //     this.$message.success("玩家禁封成功");
-        //     this.ChangeToBan = false;
-        //     this.getPlayer();
-        //   } else {
-        //     console.log(this.responseResult);
-        //     console.log(successResponse.data.message);
-        //     this.$message.error(successResponse.data.message);
-        //   }
-        // })
-        // .catch(failResponse => {});
 
         this.$axios
         .post(this.url+"/api/player/Ban", {
@@ -1088,31 +854,6 @@ export default {
         this.ChangeAllToBan = false;
     },
     BanToNormal() {
-        // this.$axios
-        // .post("/ChangeBanToNormal", {
-        //     platformId: this.platformValue,
-        //     serverId: this.serverValue,
-        //     playerName:this.tableData[this.idx].playerName,
-        //     playerAccount:this.tableData[this.idx].playerAccount,
-        //     playerId:this.tableData[this.idx].playerId,
-        //     userId:this.userId
-        // })
-        // .then(successResponse => {
-        //   this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        //   if (successResponse.data.code === 200) {
-        //     console.log(this.responseResult);
-        //     console.log("玩家解除禁封成功");
-        //     this.$message.success("玩家解除禁封成功");
-        //     this.ChangeBanToNormal = false;
-        //     this.getPlayer();
-        //   } else {
-        //     console.log(this.responseResult);
-        //     console.log(successResponse.data.message);
-        //     this.$message.error(successResponse.data.message);
-        //   }
-        // })
-        // .catch(failResponse => {});
-
 
         this.$axios
         .post(this.url+"/api/player/Ban", {
@@ -1193,26 +934,24 @@ export default {
   },
   filters:{
     //这里不能访问this  
-            filtersIsOnline:function (arg) {
-               return arg == 1 ? "在线" : "离线";
-                
-            },
-            filtersServer:function(arg){
-                
-            }
+        filtersIsOnline:function (arg) {
+            return arg == 1 ? "在线" : "离线";
+            
+        },
+        filtersServer:function(arg){
+            
+        }
     }
 };
 </script>
 
 <style scoped>
 .el-form-item {
-  /* border: 1px solid red; */
   width: 100%;
 }
 .form-box {
   width: 100%;
 }
-    /*  */
  .el-row {
     margin-bottom: 20px;
   }

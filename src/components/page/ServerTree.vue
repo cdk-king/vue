@@ -119,16 +119,6 @@
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属游戏">
-                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
-                        <el-option
-                        v-for="item in gameList"
-                        :key="item.id"
-                        :label="item.gameName"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
                 <el-form-item label="所属渠道">
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
@@ -157,8 +147,6 @@
                 <el-button type="primary" @click="deleteRow">确 定</el-button>
             </span>
         </el-dialog>
-
-
           </div>
      </div>
 
@@ -237,7 +225,6 @@ export default {
             console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformList = successResponse.data.data;
-            //this.gameList
           } else {
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
@@ -320,7 +307,6 @@ export default {
             map["id"] = item[tags[k]];
             map["label"] = item[labels[k]];
             map["tag"] = labels[k];
-            //console.log(item[tags[k]])
             child.push(map);
           }
         } else {
@@ -367,16 +353,12 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            //this.$router.push('/');
-            //this.$router.replace({path: '/index'})
             this.$message.success("服务器信息修改成功");
             this.getData();
           } else {
-            this.open4(successResponse.data.message);
             console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器信息修改失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -413,11 +395,9 @@ export default {
                 this.tableData.push(this.form);
                 this.getData();
             }else{
-                this.open4(successResponse.data.message);
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("服务器添加失败");
-                return false;
             }
         })
         .catch(failResponse => {})
@@ -439,19 +419,13 @@ export default {
                     //必须异步处理
                     this.getData();
                 }else{
-                    this.open4(successResponse.data.message);
                     console.log('error');
                     console.log(this.responseResult);
                     this.$message.error('服务器删除失败');
-                    return false;
                 }
             })
             .catch(failResponse => {}) 
-        
-        //this.tableData.splice(this.idx, 1);
-        
-        this.delVisible = false;
-        
+        this.delVisible = false; 
     },
     append(node,data) {
         this.getPlatformList();
@@ -485,7 +459,6 @@ export default {
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
-      //children.splice(index, 1);
       const id = data.id;
       this.delVisible = true;
       this.id = id;
@@ -504,11 +477,7 @@ export default {
       const item = this.tableData[0];
       if(tag=='server'){
         for (var i = 0; i < this.tableData.length; i++) {
-        //console.log(this.tableData[i].id);
-        //console.log(this.tableData[i]['id']);
         if (this.tableData[i]["serverId"] == id) {
-          //console.log(this.tableData[i].server);
-          //console.log(this.tableData[i].id);
           const item = this.tableData[i];
           this.form = {
             id: item.id,
@@ -561,14 +530,11 @@ export default {
       const tag = data.tag;
       console.log("id:" + id);
       console.log("tag:" + tag);
-
-
       const item = this.tableData[0];
       if(tag=="server"){
         for (var i = 0; i < this.tableData.length; i++) {
         if (this.tableData[i]["serverId"] == id) {
           const item = this.tableData[i];
-
           this.form = {
             id: item.id,
             server: item.server,
@@ -609,9 +575,7 @@ export default {
           };
       }
       
-
       this.getPlatformList();
-
       this.editVisible = true;
     },
 
@@ -681,11 +645,9 @@ export default {
 .handle-box {
   margin-bottom: 20px;
 }
-
 .handle-select {
   width: 120px;
 }
-
 .handle-input {
   width: 300px;
   display: inline-block;
@@ -701,13 +663,11 @@ export default {
 .red {
   color: #ff0000;
 }
-
 .custom-tree-node {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   font-size: 20px;
   padding-right: 50px;
 }

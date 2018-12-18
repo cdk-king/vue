@@ -129,7 +129,6 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-
                 //this.fullscreenLoading = true;
                 this.loading = this.$loading({
                         lock: true,
@@ -162,8 +161,7 @@
                 })
             },
             handlePreview(file){
-                //console.log(file);
-                
+            
             },
             handleChange(file,fileList){
                 console.log(file.raw);
@@ -214,8 +212,6 @@
                     }
                     let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
                     console.log(json);
-                    //console.log(JSON.stringify(json));
-                    //self.result = JSON.stringify(json);
                     $t.dealFile(json); // analyzeData: 解析导入数据
                 }
                 if (this.rABS) {
@@ -250,9 +246,6 @@
                 
                 const file = e.target.files[0];
                 console.log(file);
-                // if (!file.type=='.png')) {
-                //     return;
-                // }
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");
@@ -269,9 +262,7 @@
             selectPlatform() {
                 console.log(this.form.platformId);
             },
-
-        },
-        
+        },     
     }
 </script>
 

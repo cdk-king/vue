@@ -171,7 +171,6 @@
                 .catch(failResponse => {})
             },
             handlePreview(file){
-                //console.log(file);
                 
             },
             handleChange(file,fileList){
@@ -200,7 +199,6 @@
                             map.isBan = data[11];
                             map.registrationTime = data[12];
                             this.playerList.push(map);
-                            //console.log(fileText[i]);
                         }
                         console.log(this.playerList);
                         this.strplayerList = JSON.stringify(this.playerList);
@@ -211,9 +209,6 @@
                 
                 const file = e.target.files[0];
                 console.log(file);
-                // if (!file.type=='.png')) {
-                //     return;
-                // }
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");
@@ -225,7 +220,6 @@
                         }
                     }
             },
-
             selectPlatform() {
                 console.log(this.form.platformId);
                 this.getServerList(this.form.platformId);

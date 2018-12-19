@@ -1,7 +1,7 @@
 
 
 
-
+import Vue from 'vue';
 import dynamicRouter from './dynamicRouter';
 function getDefaultRouter() {
 
@@ -17,7 +17,7 @@ function getDefaultRouter() {
     },
     {
       path: '/register',
-      component: resolve => require(['../components/page/register.vue'], resolve),
+      component: resolve => require(['../components/page/Register.vue'], resolve),
     },
     {
       path: '/403',
@@ -33,6 +33,7 @@ function getDefaultRouter() {
       redirect: '/'
     }
   ]
+  Vue.prototype.$setDefaultRouter(defaultRouter);
   return defaultRouter;
 }
 export default getDefaultRouter;

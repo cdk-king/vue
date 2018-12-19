@@ -11,7 +11,6 @@
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -35,9 +34,6 @@
                 </el-table-column>
                 <el-table-column prop="gameTag" label="游戏标识" >
                 </el-table-column>
-                
-                <!-- <el-table-column prop="isDelete" label="删除标识" width="120">
-                </el-table-column> -->
                 <el-table-column prop="game_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="gameEncryptSign" label="加密标识" >
@@ -158,7 +154,7 @@
         name: 'GameTable',
         data() {
             return {
-                url:'/getAllGame',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -203,6 +199,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+            this.url = this.$url;
+            }
             this.getData();
             this.right();
         },
@@ -218,14 +217,11 @@
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
                 if(right.indexOf('Game_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -240,7 +236,7 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getAllGame', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -265,7 +261,6 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -277,7 +272,6 @@
                  this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
@@ -337,7 +331,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllGame',{
+                this.$axios.post(this.url+'/deleteAllGame',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -387,7 +381,7 @@
                     console.log("游戏标识不能为空");
                     this.$message.error("游戏标识不能为空");
                 }else{
-                    this.$axios.post('/addGame',{ 
+                    this.$axios.post(this.url+'/addGame',{ 
 
                         id: this.form.id,
                         gameName:this.form.gameName,
@@ -425,7 +419,7 @@
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editGame',{
+                this.$axios.post(this.url+'/editGame',{
                     id:this.form.id,
                     gameName:this.form.gameName,
                     gameTag:this.form.gameTag,
@@ -463,7 +457,7 @@
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Game',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Game',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -487,7 +481,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Game',{
+                this.$axios.post(this.url+'/changeStateToNormal_Game',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -512,7 +506,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteGame',{
+                this.$axios.post(this.url+'/deleteGame',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -537,10 +531,6 @@
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

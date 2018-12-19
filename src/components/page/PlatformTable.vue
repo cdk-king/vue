@@ -19,7 +19,6 @@
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -41,6 +40,8 @@
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
                 <el-table-column prop="id" label="ID"  width="80">
+                </el-table-column>
+                <el-table-column prop="platformId" label="平台ID"  width="80">
                 </el-table-column>
                 <el-table-column prop="platform" label="平台名称" width="160">
                 </el-table-column>
@@ -83,6 +84,9 @@
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>
                 </el-form-item>
+                <el-form-item label="平台ID">
+                    <el-input v-model="form.platformId"></el-input>
+                </el-form-item>
                 <el-form-item label="平台标识">
                     <el-input v-model="form.platformTag"></el-input>
                 </el-form-item>
@@ -124,6 +128,9 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
                     <el-input v-model="form.platform"></el-input>
+                </el-form-item>
+                <el-form-item label="平台ID">
+                    <el-input v-model="form.platformId"></el-input>
                 </el-form-item>
                 <el-form-item label="平台标识">
                     <el-input v-model="form.platformTag"></el-input>
@@ -203,7 +210,7 @@
         name: 'platformTable',
         data() {
             return {
-                url:'/getAllPlatform',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -222,6 +229,7 @@
                 total:0,
                 form: {
                     id:'',
+                    platformId:'',
                     platform:'',
                     gameId:'',
                     roleId:'',
@@ -237,6 +245,7 @@
                 },
                 searchKey: {
                     id:'',
+                    platformId:'',
                     platform:'',
                     platformTag:'',
                     platform_describe: '',
@@ -275,6 +284,9 @@
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             this.right();
         
@@ -289,7 +301,7 @@
         },
         methods: {
             getGameList(){
-                this.$axios.post('/getAllGameList',{
+                this.$axios.post(this.url+'/getAllGameList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -297,7 +309,6 @@
                         console.log(this.responseResult);
                         console.log("游戏列表获取成功");
                         this.gameList = successResponse.data.data;
-                        //this.gameList
                         
                     }else{
                         this.open4(successResponse.data.message);
@@ -309,7 +320,7 @@
                 .catch(failResponse => {})
             },
             getRoleList(){
-                this.$axios.post('/getAllRoleList',{
+                this.$axios.post(this.url+'/getAllRoleList',{
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -317,7 +328,6 @@
                         console.log(this.responseResult);
                         console.log("角色列表获取成功");
                         this.roleList = successResponse.data.data;
-                        //this.gameList
                         
                     }else{
                         this.open4(successResponse.data.message);
@@ -331,14 +341,11 @@
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
                 if(right.indexOf('Platform_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -353,10 +360,11 @@
             },
             getData() {
 
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getAllPlatform', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
+                    platformId:'',
                     id:'',
                     platform:this.searchKey.platform,
                     gameId:'',
@@ -381,7 +389,6 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -393,7 +400,6 @@
                  this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
@@ -414,6 +420,7 @@
                 const item = this.tableData[index];
                 this.form = {
                     id:item.id,
+                    platformId:item.platformId,
                     platform:item.platform,
                     platformTag:item.platformTag,
                     platform_describe: item.platform_describe,
@@ -456,7 +463,7 @@
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllPlatform',{
+                this.$axios.post(this.url+'/deleteAllPlatform',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -489,6 +496,7 @@
                 this.addplatformVisible = true;
                 this.form = {
                     id:'',
+                    platformId: '',
                     platformName:'',
                     platformTag:'',
                     platform_describe: '',
@@ -516,9 +524,9 @@
                     console.log(this.selectGame);
                     console.log(this.selectRole);
 
-                    this.$axios.post('/addPlatform',{
+                    this.$axios.post(this.url+'/addPlatform',{
 
-                        id: this.form.id,
+                        platformId: this.form.platformId,
                         platform:this.form.platform,
                         platformTag:this.form.platformTag,
                         platform_describe: this.form.platform_describe,
@@ -546,16 +554,13 @@
                     .catch(failResponse => {})
                     this.addplatformVisible = false; 
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
-                
-                
             },
             // 保存编辑
             saveEdit() {
 
-                this.$axios.post('/editPlatform',{
+                this.$axios.post(this.url+'/editPlatform',{
                     id:this.form.id,
+                    platformId: this.form.platformId,
                     platform:this.form.platform,
                     platformTag:this.form.platformTag,
                     platform_describe: this.form.platform_describe,
@@ -588,13 +593,11 @@
                 //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                
-                
+                this.editVisible = false;  
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Platform',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Platform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -618,7 +621,7 @@
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Platform',{
+                this.$axios.post(this.url+'/changeStateToNormal_Platform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -643,7 +646,7 @@
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deletePlatform',{
+                this.$axios.post(this.url+'/deletePlatform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -668,10 +671,6 @@
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

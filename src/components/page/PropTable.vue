@@ -13,15 +13,14 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">状态：</span>
                 
                 <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -45,8 +44,6 @@
                 </el-table-column>
                 <el-table-column prop="propTag" label="道具标识" >
                 </el-table-column>
-                
-                
                 <el-table-column prop="prop_describe" label="描述" >
                 </el-table-column> 
                 <el-table-column prop="platform" label="所在平台" width="120">
@@ -80,12 +77,11 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
-                        <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -220,11 +216,11 @@ import bus from '../common/bus';
                 },
                 platformOptions: [
                     {
-                    id: "1",
+                    platformId: "1",
                     platform: "渠道1"
                     },
                     {
-                    id: "2",
+                    platformId: "2",
                     platform: "渠道2"
                     }
                 ],
@@ -268,12 +264,9 @@ import bus from '../common/bus';
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -356,7 +349,6 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
@@ -498,8 +490,6 @@ import bus from '../common/bus';
                     .catch(failResponse => {})
                     
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addpropVisible = false; 
                 
             },
@@ -521,8 +511,6 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("道具信息修改成功");
                         this.getData();
                     }else{
@@ -534,13 +522,7 @@ import bus from '../common/bus';
                     }
                 })
                 .catch(failResponse => {})
-
-                //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;
-                
-                
             },
             // 确定冻结
             changeStateToFrozen(){
@@ -618,10 +600,6 @@ import bus from '../common/bus';
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

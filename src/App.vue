@@ -1,6 +1,8 @@
 <template>
     <div id="app">
-        <router-view :key="activeDate"></router-view>
+        <!-- :key="activeDate" -->
+        <!-- :key="key" -->
+        <router-view ></router-view>
     </div>
 </template>
 <style>
@@ -22,8 +24,7 @@ export default {
     },
     computed: {
         key() {
-            console.log("keykeykey");
-            return this.$route.name !== undefined? this.$route.name +new Date(): this.$route +new Date()
+            return new Date()
         }
     },
     methods:{

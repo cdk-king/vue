@@ -68,6 +68,9 @@
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
@@ -81,9 +84,9 @@
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择角色">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -104,6 +107,9 @@
                 <el-form-item label="服务器名称">
                     <el-input v-model="form.server"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器Id">
+                    <el-input v-model="form.serverId"></el-input>
+                </el-form-item>
                 <el-form-item label="服务器IP">
                     <el-input v-model="form.serverIp"></el-input>
                 </el-form-item>
@@ -113,23 +119,13 @@
                 <el-form-item label="服务器描述">
                     <el-input v-model="form.server_describe"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属游戏">
-                    <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
-                        <el-option
-                        v-for="item in gameList"
-                        :key="item.id"
-                        :label="item.gameName"
-                        :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item> -->
                 <el-form-item label="所属渠道">
                     <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
                         <el-option
                         v-for="item in platformList"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -151,13 +147,8 @@
                 <el-button type="primary" @click="deleteRow">确 定</el-button>
             </span>
         </el-dialog>
-
-
           </div>
      </div>
-          
-
-
 
 </template>
 
@@ -215,24 +206,26 @@ export default {
       addServerVisible:false,
       delVisible: false,
       id:"",
+      url:"http://localhost:8011",
     };
   },
   created() {
+    if(this.$url!=null){
+      this.url = this.$url;
+    }
     this.getData();
   },
   methods: {
     getPlatformList() {
       this.$axios
-        .post("/getAllPlatformList", {})
+        .post(this.url+"/getAllPlatformList", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformList = successResponse.data.data;
-            //this.gameList
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
             return false;
@@ -242,7 +235,7 @@ export default {
     },
     getData() {
       this.$axios
-        .post("/getServerTree", {})
+        .post(this.url+"/getServerTree", {})
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -251,21 +244,20 @@ export default {
             this.TreeList = successResponse.data.data;
             this.MapData(this.TreeList);
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器树状结构获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
 
       this.$axios
-        .post("/getAllServer", {
+        .post(this.url+"/getAllServer", {
           pageNo: 1,
           pageSize: 10,
           isPage: "",
           id: "",
           server: "",
+          serverId: "",
           gameId: "",
           platformId: "",
           platform: "",
@@ -286,7 +278,6 @@ export default {
           } else {
             console.log(this.responseResult);
             console.log("所有服务器获取失败");
-            return false;
           }
         })
     },
@@ -316,7 +307,6 @@ export default {
             map["id"] = item[tags[k]];
             map["label"] = item[labels[k]];
             map["tag"] = labels[k];
-            //console.log(item[tags[k]])
             child.push(map);
           }
         } else {
@@ -345,9 +335,10 @@ export default {
     // 保存编辑
     saveEdit() {
       this.$axios
-        .post("/editServer", {
+        .post(this.url+"/editServer", {
           id: this.form.id,
           server: this.form.server,
+          serverId: this.form.serverId,
           serverIp: this.form.serverIp,
           serverPort:this.form.serverPort,
           server_describe: this.form.server_describe,
@@ -362,16 +353,12 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            //this.$router.push('/');
-            //this.$router.replace({path: '/index'})
             this.$message.success("服务器信息修改成功");
             this.getData();
           } else {
-            this.open4(successResponse.data.message);
             console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器信息修改失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -386,10 +373,11 @@ export default {
         this.$message.error("所属渠道不能为空");
     }else{
 
-        this.$axios.post('/addServer',{
+        this.$axios.post(this.url+'/addServer',{
 
             id: this.form.id,
             server:this.form.server,
+            serverId:this.form.serverId,
             serverIp:this.form.serverIp,
             serverPort:this.form.serverPort,
             server_describe: this.form.server_describe,
@@ -407,11 +395,9 @@ export default {
                 this.tableData.push(this.form);
                 this.getData();
             }else{
-                this.open4(successResponse.data.message);
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("服务器添加失败");
-                return false;
             }
         })
         .catch(failResponse => {})
@@ -422,7 +408,7 @@ export default {
     // 确定删除
     deleteRow(){
 
-        this.$axios.post('/deleteServer',{
+        this.$axios.post(this.url+'/deleteServer',{
                 id: this.id, 
             })
             .then(successResponse =>{
@@ -433,19 +419,13 @@ export default {
                     //必须异步处理
                     this.getData();
                 }else{
-                    this.open4(successResponse.data.message);
                     console.log('error');
                     console.log(this.responseResult);
                     this.$message.error('服务器删除失败');
-                    return false;
                 }
             })
             .catch(failResponse => {}) 
-        
-        //this.tableData.splice(this.idx, 1);
-        
-        this.delVisible = false;
-        
+        this.delVisible = false; 
     },
     append(node,data) {
         this.getPlatformList();
@@ -453,6 +433,7 @@ export default {
          this.form = {
               id:'',
               server:'',
+              serverId:'',
               serverTag:'',
               serverIp:'',
               serverPort:'',
@@ -478,7 +459,6 @@ export default {
       const parent = node.parent;
       const children = parent.data.children || parent.data;
       const index = children.findIndex(d => d.id === data.id);
-      //children.splice(index, 1);
       const id = data.id;
       this.delVisible = true;
       this.id = id;
@@ -497,15 +477,12 @@ export default {
       const item = this.tableData[0];
       if(tag=='server'){
         for (var i = 0; i < this.tableData.length; i++) {
-        //console.log(this.tableData[i].id);
-        //console.log(this.tableData[i]['id']);
-        if (this.tableData[i]["id"] == id) {
-          //console.log(this.tableData[i].server);
-          //console.log(this.tableData[i].id);
+        if (this.tableData[i]["serverId"] == id) {
           const item = this.tableData[i];
           this.form = {
             id: item.id,
             server: item.server,
+            serverId: item.serverId,
             serverIp: item.serverIp,
             serverPort:item.serverPort,
             server_describe: item.server_describe,
@@ -526,6 +503,7 @@ export default {
         this.form = {
             id: "",
             server: "",
+            serverId: "",
             serverIp: "",
             serverPort:"",
             server_describe: "",
@@ -552,17 +530,15 @@ export default {
       const tag = data.tag;
       console.log("id:" + id);
       console.log("tag:" + tag);
-
-
       const item = this.tableData[0];
       if(tag=="server"){
         for (var i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i]["id"] == id) {
+        if (this.tableData[i]["serverId"] == id) {
           const item = this.tableData[i];
-
           this.form = {
             id: item.id,
             server: item.server,
+            serverId: item.serverId,
             serverIp: item.serverIp,
             serverPort:item.serverPort,
             server_describe: item.server_describe,
@@ -583,6 +559,7 @@ export default {
         this.form = {
             id: "",
             server: "",
+            serverId: "",
             serverIp: "",
             serverPort:"",
             server_describe: "",
@@ -598,9 +575,7 @@ export default {
           };
       }
       
-
       this.getPlatformList();
-
       this.editVisible = true;
     },
 
@@ -670,11 +645,9 @@ export default {
 .handle-box {
   margin-bottom: 20px;
 }
-
 .handle-select {
   width: 120px;
 }
-
 .handle-input {
   width: 300px;
   display: inline-block;
@@ -690,13 +663,11 @@ export default {
 .red {
   color: #ff0000;
 }
-
 .custom-tree-node {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   font-size: 20px;
   padding-right: 50px;
 }

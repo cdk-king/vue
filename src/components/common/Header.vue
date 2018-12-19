@@ -5,14 +5,6 @@
             <i class="el-icon-menu"></i>
         </div>
         <div class="logo">后台管理系统</div>
-            <!-- <el-select class="el-select" v-model="gameValue" placeholder="请选择游戏">
-                <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-            </el-select> -->
             <i class="el-icon-lx-sort el-select"></i>
             <el-dropdown class="el-select" @command="handleChangGame">
             
@@ -46,19 +38,14 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="dist/static/img/img.jpg"></div>
+                <div class="user-avator hoverCursor" @click="goCenter"><img src="dist/static/img/img.jpg"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <!-- <a href="http://blog.gdfengshuo.com/about/" target="_blank">
-                            <el-dropdown-item>关于作者</el-dropdown-item>
-                        </a>
-                        <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
-                            <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a> -->
+                            <el-dropdown-item command="center">个人中心</el-dropdown-item>
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -75,10 +62,6 @@
                 fullscreen: false,
                 name: 'cdk',
                 message: 0,
-                // {
-                // id: '1',
-                // gameName: '游戏1'
-                // }
                 options: [],
                 gameValue: '1',
                 gameLabel:"请选择游戏",
@@ -102,10 +85,10 @@
                 const right = localStorage.getItem('rightTags');
                 console.log("right:"+right);
                 this.getData();
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             getData(){
                 var userData = JSON.parse(localStorage.getItem("userData"));
+                
                 this.$axios
                     .post(this.url+"/getGameListForUser", {
                     id: userData.id
@@ -120,14 +103,11 @@
                         this.$message("已选择游戏："+this.options[0].gameName);
                         this.gameLabel = this.options[0].gameName;
                     } else {
-                        this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("用户游戏列表获取失败");
-                        return false;
                     }
                     })
                     .catch(failResponse => {});
-
             },
             // 用户名下拉菜单选择事件
             handleCommand(command) {
@@ -139,6 +119,12 @@
                     //跳转到登录界面
                     this.$router.push('/login');
                 }
+                if(command=="center"){
+                    this.$router.push('/center');
+                }
+            },
+            goCenter(){
+                this.$router.push("/center");
             },
             // 侧边栏折叠
             collapseChage(){
@@ -183,10 +169,8 @@
                 //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
                 //this.$store.state.gameId=command.id;
                 //console.log(this.$store.state.gameId);
-                this.gameLabel = command.gameName;
-                
-                this.$message("已选择游戏："+command.gameName);
-                
+                this.gameLabel = command.gameName;               
+                this.$message("已选择游戏："+command.gameName);       
             }
         },
         mounted(){
@@ -273,8 +257,6 @@
     .el-select{
         top: 20px;
         font-size:20px;
-        /* border: 1px solid red; */
-
     }
     .el-dropdown-menu{
         width: 100px;
@@ -283,5 +265,8 @@
     .el-dropdown-item{
         font-size: 15px;
         
+    }
+    .hoverCursor:hover{
+        cursor:pointer;
     }
 </style>

@@ -35,9 +35,9 @@
                     <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                     <span style="margin-left:22px">选择服务器</span>
@@ -80,10 +80,6 @@
                 playerList: [],
                 strplayerList: "",
                 platformOptions: [
-                    // {
-                    // id: "1",
-                    // platform: "渠道1"
-                    // },
                 ],
                 serverOptions:[
 
@@ -138,7 +134,7 @@
             getServerList(platformId) {
             this.$axios
                 .post("/getServerListForPlatform", {
-                id: platformId
+                platformId: platformId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -175,7 +171,6 @@
                 .catch(failResponse => {})
             },
             handlePreview(file){
-                //console.log(file);
                 
             },
             handleChange(file,fileList){
@@ -204,7 +199,6 @@
                             map.isBan = data[11];
                             map.registrationTime = data[12];
                             this.playerList.push(map);
-                            //console.log(fileText[i]);
                         }
                         console.log(this.playerList);
                         this.strplayerList = JSON.stringify(this.playerList);
@@ -215,9 +209,6 @@
                 
                 const file = e.target.files[0];
                 console.log(file);
-                // if (!file.type=='.png')) {
-                //     return;
-                // }
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");
@@ -229,7 +220,6 @@
                         }
                     }
             },
-
             selectPlatform() {
                 console.log(this.form.platformId);
                 this.getServerList(this.form.platformId);

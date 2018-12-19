@@ -9,9 +9,12 @@
         <div class="container">
             <div class="content-title">礼包导入</div>
             <div class="plugins-tips">
-                请将礼包信息按下边规定格式写入到文本文件中
+                请将礼包信息按下边规定表头格式写入到Excel文件中
+                <br/>
                 一行数据对应一个礼包，示例：
-                礼包编号|礼包名称|礼包标识|礼包描述
+                id、limit、expire_time、goods_prize1、value_prize1
+                <br/>
+                默认从第四行开始读取数据
                </div>
 
             <el-upload
@@ -19,11 +22,11 @@
                 drag
                 action="XXX"
                 :auto-upload="false"
-                :on-change="handleChange"
+                :on-change="handleChangeXlsx"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传txt文件，且不超过500kb</div>
+                <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件</div>
             </el-upload>
 
             <Divider />
@@ -35,9 +38,9 @@
                     <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                         <el-button type="primary" @click="ImportDatabase">导入数据库</el-button>
@@ -58,6 +61,7 @@
 
 <script>
     import bus from '../common/bus';
+    import XLSX from 'xlsx';
     export default {
         name: 'upload',
         data: function(){
@@ -71,20 +75,21 @@
                 giftList: [],
                 strGiftList: "",
                 platformOptions: [
-                    // {
-                    // id: "1",
-                    // platform: "渠道1"
-                    // },
                 ],
                 form:{
                     platformId:0
-                }
+                },
+                loading:null,
+                url:"http://localhost:8011",
             }
         },
         components: {
             
         },
         created(){
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -102,7 +107,7 @@
             getPlatformList(gameId) {
                 var userData =JSON.parse(localStorage.getItem('userData'));
                 this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 
                 userId:userData.id,
                 gameId: gameId
@@ -117,31 +122,41 @@
                     this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-                this.$axios.post('/api/gift/ImportGift',{
+                this.loading = this.$loading({
+                        lock: true,
+                        text: '数据导入中...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                this.$axios.post(this.url+'/api/gift/ImportGift',{
                     list: JSON.stringify(this.giftList),
-                    platformId:this.form.platformId
+                    platformId:this.form.platformId,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
+                        this.loading.close();
                         this.$message.success("礼包导入成功");
                     }else{
                         console.log('error');
                         console.log(this.responseResult);
+                        this.loading.close();
                         this.$message.error("礼包导入失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                    this.loading.close();
+                    console.log('error');
+                })
             },
             handlePreview(file){
-                //console.log(file);
                 
             },
             handleChange(file,fileList){
@@ -172,13 +187,61 @@
                         console.log(this.strGiftList);
                     }.bind(this)
             },
+            handleChangeXlsx(file,fileList){
+                console.log(file); 
+                 var self = this;
+                // 导入excel
+                var f = file.raw;
+                var reader = new FileReader();
+                let $t = this;
+                //定义onload事件
+                reader.onload = function(e) {
+                    console.log(e);
+                    var data = e.target.result;
+                    
+                    if ($t.rABS) {
+                        $t.wb = XLSX.read(btoa(this.fixdata(data)), {
+                        // 手动转化
+                        type: "base64"
+                        });
+                    } else {
+                        $t.wb = XLSX.read(data, {
+                        type: "binary"
+                        });
+                    }
+                    let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    //self.result = JSON.stringify(json);
+                    $t.dealFile(json); // analyzeData: 解析导入数据
+                }
+                if (this.rABS) {
+                    
+                    reader.readAsArrayBuffer(f);
+                } else {
+                    //执行读取操作
+                    reader.readAsBinaryString(f);
+                }
+            },
+            dealFile(json){
+                //第一个对象是类型
+                console.log(json.length);
+                for(var i = 2;i<json.length;i++){
+                    var map = new Object();
+                        map.giftId = json[i].id;
+                        map.limit = json[i].limit;
+                        map.expire_time = json[i].expire_time;
+                        map.goods_prize1 = json[i].goods_prize1;
+                        map.value_prize1 = json[i].value_prize1;
+                    this.giftList.push(map);
+                }
+                this.strGiftList = JSON.stringify(this.giftList);
+                console.log(JSON.stringify(this.giftList))
+            },
             upload(e){
                 
                 const file = e.target.files[0];
                 console.log(file);
-                // if (!file.type=='.png')) {
-                //     return;
-                // }
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");

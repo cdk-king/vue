@@ -13,9 +13,9 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">状态：</span>
@@ -37,9 +37,9 @@
                 <el-button type="primary" icon="search" @click="handleImportProp">导入</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <!-- <el-table-column type="selection" width="55" align="center">
-                </el-table-column> -->
                 <el-table-column prop="id" label="ID"  >
+                </el-table-column>
+                <el-table-column prop="propId" label="道具ID"  >
                 </el-table-column>
                 <el-table-column prop="propName" label="道具名称" >
                 </el-table-column>
@@ -63,12 +63,11 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
-                        <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -159,7 +158,7 @@ import bus from '../common/bus';
         name: 'newPropTable',
         data() {
             return {
-                url:'/getPropUplaod',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -178,6 +177,7 @@ import bus from '../common/bus';
                 total:0,
                 form: {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTag:'',
                     prop_describe: '',
@@ -191,6 +191,7 @@ import bus from '../common/bus';
                 },
                 searchKey: {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTypeId:'',
                     prop_describe: '',
@@ -203,11 +204,11 @@ import bus from '../common/bus';
                 },
                 platformOptions: [
                     {
-                    id: "1",
+                    platformId: "1",
                     platform: "渠道1"
                     },
                     {
-                    id: "2",
+                    platformId: "2",
                     platform: "渠道2"
                     }
                 ],
@@ -220,7 +221,9 @@ import bus from '../common/bus';
         },
         created() {
             
-
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             this.getPropTypeList(this.$gameId);
@@ -254,7 +257,6 @@ import bus from '../common/bus';
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -269,17 +271,18 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的道具
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+"/getPropUplaod", {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
+                    propId:'',
                     propName:this.searchKey.propName,
                     propType:this.searchKey.propTypeId,
                     platformId:this.searchKey.platformId,
                     strPlatform:this.strPlatform
                 }).then(successResponse =>{
-                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data);
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
                         console.log("道具列表获取成功");
@@ -299,7 +302,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
                 this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -311,7 +314,7 @@ import bus from '../common/bus';
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].id+",";
+                        this.strPlatform += this.platformOptions[i].platformId+",";
                         
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
@@ -327,7 +330,7 @@ import bus from '../common/bus';
             getPropTypeList(gameId){
                 
                 this.$axios
-                .post("/api/newProp/getPropTypeList", {
+                .post(this.url+"/api/newProp/getPropTypeList", {
                 gameId:gameId
                 })
                 .then(successResponse => {
@@ -360,7 +363,6 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.property];  
@@ -381,6 +383,7 @@ import bus from '../common/bus';
                 console.log(item.id);
                 this.form = {
                     id:item.id,
+                    propId:item.id,
                     propName:item.propName,
                     propTag:item.propTag,
                     prop_describe: item.prop_describe,
@@ -422,7 +425,7 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllProp',{
+                this.$axios.post(this.url+'/deleteAllProp',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -453,6 +456,7 @@ import bus from '../common/bus';
                 this.addpropVisible = true;
                 this.form = {
                     id:'',
+                    propId:'',
                     propName:'',
                     propTag:'',
                     prop_describe: '',
@@ -474,9 +478,10 @@ import bus from '../common/bus';
                     console.log("道具标识不能为空");
                     this.$message.error("道具标识不能为空");
                 }else{
-                    this.$axios.post('/addProp',{ 
+                    this.$axios.post(this.url+'/addProp',{ 
 
                         id: this.form.id,
+                        propId:this.form.propId,
                         propName:this.form.propName,
                         propTag:this.form.propTag,
                         propType:this.form.propType,
@@ -505,16 +510,15 @@ import bus from '../common/bus';
                     .catch(failResponse => {})
                     
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addpropVisible = false; 
                 
             },
             // 保存编辑
             saveEdit() {
                     console.log(this.form.id);
-                this.$axios.post('/editProp',{
+                this.$axios.post(this.url+'/editProp',{
                     id:this.form.id,
+                    propId:this.form.propId,
                     propName:this.form.propName,
                     propTag:this.form.propTag,
                     prop_describe: this.form.prop_describe,
@@ -528,8 +532,6 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("道具信息修改成功");
                         this.getData();
                     }else{
@@ -551,7 +553,7 @@ import bus from '../common/bus';
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Prop',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Prop',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -575,7 +577,7 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Prop',{
+                this.$axios.post(this.url+'/changeStateToNormal_Prop',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -600,7 +602,7 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteProp',{
+                this.$axios.post(this.url+'/deleteProp',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -625,10 +627,6 @@ import bus from '../common/bus';
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

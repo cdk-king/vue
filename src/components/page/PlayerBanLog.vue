@@ -12,13 +12,13 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">选择服务器</span>
-                <el-select v-model="serverValue" @change="selectServer" placeholder="请选择服务器" style="width:150px">
+                <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="请选择服务器" style="width:150px">
                     <el-option
                     v-for="item in serverOptions"
                     :key="item.serverId"
@@ -28,7 +28,6 @@
                 </el-select>
                 <span class="grid-content bg-purple-light">是否禁封：</span>
                     <el-select  placeholder="请选择" @change="selectisToBan"  v-model="searchKey.isToBan" class="handle-select mr10" style="width:150px">
-                    <!-- @change="stateSelect" -->
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="未禁封" value="1"></el-option>
                     <el-option key="3" label="已禁封" value="2"></el-option>
@@ -74,11 +73,12 @@
 
 <script>
 import bus from '../common/bus';
+import setLocalThisUrl from '../../code/setLocalThisUrl';
     export default {
         name: 'playerLogTable',
         data() {
             return {
-                url:'/getPlayerBan',
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -130,6 +130,7 @@ import bus from '../common/bus';
             }
         },
         created() {
+            setLocalThisUrl(this);
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             console.log(this.strPlatform);
@@ -155,7 +156,7 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的玩家
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+'/getPlayerBan', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -170,8 +171,8 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        console.log("日志列表获取成功");
-                        //this.$message.success("玩家列表获取成功");
+                        console.log("禁封记录获取成功");
+                        //this.$message.success("禁封记录获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
@@ -179,8 +180,7 @@ import bus from '../common/bus';
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("日志列表获取失败");
-                        return false;
+                        this.$message.error("禁封记录获取成功");
                     }
                 })
             },
@@ -188,7 +188,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
             this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -200,7 +200,7 @@ import bus from '../common/bus';
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].id+",";
+                        this.strPlatform += this.platformOptions[i].platformId+",";
                         
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
@@ -216,8 +216,8 @@ import bus from '../common/bus';
             },
             getServerList(platformId) {
                 this.$axios
-                .post("/getServerListForPlatform", {
-                id: platformId
+                .post(this.url+"/getServerListForPlatform", {
+                platformId: platformId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -252,15 +252,12 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatDatetime(row, column) {
-                //return row.address;
-                //时间格式化
-                    
+                //时间格式化               
                 var date = row[column.property];
                 console.log(date);
                 if (date == undefined) {  
                     return "";  
                 }
-
                 var tt=new Date(parseInt(date)).toLocaleString();
                 return tt;
             },

@@ -63,14 +63,14 @@
         methods:{
             setImage(e){
                 const file = e.target.files[0];
-                if (!file.type.includes('image/')) {
-                    return;
-                }
+                // if (!file.type.includes('image/')) {
+                //     return;
+                // }
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    this.dialogVisible = true;
-                    this.imgSrc = event.target.result;
-                    this.$refs.cropper && this.$refs.cropper.replace(event.target.result);
+                    // this.dialogVisible = true;
+                    // this.imgSrc = event.target.result;
+                    // this.$refs.cropper && this.$refs.cropper.replace(event.target.result);
                 };
                 reader.readAsDataURL(file);
             },

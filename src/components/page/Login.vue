@@ -18,7 +18,7 @@
                     <el-button type="primary" @click="submitForm('ruleForm')">登&emsp;录</el-button>
                 </div>
                 
-                <div v-if="false">
+                <div v-if="footVisible">
                     <el-button-group style="width:100%" >
                     <el-button  class="bottomBtnClass" icon="el-icon-arrow-left" style="" @click="loginInTourist">游客登陆</el-button>
                     <el-button  class="bottomBtnClass" style="" @click="register">注册用户<i class="el-icon-arrow-right el-icon--right" ></i></el-button>
@@ -60,8 +60,8 @@ import md5 from 'js-md5';
 
             return {
                 ruleForm: {
-                    username: 'admin',
-                    password: '123456'
+                    username: '',
+                    password: ''
                 },
                 rules: {
                     username: [
@@ -72,7 +72,8 @@ import md5 from 'js-md5';
                     ]
                 },
                 responseResult:[],
-                url:"http://localhost:8011"
+                url:"http://localhost:8011",
+                footVisible:true
             }
         },
         created(){
@@ -86,7 +87,6 @@ import md5 from 'js-md5';
                 this.$axios.post(this.url+'/api/login/getTourist',{
                 })
                 .then(successResponse =>{
-                    //stringify json => str
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data);
                     if(successResponse.data.code === 200){
                         console.log(successResponse.data);
@@ -125,6 +125,9 @@ import md5 from 'js-md5';
                 //this.$router.push('/register');
             },
             loginInTourist(){
+                this.$message.info("暂不支持游客登录");
+                if(false){
+                //todo
                 localStorage.setItem('ms_username',"游客"); 
                 if(this.$touristId==0){
                     
@@ -132,10 +135,10 @@ import md5 from 'js-md5';
                 }else{
                     console.log(this.$touristId); 
                     this.getUserAllRight(this.$touristId);
-                    //and set Userdata
                     this.getThisUserInfo(this.$touristName);
                     this.$router.push('/');
                 }  
+                }
             },
             getThisUserInfo(name){
                 console.log(name);
@@ -145,7 +148,6 @@ import md5 from 'js-md5';
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        //console.log(this.responseResult);
                         localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
                         console.log(localStorage.getItem('userData'));
                         console.log("当前用户信息获取成功");
@@ -160,20 +162,15 @@ import md5 from 'js-md5';
             submitForm(formName) {
                 if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
                     localStorage.setItem('ms_username',"admin");
-                    //this.getUserAllRight(20);
                     this.$router.push('/');
                     
                 }
-                //离线环境下测试
-                // localStorage.setItem('ms_username',"admin");
-                // this.$router.push('/');
 
                 var password1 = md5.hex(this.ruleForm.password+"cdk");
                 var password2 = md5.hex(password1+"cdk");
                 console.log("md5Password:"+password2);
                 //表单验证
                 this.$refs[formName].validate((valid) => {
-                   //console.log("valid:"+valid);
                     if (valid) {
                         this.$axios.post(this.url+'/login',{
                             username:this.ruleForm.username,
@@ -181,7 +178,6 @@ import md5 from 'js-md5';
 
                         })
                         .then(successResponse =>{
-                            //stringify json => str
                             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                             if(successResponse.data.code === 200){
                                 console.log(successResponse.data);
@@ -194,9 +190,7 @@ import md5 from 'js-md5';
                                 //只能储存字符串
                                 //roleTable、giftUpload、giftTable...需要获取userId、userName
                                 localStorage.setItem('userData',JSON.stringify(successResponse.data.data));
-                                //localStorage.setItem('ms_username',this.ruleForm.username);
-                                this.$router.push('/');
-                                //this.$router.replace({path: '/index'})
+                                this.getUserAllRole(successResponse.data.data.id);
                             }else{
                                 this.$message.error(successResponse.data.message);
                                 console.log('error submit!!');
@@ -221,7 +215,6 @@ import md5 from 'js-md5';
                 });
             },
             getUserAllRole(id){
-                //console.log("id:"+id);
                 this.$axios.post(this.url+'/getUserAllRole',{
                     id:id
                 })
@@ -229,13 +222,11 @@ import md5 from 'js-md5';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //console.log(successResponse.data.data);
                         console.log("角色获取成功");
                         localStorage.setItem('roles',"");
+                        //找不到引用
                         localStorage.setItem('roles',successResponse.data.data);
                         this.getUserAllRight(id);
-                        //localStorage.setItem('ms_username',this.ruleForm.username);
-                        //this.$router.replace({path: '/index'})
 
                     }else{
                         this.$message.error(successResponse.data.message);
@@ -263,8 +254,6 @@ import md5 from 'js-md5';
                         
                         localStorage.setItem('rightTags',successResponse.data.data);
                         this.addRouter();
-                        //localStorage.setItem('ms_username',this.ruleForm.username);
-                        //this.$router.replace({path: '/index'})
 
                     }else{
                         this.$message.error(successResponse.data.message);
@@ -274,7 +263,6 @@ import md5 from 'js-md5';
                     }
                 })
                 .catch(failResponse => {})
-
             },
             addRouter(){
                     const right = localStorage.getItem('rightTags');
@@ -296,11 +284,16 @@ import md5 from 'js-md5';
                     var router = getRouter();
                     //重启vue
                     console.log("Vue重启中。。。");
+                    
                     new Vue({
                          router,
-                        render: h => h(App)
+                        render: h => h(App),
+                        mounted:function(){
+                            this.$router.push('/');
+                        }
                     }).$mount('#app');
-                    console.log("Vue重启成功");
+                    
+                    console.log("Vue重启成功");        
             }
         }
     }

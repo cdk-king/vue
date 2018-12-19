@@ -13,9 +13,9 @@
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                 </el-select>
 
@@ -29,8 +29,8 @@
                 <el-button type="primary" icon="search" @click="handleImportGift">导入</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <!-- <el-table-column type="selection" width="55" align="center">
-                </el-table-column> -->
+                <el-table-column prop="id" label="ID"  >
+                </el-table-column>
                 <el-table-column prop="giftId" label="礼包ID"  >
                 </el-table-column>
                 <el-table-column prop="limitCount" label="领取限制" >
@@ -58,12 +58,11 @@
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
                     <el-select v-model="form.platformId" placeholder="请选择渠道平台">
-                        <!-- @change="selectPlatform"  -->
                         <el-option
                         v-for="item in platformOptions"
-                        :key="item.id"
+                        :key="item.platformId"
                         :label="item.platform"
-                        :value="item.id">
+                        :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -145,7 +144,6 @@ import bus from '../common/bus';
         name: 'giftTable',
         data() {
             return {
-                url:'/getGiftUpload',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -189,21 +187,25 @@ import bus from '../common/bus';
                 },
                 platformOptions: [
                     {
-                    id: "1",
+                    platformId: "1",
                     platform: "渠道1"
                     },
                     {
-                    id: "2",
+                    platformId: "2",
                     platform: "渠道2"
                     }
                 ],
                 idx: -1,
                 responseResult:[],
                 id:"",
-                strPlatform:""
+                strPlatform:"",
+                url:"http://localhost:8011",
             }
         },
         created() {
+            if(this.$url!=null){
+                this.url = this.$url;
+            }
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             console.log(this.strPlatform);
@@ -235,7 +237,6 @@ import bus from '../common/bus';
                 }else{
                     this.handleVisible = true;
                 }
-                //console.log("this.handleVisible:"+this.handleVisible);
             },
             //重置表单
             rest() {
@@ -250,7 +251,7 @@ import bus from '../common/bus';
             },
             //筛选当前用户游戏的礼包
             getData() {
-                this.$axios.post(this.url, {
+                this.$axios.post(this.url+"/getGiftUpload", {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
@@ -273,7 +274,6 @@ import bus from '../common/bus';
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -281,7 +281,7 @@ import bus from '../common/bus';
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
             this.$axios
-                .post("/getPlatformListForUserIdAndGameId", {
+                .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
                 gameId:gameId
                 })
@@ -293,7 +293,7 @@ import bus from '../common/bus';
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].id+",";
+                        this.strPlatform += this.platformOptions[i].platformId+",";
                         
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
@@ -302,7 +302,6 @@ import bus from '../common/bus';
                     
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -318,7 +317,6 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //return row.address;
                 //时间格式化
                     
                 var date = row[column.gifterty];  
@@ -380,7 +378,7 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post('/deleteAllGift',{
+                this.$axios.post(this.url+'/deleteAllGift',{
                         id: str
                 })
                 .then(successResponse =>{
@@ -432,7 +430,7 @@ import bus from '../common/bus';
                     console.log("礼包标识不能为空");
                     this.$message.error("礼包标识不能为空");
                 }else{
-                    this.$axios.post('/addGift',{
+                    this.$axios.post(this.url+'/addGift',{
 
                         id: this.form.id,
                         giftName:this.form.giftName,
@@ -463,15 +461,13 @@ import bus from '../common/bus';
                     .catch(failResponse => {})
                     
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addgiftVisible = false; 
                 
             },
             // 保存编辑
             saveEdit() {
                     console.log(this.form.id);
-                this.$axios.post('/editGift',{
+                this.$axios.post(this.url+'/editGift',{
                     id:this.form.id,
                     giftName:this.form.giftName,
                     giftTag:this.form.giftTag,
@@ -486,8 +482,6 @@ import bus from '../common/bus';
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("礼包信息修改成功");
                         this.getData();
                     }else{
@@ -509,7 +503,7 @@ import bus from '../common/bus';
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post('/changeStateToFrozen_Gift',{
+                this.$axios.post(this.url+'/changeStateToFrozen_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -533,7 +527,7 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post('/changeStateToNormal_Gift',{
+                this.$axios.post(this.url+'/changeStateToNormal_Gift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -558,7 +552,7 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post('/deleteGift',{
+                this.$axios.post(this.url+'/deleteGift',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
@@ -583,10 +577,6 @@ import bus from '../common/bus';
                 this.delVisible = false;
                 
             },
-            // formatSex: function (row, column, cellValue, index) {
-			// return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-            // }
-            // ,
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }

@@ -4,29 +4,29 @@
         <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#fff"
             text-color="#000" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
-                <template v-if="item.subs">
+                <template v-if="item.subs  && item.isShow==1">
                     <el-submenu :index="item.index" :key="item.index"  >
-                        <template slot="title">
+                        <template slot="title" v-show="item.isShow==1">
                             
-                            <i :class="item.icon" ></i><span slot="title">{{ item.title }}</span>
+                            <i :class="item.icon" ></i><span slot="title" >{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.subs">
-                            <el-submenu    v-if="subItem.subs" :index="subItem.index" :key="subItem.index">
+                            <el-submenu    v-if="subItem.subs && subItem.isShow==1" :index="subItem.index" :key="subItem.index">
                                 <template slot="title">{{ subItem.title }}</template>
-                                <el-menu-item class="el-menu-item" v-for="(threeItem,i) in subItem.subs" :key="i" :index="threeItem.index">
+                                <el-menu-item class="el-menu-item" v-for="(threeItem,i) in subItem.subs" :key="i" :index="threeItem.index" v-show="threeItem.isShow==1">
                                     {{ threeItem.title }}
                                     
                                 </el-menu-item>
                             </el-submenu>
-                            <el-menu-item class="el-menu-item" v-else :index="subItem.index" :key="subItem.index">
+                            <el-menu-item class="el-menu-item" v-else :index="subItem.index" :key="subItem.index" v-show="subItem.isShow==1">
                                 {{ subItem.title }}
                             </el-menu-item>
                         </template>
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item class="el-menu-item" :index="item.index" :key="item.index">
-                        <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                    <el-menu-item class="el-menu-item" :index="item.index" :key="item.index" v-show="item.isShow==1">
+                        <i :class="item.icon"></i><span slot="title" >{{ item.title }}</span>
                     </el-menu-item>
                 </template>
             </template>
@@ -204,6 +204,14 @@
                                         index: 'TouristIdSet',
                                         title: '游客账号设置'
                                     },
+                                     {
+                                        index: 'Upload',
+                                        title: '文件上传'
+                                    },
+                                    {
+                                        index:'Xlsx',
+                                        title:'Xlsx',
+                                    }
                         ]
                     },
                     // {
@@ -275,7 +283,8 @@
                     //         }
                     //     ]
                     // }
-                ]
+                ],
+                indexList:[]
             }
         },
         computed:{
@@ -288,7 +297,100 @@
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
-            })
+            });
+            console.log("this.$defaultRouter:");
+            console.log(this.$defaultRouter);
+
+            this.mapData();
+
+            //this.createSide();
+            this.addIsShow(this.items);
+        },
+        methods:{
+            mapData(){
+                var children;
+                var len = this.$defaultRouter.length;
+                for(var i = 0;i<len;i++){
+                    if(this.$defaultRouter[i].children!=null){
+                        children= this.$defaultRouter[i].children;
+                    }
+                }
+
+                for(var j = 0;j<children.length;j++){
+                    if(children[j].isRight!=null && children[j].isRight==-1){
+                        
+                    }else{
+                        this.indexList.push(children[j].path);
+                    }
+                    //this.indexList[j] = children[j].path;
+                }
+                console.log("this.indexList:");
+                console.log(this.indexList);
+
+            },
+            createSide(){
+                var item = [];
+                if(this.isInclude("dashboard",this.indexList)){
+                    var a = {
+                        icon: 'el-icon-lx-home',
+                        index: 'dashboard',
+                        title: '系统首页'
+                    }
+                    item.push(a);
+                }
+                if(this.isInclude("userTable",this.indexList)){
+                    var a = {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'userTable',
+                        title: '用户管理'
+                    }
+                    item.push(a);
+                }
+                if(this.isInclude("roleTable",this.indexList)){
+                    var a =  {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'roleTable',
+                        title: '角色管理'
+                    }
+                    item.push(a);
+                }
+                console.log(item);
+                this.items = item;
+            },
+            // this.indexList.includes('/'+item[i].index) 更简便
+            isInclude(key,list){
+                for(var i = 0;i<list.length;i++){
+                    let a = list[i].toString();
+                    if(a.substring(1,list[i].length)==key){
+                            return true;
+                    }
+                }
+                return false;
+            },
+            addIsShow(items){
+                var len = items.length;
+                var count = 0;
+                for(var i=0;i<len;i++ ){
+                    if(items[i].subs!=null){
+                        var subCount = this.addIsShow(items[i].subs);
+                        if(subCount>0){
+                            items[i].isShow = 1;
+                            count++;
+                        }
+                        else{
+                            items[i].isShow = -1;
+                        }
+                    }else{
+                        if(this.isInclude(items[i].index,this.indexList)){
+                            items[i].isShow = 1;
+                            count++;
+                        }else{
+                             items[i].isShow = -1;
+                        }
+                    }
+                }
+                return count;
+            }
         }
     }
 </script>

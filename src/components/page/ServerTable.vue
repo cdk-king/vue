@@ -15,6 +15,7 @@
 
       <Divider/>
       <div class="handle-box">
+        <el-button type="primary" icon="search" @click="HandleAddAllChannel">添加通道</el-button>
         <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
         <span class="grid-content bg-purple-light">状态：</span>
 
@@ -30,6 +31,17 @@
           <el-option key="2" label="新服" value="2"></el-option>
           <el-option key="3" label="良好" value="3"></el-option>
           <el-option key="4" label="爆满" value="4"></el-option>
+        </el-select>
+
+        <span class="grid-content bg-purple-light">平台：</span>
+        <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠平台" class="handle-select mr10">
+            <el-option key="0" label="全部" value="0"></el-option>
+            <el-option
+            v-for="item in platformOptions"
+            :key="item.platformId"
+            :label="item.platform"
+            :value="item.platformId">
+            </el-option>
         </el-select>
 
         <span class="grid-content bg-purple-light">服务器名：</span>
@@ -48,26 +60,20 @@
           style="width:120px"
         ></el-input>
 
-        <span class="grid-content bg-purple-light">渠道平台：</span>
-        <el-input
-          v-model="searchKey.platform"
-          placeholder="渠道平台"
-          class="handle-input"
-          style="width:120px"
-        ></el-input>
 
-        <span class="grid-content bg-purple-light">游戏：</span>
+
+        <!-- <span class="grid-content bg-purple-light">游戏：</span>
         <el-input
           v-model="searchKey.gameName"
           placeholder="游戏"
           class="handle-input"
           style="width:120px"
-        ></el-input>
+        ></el-input> -->
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
         <el-button type="primary" icon="search" @click="handleAddServer" v-if="false">添加</el-button>
         <el-button type="primary" icon="search" @click="handleSyn">同步</el-button>
-        <el-button type="primary" icon="search" @click="handleGetList">获取列表</el-button>
+        <!-- <el-button type="primary" icon="search" @click="handleGetList">获取列表</el-button> -->
       </div>
       <el-table
         :data="data"
@@ -77,25 +83,33 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="serverId" label="服务器ID" width="80"></el-table-column>
-        <el-table-column prop="server" label="服务器名称" width="160"></el-table-column>
+        <el-table-column prop="id" label="ID" ></el-table-column>
+        <el-table-column prop="serverId" label="服务器ID"></el-table-column>
+        <el-table-column prop="server" label="服务器名称" ></el-table-column>
         <el-table-column prop="serverIp" label="服务器IP"></el-table-column>
         <el-table-column prop="serverPort" label="服务器端口"></el-table-column>
-        <el-table-column prop="gameName" label="所属游戏" width="120"></el-table-column>
-        <el-table-column prop="platform" label="所属渠道" width="120"></el-table-column>
-        <el-table-column prop="platformTag" label="渠道标识" width="120"></el-table-column>
+        <el-table-column prop="gameName" label="所属游戏" ></el-table-column>
+        <el-table-column prop="platform" label="所属平台" ></el-table-column>
+        
+        <el-table-column prop="platformTag" label="平台标识" ></el-table-column>
+        <el-table-column prop="channel" label="平台通道" >
+          <template slot-scope="aa">
+            <ul style="text-align:center">
+              <li v-for="item in aa.row.channel.split(',')" v-bind:key="item">{{item}}</li>
+            </ul>
+          </template>
+        </el-table-column>
         <el-table-column prop="server_describe" label="描述"></el-table-column>
-        <el-table-column prop="state" label="状态" width="100" :formatter="formatState"></el-table-column>
+        <el-table-column prop="state" label="状态"  :formatter="formatState"></el-table-column>
         <el-table-column
           prop="addDatetime"
           label="添加时间"
           :formatter="formatter"
-          value-format="YYYY-MM-DD HH:mm:ss"
+          value-format="YYYY-MM-DD HH:mm:ss" 
         ></el-table-column>
         <el-table-column prop="addUser" label="添加人"></el-table-column>
         <el-table-column prop="isDefault" width="50" label="是否默认" :formatter="formatIsDefault"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible">
+        <el-table-column label="操作" align="center" v-if="handleVisible" width="120px">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -107,6 +121,7 @@
               icon="el-icon-edit"
               @click="handleSetDefault(scope.$index, scope.row)"
             >设置默认</el-button>
+            <el-button type="text" icon="el-icon-edit" @click="handleServerAddChannel(scope.$index, scope.row)" >添加平台通道</el-button>
             <!-- <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToFrozen(scope.$index, scope.row)" v-if="scope.row.state!=1">冻结</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToNormal(scope.$index, scope.row)" v-if="scope.row.state==1">解冻</el-button>
@@ -212,6 +227,31 @@
       </span>
     </el-dialog>
 
+
+        <!-- 添加平台通道提示框 -->
+    <el-dialog title="提示" :visible.sync="ServerAddChannelVisible" width="580px" center>
+
+    <template>
+      <el-transfer
+        v-model="checkchannelData"
+        :props="{
+          key: 'value',
+          label: 'desc'
+        }"
+        :data="otherChannelData" 
+        :titles="['其他通道', '已选通道']" 
+        :button-texts="['移除', '添加']" 
+        >
+      </el-transfer>
+    </template> 
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="ServerAddChannelVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveCheckChannel">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
     <!-- 编辑冻结提示框 -->
     <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
       <div class="del-dialog-cnt">冻结后将停止服务器使用，是否确定冻结？</div>
@@ -238,6 +278,9 @@
         <el-button type="primary" @click="deleteRow">确 定</el-button>
       </span>
     </el-dialog>
+
+
+
     <!-- 批量删除提示框 -->
     <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
       <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
@@ -279,6 +322,7 @@
 export default {
   name: "serverTable",
   data() {
+
     return {
       url: "http://localhost:8011",
       tableData: [],
@@ -296,6 +340,7 @@ export default {
       addServerVisible: false,
       handleVisible: true,
       delAllVisible: false,
+      platformOptions:[],
       total: 0,
       form: {
         id: "",
@@ -329,51 +374,224 @@ export default {
         platform: ""
       },
       idx: -1,
+      id:-1,
       responseResult: [],
       id: "",
       gameList: [
-        {
-          id: 1,
-          gameName: "游戏1"
-        },
-        {
-          id: 2,
-          gameName: "游戏2"
-        }
+
       ],
       platformList: [
-        {
-          platformId: 1,
-          role: "渠道1"
-        },
-        {
-          platformId: 2,
-          role: "渠道2"
-        }
+
       ],
       selectGame: "",
-      selectPlatform: "",
       synServerList: [],
       ChangeStateVisible: false,
-      SetDefaultVisible: false
+      SetDefaultVisible: false,
+      ServerAddChannelVisible:false,
+      channel:[],
+      otherChannelData: [],
+      checkchannelData: [],
+      allChannel:[]
     };
   },
   created() {
     if (this.$url != null) {
       this.url = this.$url;
     }
+    this.getAllPlatform();
     this.getData();
     this.right();
   },
   computed: {
     data() {
       return this.tableData;
-    }
+    },
+    
   },
   mounted() {
     this.right();
   },
   methods: {
+    getAllPlatform(){
+        console.log("this.$gameId:"+this.$gameId);
+        this.$axios
+        .post(this.url + "/getPlatformListForGameId", {
+          id:this.$gameId,
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            //console.log(this.responseResult);
+            console.log("平台获取成功");
+            this.platformOptions = successResponse.data.data.list;
+          } else {
+            console.log(this.responseResult);
+            console.log("平台获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
+    saveCheckChannel(){
+        var len = this.multipleSelection.length;
+        console.log(this.checkchannelData);
+        var channel = "";
+        for(var i = 0;i<this.checkchannelData.length;i++){
+            channel += this.checkchannelData[i]+",";
+        }
+        channel = channel.substring(0,channel.length-1);
+        if(len==0){
+            this.$axios
+            .post(this.url + "/api/channel/saveCheckChannel", {
+              id:this.id,
+              channel:channel
+            })
+            .then(successResponse => {
+              this.responseResult = "\n" + JSON.stringify(successResponse.data);
+              if (successResponse.data.code === 200) {
+                //console.log(this.responseResult);
+                console.log("通道更新成功");
+                this.getData();
+                this.ServerAddChannelVisible = false;
+              } else {
+                console.log(this.responseResult);
+                console.log("通道更新失败");
+              }
+            })
+            .catch(failResponse => {});
+        }else{
+          var str = "";
+            for (let i = 0; i < len; i++) {
+              console.log("cdk"+this.multipleSelection[i].id);
+                str += this.multipleSelection[i].id + ",";
+            }
+            str = str.substring(0,str.length-1);
+            
+            this.$axios
+            .post(this.url + "/api/channel/saveAllCheckChannel", {
+              ids:str,
+              channel:channel
+            })
+            .then(successResponse => {
+              this.responseResult = "\n" + JSON.stringify(successResponse.data);
+              if (successResponse.data.code === 200) {
+                //console.log(this.responseResult);
+                console.log("通道更新成功");
+                this.getData();
+                this.ServerAddChannelVisible = false;
+              } else {
+                console.log(this.responseResult);
+                console.log("通道更新失败");
+              }
+            })
+            .catch(failResponse => {});
+          
+        }
+    },
+    generateAllChannelData(allChannel){
+      var len = allChannel.length;
+        console.log(len);
+        const data = [];
+        for (let i = 0; i < len; i++) {
+          data.push({
+            value: allChannel[i].channelId,
+            desc: allChannel[i].channelName+"",
+            disabled: false
+          });
+        }
+        console.log(data);
+        this.otherChannelData =  data;
+      },
+      HandleAddAllChannel(){
+        const length = this.multipleSelection.length;
+        if(length==0){
+          this.$message.error("请勾选服务器")
+            return;
+        }
+        this.ServerAddChannelVisible = true;
+        //this.getAllChannelFormPlatform(platformId);
+        console.log(JSON.stringify(this.multipleSelection));
+        
+        let str = "";
+        for (let i = 0; i < length; i++) {
+            if(this.multipleSelection[i].platformId!=this.multipleSelection[0].platformId){
+                this.$message.error("请选择相同平台的服务器");
+            }
+        }
+        for (let i = 0; i < length; i++) {
+            str += this.multipleSelection[i].id + ",";
+        }
+
+        console.log(str);
+        this.getAllChannelFormPlatform(this.multipleSelection[0].platformId);
+
+
+
+      },
+
+    handleServerAddChannel(index,row){
+      
+      this.idx = index;
+      
+      const item = this.tableData[index];
+      this.id = item.id;
+      console.log(this.id);
+      this.getAllChannelFormPlatform(item.platformId);
+      this.getChannel(item);
+      this.ServerAddChannelVisible = true;
+    },
+    getChannel(item){
+
+        var channelStr = item.channel;
+        if(channelStr!=null && channelStr!=""){
+
+          var len = channelStr.split(",").length;
+
+          const data = [];
+          for(var i = 0;i<len;i++){
+            data.push(parseInt( channelStr.split(",")[i]));
+          }
+          //console.log(data);
+          this.checkchannelData = data;
+        }
+    },
+    getAllChannelFormPlatform(platformId){
+        this.$axios
+        .post(this.url + "/api/channel/getAllChannelFormPlatform", {
+          platformId:platformId
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            //console.log(this.responseResult);
+            console.log("列表获取成功");
+            this.allChannelFormPlatform = successResponse.data.data.list;
+            this.generateAllChannelData(this.allChannelFormPlatform);
+          } else {
+            console.log(this.responseResult);
+            console.log("列表获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
+    getAllChannel(){
+        this.$axios
+        .post(this.url + "/api/channel/getAllChannel", {
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("列表获取成功");
+            this.allChannel = successResponse.data.data.list;
+          } else {
+            console.log(this.responseResult);
+            console.log("列表获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
+    selectPlatform(){
+        this.getData();
+    },
     handleGetList() {
       this.$axios
         .post(this.url + "/api/server/getServerList", {
@@ -455,6 +673,7 @@ export default {
       this.getData();
     },
     getData() {
+      console.log(this.searchKey.platformId);
       this.$axios
         .post(this.url + "/getAllServer", {
           pageNo: this.cur_page,
@@ -464,7 +683,7 @@ export default {
           server: this.searchKey.server,
           gameId: "",
           gameName: this.searchKey.gameName,
-          platformId: "",
+          platformId: this.searchKey.platformId,
           platform: this.searchKey.platform,
           serverIp: this.searchKey.serverIp,
           server_describe: this.searchKey.server_describe,
@@ -477,7 +696,7 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            this.$message.success("服务器列表获取成功");
+            //this.$message.success("服务器列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
@@ -487,6 +706,7 @@ export default {
           }
         });
     },
+
     search() {
       this.is_search = true;
       this.getData();
@@ -557,7 +777,6 @@ export default {
             this.SetDefaultVisible = false;
             this.getData();
           } else {
-            this.open4(successResponse.data.message);
             console.log("error");
             console.log(this.responseResult);
             this.$message.error("默认服务器设置失败");
@@ -659,7 +878,6 @@ export default {
         serverPort: ""
       };
       this.selectGame = "";
-      this.selectPlatform = "";
     },
     saveAddServer() {
       if (this.form.server == "") {

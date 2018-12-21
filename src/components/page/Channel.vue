@@ -2,55 +2,70 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>道具管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>通道管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
+            <div class="plugins-tips">
+                     备注：
+                    <br/>
+                    一个通道对应一个且唯一的平台，在添加和修改通道的时候必须指定对应的平台。
+                    <br/>
+                    </div>
+                
+                <Divider />
             <div class="handle-box">
-                <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">平台：</span>
-                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠道平台" class="handle-select mr10">
-                        <el-option key="0" label="全部" value="0"></el-option>
+                <el-select class="handle-select mr10" v-model="searchKey.platformId" filterable placeholder="请选择平台">
                         <el-option
-                        v-for="item in platformOptions"
+                        v-for="item in platformList"
                         :key="item.platformId"
                         :label="item.platform"
                         :value="item.platformId">
                         </el-option>
-                </el-select>
-                <span class="grid-content bg-purple-light">状态：</span>
+                    </el-select>
 
-                <span class="grid-content bg-purple-light">道具名：</span>
-                <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">通道名：</span>
+                <el-input v-model="searchKey.channelName" placeholder="筛选通道名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">道具类别：</span> 
-                <el-select v-model="searchKey.propTypeId" @change="selectPropType" placeholder="请选择道具类别" class="handle-select mr10">
-                        <el-option key="0" label="全部" value="0"></el-option>
-                        <el-option
-                        v-for="item in propTypeList"
-                        :key="item.propTypeId"
-                        :label="item.propType"
-                        :value="item.propTypeId">
-                        </el-option>
-                </el-select>
+                <span class="grid-content bg-purple-light">通道标识：</span>
+                <el-input v-model="searchKey.channelTag" placeholder="筛选通道标识" class="handle-input " style="width:150px"></el-input>
+
+                <span class="grid-content bg-purple-light">平台：</span>
+                <el-input v-model="searchKey.platform" placeholder="筛选平台" class="handle-input " style="width:150px"></el-input>
+
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleImportProp">导入</el-button>
+                <el-button type="primary" icon="search" @click="handleAddchannel">添加</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column prop="id" label="ID"  >
+                <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
-                <el-table-column prop="propId" label="道具ID"  >
+                <el-table-column prop="id" label="ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="propName" label="道具名称" >
+                <el-table-column prop="channelId" label="通道ID"  width="80">
                 </el-table-column>
-                <el-table-column prop="propTypeName" label="道具类别" >
+                <el-table-column prop="channelName" label="通道名称" width="160">
                 </el-table-column>
-                
-                
-                <el-table-column prop="propDescribe" label="描述" >
+                <el-table-column prop="channelTag" label="通道标识" >
+                </el-table-column>
+                <el-table-column prop="platform" label="所属平台" width="120">
+                </el-table-column>
+                <el-table-column prop="channel_describe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="platform" label="所在平台" >
+                <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>
+                <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
+                </el-table-column>
+                <el-table-column prop="addUser"  label="添加人" >
+                </el-table-column>
+                <el-table-column label="操作"  align="center">
+                    <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+
             </el-table>
             <div class="pagination">
                 <el-pagination background @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper" :total="this.total">
@@ -59,51 +74,64 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加道具" :visible.sync="addpropVisible" width="30%">
+        <el-dialog title="添加通道" :modal="false"  :close-on-click-modal="false" :visible.sync="addchannelVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="平台">
-                    <el-select v-model="form.platformId" placeholder="请选择渠道平台">
+                <el-form-item label="通道名称">
+                    <el-input v-model="form.channel"></el-input>
+                </el-form-item>
+                <el-form-item label="通道ID">
+                    <el-input v-model="form.channelId"></el-input>
+                </el-form-item>
+                <el-form-item label="通道标识">
+                    <el-input v-model="form.channelTag"></el-input>
+                </el-form-item>
+                <el-form-item label="通道描述">
+                    <el-input v-model="form.channel_describe"></el-input>
+                </el-form-item>
+                <el-form-item label="所属平台">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
                         <el-option
-                        v-for="item in platformOptions"
+                        v-for="item in platformList"
                         :key="item.platformId"
                         :label="item.platform"
                         :value="item.platformId">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="道具名称">
-                    <el-input v-model="form.propName"></el-input>
-                </el-form-item>
-                <el-form-item label="道具标识">
-                    <el-input v-model="form.propTag"></el-input>
-                </el-form-item>
-                <el-form-item label="道具描述">
-                    <el-input v-model="form.prop_describe"></el-input>
-                </el-form-item>
-                <el-form-item label="道具类别">
-                    <el-input v-model="form.propType"></el-input>
-                </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="addpropVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAddprop">确 定</el-button>
+                <el-button @click="addchannelVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAddchannel">确 定</el-button>
             </span>
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑道具" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑通道" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="道具名称">
-                    <el-input v-model="form.propName"></el-input>
+                <el-form-item label="通道名称">
+                    <el-input v-model="form.channel"></el-input>
                 </el-form-item>
-                <el-form-item label="道具标识">
-                    <el-input v-model="form.propTag"></el-input>
+                <el-form-item label="通道ID">
+                    <el-input v-model="form.channelId"></el-input>
                 </el-form-item>
-                <el-form-item label="道具描述">
-                    <el-input v-model="form.prop_describe"></el-input>
+                <el-form-item label="通道标识">
+                    <el-input v-model="form.channelTag"></el-input>
+                </el-form-item>
+                <el-form-item label="通道描述">
+                    <el-input v-model="form.channel_describe"></el-input>
+                </el-form-item>
+                <el-form-item label="所属平台">
+                    <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
+                        <el-option
+                        v-for="item in platformList"
+                        :key="item.platformId"
+                        :label="item.platform"
+                        :value="item.platformId">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -117,7 +145,7 @@
 
         <!-- 编辑冻结提示框 -->
         <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-            <div class="del-dialog-cnt">冻结后将停止道具使用，是否确定冻结？</div>
+            <div class="del-dialog-cnt">冻结后将停止通道使用，是否确定冻结？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
                 <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
@@ -153,9 +181,8 @@
 </template>
 
 <script>
-import bus from '../common/bus';
     export default {
-        name: 'newPropTable',
+        name: 'channelTable',
         data() {
             return {
                 url:"http://localhost:8011",
@@ -171,70 +198,56 @@ import bus from '../common/bus';
                 editPasswordVisible:false,
                 changeStateToFrozenVisible:false,
                 changeStateToNormalVisible:false,
-                addpropVisible:false,
+                addchannelVisible:false,
                 handleVisible:true,
                 delAllVisible:false,
                 total:0,
                 form: {
                     id:'',
-                    propId:'',
-                    propName:'',
-                    propTag:'',
-                    prop_describe: '',
-                    propType:'',
+                    channelId:'',
+                    channel:'',
+                    platformId:'',
+                    roleId:'',
+                    channelTag:'',
+                    channel_describe: '',
+                    parentId:'',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
-                    platformId:"",
-                    platform:""
+                    platform:'',
+                    role:'',
                 },
                 searchKey: {
                     id:'',
-                    propId:'',
-                    propName:'',
-                    propTypeId:'',
-                    prop_describe: '',
+                    channelId:'',
+                    channel:'',
+                    channelTag:'',
+                    channel_describe: '',
                     sort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
-                    platformId:"",
-                    platform:""
+                    platform:'',
                 },
-                platformOptions: [
-                    {
-                    platformId: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    platformId: "2",
-                    platform: "渠道2"
-                    }
-                ],
                 idx: -1,
                 responseResult:[],
                 id:"",
-                strPlatform:"",
-                propTypeList:[]
+                platformList:[
+
+                ],
+                selectGame:"",
+                selectRole:""
             }
         },
-        created() {       
+        created() {
             if(this.$url!=null){
                 this.url = this.$url;
             }
-            console.log("this.$gameId:"+this.$gameId);
-            this.getPlatformList(this.$gameId);
-            this.getPropTypeList(this.$gameId);
-            console.log(this.strPlatform);
-
-            bus.$on('changeGameId',function(obj){
-                console.log(obj.message);
-                this.getPlatformList(this.$gameId);
-                this.getPropTypeList(this.$gameId);
-            }.bind(this))      
-            
+            this.getPlatformList();
+            this.getData();
             this.right();
+        
         },
         computed: {
             data() {
@@ -245,12 +258,44 @@ import bus from '../common/bus';
             this.right();
         },
         methods: {
+            getPlatformList(){
+                this.$axios.post(this.url+'/getAllPlatformList',{
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        console.log("平台列表获取成功");
+                        this.platformList = successResponse.data.data;
+                        
+                    }else{
+                        console.log(this.responseResult);
+                        console.log("平台列表获取失败");
+                    }
+                })
+                .catch(failResponse => {})
+            },
+            getRoleList(){
+                this.$axios.post(this.url+'/getAllRoleList',{
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        console.log("角色列表获取成功");
+                        this.roleList = successResponse.data.data;
+                        
+                    }else{
+                        console.log(this.responseResult);
+                        console.log("角色列表获取失败");
+                    }
+                })
+                .catch(failResponse => {})
+            },
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
-                if(right.indexOf('Prop_management_Handle')==-1){
+                if(right.indexOf('channel_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
                     this.handleVisible = true;
@@ -267,84 +312,31 @@ import bus from '../common/bus';
                 console.log("page:"+val);
                 this.getData();
             },
-            //筛选当前用户游戏的道具
             getData() {
-                this.$axios.post(this.url+"/getPropUplaod", {
+
+                this.$axios.post(this.url+'/api/channel/getChannelTable', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
-                    id:'',
-                    propId:'',
-                    propName:this.searchKey.propName,
-                    propType:this.searchKey.propTypeId,
+                    channelId:'',
+                    channelName:this.searchKey.channel,
                     platformId:this.searchKey.platformId,
-                    strPlatform:this.strPlatform
+                    channelTag:this.searchKey.channelTag,
+                    channel_describe: this.searchKey.channel_describe,
                 }).then(successResponse =>{
-                    this.responseResult ="\n"+ JSON.stringify(successResponse.data);
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        console.log("道具列表获取成功");
-                        //this.$message.success("道具列表获取成功");
+                        this.$message.success("通道列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具列表获取失败");
+                        this.$message.error("通道列表获取失败");
                     }
                 })
-            },
-            //当前游戏的平台
-            getPlatformList(gameId) {
-            var userData =JSON.parse(localStorage.getItem('userData'));
-                this.$axios
-                .post(this.url+"/getPlatformListForUserIdAndGameId", {
-                userId:userData.id,
-                gameId:gameId
-                })
-                .then(successResponse => {
-                this.responseResult = "\n" + JSON.stringify(successResponse.data);
-                if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
-                    console.log("渠道列表获取成功");
-                    this.platformOptions = successResponse.data.data.list;
-                    this.strPlatform = "";
-                    for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].platformId+",";
-                        
-                    }
-                    this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
-                    this.getData();
-                } else {
-                    
-                    console.log(this.responseResult);
-                    console.log("渠道列表获取失败");
-                }
-                })
-                .catch(failResponse => {});
-            },
-            getPropTypeList(gameId){
-                
-                this.$axios
-                .post(this.url+"/api/newProp/getPropTypeList", {
-                gameId:gameId
-                })
-                .then(successResponse => {
-                this.responseResult = "\n" + JSON.stringify(successResponse.data);
-                if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
-                    console.log("道具类别列表获取成功");
-                    this.propTypeList = successResponse.data.data.list;
-                    //this.getData();
-                } else {
-                    
-                    console.log(this.responseResult);
-                    console.log("道具类别列表获取失败");
-                }
-                })
-                .catch(failResponse => {});
             },
             search() {
                 this.is_search = true;
@@ -352,13 +344,6 @@ import bus from '../common/bus';
             },
             stateSelect(){
                  this.getData();
-            },
-            selectPlatform(){
-                
-                this.getData();
-            },
-            selectPropType(){
-                this.getData();
             },
             formatter(row, column) {
                 //时间格式化
@@ -375,22 +360,23 @@ import bus from '../common/bus';
                 return row.tag === value;
             },
             handleEdit(index, row) {
+                this.getPlatformList();
+                this.getRoleList();
                 this.idx = index;
                 const item = this.tableData[index];
-                console.log("index:"+index);
-                console.log(item.id);
                 this.form = {
                     id:item.id,
-                    propId:item.id,
-                    propName:item.propName,
-                    propTag:item.propTag,
-                    prop_describe: item.prop_describe,
+                    channelId:item.channelId,
+                    channel:item.channelName,
+                    channelTag:item.channelTag,
+                    channel_describe: item.channel_describe,
                     sort:item.sort,
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
                     state:item.state,
+                    platformId:item.platformId,
+                    roleId:item.roleId
                 }
-                console.log(this.form.id);
                 this.editVisible = true;
             },
             handleChangeStateToFrozen(index, row) {
@@ -423,23 +409,21 @@ import bus from '../common/bus';
                 }
                 console.log(str);
                 //批量删除处理
-                this.$axios.post(this.url+'/deleteAllProp',{
+                this.$axios.post(this.url+'/api/channel/deleteChannel',{
                         id: str
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("道具批量删除完成");
+                        this.$message.success("通道批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
                     }else{
-                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具批量删除失败");
-                        return false;
+                        this.$message.error("通道批量删除失败");
                     }
                 })
                 .catch(failResponse => {})
@@ -450,94 +434,84 @@ import bus from '../common/bus';
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleAddprop(){
-                this.addpropVisible = true;
+            handleAddchannel(){
+                this.getPlatformList();
+                this.getRoleList();
+                this.addchannelVisible = true;
                 this.form = {
                     id:'',
-                    propId:'',
-                    propName:'',
-                    propTag:'',
-                    prop_describe: '',
-                    propParentId:'',
-                    propSort:'',
+                    channelId: '',
+                    channelName:'',
+                    channelTag:'',
+                    channel_describe: '',
+                    channelParentId:'',
+                    channelSort:'',
                     addUser: '',
                     addDatetime: '',
                     state:'',
                 }
+                this.selectGame="";
+                this.selectRole="";
+                
             },
-            handleImportProp(){
-                this.$router.push('/PropUpload');
-            },
-            saveAddprop(){
-                if(this.form.propName==""){
-                    console.log("道具名称不能为空");
-                    this.$message.error("道具名称不能为空");
-                }else if(this.form.propTag==""){
-                    console.log("道具标识不能为空");
-                    this.$message.error("道具标识不能为空");
+            saveAddchannel(){
+                if(this.form.channel==""){
+                    console.log("通道名称不能为空");
+                    this.$message.error("通道名称不能为空");
+                }else if(this.form.platformId==""){
+                    console.log("所属平台不能为空");
+                    this.$message.error("所属平台不能为空");
                 }else{
-                    this.$axios.post(this.url+'/addProp',{ 
-
-                        id: this.form.id,
-                        propId:this.form.propId,
-                        propName:this.form.propName,
-                        propTag:this.form.propTag,
-                        propType:this.form.propType,
-                        prop_describe: this.form.prop_describe,
-                        sort:this.form.sort,
+                    this.$axios.post(this.url+'/api/channel/addChannel',{
+                        channelId: this.form.channelId,
+                        channelName:this.form.channel,
+                        channelTag:this.form.channelTag,
+                        channel_describe: this.form.channel_describe,
                         addUser: this.form.addUser,
-                        state:this.form.state,
-                        platformId:this.form.platformId,
-                        
+                        platformId:this.form.platformId
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("道具添加成功");
+                            this.$message.success("通道添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error("道具添加失败");
-                            return false;
+                            this.$message.error("通道添加失败");
                         }
                     })
                     .catch(failResponse => {})
-                    
+                    this.addchannelVisible = false; 
                 }               
-                this.addpropVisible = false; 
-                
             },
             // 保存编辑
             saveEdit() {
-                    console.log(this.form.id);
-                this.$axios.post(this.url+'/editProp',{
+
+                this.$axios.post(this.url+'/api/channel/editChannel',{
                     id:this.form.id,
-                    propId:this.form.propId,
-                    propName:this.form.propName,
-                    propTag:this.form.propTag,
-                    prop_describe: this.form.prop_describe,
-                    sort:this.form.sort,
+                    channelId: this.form.channelId,
+                    channelName:this.form.channel,
+                    channelTag:this.form.channelTag,
+                    channel_describe: this.form.channel_describe,
                     addUser: this.form.addUser,
-                    addDatetime: this.form.addDatetime,
-                    state:this.form.state,
+                    platformId:this.form.platformId,
 
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("道具信息修改成功");
+                        //this.$router.push('/');
+                        //this.$router.replace({path: '/index'})
+                        this.$message.success("通道信息修改成功");
                         this.getData();
                     }else{
-                        
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("道具信息修改失败");
-                        return false;
+                        this.$message.error("通道信息修改失败");
                     }
                 })
                 .catch(failResponse => {})
@@ -545,27 +519,23 @@ import bus from '../common/bus';
                 //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
                 //this.$set(this.data,”key”,value’)  添加属性
                 //this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                
-                
+                this.editVisible = false;  
             },
             // 确定冻结
             changeStateToFrozen(){
-                this.$axios.post(this.url+'/changeStateToFrozen_Prop',{
+                this.$axios.post(this.url+'/changeStateToFrozen_channel',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`道具冻结成功`);
+                            this.$message.success(`通道冻结成功`);
                             this.getData();
                         }else{
-                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具冻结失败');
-                            return false;
+                            this.$message.error('通道冻结失败');
                         }
                     })
                     .catch(failResponse => {})
@@ -575,21 +545,19 @@ import bus from '../common/bus';
             },
             // 确定解冻
             changeStateToNormal(){
-                this.$axios.post(this.url+'/changeStateToNormal_Prop',{
+                this.$axios.post(this.url+'/changeStateToNormal_channel',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success("道具解冻成功");
+                            this.$message.success("通道解冻成功");
                             this.getData();
                         }else{
-                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具解冻失败');
-                            return false;
+                            this.$message.error('通道解冻失败');
                         }
                     })
                     .catch(failResponse => {})
@@ -600,22 +568,20 @@ import bus from '../common/bus';
             // 确定删除
             deleteRow(){
 
-                this.$axios.post(this.url+'/deleteProp',{
+                this.$axios.post(this.url+'/api/channel/deleteChannel',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             console.log(this.responseResult);
-                            this.$message.success(`道具删除成功`);
+                            this.$message.success(`通道删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            
                             console.log('error');
                             console.log(this.responseResult);
-                            this.$message.error('道具删除失败');
-                            return false;
+                            this.$message.error('通道删除失败');
                         }
                     })
                     .catch(failResponse => {})    

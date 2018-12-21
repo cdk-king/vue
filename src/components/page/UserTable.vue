@@ -351,46 +351,12 @@ export default {
         ghostClass: "ghost-style"
       },
       todo: [
-        {
-          content: "开发图表组件",
-          id: 1
-        },
-        {
-          content: "开发拖拽组件",
-          id: 2
-        },
-        {
-          content: "开发权限测试组件",
-          id: 3
-        }
       ],
       doing: [
-        {
-          content: "开发登录注册页面",
-          id: 1
-        },
-        {
-          content: "开发头部组件",
-          id: 2
-        },
-        {
-          content: "开发表格相关组件",
-          id: 3
-        },
-        {
-          content: "开发表单相关组件",
-          id: 4
-        }
+
       ],
       done: [
-        {
-          content: "初始化项目，生成工程目录，完成相关配置",
-          id: 1
-        },
-        {
-          content: "开发项目整体框架",
-          id: 2
-        }
+
       ]
     };
   },
@@ -458,7 +424,6 @@ export default {
         });
     },
     getData() {
-      console.log("getting Data...");
       this.$axios
         .post(this.url + "/getUser", {
           pageNo: this.cur_page,
@@ -473,15 +438,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            this.$message.success("用户列表获取成功");
+            //console.log(this.responseResult);
+            //this.$message.success("用户列表获取成功");
             console.log("用户列表获取成功");
             this.tableData = this.mapData(successResponse.data.data.list);
-            console.log(this.tableData);
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
-            console.log(this.responseResult);
             this.$message.error("用户列表获取失败");
             console.log("用户列表获取失败");
           }
@@ -504,8 +466,6 @@ export default {
                 }
               }
             }
-
-            console.log("Data Mapping...");
           }
         }
       });
@@ -541,8 +501,6 @@ export default {
       this.todo = [];
       this.done = [];
       if (roles != null && roles != "") {
-        //同步任务,异步函数,需要回调
-        //通过将正确的【this】传递到【callback】中来保证最后得到正确的结果
         for (var i = 0; i < roles.length; i++) {
           (function(a, that) {
             if (roles[a].split) {
@@ -721,6 +679,7 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
+            console.log("用户角色添加成功");
             //this.$message.success("用户角色添加成功");
             this.getData();
           } else {
@@ -771,7 +730,6 @@ export default {
             if (successResponse.data.code === 200) {
               console.log(this.responseResult);
               this.$message.success("用户添加成功");
-              this.tableData.push(this.form);
               this.getData();
             } else {
               console.log("error");

@@ -243,34 +243,12 @@
                     ghostClass: 'ghost-style'
                 },
                 todo: [
-                    {
-                        content: '开发图表组件',
-                        id:1
-                    },
-                    {
-                        content: '开发拖拽组件',
-                        id:2
-                    }
+
                 ],
                 doing: [
-                    {
-                        content: '开发登录注册页面',
-                        id:1
-                    },
-                    {
-                        content: '开发头部组件',
-                        id:2
-                    }
+
                 ],
                 done:[
-                    {
-                        content: '初始化项目，生成工程目录，完成相关配置',
-                        id:1
-                    },
-                    {
-                        content: '开发项目整体框架',
-                        id:2
-                    }
                 ]
             }
         },
@@ -287,7 +265,6 @@
         computed: {
             data() {
                 return this.tableData;
-
             }
         },
         mounted() {
@@ -340,7 +317,7 @@
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
+                        console.log("角色列表获取成功");
                         //this.$message.success("角色列表获取成功"); 
                         this.tableData = this.mapData(successResponse.data.data.list);
                         console.log(this.tableData);
@@ -349,7 +326,6 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -373,9 +349,7 @@
                         console.log("Data Mapping...");
                         }
                     }
-                    
                 });
-
                 return obj;
             },
             search() {
@@ -387,7 +361,6 @@
             },
             formatter(row, column) {
                 //时间格式化
-                    
                 var date = row[column.property];  
                 if (date == undefined) {  
                     return "";  
@@ -476,7 +449,6 @@
                 this.idx = index;
                 this.delVisible = true;
                 this.id = this.tableData[index].id;
-                
             },
             delAll() {
                 this.del_list = this.del_list.concat(this.multipleSelection);
@@ -584,7 +556,7 @@
                         console.log(localStorage.getItem('userData')); 
                         var userId =JSON.parse(localStorage.getItem('userData')).id;
                         console.log(userId);
-                        Utils.getUserAllRight(userId);
+                        Utils.getUserAllRight(userId,this.url);
                     }else{
                         console.log('error');
                         console.log(this.responseResult);
@@ -607,7 +579,7 @@
                         this.getData();
                         console.log("数据更新完成");
                         var userId =JSON.parse(localStorage.getItem('userData')).id;
-                        Utils.getUserAllRight(userId);
+                        Utils.getUserAllRight(userId,this.url);
                     }else{
                         console.log('error');
                         console.log(this.responseResult);
@@ -642,7 +614,6 @@
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("角色添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -672,7 +643,6 @@
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("角色信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -696,7 +666,6 @@
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -718,7 +687,6 @@
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -742,7 +710,6 @@
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('角色删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    

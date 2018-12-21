@@ -21,9 +21,6 @@
                 </div>
                 <div></div>
                 <div></div>
-                
-
-                
             </div>
             <!-- 编辑冻结提示框 -->
             <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
@@ -75,12 +72,6 @@ export default {
         console.log(curVal);
         this.$message(curVal);
         },
-        // cdk:{//深度监听，可监听到对象、数组的变化
-        //     handler(val, oldVal){
-        //         console.log("b.c: "+val.c, oldVal.c);//但是这两个值打印出来却都是一样的
-        //     },
-        //     deep:true
-        // }
     }
 }
 </script>

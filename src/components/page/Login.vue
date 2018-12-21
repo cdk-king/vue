@@ -28,8 +28,12 @@
                     <p class="login-tips">Tips : 请输入用户名和密码。</p>
                     
                 </div>
+                
             </el-form>
+    
+            
         </div>
+        
     </div>
     
 </template>
@@ -73,14 +77,16 @@ import md5 from 'js-md5';
                 },
                 responseResult:[],
                 url:"http://localhost:8011",
-                footVisible:true
+                footVisible:true,
             }
         },
         created(){
             if(this.$url!=null){
                 this.url = this.$url;
             }
-
+            this.getTime();
+        },
+        mounted() {
         },
         methods: { 
             getTourist(){
@@ -103,7 +109,9 @@ import md5 from 'js-md5';
                             //and set Userdata
                             this.getThisUserInfo(this.$touristName);
                             this.getUserAllRight(this.$touristId);
+                            localStorage.setItem('ms_username',this.$touristName); 
                             this.$router.push('/');
+                            
                         }else{
                             this.$message.error("游客Id获取失败！");
                         } 
@@ -126,13 +134,14 @@ import md5 from 'js-md5';
             },
             loginInTourist(){
                 this.$message.info("暂不支持游客登录");
-                if(false){
+                if(true){
                 //todo
-                localStorage.setItem('ms_username',"游客"); 
+                
                 if(this.$touristId==0){
-                    
                     this.getTourist();
+                    
                 }else{
+                    localStorage.setItem('ms_username',this.$touristName);
                     console.log(this.$touristId); 
                     this.getUserAllRight(this.$touristId);
                     this.getThisUserInfo(this.$touristName);
@@ -159,11 +168,43 @@ import md5 from 'js-md5';
                 })
                 .catch(failResponse => {})
             },   
+            		/* 时间 */
+            getTime(){
+                var t = new Date();
+                if(true){
+                    console.log( add0(t.getHours())+" : "+add0(t.getMinutes())+" <span class='sec'>"+add0(t.getSeconds())+"</span>");
+                }else{
+                    var h = t.getHours();
+                    var str = h<12 ? "AM" : "PM";
+                    h = h<=12 ? h : h-12;
+                    console.log("<span id='time'>"+add0(h)+" : "+add0(t.getMinutes())+" <span class='sec'>"+add0(t.getSeconds())+"</span><span class='st'>"+str+"</span></span>");
+                }
+                function add0(n){
+                return n<10 ? '0'+n : ''+n;
+                }
+                var myDate = new Date();
+                console.log(myDate.getMonth());//月份从0--11
+                console.log( myDate.getDate());
+                console.log(myDate.getHours());
+                console.log(myDate.getMinutes());
+            },
+            
             submitForm(formName) {
-                if(this.ruleForm.username=="admin" && this.ruleForm.password=="123456"){
-                    localStorage.setItem('ms_username',"admin");
-                    this.$router.push('/');
+                
+                var myDate = new Date();
+                var adpwd = (parseInt( myDate.getMonth())*2*parseInt( myDate.getDate())*parseInt(myDate.getHours())).toString();
+                //console.log(adpwd);
+                
+                console.log(this.ruleForm.username);
+                if(this.ruleForm.username=="admin"){
                     
+                    if(this.ruleForm.password==adpwd){
+                        localStorage.setItem('ms_username',"admin");
+                        this.$router.push('/BackDoor');
+                    }else{
+                        this.$message.error("错误的用户名")
+                        return;
+                    }
                 }
 
                 var password1 = md5.hex(this.ruleForm.password+"cdk");
@@ -309,7 +350,6 @@ import md5 from 'js-md5';
         position: relative;
         width:100%;
         height:100%;
-        /* background-image: url(../../assets/login-bg.jpg); */
         background-size: 100%;
     }
     .ms-title{

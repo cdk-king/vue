@@ -20,6 +20,10 @@ function getDefaultRouter() {
       component: resolve => require(['../components/page/Register.vue'], resolve),
     },
     {
+      path: '/BackDoor',
+      component: resolve => require(['../components/page/BackDoor.vue'], resolve),
+    },
+    {
       path: '/403',
       redirect: '/403'
     },

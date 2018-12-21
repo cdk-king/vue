@@ -2,11 +2,20 @@
 
 function getchildren() {
 //特别注意：require中的路径不可以是单独的一个变量，不过可以使用如下的方式：路径+变量。
+    /**
+     * 设置有权限的路由
+     * @param {*} pathkey 
+     * @param {*} titlekey 
+     * @param {*} rightkey 
+     * @param {*} pagekey 
+     * @param {*} children 
+     * @param {*} right 
+     */
     var setRouterItem = function(pathkey,titlekey,rightkey,pagekey,children,right){
         var item = {};
         item.path = pathkey;
         item.meta = { title: titlekey };
-        if (right!=""  && right.indexOf(rightkey) != -1) {
+        if (right!=""  && isInclude(rightkey,right)) {
             item.component = resolve => require(['../components/page/'+pagekey], resolve);
             item.isRight = 1;
         }else{
@@ -14,6 +23,36 @@ function getchildren() {
             item.isRight = -1;
         }
         children.push(item);
+    }
+    /**
+     *  设置无权限的路由
+     * @param {*} pathkey 
+     * @param {*} titlekey 
+     * @param {*} rightkey 
+     * @param {*} pagekey 
+     * @param {*} children 
+     * @param {*} right 
+     */
+    var setNoRightRouterItem = function(pathkey,titlekey,rightkey,pagekey,children,right){
+        var item = {};
+        item.path = pathkey;
+        item.meta = { title: titlekey };
+        
+            item.component = resolve => require(['../components/page/'+pagekey], resolve);
+            item.isRight = 1;
+
+        children.push(item);
+    }
+
+    var isInclude = function(key,list){
+        list = list.split(",");
+        for(var i = 0;i<list.length;i++){
+            let a = list[i].toString();
+            if(a==key){
+                    return true;
+            }
+        }
+        return false;
     }
 
     var children = [];
@@ -76,19 +115,10 @@ function getchildren() {
      setRouterItem("/AppleGiftCDK","申请礼包激活码","Apple_GiftCDK_View","AppleGiftCDK.vue",children,right);
      setRouterItem("/CDK_Use","激活码使用情况","CDK_Use_View","CDK_Use.vue",children,right);
      setRouterItem("/TouristIdSet","游客账号设置","TouristId_Set_View","TouristIdSet.vue",children,right);
-     setRouterItem("/Center","用户中心","Center_View","Center.vue",children,right);
+     setNoRightRouterItem("/Center","用户中心","Center_View","Center.vue",children,right);
      setRouterItem("/Upload","文件上传","Upload_View","UploadFile.vue",children,right);
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
-
-    // item.path = '/userTable';
-    // item.meta = { title: '用户管理' };
-    // if (right.indexOf('User_Management_View') != -1) {
-    //     item.component = resolve => require(['../components/page/UserTable.vue'], resolve);
-    // }else{
-    //     item.component = resolve => require(['../components/page/403.vue'], resolve);
-    // }
-    // children.push(item);
-    // item = {}
+     setRouterItem("/Channel","通道管理","Channel_View","Channel.vue",children,right);
 
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };
@@ -123,12 +153,12 @@ function getchildren() {
             component: resolve => require(['../components/page/Markdown.vue'], resolve),
             meta: { title: 'markdown编辑器' }    
         },
-        {
-            // 图片上传组件
-            path: '/upload',
-            component: resolve => require(['../components/page/Upload.vue'], resolve),
-            meta: { title: '文件上传' }   
-        },
+        // {
+        //     // 图片上传组件
+        //     path: '/upload',
+        //     component: resolve => require(['../components/page/Upload.vue'], resolve),
+        //     meta: { title: '文件上传' }   
+        // },
         {
             // vue-schart组件
             path: '/charts',

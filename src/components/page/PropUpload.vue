@@ -120,10 +120,8 @@
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});

@@ -195,10 +195,11 @@ export default {
     }
     this.handleListener();
     this.changeDate();
-    this.date =
-      new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
-    this.roleId = localStorage.getItem("roles").split(",")[0];
-    console.log(localStorage.getItem("roles"));
+    this.date =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+    if(localStorage.getItem("roles")!=null){
+      this.roleId = localStorage.getItem("roles").split(",")[0];
+      console.log(localStorage.getItem("roles"));
+    }
     this.getRoleName();
   },
   activated() {
@@ -208,7 +209,6 @@ export default {
     //window.removeEventListener('resize', this.renderChart);
     //bus.$off('collapse', this.handleBus);
   },
-
   mounted() {
     this.readyBaiduMap();
   },

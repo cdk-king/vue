@@ -116,6 +116,7 @@
                     //清除缓存信息
                     localStorage.removeItem('ms_username')
                     localStorage.removeItem('rightTags')
+                    localStorage.removeItem('roles')
                     //跳转到登录界面
                     this.$router.push('/login');
                 }

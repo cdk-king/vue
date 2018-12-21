@@ -75,6 +75,10 @@
                                 title: '平台管理'
                             },
                             {
+                                index: 'Channel',
+                                title: '通道管理'
+                            },
+                            {
                                 index: 'serverTable',
                                 title: '服务器管理'
                             },
@@ -206,7 +210,7 @@
                                     },
                                      {
                                         index: 'Upload',
-                                        title: '文件上传'
+                                        title: '文件中转'
                                     },
                                     {
                                         index:'Xlsx',
@@ -361,7 +365,7 @@
             isInclude(key,list){
                 for(var i = 0;i<list.length;i++){
                     let a = list[i].toString();
-                    if(a.substring(1,list[i].length)==key){
+                    if(a.substring(0,list[i].length)=="/"+key){
                             return true;
                     }
                 }

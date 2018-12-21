@@ -253,7 +253,7 @@ export default {
         }
         };
         this.$axios
-        .post(this.url + "/api/file/fileDownload", {
+        .post(this.url + "/api/file/CDKFileDownload", {
             fileName:fileName,
             filePath:filePath
         },config)
@@ -276,7 +276,6 @@ export default {
     },
     testDownload() {
         //window.location.href = "http://127.0.0.1:8011/download";
-        //window.location.href = "http://127.0.0.1:8011/api/file/fileDownload";
         let config = {
         //responseType: "arraybuffer",
         //BLOB (binary large object)，二进制大对象，是一个可以存储二进制文件的容器。
@@ -288,8 +287,6 @@ export default {
             //"Content-type":"text/html;charset=UTF-8"
         }
         };
-        //"/api/file/fileDownload"
-        //"/download"
         this.$axios
         .post(this.url + "/download", {
             fileName:"img.jpg",

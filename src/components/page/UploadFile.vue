@@ -1,5 +1,6 @@
 <template>
   <div>
+    <input id="inputFile" class="fileInput" type="file" @change="getFile($event)">
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
@@ -23,17 +24,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="el-form-item fileInputBox-out" label>
-          <div class="fileInputBox">
-            <el-button type="primary" @click="clickInputFile">选取文件</el-button>
-            <input id="inputFile" class="fileInput" type="file" @change="getFile($event)">
-            <el-button type="success" @click="fileUpload">文件上传</el-button>
-            <label style="margin-left:20px" for>{{fileName | filterFileName}}</label>
-            <label style="margin-left:20px" for>{{fileSize | filterFileSize}}</label>
-          </div>
-        </el-form-item>
+        <el-button type="primary" @click="HandleAddFile">添加文件</el-button>
       </el-form>
-
+      
       <Divider/>
 
       <el-table
@@ -45,12 +38,12 @@
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="account" label="文件分类"></el-table-column>
-        <el-table-column prop="name" label="原始文件名"></el-table-column>
-        <el-table-column prop="state" label="新文件名"></el-table-column>
-        <el-table-column prop="phone" label="文件描述"></el-table-column>
-        <el-table-column prop="email" label="文件大小" width="100"></el-table-column>
-        <el-table-column prop="email" label="上传人" width="100"></el-table-column>
+        <el-table-column prop="fileType" label="文件类别"></el-table-column>
+        <el-table-column prop="fileOldName" label="原始文件名"></el-table-column>
+        <el-table-column prop="fileName" label="新文件名"></el-table-column>
+        <el-table-column prop="fileDescribe" label="文件描述"></el-table-column>
+        <el-table-column prop="fileSize" label="文件大小" width="100"></el-table-column>
+        <el-table-column prop="addUser" label="上传人" width="100"></el-table-column>
         <el-table-column
           prop="addDatetime"
           width="120"
@@ -58,7 +51,7 @@
           :formatter="formatter"
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
-        <el-table-column prop="email" label="下载次数" width="80"></el-table-column>
+        <el-table-column prop="downloadTime" label="下载次数" width="80"></el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
@@ -96,6 +89,40 @@
             <input type="file" @change="getFile($event)">
             <button @click="fileUpload">提交</button>
       </form>-->
+    
+    <!-- 添加弹出框 -->
+    <el-dialog
+      title="文件上传"
+      :modal="false"
+      :close-on-click-modal="false"
+      :visible.sync="uploadVisible"
+      width="30%"
+    >
+      <el-form ref="form"  label-width="100px">
+        <el-form-item label="新文件名">
+          <el-input v-model="form.newFileName"></el-input>
+        </el-form-item>
+        <el-form-item label="文件描述">
+          <el-input v-model="form.fileDescribe"></el-input>
+        </el-form-item>
+        <el-form-item class="el-form-item fileInputBox-out" label>
+          <div class="fileInputBox">
+            <div style="margin-bottom:10px">
+            <label style="margin-left:0px" for>{{fileName | filterFileName}}</label>
+            <label style="margin-left:20px" for>{{fileSize | filterFileSize}}</label>
+            </div>
+            <el-button type="primary" @click="clickInputFile">选取文件</el-button>
+            
+            <el-button type="success" @click="fileUpload">文件上传</el-button>
+
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="uploadVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveUpload">确 定</el-button>
+      </span>
+    </el-dialog>
     </div>
   </div>
 </template>
@@ -109,7 +136,6 @@ export default {
   name: "upload",
   data: function() {
     return {
-      defaultSrc: "./static/img/img.jpg",
       fileList: [],
       imgSrc: "",
       cropImg: "",
@@ -118,13 +144,15 @@ export default {
       strPropList: "",
       platformOptions: [],
       form: {
-        platformId: 0
+        platformId: 0,
+        newFileName:"",
+        fileDescribe:""
       },
       fullscreenLoading: false,
       loading: null,
       name: "",
       age: "",
-      file: "",
+      file: null,
       fileName: "",
       fileSize: 0,
       total: 0,
@@ -132,7 +160,8 @@ export default {
       tableData: [],
       cur_page: 1,
       multipleSelection: [],
-      inputFile: ""
+      inputFile: "",
+      uploadVisible:false
     };
   },
   components: {},
@@ -144,6 +173,8 @@ export default {
   created() {
     setLocalThisUrl(this);
     this.getData();
+    var userData = JSON.parse(localStorage.getItem("userData"));
+    this.userName = userData.name;
     bus.$on(
       "changeGameId",
       function(obj) {
@@ -159,6 +190,66 @@ export default {
     this.inputFile = document.getElementById("inputFile");
   },
   methods: {
+    saveUpload(){
+      this.uploadVisible = false;
+    },
+    handleDelete(index, row){
+        this.idx = index;
+        var item = this.tableData[index];
+        var fileName = item.fileName+"."+item.fileType;
+        var filePath = "file/";
+        this.$axios
+        .post(this.url + "/api/file/deleteFile", {
+            fileName:fileName,
+            filePath:filePath,
+            id:item.id
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            console.log(successResponse.data);
+            this.getData();
+        })
+        .catch(failResponse => {});
+    },
+    handleDownload(index, row){
+        this.idx = index;
+        var item = this.tableData[index];
+        var fileName = item.fileName+"."+item.fileType;
+        var filePath = "file/";
+        console.log(fileName);
+        console.log(filePath);
+        //window.location.href = "http://127.0.0.1:8011/download";
+        let config = {
+        responseType: "blob",
+        headers:{
+            "Content-type":"application/json;charset=UTF-8"
+        }
+        };
+        this.$axios
+        .post(this.url + "/api/file/fileDownload", {
+            fileName:fileName,
+            filePath:filePath
+        },config)
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            console.log(successResponse.data);
+          let url = window.URL.createObjectURL(successResponse.data)
+          let link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = url
+          link.setAttribute('download', fileName)
+          document.body.appendChild(link)
+          link.click();
+          URL.revokeObjectURL(link.href) // 释放URL 对象
+          document.body.removeChild(link);
+          this.getData();
+          this.uploadVisible = false;
+        })
+        .catch(failResponse => {});
+    },
+    HandleAddFile(){
+        this.uploadVisible = true;
+    },
     clickInputFile() {
       this.inputFile.click();
     },
@@ -190,14 +281,16 @@ export default {
     getFileList(gameId) {
       this.$axios
         .post(this.url + "/api/file/getFileList", {
-          gameId: gameId
+            pageNo:"1",
+            pageSize:"10"
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("文件列表获取成功");
-            this.platformOptions = successResponse.data.data.list;
+            this.tableData = successResponse.data.data.list;
+            
           } else {
             console.log(this.responseResult);
             console.log("文件列表获取失败");
@@ -260,29 +353,6 @@ export default {
     submitUpload() {
       this.$refs.upload.submit();
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
-    },
-    upload(e) {
-      const file = e.target.files[0];
-      console.log(file);
-
-      const reader = new FileReader();
-
-      reader.readAsText(file, "gb2312");
-      reader.onload = function(e) {
-        var fileText = e.target.result;
-        fileText = fileText.replace(/(\t)|(\r)/g, "");
-        list = e.target.result.split("\n");
-        for (var i = 0; i < list.length; i++) {
-          var data = list[i].split("|");
-          console.log(list[i]);
-        }
-      };
-    },
     selectPlatform() {
       console.log(this.form.platformId);
     },
@@ -293,8 +363,16 @@ export default {
       console.log(this.file);
     },
     fileUpload() {
+      if(this.file == null){
+        this.$message.error("请选择正确的文件")
+          return;
+      }
       let formData = new FormData();
       formData.append("file", this.file);
+      formData.append("fileName", this.form.newFileName);
+      formData.append("fileSize", this.filterFileSize(this.fileSize));
+      formData.append("fileDescribe", this.form.fileDescribe);
+      formData.append("addUser", this.userName);
       let headers = { headers: { "Content-Type": "multipart/form-data" } };
       this.$axios
         .post(this.url + "/fileUpload", formData, headers)
@@ -302,14 +380,16 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
-            this.$message.success("success");
+            this.$message.success("文件添加成功");
+            this.getFileList(this.$gameId);
+            this.uploadVisible = false;
           } else {
             console.log(this.responseResult);
-            this.$message.error("error");
+            this.$message.error("文件添加失败");
           }
         })
         .catch(failResponse => {
-          console.log("error");
+          console.log("文件添加失败");
         });
     },
     submitForm(event) {
@@ -332,7 +412,28 @@ export default {
             /*这里做处理*/
           }
         });
+    },
+    filterFileSize(value){
+        if (value != 0) {
+          var size = 0;
+          if (value < 0.1 * 1024) {
+            //如果小于0.1KB转化成B
+            size = value.toFixed(2) + "B";
+          } else if (value < 0.1 * 1024 * 1024) {
+            //如果小于0.1MB转化成KB
+            size = (value / 1024).toFixed(2) + "KB";
+          } else if (value < 0.1 * 1024 * 1024 * 1024) {
+            //如果小于0.1GB转化成MB
+            size = (value / (1024 * 1024)).toFixed(2) + "MB";
+          } else {
+            //其他转化成GB
+            size = (value / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+          }
+          return size;
+        }
+        return "";
     }
+
   },
   filters: {
     filterFileName: function(value) {

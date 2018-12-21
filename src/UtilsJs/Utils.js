@@ -10,10 +10,8 @@ import defaultRouter from '../router/defaultRouter';
 
 var Utils = {};
 
-Utils.getUserAllRight = function (id) {
-    console.log(axios);
-    console.log(this);
-    axios.post('/getUserAllRight', {
+Utils.getUserAllRight = function (id,url) {
+    axios.post(url+'/getUserAllRight', {
         id: id
     })
         .then(successResponse => {

@@ -118,6 +118,15 @@
                     console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
+                    this.strPlatform = "";
+                    for (var i = 0; i < this.platformOptions.length; i++) {
+                    this.strPlatform += this.platformOptions[i].platformId + ",";
+                    }
+                    console.log(this.strPlatform);
+                    this.strPlatform = this.strPlatform.substring(
+                    0,
+                    this.strPlatform.length - 1
+                    );
                 } else {
                     this.open4(successResponse.data.message);
                     console.log(this.responseResult);

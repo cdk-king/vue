@@ -158,8 +158,6 @@
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
-                select_cate: '',
-                select_word: '',
                 del_list: [],
                 is_search: false,
                 editVisible: false,
@@ -225,8 +223,6 @@
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -252,12 +248,11 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("游戏列表获取成功");
+                        //this.$message.success("游戏列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏列表获取失败");
@@ -343,11 +338,9 @@
                         this.getData();
 
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -401,20 +394,15 @@
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("游戏添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                     
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
-                this.addGameVisible = false; 
-                
+                this.addGameVisible = false;   
             },
             // 保存编辑
             saveEdit() {
@@ -434,26 +422,16 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("游戏信息修改成功");
                         this.getData();
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
-
-                //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;
-                
-                
             },
             // 确定冻结
             changeStateToFrozen(){
@@ -467,11 +445,9 @@
                             this.$message.success(`游戏冻结成功`);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -491,11 +467,9 @@
                             this.$message.success("游戏解冻成功");
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -517,11 +491,9 @@
                             //必须异步处理
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    
@@ -529,7 +501,6 @@
                 this.tableData.splice(this.idx, 1);
                 
                 this.delVisible = false;
-                
             },
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';

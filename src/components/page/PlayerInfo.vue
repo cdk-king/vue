@@ -404,14 +404,7 @@ export default {
       handleVisible: false,
       multipleSelection:[],
       platformOptions: [
-        {
-          platformId: "1",
-          platformName: "渠道1"
-        },
-        {
-          platformId: "2",
-          platformName: "渠道2"
-        }
+
       ],
       platformValue: "",
       platformLabel: "",
@@ -483,7 +476,7 @@ export default {
             var item;
             for(var i = 0;i<this.platformOptions.length;i++){
                 if(this.platformOptions[i].id==platformId){
-                         return this.platformOptions[i].platform;
+                    return this.platformOptions[i].platform;
                 }
             }
 
@@ -493,7 +486,7 @@ export default {
         return function(serverId){
             for(var i = 0;i<this.serverOptions.length;i++){
                     if(this.serverOptions[i].serverId==serverId){
-                            return this.serverOptions[i].serverName;
+                        return this.serverOptions[i].serverName;
                     }
             }
         }
@@ -542,10 +535,8 @@ export default {
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -563,7 +554,6 @@ export default {
              this.serverOptions = [];
             this.serverOptions = successResponse.data.data;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道服务器列表获取失败");
           }
@@ -599,7 +589,6 @@ export default {
                 this.$message.error("请选择正确的服务器");
                 return;
             }
-
 
         this.$axios
         .post(this.url+"/api/player/getPlayerFromServer", {
@@ -649,7 +638,6 @@ export default {
         this.tableData = data.PlayerList;
         
         this.total = this.tableData.length;
-        //特殊分页技巧
         this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
     },
     getServerIp() {},
@@ -769,10 +757,6 @@ export default {
           }
         })
         .catch(failResponse => {});
-
-
-
-
     },
     AllToProhibitSpeak(){
         this.ChangeAllToProhibitSpeak = false;
@@ -854,7 +838,6 @@ export default {
         this.ChangeAllToBan = false;
     },
     BanToNormal() {
-
         this.$axios
         .post(this.url+"/api/player/Ban", {
             platformId: this.platformValue,
@@ -912,16 +895,12 @@ export default {
                 this.getNotice();
 
             }else{
-                this.open4(successResponse.data.message);
                 console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("公告批量删除失败");
-                return false;
             }
         })
         .catch(failResponse => {})
-      
-
 
       this.delAllVisible = false;
     }
@@ -936,7 +915,6 @@ export default {
     //这里不能访问this  
         filtersIsOnline:function (arg) {
             return arg == 1 ? "在线" : "离线";
-            
         },
         filtersServer:function(arg){
             

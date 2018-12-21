@@ -113,14 +113,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     isToBan:""
                 },
                 platformOptions: [
-                    {
-                    id: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    id: "2",
-                    platform: "渠道2"
-                    }
+
                 ],
                 serverOptions:[],
                 idx: -1,
@@ -205,11 +198,9 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
-                } else {
-                    
+                } else {           
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -226,10 +217,8 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道服务器列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});

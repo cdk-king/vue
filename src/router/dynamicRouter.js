@@ -49,7 +49,7 @@ function getchildren() {
         for(var i = 0;i<list.length;i++){
             let a = list[i].toString();
             if(a==key){
-                    return true;
+                return true;
             }
         }
         return false;
@@ -80,6 +80,8 @@ function getchildren() {
     children.push(item);
     item = {}
 
+
+    //获取用户权限
     var right = localStorage.getItem('rightTags');
     if(null==right){
         right = "";
@@ -128,59 +130,53 @@ function getchildren() {
 
     var otherItem=[{
             path: '/tabs',
-            component: resolve => require(['../components/page/Tabs.vue'], resolve),
+            component: resolve => require(['../components/example/Tabs.vue'], resolve),
             meta: { title: '消息中心' }
         },
         {
             path: '/form',
-            component: resolve => require(['../components/page/BaseForm.vue'], resolve),
+            component: resolve => require(['../components/example/BaseForm.vue'], resolve),
             meta: { title: '基本表单' }
         },
         {
         path: '/form',
-        component: resolve => require(['../components/page/BaseForm.vue'], resolve),
+        component: resolve => require(['../components/example/BaseForm.vue'], resolve),
         meta: { title: '基本表单' }
         },
         {
             // 富文本编辑器组件
             path: '/editor',
-            component: resolve => require(['../components/page/VueEditor.vue'], resolve),
+            component: resolve => require(['../components/example/VueEditor.vue'], resolve),
             meta: { title: '富文本编辑器' }
         },
         {
             // markdown组件
             path: '/markdown',
-            component: resolve => require(['../components/page/Markdown.vue'], resolve),
+            component: resolve => require(['../components/example/Markdown.vue'], resolve),
             meta: { title: 'markdown编辑器' }    
         },
-        // {
-        //     // 图片上传组件
-        //     path: '/upload',
-        //     component: resolve => require(['../components/page/Upload.vue'], resolve),
-        //     meta: { title: '文件上传' }   
-        // },
         {
             // vue-schart组件
             path: '/charts',
-            component: resolve => require(['../components/page/BaseCharts.vue'], resolve),
+            component: resolve => require(['../components/example/BaseCharts.vue'], resolve),
             meta: { title: 'schart图表' }
         },
         {
             // 自定义图标组件
             path: '/icon',
-            component: resolve => require(['../components/page/Icon.vue'], resolve),
+            component: resolve => require(['../components/example/Icon.vue'], resolve),
             meta: { title: '自定义图标' }
         },
         {
             // 拖拽列表组件
             path: '/drag',
-            component: resolve => require(['../components/page/DragList.vue'], resolve),
+            component: resolve => require(['../components/example/DragList.vue'], resolve),
             meta: { title: '拖拽列表' }
         },
         {
             // 权限页面
             path: '/permission',
-            component: resolve => require(['../components/page/Permission.vue'], resolve),
+            component: resolve => require(['../components/example/Permission.vue'], resolve),
             meta: { title: '权限测试', permission: true }
         },
     ]
@@ -209,63 +205,6 @@ function getchildren() {
         //     component: resolve => require(['../components/page/Icon.vue'], resolve),
         //     meta: { title: '自定义图标' }
         // },
-        // {
-        //     path: '/CommunicationTest',
-        //     component: resolve => require(['../components/test/ComponentCommunicationTest.vue'], resolve),
-        //     meta: { title: '测试' }
-        // },
-        // {
-        //     path: '/usertable',
-        //     component: resolve => require(['../components/page/UserTable.vue'], resolve),
-        //     meta: { title: '用户表格' }
-        // },
-        // {
-        //     path: '/tabs',
-        //     component: resolve => require(['../components/page/Tabs.vue'], resolve),
-        //     meta: { title: 'tab选项卡' }
-        // },
-        // {
-        //     path: '/form',
-        //     component: resolve => require(['../components/page/BaseForm.vue'], resolve),
-        //     meta: { title: '基本表单' }
-        // },
-        // {
-        //     // 富文本编辑器组件
-        //     path: '/editor',
-        //     component: resolve => require(['../components/page/VueEditor.vue'], resolve),
-        //     meta: { title: '富文本编辑器' }
-        // },
-        // {
-        //     // markdown组件
-        //     path: '/markdown',
-        //     component: resolve => require(['../components/page/Markdown.vue'], resolve),
-        //     meta: { title: 'markdown编辑器' }    
-        // },
-        // {
-        //     // 图片上传组件
-        //     path: '/upload',
-        //     component: resolve => require(['../components/page/Upload.vue'], resolve),
-        //     meta: { title: '文件上传' }   
-        // },
-        // {
-        //     // vue-schart组件
-        //     path: '/charts',
-        //     component: resolve => require(['../components/page/BaseCharts.vue'], resolve),
-        //     meta: { title: 'schart图表' }
-        // },
-        // {
-        //     // 拖拽列表组件
-        //     path: '/drag',
-        //     component: resolve => require(['../components/page/DragList.vue'], resolve),
-        //     meta: { title: '拖拽列表' }
-        // },
-        // {
-        //     // 权限页面
-        //     path: '/permission',
-        //     component: resolve => require(['../components/page/Permission.vue'], resolve),
-        //     meta: { title: '权限测试', permission: true }
-        // },
-
     }
     return dynamicRouter;
 }

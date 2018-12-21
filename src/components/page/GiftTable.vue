@@ -217,14 +217,7 @@ import bus from '../common/bus';
                     platform:""
                 },
                 platformOptions: [
-                    {
-                    platformId: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    platformId: "2",
-                    platform: "渠道2"
-                    }
+
                 ],
                 idx: -1,
                 responseResult:[],
@@ -303,12 +296,10 @@ import bus from '../common/bus';
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
-                    }else{
-                        
+                    }else{                      
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -329,15 +320,12 @@ import bus from '../common/bus';
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
                         this.strPlatform += this.platformOptions[i].id+",";
-                        
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
-                    
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -354,8 +342,7 @@ import bus from '../common/bus';
             },
             formatter(row, column) {
                 //时间格式化
-                    
-                var date = row[column.gifterty];  
+                var date = row[column.property];
                 if (date == undefined) {  
                     return "";  
                 }
@@ -424,13 +411,10 @@ import bus from '../common/bus';
                         this.$message.success("礼包批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
-
-                    }else{
-                        
+                    }else{                    
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -464,7 +448,6 @@ import bus from '../common/bus';
                     this.$message.error("礼包标识不能为空");
                 }else{
                     this.$axios.post('/addGift',{
-
                         id: this.form.id,
                         giftName:this.form.giftName,
                         giftTag:this.form.giftTag,
@@ -484,18 +467,13 @@ import bus from '../common/bus';
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("礼包添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
-                    
                 }               
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, 1, this.form);
                 this.addgiftVisible = false; 
                 
             },
@@ -524,7 +502,6 @@ import bus from '../common/bus';
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})

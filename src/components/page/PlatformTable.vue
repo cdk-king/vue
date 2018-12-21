@@ -259,28 +259,13 @@
                 responseResult:[],
                 id:"",
                 gameList:[
-                    {
-                        id:1,
-                        gameName:"游戏1"
-                    },
-                    {
-                        id:2,
-                        gameName:"游戏2"
-                    },
+
                 ],
                 roleList:[
-                    {
-                        id:1,
-                        role:"角色1"
-                    },
-                    {
-                        id:2,
-                        role:"角色2"
-                    },
+
                 ],
                 selectGame:"",
                 selectRole:""
-
             }
         },
         created() {
@@ -311,10 +296,8 @@
                         this.gameList = successResponse.data.data;
                         
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("游戏列表获取失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -330,10 +313,8 @@
                         this.roleList = successResponse.data.data;
                         
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log(this.responseResult);
                         console.log("角色列表获取失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -349,8 +330,6 @@
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -380,12 +359,10 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        this.$message.success("平台列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台列表获取失败");
@@ -475,11 +452,9 @@
                         this.getData();
 
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -544,11 +519,9 @@
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("平台添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -581,11 +554,9 @@
                         this.$message.success("平台信息修改成功");
                         this.getData();
                     }else{
-                        this.open4(successResponse.data.message);
                         console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -607,17 +578,14 @@
                             this.$message.success(`平台冻结成功`);
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToFrozenVisible = false;
                 this.rest();
-                
             },
             // 确定解冻
             changeStateToNormal(){
@@ -631,17 +599,14 @@
                             this.$message.success("平台解冻成功");
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToNormalVisible = false;
                 this.rest();
-                
             },
             // 确定删除
             deleteRow(){
@@ -657,19 +622,14 @@
                             //必须异步处理
                             this.getData();
                         }else{
-                            this.open4(successResponse.data.message);
                             console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    
-                
                 this.tableData.splice(this.idx, 1);
-                
                 this.delVisible = false;
-                
             },
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';

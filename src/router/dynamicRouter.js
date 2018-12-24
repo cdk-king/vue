@@ -121,6 +121,10 @@ function getchildren() {
      setRouterItem("/Upload","文件上传","Upload_View","UploadFile.vue",children,right);
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
      setRouterItem("/Channel","通道管理","Channel_View","Channel.vue",children,right);
+     setNoRightRouterItem("/GoodFlowLog","物品流通","GoodFlowLog_View","GoodFlowLog.vue",children,right);
+     setNoRightRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
+     setNoRightRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
+     setNoRightRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
 
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };
@@ -144,37 +148,31 @@ function getchildren() {
         meta: { title: '基本表单' }
         },
         {
-            // 富文本编辑器组件
             path: '/editor',
             component: resolve => require(['../components/example/VueEditor.vue'], resolve),
             meta: { title: '富文本编辑器' }
         },
         {
-            // markdown组件
             path: '/markdown',
             component: resolve => require(['../components/example/Markdown.vue'], resolve),
             meta: { title: 'markdown编辑器' }    
         },
         {
-            // vue-schart组件
             path: '/charts',
             component: resolve => require(['../components/example/BaseCharts.vue'], resolve),
             meta: { title: 'schart图表' }
         },
         {
-            // 自定义图标组件
             path: '/icon',
             component: resolve => require(['../components/example/Icon.vue'], resolve),
             meta: { title: '自定义图标' }
         },
         {
-            // 拖拽列表组件
             path: '/drag',
             component: resolve => require(['../components/example/DragList.vue'], resolve),
             meta: { title: '拖拽列表' }
         },
         {
-            // 权限页面
             path: '/permission',
             component: resolve => require(['../components/example/Permission.vue'], resolve),
             meta: { title: '权限测试', permission: true }

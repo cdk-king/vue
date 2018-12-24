@@ -119,6 +119,28 @@
                                     },
                                 ]
                             },
+                             {
+                                index: 'log',
+                                title: '日志管理',
+                                subs: [
+                                    {
+                                        index: 'GoodFlowLog',
+                                        title: '物品流通'
+                                    },
+                                    {
+                                        index: 'MoneyFlowLog',
+                                        title: '货币消耗' 
+                                    },
+                                    {
+                                        index: 'CreateRoleLog',
+                                        title: '角色创建'
+                                    },
+                                    {
+                                        index: 'RoleLoginLog',
+                                        title: '角色登录'
+                                    },
+                                ]
+                            },
                             {
                                 index: 'NoticeManagement',
                                 title: '系统公告管理',

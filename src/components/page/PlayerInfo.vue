@@ -389,6 +389,8 @@
 <script>
 import bus from "../common/bus";
 import dialog from "../test/dialog.vue";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "PlayerInfo",
   data() {
@@ -471,8 +473,6 @@ export default {
     getPlatformName(){
         //用闭包去实现传参
         return function(platformId){
-            console.log(platformId);
-            console.log(JSON.stringify(this.platformOptions));
             var item;
             for(var i = 0;i<this.platformOptions.length;i++){
                 if(this.platformOptions[i].id==platformId){
@@ -485,18 +485,15 @@ export default {
     getServerName(){
         return function(serverId){
             for(var i = 0;i<this.serverOptions.length;i++){
-                    if(this.serverOptions[i].serverId==serverId){
-                        return this.serverOptions[i].serverName;
-                    }
+                if(this.serverOptions[i].serverId==serverId){
+                    return this.serverOptions[i].serverName;
+                }
             }
         }
     }
-
   },
   created() {
-    if(this.$url!=null){
-         this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getData();
     this.right();
     bus.$on(
@@ -582,14 +579,13 @@ export default {
     },
     getPlayer() {
         if(this.platformValue==null || this.platformValue==""){
-                this.$message.error("请选择正确的平台");
-                return;
-            }
-         if(this.serverValue==null || this.serverValue==""){
-                this.$message.error("请选择正确的服务器");
-                return;
-            }
-
+            this.$message.error("请选择正确的平台");
+            return;
+        }
+        if(this.serverValue==null || this.serverValue==""){
+            this.$message.error("请选择正确的服务器");
+            return;
+        }
         this.$axios
         .post(this.url+"/api/player/getPlayerFromServer", {
           platformId: this.platformValue,
@@ -607,7 +603,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家列表获取成功");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             this.mapData(successResponse.data.data);
           } else {
@@ -631,12 +626,9 @@ export default {
         data = data.replace(/TalkBanEndTime/g,"prohibitSpeakTime");
         data = data.replace(/LoginBan/g,"isBan");
         data = data.replace(/LoginBanEndTime/g,"banTime");
-        console.log(data);
         data = JSON.parse(data);
         console.log(data);
-        console.log(typeof(data));
         this.tableData = data.PlayerList;
-        
         this.total = this.tableData.length;
         this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
     },
@@ -654,13 +646,8 @@ export default {
     },
     formatter(row, column) {
       //时间格式化
-
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     testMessage() {
       console.log(this.searchForm);

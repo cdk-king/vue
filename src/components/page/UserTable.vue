@@ -292,6 +292,8 @@
 <script>
 import draggable from "vuedraggable";
 import md5 from "js-md5";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "usertable",
   data() {
@@ -364,9 +366,7 @@ export default {
     draggable
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getRole();
     this.right();
   },
@@ -482,11 +482,7 @@ export default {
     formatter(row, column) {
       //时间格式化
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     filterTag(value, row) {
       return row.tag === value;

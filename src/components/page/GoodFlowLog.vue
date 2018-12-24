@@ -2,11 +2,13 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>玩家禁封记录</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>物品流通日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
+
             <div class="handle-box">
+                
                 <span class="grid-content bg-purple-light">平台：</span>
                 <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
@@ -26,12 +28,6 @@
                     :value="item.serverId">
                     </el-option>
                 </el-select>
-                <span class="grid-content bg-purple-light">是否禁封：</span>
-                    <el-select  placeholder="请选择" @change="selectisToBan"  v-model="searchKey.isToBan" class="handle-select mr10" style="width:150px">
-                    <el-option key="1" label="全部" value="0"></el-option>
-                    <el-option key="2" label="未禁封" value="1"></el-option>
-                    <el-option key="3" label="已禁封" value="2"></el-option>
-                </el-select>
 
                 <span class="grid-content bg-purple-light">玩家名：</span>
                 <el-input v-model="searchKey.playerName" placeholder="筛选玩家名" class="handle-input " style="width:150px"></el-input>
@@ -42,29 +38,40 @@
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column prop="id" label="ID"  width="80">
-                </el-table-column>
-                <el-table-column prop="playerName" label="玩家名称" width="160">
-                </el-table-column>
-                <el-table-column prop="playerAccount" label="玩家账号" >
-                </el-table-column>
-                <el-table-column prop="playerId" label="玩家ID" >
-                </el-table-column>
-                <el-table-column prop="isToBan" label="操作类型" :formatter="formatisToBan">
-                </el-table-column> 
-                <el-table-column prop="banTime" label="禁封时间" >
-                </el-table-column> 
-                <el-table-column prop="addDatetime" label="操作时间" :formatter="formatDatetime" value-format="YYYY-MM-DD HH:mm:ss">
-                </el-table-column>
                 <el-table-column prop="platform" label="平台" >
                 </el-table-column>
                 <el-table-column prop="server" label="服务器" >
                 </el-table-column>
-                <el-table-column prop="userName" label="操作人员" >
+                <el-table-column prop="iEventId" label="操作ID" >
                 </el-table-column>
+                <el-table-column prop="iWorldId" label="游戏大区ID" >
+                </el-table-column>
+                <el-table-column prop="iUin" label="用户ID" >
+                </el-table-column>
+                <el-table-column prop="dtEventTime" label="记录时间" :formatter="formatDatetime">
+                </el-table-column>
+                <el-table-column prop="iRoleId" label="角色ID" >
+                </el-table-column>
+                <el-table-column prop="vRoleName" label="角色名" >
+                </el-table-column>
+                <el-table-column prop="vOperate" label="操作类型" >
+                </el-table-column>
+                <el-table-column prop="iGoodsId" label="物品id" >
+                </el-table-column>
+                <el-table-column prop="vGoodsName" label="物品名字" >
+                </el-table-column>
+                <el-table-column prop="iCount" label="个数" >
+                </el-table-column>
+                <el-table-column prop="iTotalCount" label="总个数" >
+                </el-table-column>
+                <el-table-column prop="iIdentifier" label="得失" :formatter="formatIsGetOrLost">
+                </el-table-column>
+                <!-- <el-table-column prop="dt" label="时间日期" >
+                </el-table-column> -->
+
             </el-table>
             <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper" :total="this.total">
+                <el-pagination background @current-change="handleCurrentChange" :page-sizes="[15, 30, 50, 100]" layout="total, prev, pager, next, jumper" :total="this.total">
                 </el-pagination>
             </div>
         </div>
@@ -73,14 +80,17 @@
 
 <script>
 import bus from '../common/bus';
-import setLocalThisUrl from '../../code/setLocalThisUrl';
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'playerLogTable',
         data() {
             return {
+                activeNames: ['1'],
                 url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
+                pager:0,
                 multipleSelection: [],
                 select_cate: '',
                 select_word: '',
@@ -127,7 +137,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             console.log(this.strPlatform);
-
+            this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
@@ -149,33 +159,35 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             },
             //筛选当前用户游戏的玩家
             getData() {
-                this.$axios.post(this.url+'/getPlayerBan', {
+                this.$axios.post(this.url+'/api/log/getPlayerLogByPlayerId', {
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage:"isPage",
-                    playerName:this.searchKey.playerName,
-                    playerAccount:this.searchKey.playerAccount,
-                    playerId:this.searchKey.playerId,
-                    platformId:this.searchKey.platformId,
-                    serverId:this.searchKey.serverId,
-                    isToBan:this.searchKey.isToBan,
-                    strPlatform:this.strPlatform
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
-                        console.log("禁封记录获取成功");
-                        //this.$message.success("禁封记录获取成功");
+                        console.log(successResponse.data);
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
+                        this.mapData();
+
                     }else{
                         
                         console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("禁封记录获取失败");
+                        this.$message.error("物品流通日志失败");
                     }
                 })
+            },
+            mapData(){
+                
+            },
+                // 分页导航
+            handleCurrentChange(val) {
+            this.cur_page = val;
+            console.log("page:" + val);
+            this.getData();
             },
             //当前游戏的平台
             getPlatformList(gameId) {
@@ -204,6 +216,9 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 }
                 })
                 .catch(failResponse => {});
+            },
+            getServerList(){
+
             },
             getServerList(platformId) {
                 this.$axios
@@ -240,15 +255,14 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             selectisToBan(){
                 this.getData();
             },
+            formatIsGetOrLost(row, column){
+                var str = row[column.property];
+                return str=="1" ? "得到":"失去"
+            },
             formatDatetime(row, column) {
                 //时间格式化               
                 var date = row[column.property];
-                console.log(date);
-                if (date == undefined) {  
-                    return "";  
-                }
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;

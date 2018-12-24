@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>物品流通日志</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>角色创建日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -40,12 +40,10 @@
                                 <el-input v-model="searchKey.vRoleName" placeholder="角色名" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
-                        <el-form-item label="物品ID">
-                                <el-input v-model="searchKey.iGoodsId" placeholder="物品ID" class="handle-input " style="width:160px"></el-input>
-                                <span style="margin-left:22px">物品名字</span>
-                                <el-input v-model="searchKey.vGoodsName" placeholder="物品名字" class="handle-input " style="width:160px"></el-input>
-                                <span style="margin-left:22px">操作类型</span>
-                                <el-input v-model="searchKey.vOperate" placeholder="操作类型" class="handle-input " style="width:160px"></el-input>
+                        <el-form-item label="客户端所在ip">
+                                <el-input v-model="searchKey.vClientIp" placeholder="客户端所在ip" class="handle-input " style="width:160px"></el-input>
+                                <span style="margin-left:22px">登录渠道</span>
+                                <el-input v-model="searchKey.iLoginWay" placeholder="登录渠道" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
                         <el-form-item label="">
@@ -63,7 +61,7 @@
                 </el-table-column>
                 <el-table-column prop="serverName" label="服务器" >
                 </el-table-column>
-                <el-table-column prop="iEventId" label="操作ID" >
+                <el-table-column prop="iEventId" label="事件ID" >
                 </el-table-column>
                 <el-table-column prop="iWorldId" label="游戏大区ID" >
                 </el-table-column>
@@ -75,17 +73,11 @@
                 </el-table-column>
                 <el-table-column prop="vRoleName" label="角色名" >
                 </el-table-column>
-                <el-table-column prop="vOperate" label="操作类型" >
+                <el-table-column prop="iJobId" label="角色职业" >
                 </el-table-column>
-                <el-table-column prop="iGoodsId" label="物品id" >
+                <el-table-column prop="vClientIp" label="客户端所在ip" >
                 </el-table-column>
-                <el-table-column prop="vGoodsName" label="物品名字" >
-                </el-table-column>
-                <el-table-column prop="iCount" label="个数" >
-                </el-table-column>
-                <el-table-column prop="iTotalCount" label="总个数" >
-                </el-table-column>
-                <el-table-column prop="iIdentifier" label="得失" :formatter="formatIsGetOrLost">
+                <el-table-column prop="iLoginWay" label="登录渠道" >
                 </el-table-column>
 
             </el-table>
@@ -129,10 +121,8 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:"",
                     iRoleId:"",
                     vRoleName:"",
-                    iGoodsId:"",
-                    vGoodsName:"",
-                    vOperate:""
-
+                    vClientIp:"",
+                    iLoginWay:""
                 },
                 platformOptions: [
 
@@ -173,7 +163,7 @@ import formatDatetime from "../../code/formatDatetime";
                 this.getData();
             },
             getData() {
-                this.$axios.post(this.url+'/api/log/getGoodFlowLog', {
+                this.$axios.post(this.url+'/api/log/getCreateRoleLog', {
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
                     pageSize: 10,
@@ -181,9 +171,8 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:this.searchKey.iUin,
                     iRoleId:this.searchKey.iRoleId,
                     vRoleName:this.searchKey.vRoleName,
-                    iGoodsId:this.searchKey.iGoodsId,
-                    vGoodsName:this.searchKey.vGoodsName,
-                    vOperate:this.searchKey.vOperate
+                    vClientIp:this.searchKey.vClientIp,
+                    iLoginWay:this.searchKey.iLoginWay
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -192,12 +181,9 @@ import formatDatetime from "../../code/formatDatetime";
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                         this.mapData();
-
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("物品流通日志失败");
+                        this.$message.error("角色创建日志获取失败");
                     }
                 })
             },
@@ -212,7 +198,7 @@ import formatDatetime from "../../code/formatDatetime";
                     }
                 }
             },
-                // 分页导航
+            // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
                 console.log("page:" + val);
@@ -299,10 +285,6 @@ import formatDatetime from "../../code/formatDatetime";
                 this.serverIdList = this.searchKey.serverId;
                 this.getData();
             },
-            formatIsGetOrLost(row, column){
-                var str = row[column.property];
-                return str=="1" ? "得到":"失去"
-            },
             formatDatetime(row, column) {
                 //时间格式化               
                 var date = row[column.property];
@@ -313,7 +295,7 @@ import formatDatetime from "../../code/formatDatetime";
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-            }
+            },
         }
     }
 

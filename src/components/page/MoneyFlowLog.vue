@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>物品流通日志</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>货币消耗日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -40,12 +40,10 @@
                                 <el-input v-model="searchKey.vRoleName" placeholder="角色名" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
-                        <el-form-item label="物品ID">
-                                <el-input v-model="searchKey.iGoodsId" placeholder="物品ID" class="handle-input " style="width:160px"></el-input>
-                                <span style="margin-left:22px">物品名字</span>
-                                <el-input v-model="searchKey.vGoodsName" placeholder="物品名字" class="handle-input " style="width:160px"></el-input>
-                                <span style="margin-left:22px">操作类型</span>
-                                <el-input v-model="searchKey.vOperate" placeholder="操作类型" class="handle-input " style="width:160px"></el-input>
+                        <el-form-item label="金钱类型">
+                                <el-input v-model="searchKey.iMoneyType" placeholder="金钱类型" class="handle-input " style="width:160px"></el-input>
+                                <span style="margin-left:22px">动作</span>
+                                <el-input v-model="searchKey.iAction" placeholder="动作" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
                         <el-form-item label="">
@@ -63,7 +61,7 @@
                 </el-table-column>
                 <el-table-column prop="serverName" label="服务器" >
                 </el-table-column>
-                <el-table-column prop="iEventId" label="操作ID" >
+                <el-table-column prop="iEventId" label="事件ID" >
                 </el-table-column>
                 <el-table-column prop="iWorldId" label="游戏大区ID" >
                 </el-table-column>
@@ -75,17 +73,19 @@
                 </el-table-column>
                 <el-table-column prop="vRoleName" label="角色名" >
                 </el-table-column>
-                <el-table-column prop="vOperate" label="操作类型" >
+                <el-table-column prop="iJobId" label="角色职业" >
                 </el-table-column>
-                <el-table-column prop="iGoodsId" label="物品id" >
+                <el-table-column prop="iRoleLevel" label="角色等级" >
                 </el-table-column>
-                <el-table-column prop="vGoodsName" label="物品名字" >
+                <el-table-column prop="iMoneyBeforer" label="动作前的金钱数" >
                 </el-table-column>
-                <el-table-column prop="iCount" label="个数" >
+                <el-table-column prop="iMoneyAfter" label="动作后的金钱数" >
                 </el-table-column>
-                <el-table-column prop="iTotalCount" label="总个数" >
+                <el-table-column prop="iMoney" label="动作涉及的金钱数" >
                 </el-table-column>
-                <el-table-column prop="iIdentifier" label="得失" :formatter="formatIsGetOrLost">
+                <el-table-column prop="iMoneyType" label="金钱类型" >
+                </el-table-column>
+                <el-table-column prop="iAction" label="动作" >
                 </el-table-column>
 
             </el-table>
@@ -116,10 +116,17 @@ import formatDatetime from "../../code/formatDatetime";
                 is_search: false,
                 total:0,
                 form: {
+                    id:'',
+                    playerName:'',
+                    playerAccount:'',
+                    playerId: '',
+                    userId: '',
+                    addDatetime: '',
                     platformId:"",
                     platform:"",
                     serverId:"",
                     server:"",
+                    isToBan:""
                 },
                 searchKey: {
                     platformId:"",
@@ -129,10 +136,8 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:"",
                     iRoleId:"",
                     vRoleName:"",
-                    iGoodsId:"",
-                    vGoodsName:"",
-                    vOperate:""
-
+                    iMoneyType:"",
+                    iAction:""
                 },
                 platformOptions: [
 
@@ -173,7 +178,7 @@ import formatDatetime from "../../code/formatDatetime";
                 this.getData();
             },
             getData() {
-                this.$axios.post(this.url+'/api/log/getGoodFlowLog', {
+                this.$axios.post(this.url+'/api/log/getMoneyFlowLog', {
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
                     pageSize: 10,
@@ -181,9 +186,8 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:this.searchKey.iUin,
                     iRoleId:this.searchKey.iRoleId,
                     vRoleName:this.searchKey.vRoleName,
-                    iGoodsId:this.searchKey.iGoodsId,
-                    vGoodsName:this.searchKey.vGoodsName,
-                    vOperate:this.searchKey.vOperate
+                    iMoneyType:this.searchKey.iMoneyType,
+                    iAction:this.searchKey.iAction
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -192,12 +196,9 @@ import formatDatetime from "../../code/formatDatetime";
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                         this.mapData();
-
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
-                        this.$message.error("物品流通日志失败");
+                        this.$message.error("货币消耗日志获取失败");
                     }
                 })
             },
@@ -212,7 +213,7 @@ import formatDatetime from "../../code/formatDatetime";
                     }
                 }
             },
-                // 分页导航
+            // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
                 console.log("page:" + val);
@@ -299,10 +300,6 @@ import formatDatetime from "../../code/formatDatetime";
                 this.serverIdList = this.searchKey.serverId;
                 this.getData();
             },
-            formatIsGetOrLost(row, column){
-                var str = row[column.property];
-                return str=="1" ? "得到":"失去"
-            },
             formatDatetime(row, column) {
                 //时间格式化               
                 var date = row[column.property];
@@ -313,7 +310,7 @@ import formatDatetime from "../../code/formatDatetime";
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-            }
+            },
         }
     }
 

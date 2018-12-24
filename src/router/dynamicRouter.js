@@ -121,10 +121,11 @@ function getchildren() {
      setRouterItem("/Upload","文件上传","Upload_View","UploadFile.vue",children,right);
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
      setRouterItem("/Channel","通道管理","Channel_View","Channel.vue",children,right);
-     setNoRightRouterItem("/GoodFlowLog","物品流通","GoodFlowLog_View","GoodFlowLog.vue",children,right);
-     setNoRightRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
-     setNoRightRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
-     setNoRightRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
+     setRouterItem("/GoodFlowLog","物品流通","GoodFlowLog_View","GoodFlowLog.vue",children,right);
+     setRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
+     setRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
+     setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
+     setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
 
     item.path = '/CommunicationTest';
     item.meta = { title: '测试' };

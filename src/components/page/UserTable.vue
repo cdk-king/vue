@@ -437,9 +437,7 @@ export default {
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            //console.log(this.responseResult);
-            //this.$message.success("用户列表获取成功");
+          if (successResponse.data.code === 200) { 
             console.log("用户列表获取成功");
             this.tableData = this.mapData(successResponse.data.data.list);
             this.total = successResponse.data.data.total;

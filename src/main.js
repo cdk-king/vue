@@ -47,10 +47,10 @@ Vue.prototype.$setTouristName = function(name){
     Vue.prototype.$touristName = name;
 };
 //url
-//本地环境
-//Vue.prototype.$url = "http://127.0.0.1:8011";
+//测试环境
+Vue.prototype.$url = "http://127.0.0.1:8011";
 //生成环境
-Vue.prototype.$url = "";
+//Vue.prototype.$url = "";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
 };

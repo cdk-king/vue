@@ -506,7 +506,6 @@
 
 <script>
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 export default {
   name: "PlayerInfo",
   data() {
@@ -573,7 +572,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
   computed: {
     data() {

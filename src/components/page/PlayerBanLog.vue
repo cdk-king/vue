@@ -26,11 +26,11 @@
                     :value="item.serverId">
                     </el-option>
                 </el-select>
-                <span class="grid-content bg-purple-light">是否禁封：</span>
+                <span class="grid-content bg-purple-light">操作类型：</span>
                     <el-select  placeholder="请选择" @change="selectisToBan"  v-model="searchKey.isToBan" class="handle-select mr10" style="width:150px">
                     <el-option key="1" label="全部" value="0"></el-option>
-                    <el-option key="2" label="未禁封" value="1"></el-option>
-                    <el-option key="3" label="已禁封" value="2"></el-option>
+                    <el-option key="2" label="解除禁封" value="1"></el-option>
+                    <el-option key="3" label="禁封" value="2"></el-option>
                 </el-select>
 
                 <span class="grid-content bg-purple-light">玩家名：</span>
@@ -163,15 +163,11 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("禁封记录获取成功");
-                        //this.$message.success("禁封记录获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("禁封记录获取失败");
                     }

@@ -464,7 +464,6 @@
 
 <script>
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "PlayerInfo",
@@ -561,7 +560,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
 
   computed: {
@@ -707,7 +705,6 @@ export default {
             console.log(this.responseResult);
             console.log("邮件列表获取失败");
             //this.$message.error("邮件列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -726,7 +723,6 @@ export default {
             console.log(this.responseResult);
             console.log("邮件发送类别获取失败");
             this.$message.error("邮件发送类别获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -745,7 +741,6 @@ export default {
             console.log(this.responseResult);
             console.log("邮件消息类别获取失败");
             this.$message.error("邮件消息类别获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});

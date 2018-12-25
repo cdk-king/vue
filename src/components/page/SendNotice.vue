@@ -231,7 +231,6 @@
 
 <script>
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "PlayerInfo",
@@ -296,7 +295,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
 
   computed: {
@@ -322,8 +320,6 @@ export default {
         this.getPlatformList(this.id);
       }.bind(this)
     );
-
-    console.log();
   },
   beforeDestroy() {
     bus.$off("changeGameId");
@@ -396,7 +392,6 @@ export default {
           } else {
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -432,9 +427,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("公告列表获取成功");
-            //this.$message.success("公告列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
             this.mapDate();
@@ -452,7 +445,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("公告发送类别获取成功");
             this.sendTypeList = successResponse.data.data.list;
           } else {
@@ -469,7 +461,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("公告消息类别获取成功");
             this.noticeTypeList = successResponse.data.data.list;
           } else {
@@ -497,7 +488,6 @@ export default {
     },
     formatter(row, column) {
       //时间格式化
-
       var date = row[column.property];
       if (date == undefined) {
         return "";
@@ -561,7 +551,6 @@ export default {
       this.dialogVisible = true;
     },
     handleCheckedServer() {
-      console.log(this.serverList);
     },
     selectSearchKeyPlatform() {
       this.getSearchKeyServerList(this.searchKey.platformId);

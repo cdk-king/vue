@@ -309,7 +309,6 @@
 
 <script>
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "PlayerInfo",
@@ -374,7 +373,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
 
   computed: {

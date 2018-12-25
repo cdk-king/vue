@@ -26,11 +26,11 @@
                     :value="item.serverId">
                     </el-option>
                 </el-select>
-                <span class="grid-content bg-purple-light">是否禁言：</span>
-                    <el-select  placeholder="请选择" @change="selectIsToBan"  v-model="searchKey.isToBan" class="handle-select mr10" style="width:150px">
+                <span class="grid-content bg-purple-light">操作类型：</span>
+                    <el-select  placeholder="请选择" @change="selectisToProhibitSpeak"  v-model="searchKey.isToProhibitSpeak" class="handle-select mr10" style="width:150px">
                     <el-option key="1" label="全部" value="0"></el-option>
-                    <el-option key="2" label="未禁言" value="1"></el-option>
-                    <el-option key="3" label="已禁言" value="2"></el-option>
+                    <el-option key="2" label="解除禁言" value="1"></el-option>
+                    <el-option key="3" label="禁言" value="2"></el-option>
                 </el-select>
 
                 <span class="grid-content bg-purple-light">玩家名：</span>
@@ -50,7 +50,7 @@
                 </el-table-column>
                 <el-table-column prop="playerId" label="玩家ID" >
                 </el-table-column>
-                <el-table-column prop="isToBan" label="操作类型" :formatter="formatIsToProhibitSpeak">
+                <el-table-column prop="isToProhibitSpeak" label="操作类型" :formatter="formatIsToProhibitSpeak">
                 </el-table-column> 
                 <el-table-column prop="prohibitSpeakTime" label="禁言时间" >
                 </el-table-column> 
@@ -97,7 +97,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     platform:"",
                     serverId:"",
                     server:"",
-                    isToBan:""
+                    isToProhibitSpeak:""
                 },
                 searchKey: {
                     id:'',
@@ -110,7 +110,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     platform:"",
                     serverId:"",
                     server:"",
-                    isToBan:""
+                    isToProhibitSpeak:""
                 },
                 platformOptions: [
                     {
@@ -164,7 +164,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     playerId:this.searchKey.playerId,
                     platformId:this.searchKey.platformId,
                     serverId:this.searchKey.serverId,
-                    isToBan:this.searchKey.isToBan,
+                    isToProhibitSpeak:this.searchKey.isToProhibitSpeak,
                     strPlatform:this.strPlatform
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -245,7 +245,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             selectServer(){
                 this.getData();
             },
-            selectIsToBan(){
+            selectisToProhibitSpeak(){
                 this.getData();
             },
             formatDatetime(row, column) {

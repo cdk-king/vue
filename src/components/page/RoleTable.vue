@@ -351,7 +351,6 @@ export default {
           isPage: ""
         })
         .then(res => {
-          console.log(res.data);
           this.rightData = res.data.data.list;
           this.getData();
         });
@@ -372,12 +371,9 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("角色列表获取成功");
-            //this.$message.success("角色列表获取成功");
             this.tableData = this.mapData(successResponse.data.data.list);
-            console.log(this.tableData);
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色列表获取失败");
           }
@@ -527,7 +523,6 @@ export default {
             this.multipleSelection = [];
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色批量删除失败");
           }
@@ -590,6 +585,11 @@ export default {
       this.doing = oldDoing;
       this.done = olddone;
       //添加角色处理
+      this.InsertRoleRights(InsertRoleRights,deleteRoleRights);
+      this.ManageRightVisible = false;
+    },
+    InsertRoleRights(InsertRoleRights,deleteRoleRights){
+        //添加角色处理
       this.$axios
         .post(this.url + "/InsertRoleRights", {
           id: this.form.id,
@@ -598,23 +598,17 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            //this.$message.success("用户角色添加成功");
             console.log("角色权限添加完成");
-            this.getData();
-            console.log("数据更新完成");
-            //这里要输入用户id
-            console.log(localStorage.getItem("userData"));
-            var userId = JSON.parse(localStorage.getItem("userData")).id;
-            console.log(userId);
-            Utils.getUserAllRight(userId, this.url);
+            //删除角色处理
+            this.deleteRoleRights(deleteRoleRights);
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色权限添加失败");
           }
         })
         .catch(failResponse => {});
+    },
+    deleteRoleRights(deleteRoleRights){
       //删除角色处理
       this.$axios
         .post(this.url + "/deleteRoleRights", {
@@ -624,22 +618,17 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("角色权限编辑完成");
             this.$message.success("角色权限编辑完成");
             this.getData();
-            console.log("数据更新完成");
             var userId = JSON.parse(localStorage.getItem("userData")).id;
             Utils.getUserAllRight(userId, this.url);
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色权限删除失败");
           }
         })
         .catch(failResponse => {});
-
-      this.ManageRightVisible = false;
     },
     saveAddRole() {
       if (this.form.role == "") {
@@ -662,7 +651,6 @@ export default {
               this.tableData.push(this.form);
               this.getData();
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("角色添加失败");
             }
@@ -689,7 +677,6 @@ export default {
             this.$message.success("角色信息修改成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色信息修改失败");
           }
@@ -710,7 +697,6 @@ export default {
             this.$message.success(`角色冻结成功`);
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色冻结失败");
           }
@@ -732,7 +718,6 @@ export default {
             this.$message.success("角色解冻成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色解冻失败");
           }
@@ -755,7 +740,6 @@ export default {
             //必须异步处理
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("角色删除失败");
           }

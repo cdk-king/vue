@@ -158,7 +158,6 @@ import formatDatetime from "../../code/formatDatetime";
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             this.getAllServerList();
-            console.log(this.strPlatform);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -193,9 +192,7 @@ import formatDatetime from "../../code/formatDatetime";
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(successResponse.data);
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                         this.mapData();
                     }else{
@@ -232,7 +229,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
@@ -259,7 +255,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                     if (successResponse.data.code === 200) {
-                        console.log(this.responseResult);
                         this.serverList = successResponse.data.data.list;
                     } else {
                         console.log(this.responseResult);
@@ -275,7 +270,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                     for(var i = 0;i<this.serverOptions.length;i++){

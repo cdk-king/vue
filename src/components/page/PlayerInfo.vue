@@ -14,9 +14,10 @@
                     <br/>
                     （2）禁封和禁言操作不输入时间则为永久操作
                 </div>
-                <el-collapse v-model="activeNames" >
-                <el-collapse-item title="折叠" name="1">
+                <!-- <el-collapse v-model="activeNames" >
+                <el-collapse-item title="折叠" name="1"> -->
                         <div class="form-box">
+                            
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="platformValue" @change="selectPlatform" placeholder="请选择平台" style="width:180px">
@@ -27,6 +28,7 @@
                                 :value="item.platformId">
                                 </el-option>
                             </el-select>
+                            <i class="" style="color:red;font-size:18px">*</i>
                             <span style="margin-left:22px">选择服务器</span>
                             <el-select v-model="serverValue" @change="selectServer" placeholder="请选择服务器" style="width:180px">
                                 <el-option
@@ -36,6 +38,7 @@
                                 :value="item.serverId">
                                 </el-option>
                             </el-select>
+                            <i class="" style="color:red;font-size:18px">*</i>
                         </el-form-item>
                         <Divider />
                         <el-form-item label="玩家账号">
@@ -60,24 +63,25 @@
                         <el-form-item label="是否禁言">
                                 <el-select  placeholder="请选择"  v-model="searchForm.isProhibitSpeak" class="handle-select mr10" style="width:180px">
                                 <el-option key="1" label="全部" value="0"></el-option>
-                                <el-option key="2" label="未禁言" value="0"></el-option>
+                                <!-- <el-option key="2" label="未禁言" value="0"></el-option> -->
                                 <el-option key="3" label="已禁言" value="1"></el-option>
                             </el-select>
                             <span style="margin-left:22px">是否禁封</span>
                                 <el-select  placeholder="请选择"  v-model="searchForm.isBan" class="handle-select mr10" style="width:180px">
                                 <el-option key="1" label="全部" value="0"></el-option>
-                                <el-option key="2" label="未封禁" value="0"></el-option>
+                                <!-- <el-option key="2" label="未封禁" value="0"></el-option> -->
                                 <el-option key="3" label="已封禁" value="1"></el-option>
                             </el-select>
                             
                         </el-form-item>
                         <el-form-item label="">
                             <el-button type="primary" icon="search" @click="testMessage">查询</el-button>
+                            <el-button type="primary" icon="search" @click="testMessage">刷新</el-button>
                         </el-form-item>
                         </el-form>
                     </div>
-                </el-collapse-item>
-                </el-collapse>
+                <!-- </el-collapse-item>
+                </el-collapse> -->
                 <div style="margin:15px;" v-if="false">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakAll">批量禁言</el-button>
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="handleProhibitSpeakToNormalAll">批量解除禁言</el-button>
@@ -388,7 +392,6 @@
 
 <script>
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
 export default {
@@ -456,7 +459,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
 
   computed: {

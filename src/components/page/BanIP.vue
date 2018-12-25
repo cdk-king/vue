@@ -194,7 +194,6 @@
 <script>
 import Vue from "vue";
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "BanIp",
@@ -237,7 +236,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
   computed: {
     data() {

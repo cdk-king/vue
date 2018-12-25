@@ -240,7 +240,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addMoneyToList">添加货币</el-button>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">暂时只支持系统金子</span>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">暂时只支持系统金子</span>
           </el-form-item>
           <el-form-item label="已选择货币列表">
             <el-table :data="moneyList" border class="table" ref="multipleTable">
@@ -459,7 +459,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addMoneyToList">添加货币</el-button>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">暂时只支持系统金子</span>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">暂时只支持系统金子</span>
           </el-form-item>
           <el-form-item label="已选择货币列表">
             <el-table :data="moneyList" border class="table" ref="multipleTable">
@@ -607,7 +607,6 @@
 <script>
 import Vue from "vue";
 import bus from "../common/bus";
-import dialog from "../test/dialog.vue";
 export default {
   name: "AppleProp",
   data() {
@@ -687,7 +686,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
   computed: {
     data() {

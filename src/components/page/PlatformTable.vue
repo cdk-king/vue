@@ -56,6 +56,10 @@
                 </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>
+                <el-table-column prop="platform_describe" label="描述" >
+                </el-table-column> 
+                <el-table-column prop="dataSource_url" label="数据库地址" >
+                </el-table-column>
                 <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <el-table-column prop="addUser"  label="添加人" >

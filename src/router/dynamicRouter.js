@@ -80,16 +80,11 @@ function getchildren() {
     children.push(item);
     item = {}
 
-
     //获取用户权限
     var right = localStorage.getItem('rightTags');
     if(null==right){
         right = "";
-    }else{
-        
     }
-
-    console.log("right2:" + right);
 
      setRouterItem("/userTable","用户管理","User_Management_View","UserTable.vue",children,right);
      setRouterItem("/roleTable","角色管理","Role_Management_View","RoleTable.vue",children,right);
@@ -125,13 +120,7 @@ function getchildren() {
      setRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
      setRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
      setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
-     setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
 
-    item.path = '/CommunicationTest';
-    item.meta = { title: '测试' };
-    item.component = resolve => require(['../components/test/ComponentCommunicationTest.vue'], resolve);
-    children.push(item);
-    item = {}
 
     var otherItem=[{
             path: '/tabs',
@@ -193,17 +182,6 @@ function getchildren() {
         component: resolve => require(['../components/common/Home.vue'], resolve),
         meta: { title: '自述文件' },
         children: children
-
-        // {
-        //     path: '/dashboard',
-        //     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-        //     meta: { title: '系统首页' }
-        // },
-        // {
-        //     path: '/icon',
-        //     component: resolve => require(['../components/page/Icon.vue'], resolve),
-        //     meta: { title: '自定义图标' }
-        // },
     }
     return dynamicRouter;
 }

@@ -64,14 +64,6 @@
           class="handle-input"
           style="width:120px"
         ></el-input>
-
-        <!-- <span class="grid-content bg-purple-light">游戏：</span>
-        <el-input
-          v-model="searchKey.gameName"
-          placeholder="游戏"
-          class="handle-input"
-          style="width:120px"
-        ></el-input>-->
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
         <el-button type="primary" icon="search" @click="handleAddServer" v-if="false">添加</el-button>
         <el-button type="primary" icon="search" @click="handleSyn">同步</el-button>
@@ -104,6 +96,11 @@
         <el-table-column prop="server_describe" label="描述"></el-table-column>
         <el-table-column prop="state" label="状态" :formatter="formatState"></el-table-column>
         <el-table-column
+          prop="openServiceTime"
+          label="开服时间"
+          :formatter="formatter"
+        ></el-table-column>
+        <el-table-column
           prop="addDatetime"
           label="添加时间"
           :formatter="formatter"
@@ -113,6 +110,7 @@
         <el-table-column prop="isDefault" width="50" label="是否默认" :formatter="formatIsDefault"></el-table-column>
         <el-table-column label="操作" align="center" v-if="handleVisible" width="120px">
           <template slot-scope="scope">
+            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
@@ -128,10 +126,8 @@
               icon="el-icon-edit"
               @click="handleServerAddChannel(scope.$index, scope.row)"
             >添加平台通道</el-button>
-            <!-- <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToFrozen(scope.$index, scope.row)" v-if="scope.row.state!=1">冻结</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToNormal(scope.$index, scope.row)" v-if="scope.row.state==1">解冻</el-button>
-            <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>-->
+            
+            <!-- <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -223,6 +219,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="开服时间">
+            <el-date-picker type="datetime" placeholder="选择日期" v-model="form.openDatetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;"></el-date-picker>
+        </el-form-item>
+
         <el-form-item label="添加人">
           <el-input v-model="form.addUser"></el-input>
         </el-form-item>
@@ -356,7 +357,8 @@ export default {
         addDatetime: "",
         state: "",
         gameName: "",
-        role: ""
+        role: "",
+        openDatetime:""
       },
       searchKey: {
         id: "",
@@ -515,13 +517,11 @@ export default {
       console.log(str);
       this.getAllChannelFormPlatform(this.multipleSelection[0].platformId);
     },
-
-    handleServerAddChannel(index, row) {
+    handleServerAddChannel(index, row){
       this.idx = index;
 
       const item = this.tableData[index];
       this.id = item.id;
-      console.log(this.id);
       this.getAllChannelFormPlatform(item.platformId);
       this.getChannel(item);
       this.ServerAddChannelVisible = true;
@@ -546,7 +546,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            //console.log(this.responseResult);
             console.log("列表获取成功");
             this.allChannelFormPlatform = successResponse.data.data.list;
             this.generateAllChannelData(this.allChannelFormPlatform);
@@ -583,7 +582,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data != "") {
-            console.log(this.responseResult);
             console.log(successResponse.data);
             console.log("服务器列表获取成功");
           }
@@ -678,12 +676,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            //this.$message.success("服务器列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器列表获取失败");
           }
@@ -703,7 +698,6 @@ export default {
       if (date == undefined) {
         return "";
       }
-
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
@@ -711,7 +705,6 @@ export default {
       return row.tag === value;
     },
     handleEdit(index, row) {
-      //this.getGameList();
       this.getPlatformList();
       this.idx = index;
       const item = this.tableData[index];
@@ -728,7 +721,8 @@ export default {
         gameId: item.gameId,
         roleId: item.roleId,
         platformId: item.platformId,
-        serverPort: item.serverPort
+        serverPort: item.serverPort,
+        openDatetime: item.openDatetime
       };
       this.editVisible = true;
     },
@@ -815,7 +809,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllServer", {
@@ -824,12 +817,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("服务器批量删除完成");
             this.multipleSelection = [];
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器批量删除失败");
           }
@@ -842,7 +833,6 @@ export default {
       this.multipleSelection = val;
     },
     handleAddServer() {
-      //this.getGameList();
       this.getPlatformList();
       this.addServerVisible = true;
       this.form = {
@@ -884,12 +874,10 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("服务器添加成功");
               this.tableData.push(this.form);
               this.getData();
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("服务器添加失败");
             }
@@ -913,16 +901,15 @@ export default {
           state: this.form.state,
           gameId: "",
           platformId: this.form.platformId,
-          serverPort: this.form.serverPort
+          serverPort: this.form.serverPort,
+          openDatetime:this.form.openDatetime
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("服务器信息修改成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器信息修改失败");
           }
@@ -939,11 +926,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`服务器冻结成功`);
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器冻结失败");
           }
@@ -961,11 +946,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("服务器解冻成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器解冻失败");
           }
@@ -985,10 +968,8 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             this.$message.success(`服务器删除成功`);
-            //必须异步处理
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器删除失败");
           }

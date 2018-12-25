@@ -18,31 +18,22 @@ Utils.getUserAllRight = function (id,url) {
 
             this.responseResult = "\n" + JSON.stringify(successResponse.data)
             if (successResponse.data.code === 200) {
-                console.log(this.responseResult);
-                //console.log(successResponse.data.data);
+                console.log(successResponse.data);
                 console.log("权限获取成功");
                 localStorage.setItem('rightTags', "");
                 localStorage.setItem('rightTags', successResponse.data.data);
                 this.addRouter();
-                //localStorage.setItem('ms_username',this.ruleForm.username);
-                //this.$router.replace({path: '/index'})
 
             } else {
                 this.$message.error(successResponse.data.message);
-                console.log('error');
                 console.log(this.responseResult);
-                return false;
             }
         })
         .catch(failResponse => { })
-
 };
 
 Utils.addRouter = function () {
     var dfr = defaultRouter();
-    //console.log("defaultRouter:"+JSON.stringify(dfr));
-    //实验显示这样修改参数对实际路由没用任何影响
-
     var router = getRouter();
     //重启vue，亲测有效
     console.log("Vue重启中。。。");

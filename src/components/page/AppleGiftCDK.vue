@@ -96,6 +96,7 @@
 
       <el-form label-width="150px" v-if="false">
         <el-form-item label="激活码">
+          
           <el-input style="width:215px" placeholder="请输入激活码" v-model="analyseCDK" clearable></el-input>
         </el-form-item>
         <el-form-item label>
@@ -111,7 +112,9 @@
       width="300px"
       center
     >
+    <div  style="overflow:auto;max-height:500px">
       <div v-for="item in CDKs" :key="item" class="text item">{{item}}</div>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -140,7 +143,6 @@
 import bus from "../common/bus";
 import crypto from "crypto";
 import md5 from "js-md5";
-import dialog from "../test/dialog.vue";
 export default {
   name: "AppleGiftCDK",
   props: ["value"],
@@ -199,7 +201,6 @@ export default {
     };
   },
   components: {
-    "t-dialog": dialog
   },
   computed: {
     cdk: function() {

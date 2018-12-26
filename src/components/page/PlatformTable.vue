@@ -47,7 +47,6 @@
                 </el-table-column>
                 <el-table-column prop="platformTag" label="平台标识" >
                 </el-table-column>
-                
                 <el-table-column prop="gameName" label="所属游戏" width="120">
                 </el-table-column>
                 <el-table-column prop="role" label="对应角色" width="120">
@@ -58,8 +57,8 @@
                 </el-table-column>
                 <el-table-column prop="platform_describe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="dataSource_url" label="数据库地址" >
-                </el-table-column>
+                <!-- <el-table-column prop="dataSource_url" label="数据库地址" >
+                </el-table-column> -->
                 <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <el-table-column prop="addUser"  label="添加人" >
@@ -210,6 +209,8 @@
 </template>
 
 <script>
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'platformTable',
         data() {
@@ -273,12 +274,9 @@
             }
         },
         created() {
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getData();
             this.right();
-        
         },
         computed: {
             data() {
@@ -295,10 +293,8 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("游戏列表获取成功");
                         this.gameList = successResponse.data.data;
-                        
                     }else{
                         console.log(this.responseResult);
                         console.log("游戏列表获取失败");
@@ -312,10 +308,8 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("角色列表获取成功");
-                        this.roleList = successResponse.data.data;
-                        
+                        this.roleList = successResponse.data.data;       
                     }else{
                         console.log(this.responseResult);
                         console.log("角色列表获取失败");
@@ -342,7 +336,6 @@
                 this.getData();
             },
             getData() {
-
                 this.$axios.post(this.url+'/getAllPlatform', {
                     pageNo: this.cur_page,
                     pageSize: 10,
@@ -362,12 +355,10 @@
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
+                        console.log("平台列表获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台列表获取失败");
                     }
@@ -381,15 +372,9 @@
                  this.getData();
             },
             formatter(row, column) {
-                //时间格式化
-                    
-                var date = row[column.property];  
-                if (date == undefined) {  
-                    return "";  
-                }
-
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                //时间格式化               
+                var date = row[column.property];
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;
@@ -430,7 +415,6 @@
                 this.idx = index;
                 this.delVisible = true;
                 this.id = this.tableData[index].id;
-                
             },
             delAll() {
                 this.del_list = this.del_list.concat(this.multipleSelection);
@@ -442,7 +426,6 @@
                 for (let i = 0; i < length; i++) {
                     str += this.multipleSelection[i].id + ',';
                 }
-                console.log(str);
                 //批量删除处理
                 this.$axios.post(this.url+'/deleteAllPlatform',{
                         id: str
@@ -450,21 +433,16 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("平台批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
-
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台批量删除失败");
                     }
                 })
                 .catch(failResponse => {})
-                 
                 this.delAllVisible = false;
-
             }, 
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -487,7 +465,6 @@
                 }
                 this.selectGame="";
                 this.selectRole="";
-                
             },
             saveAddplatform(){
                 if(this.form.platform==""){
@@ -500,9 +477,6 @@
                     console.log("对应角色不能为空");
                     this.$message.error("对应角色不能为空");
                 }else{
-                    console.log(this.selectGame);
-                    console.log(this.selectRole);
-
                     this.$axios.post(this.url+'/addPlatform',{
 
                         platformId: this.form.platformId,
@@ -518,12 +492,10 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("平台添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("平台添加失败");
                         }
@@ -534,7 +506,6 @@
             },
             // 保存编辑
             saveEdit() {
-
                 this.$axios.post(this.url+'/editPlatform',{
                     id:this.form.id,
                     platformId: this.form.platformId,
@@ -547,27 +518,18 @@
                     state:this.form.state,
                     gameId:this.form.gameId,
                     roleId:this.form.roleId
-
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
-                        //this.$router.push('/');
-                        //this.$router.replace({path: '/index'})
                         this.$message.success("平台信息修改成功");
                         this.getData();
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("平台信息修改失败");
                     }
                 })
                 .catch(failResponse => {})
-
-                //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;  
             },
             // 确定冻结
@@ -578,11 +540,9 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`平台冻结成功`);
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台冻结失败');
                         }
@@ -599,11 +559,9 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("平台解冻成功");
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台解冻失败');
                         }
@@ -614,19 +572,15 @@
             },
             // 确定删除
             deleteRow(){
-
                 this.$axios.post(this.url+'/deletePlatform',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`平台删除成功`);
-                            //必须异步处理
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('平台删除失败');
                         }

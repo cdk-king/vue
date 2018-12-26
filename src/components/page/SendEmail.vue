@@ -480,14 +480,6 @@ export default {
       handleVisible: true,
       checkVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platformName: "渠道1"
-        },
-        {
-          platformId: "2",
-          platformName: "渠道2"
-        }
       ],
       isOnlineOptions: [
         {
@@ -695,16 +687,13 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("邮件列表获取成功");
-            //this.$message.success("邮件列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
             this.mapDate();
           } else {
             console.log(this.responseResult);
             console.log("邮件列表获取失败");
-            //this.$message.error("邮件列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -715,9 +704,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("邮件发送类别获取成功");
-            this.$message.success("邮件发送类别获取成功");
             this.sendTypeList = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
@@ -735,7 +722,6 @@ export default {
           if (successResponse.data.code === 200) {
             console.log(this.responseResult);
             console.log("邮件消息类别获取成功");
-            this.$message.success("邮件消息类别获取成功");
             this.EmailTypeList = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
@@ -750,8 +736,6 @@ export default {
       var userData = JSON.parse(localStorage.getItem("userData"));
       this.userId = userData.id;
       this.getPlatformList(this.userId);
-      //this.getEmailType();
-      //this.getSendType();
     },
     // 分页导航
     handleCurrentChange(val) {
@@ -760,20 +744,14 @@ export default {
       this.selectServer();
     },
     formatter(row, column) {
-      //return row.address;
-      //时间格式化
-
       var date = row[column.property];
       if (date == undefined) {
         return "";
       }
-
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
     handleClick(tab, event) {
-      console.log(tab);
-      console.log(tab.name);
     },
     submit() {
       var data = {};
@@ -794,7 +772,6 @@ export default {
         return;
       }
       if (this.editableTabsValue == "1") {
-        console.log("1");
         data = {
           platformId: this.form.platformId,
           serverId: this.form.serverId,
@@ -819,7 +796,6 @@ export default {
         };
       }
       if (this.editableTabsValue == "2") {
-        console.log("2");
         data = {
           platformId: this.form.platformId,
           serverId: this.form.serverId,
@@ -836,7 +812,6 @@ export default {
         };
       }
       if (this.editableTabsValue == "3") {
-        console.log("3");
         data = {
           platformId: this.form.platformId,
           serverId: this.form.serverId,
@@ -853,7 +828,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("邮件添加成功");
             this.$message.success("邮件添加成功");
             this.getEmail();
@@ -861,13 +835,9 @@ export default {
             console.log(this.responseResult);
             console.log("邮件添加失败");
             this.$message.error("邮件添加失败");
-            return false;
           }
         })
         .catch(failResponse => {});
-      console.log(this.form);
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.serverList));
     },
     saveEdit() {
       var data = {};
@@ -942,13 +912,11 @@ export default {
           addUser: this.userId
         };
       }
-      console.log(data);
       this.$axios
         .post(this.url + "/editEmail", data)
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("邮件编辑成功");
             this.$message.success("邮件编辑成功");
             this.getEmail();
@@ -990,7 +958,6 @@ export default {
       };
     },
     timestampToStr(timestamp) {
-      console.log(timestamp);
       if (timestamp == null) {
         return null;
       }
@@ -1078,14 +1045,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("邮件发送完成");
             this.getEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("邮件发送失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -1100,14 +1064,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("邮件删除完成");
             this.getEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("邮件删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});

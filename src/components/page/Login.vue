@@ -108,7 +108,6 @@ export default {
               this.$setTouristName(touristName);
               console.log("this.$touristId:" + this.$touristId);
               console.log("this.$touristName:" + this.$touristName);
-              //and set Userdata
               this.getThisUserInfo(this.$touristName);
               this.getUserAllRight(this.$touristId);
               localStorage.setItem("ms_username", this.$touristName);
@@ -246,7 +245,6 @@ export default {
 
                 this.$message.success("登录成功");
                 localStorage.setItem("ms_username", this.ruleForm.username);
-                console.log(successResponse.data.data);
 
                 //只能储存字符串
                 //roleTable、giftUpload、giftTable...需要获取userId、userName
@@ -257,7 +255,6 @@ export default {
                 this.getUserAllRole(successResponse.data.data.id);
               } else {
                 this.$message.error(successResponse.data.message);
-                console.log("error submit!!");
                 console.log(this.responseResult);
                 var router = getRouter();
                 //重启vue
@@ -286,7 +283,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("角色获取成功");
             localStorage.setItem("roles", "");
             //找不到引用
@@ -294,10 +290,7 @@ export default {
             this.getUserAllRight(id);
           } else {
             this.$message.error(successResponse.data.message);
-            console.log("error");
             console.log(this.responseResult);
-
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -311,34 +304,22 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            //console.log(successResponse.data.data);
             console.log("权限获取成功");
             localStorage.setItem("rightTags", "");
-
             localStorage.setItem("rightTags", successResponse.data.data);
             this.addRouter();
           } else {
             this.$message.error(successResponse.data.message);
-            console.log("error");
             console.log(this.responseResult);
-            return false;
           }
         })
         .catch(failResponse => {});
     },
     addRouter() {
       const right = localStorage.getItem("rightTags");
-      console.log("right:" + right);
-
-      //var dnmr = dynamicRouter();
-      //console.log("dynamicRouter:"+JSON.stringify(dnmr));
       var dfr = defaultRouter();
-      //console.log("defaultRouter:"+JSON.stringify(dfr));
       //实验显示这样修改参数对实际路由没用任何影响
       this.$router.options.routes = dfr;
-      console.log("routes:");
-      console.log(this.$router.options.routes);
 
       //‘vue-router 有方法router.addRoutes(routes) 动态添加更多的路由规则。
       //只能动态添加，暂无删减api

@@ -198,7 +198,6 @@ export default {
     this.date =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
     if(localStorage.getItem("roles")!=null){
       this.roleId = localStorage.getItem("roles").split(",")[0];
-      console.log(localStorage.getItem("roles"));
     }
     this.getRoleName();
   },
@@ -221,7 +220,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("角色信息获取成功");
             this.role = successResponse.data.data[0].role;
           } else {

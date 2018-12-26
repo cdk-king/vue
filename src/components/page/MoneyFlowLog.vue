@@ -12,7 +12,6 @@
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10" style="width:160px">
-                                    <el-option key="0" label="全部" value="0"></el-option>
                                     <el-option
                                     v-for="item in platformOptions"
                                     :key="item.platformId"
@@ -20,7 +19,8 @@
                                     :value="item.platformId">
                                     </el-option>
                             </el-select>
-                            <span class="grid-content bg-purple-light" style="margin-left:22px">选择服务器</span>
+                            <i class="" style="color:red;font-size:18px">*</i>
+                            <span class="grid-content bg-purple-light" style="margin-left:14px">选择服务器</span>
                             <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="请选择服务器" style="width:160px">
                                 <el-option
                                 v-for="item in serverOptions"
@@ -116,17 +116,10 @@ import formatDatetime from "../../code/formatDatetime";
                 is_search: false,
                 total:0,
                 form: {
-                    id:'',
-                    playerName:'',
-                    playerAccount:'',
-                    playerId: '',
-                    userId: '',
-                    addDatetime: '',
                     platformId:"",
                     platform:"",
                     serverId:"",
                     server:"",
-                    isToBan:""
                 },
                 searchKey: {
                     platformId:"",
@@ -156,7 +149,6 @@ import formatDatetime from "../../code/formatDatetime";
             console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             this.getAllServerList();
-            console.log(this.strPlatform);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -178,7 +170,12 @@ import formatDatetime from "../../code/formatDatetime";
                 this.getData();
             },
             getData() {
+                if(this.searchKey.platformId==""){
+                    this.$message.info("请选择平台");
+                    return;
+                }
                 this.$axios.post(this.url+'/api/log/getMoneyFlowLog', {
+                    platformId:this.searchKey.platformId,
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
                     pageSize: 10,
@@ -191,9 +188,7 @@ import formatDatetime from "../../code/formatDatetime";
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(successResponse.data);
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                         this.mapData();
                     }else{
@@ -230,7 +225,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
@@ -257,7 +251,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                     if (successResponse.data.code === 200) {
-                        console.log(this.responseResult);
                         this.serverList = successResponse.data.data.list;
                     } else {
                         console.log(this.responseResult);
@@ -273,7 +266,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                     for(var i = 0;i<this.serverOptions.length;i++){

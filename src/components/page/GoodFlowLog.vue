@@ -12,7 +12,6 @@
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item class="el-form-item" label="选择平台" >
                             <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10" style="width:160px">
-                                    <el-option key="0" label="全部" value="0"></el-option>
                                     <el-option
                                     v-for="item in platformOptions"
                                     :key="item.platformId"
@@ -20,7 +19,8 @@
                                     :value="item.platformId">
                                     </el-option>
                             </el-select>
-                            <span class="grid-content bg-purple-light" style="margin-left:22px">选择服务器</span>
+                            <i class="" style="color:red;font-size:18px">*</i>
+                            <span class="grid-content bg-purple-light" style="margin-left:14px">选择服务器</span>
                             <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="请选择服务器" style="width:160px">
                                 <el-option
                                 v-for="item in serverOptions"
@@ -172,7 +172,12 @@ import formatDatetime from "../../code/formatDatetime";
                 this.getData();
             },
             getData() {
+                if(this.searchKey.platformId==""){
+                    this.$message.info("请选择平台");
+                    return;
+                }
                 this.$axios.post(this.url+'/api/log/getGoodFlowLog', {
+                    platformId:this.searchKey.platformId,
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
                     pageSize: 10,

@@ -75,6 +75,10 @@
                                 title: '平台管理'
                             },
                             {
+                                index:'DataSource',
+                                title:'数据源管理'
+                            },
+                            {
                                 index: 'Channel',
                                 title: '通道管理'
                             },
@@ -101,10 +105,6 @@
                                         index: 'PlayerInfo',
                                         title: '玩家基本信息'
                                     },
-                                    //  {
-                                    //     index: 'PlayerUpload',
-                                    //     title: '玩家信息导入'
-                                    // },
                                     {
                                         index: 'PlayerProhibitSpeakLog',
                                         title: '玩家禁言记录' 
@@ -167,10 +167,6 @@
                                 index: '2-2',
                                 title: '道具管理',
                                 subs: [
-                                    // {
-                                    //     index: 'PropInfo',
-                                    //     title: '道具信息'
-                                    // },
                                     {
                                         index: 'newPropInfo',
                                         title: '道具导入信息'
@@ -183,20 +179,12 @@
                                         index: 'AppleProp',
                                         title: '申请道具'
                                     },
-                                    // {
-                                    //     index: 'ConfirmAppleProp',
-                                    //     title: '申请道具审核'
-                                    // }
                                 ]
                             },
                             {
                                 index: '2-3',
                                 title: '礼包管理',
                                 subs: [
-                                    // {
-                                    //     index: 'GiftInfo',
-                                    //     title: '礼包信息'
-                                    // },
                                     {
                                         index: 'newGiftInfo',
                                         title: '礼包导入信息'
@@ -223,18 +211,18 @@
                         index: 'SystemSet',
                         title: '系统设置',
                         subs: [
+                                {
+                                    index: 'TouristIdSet',
+                                    title: '游客账号设置'
+                                },
                                     {
-                                        index: 'TouristIdSet',
-                                        title: '游客账号设置'
-                                    },
-                                     {
-                                        index: 'Upload',
-                                        title: '文件中转'
-                                    },
-                                    {
-                                        index:'Xlsx',
-                                        title:'Xlsx',
-                                    }
+                                    index: 'Upload',
+                                    title: '文件中转'
+                                },
+                                {
+                                    index:'Xlsx',
+                                    title:'Xlsx',
+                                }
                         ]
                     },
         
@@ -253,8 +241,6 @@
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             });
-            console.log("this.$defaultRouter:");
-            console.log(this.$defaultRouter);
 
             this.mapData();
 
@@ -270,7 +256,6 @@
                         children= this.$defaultRouter[i].children;
                     }
                 }
-
                 for(var j = 0;j<children.length;j++){
                     if(children[j].isRight!=null && children[j].isRight==-1){
                         
@@ -279,8 +264,6 @@
                     }
                     //this.indexList[j] = children[j].path;
                 }
-                console.log("this.indexList:");
-                console.log(this.indexList);
 
             },
             createSide(){
@@ -309,10 +292,8 @@
                     }
                     item.push(a);
                 }
-                console.log(item);
                 this.items = item;
             },
-            // this.indexList.includes('/'+item[i].index) 更简便
             isInclude(key,list){
                 for(var i = 0;i<list.length;i++){
                     let a = list[i].toString();

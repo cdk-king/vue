@@ -83,7 +83,6 @@
         methods:{
             right(){
                 const right = localStorage.getItem('rightTags');
-                console.log("right:"+right);
                 this.getData();
             },
             getData(){
@@ -96,7 +95,6 @@
                     .then(successResponse => {
                     this.responseResult = "\n" + JSON.stringify(successResponse.data);
                     if (successResponse.data.code === 200) {
-                        console.log(this.responseResult);
                         console.log("用户游戏列表获取成功");
                         this.options = successResponse.data.data.list;
                         this.$setGameId(this.options[0].id);

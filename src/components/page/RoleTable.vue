@@ -250,6 +250,8 @@
 <script>
 import draggable from "vuedraggable";
 import Utils from "../../UtilsJs/Utils";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "roleTable",
   data() {
@@ -307,9 +309,7 @@ export default {
     draggable
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getRight();
     this.right();
   },
@@ -395,7 +395,6 @@ export default {
                 }
               }
             }
-            console.log("Data Mapping...");
           }
         }
       });
@@ -409,13 +408,9 @@ export default {
       this.getData();
     },
     formatter(row, column) {
-      //时间格式化
-      var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+        //时间格式化               
+        var date = row[column.property];
+        return formatDatetime(date);
     },
     filterTag(value, row) {
       return row.tag === value;

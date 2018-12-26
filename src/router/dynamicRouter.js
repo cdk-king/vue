@@ -120,6 +120,7 @@ function getchildren() {
      setRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
      setRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
      setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
+     setRouterItem("/DataSource","数据源管理","DataSource_View","DataSource.vue",children,right);
 
 
     var otherItem=[{
@@ -171,7 +172,6 @@ function getchildren() {
     for(var i = 0;i<otherItem.length;i++){
         children.push(otherItem[i]);
     }
-    console.log(children);
     
     const dynamicRouter =
     {

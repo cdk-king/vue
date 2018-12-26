@@ -206,15 +206,11 @@ import bus from '../common/bus';
             if(this.$url!=null){
                 this.url = this.$url;
             }
-            console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
-            console.log(this.strPlatform);
-
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
-            }.bind(this))
-            
+            }.bind(this)) 
             
             this.right();
         },
@@ -230,8 +226,6 @@ import bus from '../common/bus';
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
                 if(right.indexOf('Gift_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
@@ -240,8 +234,6 @@ import bus from '../common/bus';
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
@@ -263,15 +255,10 @@ import bus from '../common/bus';
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("礼包列表获取成功");
-                        //this.$message.success("礼包列表获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包列表获取失败");
                     }
@@ -294,12 +281,10 @@ import bus from '../common/bus';
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
                         this.strPlatform += this.platformOptions[i].platformId+",";
-                        
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
-                    
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
                 }
@@ -317,13 +302,11 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //时间格式化
-                    
+                //时间格式化    
                 var date = row[column.gifterty];  
                 if (date == undefined) {  
                     return "";  
                 }
-
                 var tt=new Date(parseInt(date)).toLocaleString();
                 return tt;
             },
@@ -333,8 +316,6 @@ import bus from '../common/bus';
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
-                console.log("index:"+index);
-                console.log(item.id);
                 this.form = {
                     id:item.id,
                     giftName:item.giftName,
@@ -345,7 +326,6 @@ import bus from '../common/bus';
                     addDatetime: item.addDatetime,
                     state:item.state,
                 }
-                console.log(this.form.id);
                 this.editVisible = true;
             },
             handleChangeStateToFrozen(index, row) {
@@ -364,7 +344,6 @@ import bus from '../common/bus';
                 this.idx = index;
                 this.delVisible = true;
                 this.id = this.tableData[index].id;
-                
             },
             delAll() {
                 this.del_list = this.del_list.concat(this.multipleSelection);
@@ -384,23 +363,16 @@ import bus from '../common/bus';
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("礼包批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
-
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
-                 
                 this.delAllVisible = false;
-
             }, 
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -431,7 +403,6 @@ import bus from '../common/bus';
                     this.$message.error("礼包标识不能为空");
                 }else{
                     this.$axios.post(this.url+'/addGift',{
-
                         id: this.form.id,
                         giftName:this.form.giftName,
                         giftTag:this.form.giftTag,
@@ -441,32 +412,24 @@ import bus from '../common/bus';
                         addUser: this.form.addUser,
                         state:this.form.state,
                         platformId:this.form.platformId,
-                        
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("礼包添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("礼包添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
-                    
                 }               
                 this.addgiftVisible = false; 
-                
             },
             // 保存编辑
             saveEdit() {
-                    console.log(this.form.id);
                 this.$axios.post(this.url+'/editGift',{
                     id:this.form.id,
                     giftName:this.form.giftName,
@@ -476,30 +439,19 @@ import bus from '../common/bus';
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
-
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("礼包信息修改成功");
                         this.getData();
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("礼包信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
-
-                //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;
-                
-                
             },
             // 确定冻结
             changeStateToFrozen(){
@@ -509,21 +461,16 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`礼包冻结成功`);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('礼包冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToFrozenVisible = false;
                 this.rest();
-                
             },
             // 确定解冻
             changeStateToNormal(){
@@ -533,21 +480,16 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("礼包解冻成功");
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('礼包解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToNormalVisible = false;
                 this.rest();
-                
             },
             // 确定删除
             deleteRow(){
@@ -558,24 +500,17 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`礼包删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('礼包删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    
-                
                 this.tableData.splice(this.idx, 1);
-                
                 this.delVisible = false;
-                
             },
             formatState: function (row, column, cellValue, index) { 
 			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';

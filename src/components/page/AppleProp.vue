@@ -4,13 +4,13 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>道具申请
+          <i class="el-icon-lx-cascades"></i>发送道具邮件
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
       <div class="plugins-tips">备注：
-        <br>（1）两种申请方式（为指定角色申请、为全服玩家申请）只能选择其中的一种；
+        <br>（1）两种发送道具邮件方式“为指定角色发送”、“为全服玩家发送”，只能选择其中的一种
         <br>（2）道具参数格式：道具id-道具数量-是否绑定-品质
       </div>
 
@@ -20,7 +20,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -55,7 +55,7 @@
         ></el-input>
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        <el-button type="primary" icon="search" @click="handleAdd">添加申请</el-button>
+        <el-button type="primary" icon="search" @click="handleAdd">添加道具邮件申请</el-button>
       </div>
 
       <el-table
@@ -72,7 +72,7 @@
 
         <el-table-column prop="releaseTitle" label="标题"></el-table-column>
         <el-table-column prop="releaseContent" label="内容"></el-table-column>
-        <el-table-column prop="propList" label="道具列表">
+        <el-table-column prop="propList" label="道具列表" width="120px">
           <template slot-scope="scope">
             <p
               style
@@ -100,7 +100,7 @@
         <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState"></el-table-column>
         <el-table-column prop="userName" label="编辑人"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" width="120px" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -186,44 +186,47 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
-              <el-table-column prop="id" label="道具ID"></el-table-column>
+              <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
               <el-table-column prop="propType" label="道具类别"></el-table-column>
               <el-table-column prop="propDescribe" label="道具描述"></el-table-column>
+              <el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
                   <el-input
-                    placeholder="请输入标题"
-                    v-on:change="changePropCount"
+                    placeholder="请输入数量"
+                    v-on:change="changePropCount(scope.$index)"
                     v-model="propData[scope.$index].propCount"
                     clearable
                   >{{scope.row.propCount}}</el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="是否绑定">
+              <el-table-column label="是否绑定" align="center">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" align="center">
-                <template slot-scope="scope">
+              <el-table-column label="操作" align="center" style="text-align:center">
+                <template slot-scope="scope" >
                   <el-button
-                    type="text"
-                    icon="el-icon-edit"
-                    @click="handleAddPropCount(scope.$index, scope.row)"
-                  >添加</el-button>
-                  <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    type="text"  style="margin-left:0px"
+                    icon="el-icon-remove-outline"
                     @click="handleReducePropCount(scope.$index, scope.row)"
                   >减小</el-button>
+                  <el-button 
+                    type="text" style="margin-left:0px"
+                    icon="el-icon-circle-plus-outline"
+                    @click="handleAddPropCount(scope.$index, scope.row)"
+                  >添加</el-button>
+
                   <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    type="text"  style="margin-left:0px"
+                    icon="el-icon-delete"
                     @click="handleDelProp(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
@@ -259,17 +262,17 @@
                 <template slot-scope="scope">
                   <el-button
                     type="text"
-                    icon="el-icon-edit"
-                    @click="handleAddMoneyCount(scope.$index, scope.row)"
-                  >添加</el-button>
-                  <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    icon="el-icon-remove-outline"
                     @click="handleReduceMoneyCount(scope.$index, scope.row)"
                   >减小</el-button>
                   <el-button
                     type="text"
-                    icon="el-icon-edit"
+                    icon="el-icon-circle-plus-outline"
+                    @click="handleAddMoneyCount(scope.$index, scope.row)"
+                  >添加</el-button>
+                  <el-button
+                    type="text" 
+                    icon="el-icon-delete"
                     @click="handleDelMoneyItem(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
@@ -280,7 +283,7 @@
       </div>
       <Divider/>
       <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
-        <el-tab-pane label="为指定角色申请" name="1">
+        <el-tab-pane label="指定角色道具邮件申请" name="1">
           <el-form ref="form" :model="form" label-width="200px">
             <el-form-item label="玩家名称">
               <el-input
@@ -313,7 +316,7 @@
             <el-form-item label="申请说明">
               <el-input
                 style="width:515px"
-                placeholder="请输入"
+                placeholder="请输入申请说明"
                 type="textarea"
                 :autosize="{ minRows:4, maxRows: 10}"
                 v-model="form.applyReason"
@@ -326,7 +329,7 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="为全服玩家申请" name="2">
+        <el-tab-pane label="全服玩家道具邮件申请" name="2">
           <el-form ref="form" :model="form" label-width="200px">
             <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
@@ -335,7 +338,7 @@
             <el-form-item label="申请说明">
               <el-input
                 style="width:515px"
-                placeholder="请输入"
+                placeholder="请输入申请说明"
                 type="textarea"
                 :autosize="{ minRows:4, maxRows: 10}"
                 v-model="form.applyReason"
@@ -350,10 +353,10 @@
         </el-tab-pane>
       </el-tabs>
 
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="addVisible = false">取 消</el-button>
         <el-button type="primary" @click="addVisible = false">确 定</el-button>
-      </span>
+      </span> -->
     </el-dialog>
 
     <!-- 编辑提示框 -->
@@ -405,18 +408,20 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
-              <el-table-column prop="id" label="道具ID"></el-table-column>
+              <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
               <el-table-column prop="propType" label="道具类别"></el-table-column>
               <el-table-column prop="propDescribe" label="道具描述"></el-table-column>
+              \<el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
                   <el-input
-                    placeholder="请输入标题"
-                    v-on:change="changePropCount"
+                    placeholder="请输入数量"
+                    v-on:change="changePropCount(scope.$index)"
                     v-model="propData[scope.$index].propCount"
                     clearable
                   >{{scope.row.propCount}}</el-input>
@@ -424,25 +429,26 @@
               </el-table-column>
               <el-table-column label="是否绑定">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
                 </template>
               </el-table-column>
               <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
+
                   <el-button
-                    type="text"
-                    icon="el-icon-edit"
-                    @click="handleAddPropCount(scope.$index, scope.row)"
-                  >添加</el-button>
-                  <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    type="text" style="margin-left:0px"
+                    icon="el-icon-remove-outline"
                     @click="handleReducePropCount(scope.$index, scope.row)"
                   >减小</el-button>
                   <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    type="text" style="margin-left:0px"
+                    icon="el-icon-circle-plus-outline"
+                    @click="handleAddPropCount(scope.$index, scope.row)"
+                  >添加</el-button>
+                  <el-button
+                    type="text" style="margin-left:0px"
+                    icon="el-icon-delete"
                     @click="handleDelProp(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
@@ -478,17 +484,17 @@
                 <template slot-scope="scope">
                   <el-button
                     type="text"
-                    icon="el-icon-edit"
-                    @click="handleAddMoneyCount(scope.$index, scope.row)"
-                  >添加</el-button>
-                  <el-button
-                    type="text"
-                    icon="el-icon-edit"
+                    icon="el-icon-remove-outline"
                     @click="handleReduceMoneyCount(scope.$index, scope.row)"
                   >减小</el-button>
                   <el-button
                     type="text"
-                    icon="el-icon-edit"
+                    icon="el-icon-circle-plus-outline"
+                    @click="handleAddMoneyCount(scope.$index, scope.row)"
+                  >添加</el-button>
+                  <el-button
+                    type="text"
+                    icon="el-icon-delete"
                     @click="handleDelMoneyItem(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
@@ -499,7 +505,7 @@
       </div>
       <Divider/>
       <el-tabs type="border-card" @tab-click="handleClick" v-model="editableTabsValue">
-        <el-tab-pane label="为指定角色申请" name="1">
+        <el-tab-pane label="指定角色道具邮件申请" name="1">
           <el-form ref="form" :model="form" label-width="200px">
             <el-form-item label="玩家名称">
               <el-input
@@ -532,7 +538,7 @@
             <el-form-item label="申请说明">
               <el-input
                 style="width:515px"
-                placeholder="请输入"
+                placeholder="请输入申请说明"
                 type="textarea"
                 :autosize="{ minRows:4, maxRows: 10}"
                 v-model="form.applyReason"
@@ -540,12 +546,12 @@
               ></el-input>
             </el-form-item>
             <el-form-item label>
-              <el-button type="primary" icon="search" @click="editApply">申请</el-button>
+              <el-button type="primary" icon="search" @click="editApply">编辑</el-button>
               <el-button type="primary" icon="search" @click="resetForm">重置</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="为全服玩家申请" name="2">
+        <el-tab-pane label="全服玩家道具邮件申请" name="2">
           <el-form ref="form" :model="form" label-width="200px">
             <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
@@ -554,7 +560,7 @@
             <el-form-item label="申请说明">
               <el-input
                 style="width:515px"
-                placeholder="请输入"
+                placeholder="请输入申请说明"
                 type="textarea"
                 :autosize="{ minRows:4, maxRows: 10}"
                 v-model="form.applyReason"
@@ -569,19 +575,10 @@
         </el-tab-pane>
       </el-tabs>
 
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="editVisible = false">取 消</el-button>
         <el-button type="primary" @click="editVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 编辑冻结提示框 -->
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
-      <div class="del-dialog-cnt">是否确定？</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
+      </span> -->
     </el-dialog>
 
     <!-- 批量删除提示框 -->
@@ -730,6 +727,10 @@ export default {
     handleAddPropCount(index, row) {
       var data = this.propData[index];
       var count = parseInt(data.propCount) + 1;
+      if(count>parseInt(row.propMaxCount)){
+          this.$message.info("超过最大堆叠数量");
+          return;
+      }
       data.propCount = count;
       this.$set(this.propData, index, data);
     },
@@ -766,21 +767,21 @@ export default {
           var data = this.moneyList[i];
           var count = parseInt(data.moneyCount) + 1;
           data.moneyCount = count;
-          //console.log(this.propData[i].propCount);
           this.$set(this.moneyList, i, data);
-          //console.log(this.propData[i].propCount);
           return;
         }
       }
       //否则添加新的货币
-      var moneyType = this.form.moneyType;
-      var moneyCount = 1;
-      var item = {};
-      item.moneyType = moneyType;
-      item.moneyCount = moneyCount;
-
-      //var item = moneyType+"|"+moneyCount;
-      this.moneyList.push(item);
+      console.log(this.form.moneyType);
+      if(this.form.moneyType!="" && this.form.moneyType!=null ){
+        var moneyType = this.form.moneyType;
+        var moneyCount = 1;
+        var item = {};
+        item.moneyType = moneyType;
+        item.moneyCount = moneyCount;
+        this.moneyList.push(item);
+      }
+      
     },
     addPropToList() {
       //找到相同项的道具数量加一
@@ -788,11 +789,15 @@ export default {
         var item = this.propData[i];
         if (item.propId == this.form.propId) {
           var data = this.propData[i];
+          
           var count = parseInt(data.propCount) + 1;
+          if(count>parseInt(item.propMaxCount)){
+              this.$message.info("超过最大堆叠数量");
+              return;
+          }
           data.propCount = count;
-          //console.log(this.propData[i].propCount);
           this.$set(this.propData, i, data);
-          //console.log(this.propData[i].propCount);
+          
           return;
         }
       }
@@ -804,8 +809,9 @@ export default {
           break;
         }
       }
-
       this.form.prop.propCount = 1;
+      this.form.prop.propBind = "0";
+      
       this.propData.push(this.form.prop);
       console.log(this.propData);
     },
@@ -817,11 +823,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("货币类型列表获取成功");
             this.moneyTypeOptions = successResponse.data.data.list;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("货币类型列表获取失败");
           }
@@ -835,11 +839,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("品质类型列表获取成功");
             this.propQualityOptions = successResponse.data.data.list;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("品质类型列表获取失败");
           }
@@ -858,13 +860,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("申请道具列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
             //this.mapDate();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("申请道具列表获取失败");
           }
@@ -875,17 +875,9 @@ export default {
 
       for (var i = 0; i < this.tableData.length; i++) {
         var item = this.tableData[i];
-        //this.getPropList(item.platformId);
         var propList = item.propList.split(",");
         for (var j = 0; j < propList.length; j++) {
           var propInfo = propList[j].split("-");
-          // for(var k = 0;k<this.propOptions.length;k++){
-          //     console.log(this.propOptions[k].id+"|"+propInfo[0]);
-          //     if(this.propOptions[k].id==propInfo[0]){
-          //         console.log(this.propOptions[k].propName);
-          //         propInfo.push(this.propOptions[k].propName);
-          //     }
-          // }
           list.push(propInfo);
         }
         this.tableData[i].propList = list;
@@ -898,14 +890,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家类型列表获取成功");
             this.playerTypeOptions = successResponse.data.data.list;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("玩家类型列表获取失败");
-            return false;
           }
         });
     },
@@ -930,15 +919,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具列表获取成功");
-            //this.$message.success("道具列表获取成功");
             this.propOptions = successResponse.data.data.list;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("道具列表获取失败");
-            return false;
           }
         });
     },
@@ -951,21 +936,18 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
               this.strPlatform += this.platformOptions[i].platformId + ",";
             }
-            console.log(this.strPlatform);
             this.strPlatform = this.strPlatform.substring(
               0,
               this.strPlatform.length - 1
             );
             this.getApplyProp();
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
@@ -980,15 +962,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -1001,15 +980,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
-
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -1025,30 +1000,26 @@ export default {
     selectSearchKeyServer() {
       this.getApplyProp();
     },
-    changePropCount(value) {
-      console.log(value);
-      console.log(this.propData);
+    changePropCount(index) {
+        var item = this.propData[index];
+        var arr = JSON.parse(JSON.stringify(item));
+        if(arr.propCount>item.propMaxCount){
+            this.$message.info("超过最大堆叠数量");
+            arr.propCount = item.propMaxCount;
+            this.$set(this.propData,index,arr);
+        }
     },
     changeMoneyCount(value) {
-      console.log(value);
     },
     search() {
       this.getApplyProp();
-      //var a = "[{'id':1,'propName':'道具1','propTag':'prop1','propDescribe':'描述1','platformId':1,'platform':'平台1','propCount':1}]";
-      //var a = '[{"id":1,"propName":"道具1","propTag":"prop1","propDescribe":"描述1","platformId":1,"platform":"平台1","propCount":1}]';
-      //var a = '([{\"id\":1,\"propName\":\"道具1\",\"propTag\":\"prop1\",\"propDescribe\":\"描述1\r\",\"platformId\":1,\"platform\":\"平台1\",\"propCount\":1}])';
-      //a=a.replace('=',':')
-      //console.log(eval(a));
     },
     formatter(row, column) {
-      //return row.address;
       //时间格式化
-
       var date = row[column.property];
       if (date == undefined) {
         return "";
       }
-
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
@@ -1088,6 +1059,10 @@ export default {
       }
       if (this.form.releaseContent == "") {
         this.$message("内容不能为空");
+        return;
+      }
+      if (this.propData == "") {
+        this.$message("道具不能为空");
         return;
       }
       var list = "";
@@ -1134,8 +1109,6 @@ export default {
       }
       moneyList = moneyList.substring(0, moneyList.length - 1);
       if (this.editableTabsValue == "1") {
-        console.log("1");
-
         data = {
           platformId: this.form.platformId,
           serverId: this.form.serverId,
@@ -1154,20 +1127,15 @@ export default {
         };
       }
       if (this.editableTabsValue == "2") {
-        console.log("2");
         data = {
           platformId: this.form.platformId,
           serverId: this.form.serverId,
           releaseTitle: this.form.releaseTitle,
           releaseContent: this.form.releaseContent,
           applyType: 2,
-
           propList: list,
-
           applyUser: this.form.applyUser,
-
           applyReason: this.form.applyReason,
-
           addUser: this.id,
           moneyList: moneyList
         };
@@ -1177,7 +1145,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请添加成功");
             this.$message.success("道具申请添加成功");
             this.getApplyProp();
@@ -1189,12 +1156,13 @@ export default {
           }
         })
         .catch(failResponse => {});
-      console.log(this.form);
-      console.log(data);
-      console.log(JSON.stringify(data));
     },
     handleEdit(index, row) {
+      
+      this.propData =[];
+      this.moneyList = [];
       var item = this.tableData[index];
+      
       this.form = {
         id: item.id,
         platformId: item.platformId,
@@ -1208,8 +1176,53 @@ export default {
         applyUser: item.applyUser,
         applyReason: item.applyReason
       };
-      this.getPropList(this.form.platformId);
-      this.editVisible = true;
+      this.getServerList(item.platformId);
+      this.$axios
+      .post(this.url + "/getPropUplaod", {
+        pageNo: 1,
+        pageSize: 10,
+        isPage: "",
+        platformId: item.platformId,
+        strPlatform: item.platformId
+      })
+      .then(successResponse => {
+        this.responseResult = "\n" + JSON.stringify(successResponse.data);
+        if (successResponse.data.code === 200) {
+            console.log("道具列表获取成功");
+            this.propOptions = successResponse.data.data.list;
+            var arr = item.propList.split(",");
+            for(var i = 0;i<arr.length;i++){
+              var ob = {};
+                ob.propId = arr[i].split("-")[0];
+                ob.propCount = arr[i].split("-")[1];
+                ob.propBind = arr[i].split("-")[2];
+                ob.propQuality = arr[i].split("-")[3];
+                for(var j = 0;j<this.propOptions.length;j++){
+                    if(ob.propId==this.propOptions[j].propId){
+                      ob.propName = this.propOptions[j].propName;
+                      ob.propType = this.propOptions[j].propType;
+                      ob.propDescribe = this.propOptions[j].propDescribe;
+                      ob.propMaxCount = this.propOptions[j].propMaxCount;
+                      
+                      this.propData.push(ob);
+                      break;
+                    }
+                }
+            }
+            arr = item.moneyList.split(",");
+            for(var i = 0;i<arr.length;i++){
+                var ob = {};
+                ob.moneyType = arr[i].split("|")[0];
+                ob.moneyCount = arr[i].split("|")[1];
+                this.moneyList.push(ob);
+            }
+            this.editVisible = true;
+        } else {
+          console.log(this.responseResult);
+          this.$message.error("道具列表获取失败");
+        }
+      });
+      
     },
     editApply() {
       var data = {};
@@ -1227,6 +1240,10 @@ export default {
       }
       if (this.form.releaseContent == "") {
         this.$message("内容不能为空");
+        return;
+      }
+      if (this.propData == "") {
+        this.$message("道具不能为空");
         return;
       }
       var list = "";
@@ -1275,8 +1292,6 @@ export default {
       }
       moneyList = moneyList.substring(0, moneyList.length - 1);
       if (this.editableTabsValue == "1") {
-        console.log("1");
-
         data = {
           id: this.form.id,
           platformId: this.form.platformId,
@@ -1296,7 +1311,6 @@ export default {
         };
       }
       if (this.editableTabsValue == "2") {
-        console.log("2");
         data = {
           id: this.form.id,
           platformId: this.form.platformId,
@@ -1316,7 +1330,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请修改成功");
             this.$message.success("道具申请修改成功");
             this.getApplyProp();
@@ -1344,6 +1357,8 @@ export default {
         applyUser: "",
         applyReason: ""
       };
+      this.propData = [];
+      this.moneyList = [];
       this.addVisible = true;
     },
     handleApply(index, row) {
@@ -1426,7 +1441,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllApplyProp", {
@@ -1453,7 +1467,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     handleNotConfirm(index, row) {
       this.$axios
@@ -1472,7 +1485,6 @@ export default {
             console.log(this.responseResult);
             console.log("道具申请审核不通过失败");
             this.$message.error("道具申请审核不通过失败");
-            return false;
           }
         });
     },
@@ -1554,7 +1566,6 @@ export default {
 
 <style scoped>
 .el-form-item {
-  /* border: 1px solid red; */
   width: 100%;
 }
 .form-box {

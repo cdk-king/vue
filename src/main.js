@@ -35,7 +35,6 @@ Vue.prototype.$gameId = 0;
 Vue.prototype.$setGameId = function(id){
     Vue.prototype.$gameId = id;
 };
-//todo
 //游客Id
 Vue.prototype.$touristId = 0;
 Vue.prototype.$setTouristId = function(id){

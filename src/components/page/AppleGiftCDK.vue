@@ -261,7 +261,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
             console.log(successResponse.data);
+          //window.location.href = window.URL.createObjectURL(successResponse.data);
+
           //A File, Blob or MediaSource object to create an object URL for.
+
           let url = window.URL.createObjectURL(successResponse.data)
           let link = document.createElement('a')
           link.style.display = 'none'
@@ -269,6 +272,7 @@ export default {
           link.setAttribute('download', fileName)
           document.body.appendChild(link)
           link.click();
+          
           //URL.revokeObjectURL(link.href) // 释放URL 对象
           //document.body.removeChild(link)
             
@@ -479,7 +483,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
@@ -493,10 +496,8 @@ export default {
             );
             this.getCoupon();
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -510,14 +511,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("礼包列表获取成功");
             this.giftOptions = successResponse.data.data.list;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("礼包列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -555,13 +553,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("列表获取成功");
             this.tableData = successResponse.data.data.list;
-            console.log(this.tableData);
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("列表获取失败");
           }

@@ -326,14 +326,6 @@ export default {
       addPlatformEmailVisible: false,
       editPlatformEmailVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platformName: "渠道1"
-        },
-        {
-          platformId: "2",
-          platformName: "渠道2"
-        }
       ],
       platformValue: "",
       platformLabel: "",
@@ -472,7 +464,7 @@ export default {
           }
         })
         .catch(failResponse => {
-          this.form.serverList = "";
+          this.form.serverList = [];
           this.serverOptions = [];
         });
     },
@@ -496,7 +488,7 @@ export default {
         .catch(failResponse => {});
     },
     selectPlatform() {
-      this.form.serverList = "";
+      this.form.serverList = [];
       this.serverOptions = [];
       this.getServerList(this.form.platformId);
     },
@@ -670,7 +662,9 @@ export default {
       this.dialogVisible = true;
     },
     handleCheckedServer() {
+      console.log(this.form);
       console.log(this.form.serverList);
+      console.log(this.serverOptions);
     },
     selectSearchKeyPlatform() {
       this.getSearchKeyServerList(this.searchKey.platformId);

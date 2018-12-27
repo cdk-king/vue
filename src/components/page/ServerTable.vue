@@ -108,7 +108,7 @@
         ></el-table-column>
         <el-table-column prop="addUser" label="添加人"></el-table-column>
         <el-table-column prop="isDefault" width="50" label="是否默认" :formatter="formatIsDefault"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" width="120px">
+        <el-table-column label="操作" align="center" v-if="handleVisible" width="120px" fixed="right">
           <template slot-scope="scope">
             <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button
@@ -127,7 +127,7 @@
               @click="handleServerAddChannel(scope.$index, scope.row)"
             >添加平台通道</el-button>
             
-            <!-- <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
+            <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -221,7 +221,11 @@
         </el-form-item>
 
         <el-form-item label="开服时间">
-            <el-date-picker type="datetime" placeholder="选择日期" v-model="form.openDatetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;"></el-date-picker>
+              <el-date-picker
+              v-model="form.openServiceTime"
+              type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
         </el-form-item>
 
         <el-form-item label="添加人">
@@ -358,7 +362,7 @@ export default {
         state: "",
         gameName: "",
         role: "",
-        openDatetime:""
+        openServiceTime:""
       },
       searchKey: {
         id: "",
@@ -372,7 +376,8 @@ export default {
         addDatetime: "",
         state: "",
         gameName: "",
-        platform: ""
+        platform: "",
+        openServiceTime:""
       },
       idx: -1,
       id: -1,
@@ -722,7 +727,7 @@ export default {
         roleId: item.roleId,
         platformId: item.platformId,
         serverPort: item.serverPort,
-        openDatetime: item.openDatetime
+        openServiceTime: item.openServiceTime
       };
       this.editVisible = true;
     },
@@ -760,7 +765,6 @@ export default {
         .catch(failResponse => {});
     },
     saveChangeState() {
-      console.log(this.form.state);
       this.$axios
         .post(this.url + "/api/server/ChangeState", {
           id: this.id,
@@ -888,6 +892,7 @@ export default {
     },
     // 保存编辑
     saveEdit() {
+      console.log(this.form.openServiceTime);
       this.$axios
         .post(this.url + "/editServer", {
           id: this.form.id,
@@ -902,7 +907,7 @@ export default {
           gameId: "",
           platformId: this.form.platformId,
           serverPort: this.form.serverPort,
-          openDatetime:this.form.openDatetime
+          openServiceTime:this.GMTToStr(this.form.openServiceTime)
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -916,6 +921,16 @@ export default {
         })
         .catch(failResponse => {});
       this.editVisible = false;
+    },
+    GMTToStr(time){
+        let date = new Date(time)
+        let Str=date.getFullYear() + '-' +
+        (date.getMonth() + 1) + '-' + 
+        date.getDate() + ' ' + 
+        date.getHours() + ':' + 
+        date.getMinutes() + ':' + 
+        date.getSeconds()
+        return Str
     },
     // 确定冻结
     changeStateToFrozen() {
@@ -960,7 +975,7 @@ export default {
     // 确定删除
     deleteRow() {
       this.$axios
-        .post(this.url + "/deleteserver", {
+        .post(this.url + "/deleteServer", {
           id: this.id
         })
         .then(successResponse => {

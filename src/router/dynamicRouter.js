@@ -104,7 +104,7 @@ function getchildren() {
      setRouterItem("/AllNotice","全服公告","All_Notice_View","AllNotice.vue",children,right);
      setRouterItem("/PropInfo","道具信息","Prop_Info_View","PropTable.vue",children,right);
      setRouterItem("/newPropInfo","道具导入信息","Prop_Upload_View","NewPropTable.vue",children,right);
-     setRouterItem("/AppleProp","申请道具","Apple_Prop_View","AppleProp.vue",children,right);
+     setRouterItem("/AppleProp","发送道具邮件","Apple_Prop_View","AppleProp.vue",children,right);
      setRouterItem("/PropUpload","道具导入","Upload_Prop_View","PropUpload.vue",children,right);
      setRouterItem("/GiftInfo","礼包信息","Gift_Info_View","GiftTable.vue",children,right);
      setRouterItem("/newGiftInfo","礼包导入信息","Gift_Upload_View","NewGiftTable.vue",children,right);

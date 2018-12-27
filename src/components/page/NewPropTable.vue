@@ -49,6 +49,8 @@
                 
                 <el-table-column prop="propDescribe" label="描述" >
                 </el-table-column> 
+                <el-table-column prop="propMaxCount" label="最大堆叠数量" >
+                </el-table-column> 
                 <el-table-column prop="platform" label="所在平台" >
                 </el-table-column>
             </el-table>

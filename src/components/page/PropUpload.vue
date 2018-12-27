@@ -26,7 +26,7 @@
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传xlsx文件</div>
+                <div class="el-upload__tip" slot="tip">只能上传xls/xlsx文件</div>
             </el-upload>
 
             <Divider />
@@ -127,7 +127,6 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
-                //this.fullscreenLoading = true;
                 this.loading = this.$loading({
                         lock: true,
                         text: '数据导入中...',
@@ -143,11 +142,9 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log(this.responseResult);
-                        //this.fullscreenLoading = false;
                         this.loading.close();
                         this.$message.success("道具导入成功");
                     }else{
-                        console.log('error');
                         this.loading.close();
                         console.log(this.responseResult);
                         this.$message.error("道具导入失败");
@@ -155,7 +152,6 @@
                 })
                 .catch(failResponse => {
                     this.loading.close();
-                    console.log('error');
                 })
             },
             handlePreview(file){
@@ -227,13 +223,14 @@
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                     map.propId = json[i].q_id;
-                    map.propName = json[i].q_name;
-                    map.propType = json[i].q_type;
+                    map.propName = json[i].q_name ? json[i].q_name: "";
+                    map.propType = json[i].q_type ? json[i].q_type: "";
                     if(json[i].q_describe==null){
                         map.prop_describe = "";
                     }else{
                         map.prop_describe = json[i].q_describe;
                     }
+                    map.propMaxCount = json[i].q_max_count ? json[i].q_max_count: 1;
                     
                     this.propList.push(map);
                 }

@@ -177,7 +177,7 @@
                                     },
                                     {
                                         index: 'AppleProp',
-                                        title: '申请道具'
+                                        title: '发送道具邮件'
                                     },
                                 ]
                             },

@@ -184,7 +184,7 @@
         <el-table-column prop="sendType" label="发送类型" :formatter="formatSendType"></el-table-column>
         <el-table-column prop="timeInterval" label="发送时间间隔"></el-table-column>
         <el-table-column prop="cycleTime" label="循环次数"></el-table-column>
-        <el-table-column prop="noticeContent" label="内容"></el-table-column>
+        <el-table-column prop="noticeContent" label="内容" width="400px"></el-table-column>
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column prop="addUser" label="编辑人"></el-table-column>
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
@@ -334,14 +334,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
               this.strPlatform += this.platformOptions[i].platformId + ",";
             }
-            console.log(this.strPlatform);
             this.strPlatform = this.strPlatform.substring(
               0,
               this.strPlatform.length - 1
@@ -362,9 +360,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
-
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
@@ -385,9 +381,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
-
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
             console.log(this.responseResult);
@@ -467,7 +461,6 @@ export default {
             console.log(this.responseResult);
             console.log("公告消息类别获取失败");
             this.$message.error("公告消息类别获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -516,9 +509,6 @@ export default {
         this.$message("请输入正确的公告内容");
         return;
       }
-      console.log(this.form);
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.serverList));
 
       this.$axios
         .post(this.url + "/addNotice", {
@@ -534,7 +524,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("广播添加成功");
             this.$message.success("广播添加成功");
             this.getNotice();
@@ -581,7 +570,6 @@ export default {
         strServerList += serverList[i] + ",";
       }
       strServerList = strServerList.substring(0, strServerList.length - 1);
-      console.log(this.tableData[index].id);
       this.$axios
         .post(this.url + "/sendNotice", {
           id: this.tableData[index].id,

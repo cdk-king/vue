@@ -47,9 +47,9 @@ Vue.prototype.$setTouristName = function(name){
 };
 //url
 //测试环境
-Vue.prototype.$url = "http://127.0.0.1:8011";
+//Vue.prototype.$url = "http://127.0.0.1:8011";
 //生成环境
-//Vue.prototype.$url = "";
+Vue.prototype.$url = "";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
 };
@@ -66,7 +66,6 @@ var router = getRouter();
 router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');
     const right = localStorage.getItem('rightTags');
-    //console.log("right:"+right);
 
     if(!role && to.path !== '/login'){
         //没有登录同时路径不是/login

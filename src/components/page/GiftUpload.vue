@@ -145,7 +145,6 @@
                         this.loading.close();
                         this.$message.success("礼包导入成功");
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.loading.close();
                         this.$message.error("礼包导入失败");
@@ -226,6 +225,7 @@
             dealFile(json){
                 //第一个对象是类型
                 console.log(json.length);
+                console.log(json);
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                         map.giftId = json[i].id;
@@ -233,6 +233,8 @@
                         map.expire_time = json[i].expire_time ? json[i].expire_time: "";
                         map.goods_prize1 = json[i].goods_prize1 ? json[i].goods_prize1: "";
                         map.value_prize1 = json[i].value_prize1 ? json[i].value_prize1: "";
+                        map.giftName = json[i].name ? json[i].name: "";
+                        map.giftDescribe = json[i].describe ? json[i].describe: "";
                     this.giftList.push(map);
                 }
                 this.strGiftList = JSON.stringify(this.giftList);

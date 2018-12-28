@@ -33,6 +33,15 @@
                 </el-table-column>
                 <el-table-column prop="giftId" label="礼包ID"  >
                 </el-table-column>
+                <el-table-column prop="giftName" label="礼包名"  >
+                </el-table-column>
+                <el-table-column  label="礼包描述"  width="250px">
+                     <template slot-scope="scope">
+                        <ul>
+                            <li v-for="item in scope.row.giftDescribe.split('，')" v-bind:key="item">{{ item }}</li>
+                        </ul>
+                     </template>
+                </el-table-column>
                 <el-table-column prop="limitCount" label="领取限制" >
                 </el-table-column>
                 <el-table-column prop="expire_time" label="过期时间" >

@@ -69,7 +69,7 @@
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
         <el-table-column prop="addUser" width="120" label="添加人"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"

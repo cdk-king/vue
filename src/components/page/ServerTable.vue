@@ -123,7 +123,7 @@
             >设置默认</el-button>
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-circle-plus-outline"
               @click="handleServerAddChannel(scope.$index, scope.row)"
             >添加平台通道</el-button>
             

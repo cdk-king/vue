@@ -46,7 +46,7 @@
                 </el-table-column>
                 <el-table-column prop="sort" width="50" label="排序" >
                 </el-table-column>
-                <el-table-column label="操作"  align="center" v-if="handleVisible">
+                <el-table-column label="操作"  align="center" v-if="handleVisible" fixed="right">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleChangeStateToFrozen(scope.$index, scope.row)" v-if="scope.row.state!=1">冻结</el-button>

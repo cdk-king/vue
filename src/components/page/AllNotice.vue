@@ -119,7 +119,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" label="编辑人"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -129,13 +129,13 @@
             >编辑</el-button>
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleSend(scope.$index, scope.row)"
               v-if="scope.row.sendState==0"
             >发送</el-button>
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleReSend(scope.$index, scope.row)"
               v-if="scope.row.sendState==2"
             >重新发送</el-button>
@@ -214,8 +214,10 @@
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.noticeContent"
+              v-on:change="changeNoticeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
 
           <el-form-item label="需要发送的道具">
@@ -228,6 +230,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:#888">品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
@@ -321,6 +324,7 @@
           </el-form-item>
           <el-form-item label>
             <el-button type="primary" icon="search" @click="submit">提交</el-button>
+            <el-button @click="addPlatformNoticeVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -385,8 +389,10 @@
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.noticeContent"
+              v-on:change="changeNoticeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">  {{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
 
           <el-form-item label="需要发送的道具">
@@ -399,6 +405,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:#888">品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
@@ -542,6 +549,7 @@ export default {
       serverOptions: [],
       searchKeyServerOptions: [],
       serverValue: "",
+      maxLengthVisible:false,
       serverList: [],
       serverLabel: "",
       form: {
@@ -575,7 +583,8 @@ export default {
       errorList: [],
       propTypeList: [],
       url: "http://localhost:8011",
-      strPlatform: ""
+      strPlatform: "",
+      countMaxLength:600
     };
   },
   components: {
@@ -632,6 +641,23 @@ export default {
       var count = parseInt(data.moneyCount) + 1;
       data.moneyCount = count;
       this.$set(this.moneyList, index, data);
+    },
+    changeNoticeContent(){
+      if(this.form.noticeContent.length>this.countMaxLength){
+          this.$message.info("超过最大字符长度"+this.countMaxLength);
+          this.maxLengthVisible = true;
+      }else{
+          this.maxLengthVisible = false;
+      }
+    },
+    changePropCount(index) {
+        var item = this.propData[index];
+        var arr = JSON.parse(JSON.stringify(item));
+        if(arr.propCount>item.propMaxCount){
+            this.$message.info("超过最大堆叠数量");
+            arr.propCount = item.propMaxCount;
+            this.$set(this.propData,index,arr);
+        }
     },
     handleReducePropCount(index, row) {
       if (this.propData[index].propCount > 1) {
@@ -837,15 +863,6 @@ export default {
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
-    changePropCount(index) {
-        var item = this.propData[index];
-        var arr = JSON.parse(JSON.stringify(item));
-        if(arr.propCount>item.propMaxCount){
-            this.$message.info("超过最大堆叠数量");
-            arr.propCount = item.propMaxCount;
-            this.$set(this.propData,index,arr);
-        }
-    },
     handleAddPlatformNotice() {
       this.form = {
         platformId: "",
@@ -906,7 +923,12 @@ export default {
 
       this.form.prop.propCount = 1;
       this.form.prop.propBind = "0";
-      this.propData.push(this.form.prop);
+      if(this.propData.length<5){
+          this.propData.push(this.form.prop);
+      }else{
+          this.$message.info("超过最大品种数量5");
+      }
+      
     },
     submit() {
       if (this.form.platformId == "" || this.form.platformId == undefined) {
@@ -929,6 +951,10 @@ export default {
         this.form.noticeContent == undefined
       ) {
         this.$message("请输入正确的公告内容");
+        return;
+      }
+      if(this.form.noticeContent.length>this.countMaxLength){
+        this.$message("内容长度超过最大限制"+this.countMaxLength);
         return;
       }
       console.log(this.form);
@@ -1400,5 +1426,8 @@ export default {
 }
 .form-box {
   width: 100%;
+}
+.red{
+  color: red;
 }
 </style>

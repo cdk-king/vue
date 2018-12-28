@@ -612,6 +612,7 @@ export default {
               添加
             </el-button>
             <el-button
+              class="red"
               style="position: absolute;right:50px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"

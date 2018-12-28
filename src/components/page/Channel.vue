@@ -80,7 +80,7 @@
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
         <el-table-column prop="addUser" label="添加人"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"

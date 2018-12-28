@@ -71,7 +71,7 @@
         <el-table-column prop="server" label="服务器"></el-table-column>
 
         <el-table-column prop="releaseTitle" label="标题"></el-table-column>
-        <el-table-column prop="releaseContent" label="内容"></el-table-column>
+        <el-table-column prop="releaseContent" label="内容" width="300px"></el-table-column>
         <el-table-column prop="propList" label="道具列表" width="120px">
           <template slot-scope="scope">
             <p
@@ -104,10 +104,10 @@
           <template slot-scope="scope">
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleApply(scope.$index, scope.row)"
               v-if="scope.row.applyState!=1"
-            >发送邮件申请</el-button>
+            >发送邮件</el-button>
             <!-- <el-button type="text" icon="el-icon-edit" @click="handleConfirm(scope.$index, scope.row)" v-if="scope.row.confirmState!=1" >通过</el-button> -->
             <el-button
               type="text"
@@ -172,8 +172,10 @@
               :autosize="{ minRows:4, maxRows: 10}"
               placeholder="请输入邮件内容"
               v-model="form.releaseContent"
+              v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
           <Divider/>
           <el-form-item label="需要发送的道具">
@@ -186,7 +188,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空 </span>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空,品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
@@ -273,6 +275,7 @@
                   <el-button
                     type="text" 
                     icon="el-icon-delete"
+                    class="red"
                     @click="handleDelMoneyItem(scope.$index, scope.row)"
                   >删除</el-button>
                 </template>
@@ -394,8 +397,10 @@
               :autosize="{ minRows:4, maxRows: 10}"
               placeholder="请输入邮件内容"
               v-model="form.releaseContent"
+              v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
           <Divider/>
           <el-form-item label="需要发送的道具">
@@ -408,7 +413,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空 </span>
+            <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空,品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
             <el-table :data="propData" border class="table" ref="multipleTable">
@@ -612,7 +617,6 @@ export default {
       multipleSelection: [],
       show: false,
       dialogVisible: false,
-      aa: this.$cdk,
       platformOptions: [
         {
           platformId: "1",
@@ -679,7 +683,9 @@ export default {
       editVisible: false,
       addVisible: false,
       url: "http://localhost:8011",
-      strPlatform: ""
+      strPlatform: "",
+      maxLengthVisible:false,
+      countMaxLength:600
     };
   },
   components: {
@@ -748,6 +754,14 @@ export default {
         this.$set(this.propData, index, data);
       }
     },
+    changeContent(){
+      if(this.form.releaseContent.length>this.countMaxLength){
+          this.$message.info("超过最大字符长度"+this.countMaxLength);
+          this.maxLengthVisible = true;
+      }else{
+          this.maxLengthVisible = false;
+      }
+    },
     handleReduceMoneyCount(index, row) {
       if (this.moneyList[index].moneyCount > 1) {
         var data = this.moneyList[index];
@@ -811,9 +825,11 @@ export default {
       }
       this.form.prop.propCount = 1;
       this.form.prop.propBind = "0";
-      
-      this.propData.push(this.form.prop);
-      console.log(this.propData);
+      if(this.propData.length<5){
+          this.propData.push(this.form.prop);
+      }else{
+          this.$message.info("超过最大品种数量5");
+      }
     },
     getMoneyTypeList() {
       this.$axios
@@ -1065,6 +1081,10 @@ export default {
         this.$message("道具不能为空");
         return;
       }
+      if(this.form.releaseContent.length>this.countMaxLength){
+        this.$message("内容长度超过最大限制"+this.countMaxLength);
+        return;
+      }
       var list = "";
       for (var i = 0; i < this.propData.length; i++) {
         //判断是否最后
@@ -1084,7 +1104,6 @@ export default {
           }
           break;
         }
-        console.log(this.propData[i].propBind);
         list += this.propData[i].propId + "-" + this.propData[i].propCount;
         if (this.propData[i].propBind) {
           list += "-" + this.propData[i].propBind;
@@ -1247,8 +1266,6 @@ export default {
         return;
       }
       var list = "";
-      console.log("this.propData:" + this.propData);
-      console.log("this.propData.length:" + this.propData.length);
       for (var i = 0; i < this.propData.length; i++) {
         //判断是否是最后一个元素
         if (i + 1 >= this.propData.length) {
@@ -1267,7 +1284,6 @@ export default {
           }
           break;
         }
-        console.log(this.propData[i].propBind);
         list += this.propData[i].propId + "-" + this.propData[i].propCount;
         if (this.propData[i].propBind) {
           list += "-" + this.propData[i].propBind;
@@ -1341,8 +1357,6 @@ export default {
           }
         })
         .catch(failResponse => {});
-      console.log(this.form);
-      console.log(data);
     },
     handleAdd() {
       this.form = {
@@ -1369,12 +1383,9 @@ export default {
       var item = this.tableData[this.idx];
       var money = item.moneyList;
       var propList = item.propList;
-      console.log(money);
-      console.log(propList);
       propList = propList.split(",");
       var itemList = "";
       var len = propList.length;
-      console.log(len);
       for (var i = 0; i < len; i++) {
         var a = propList[i].split("-")[0];
         var b = propList[i].split("-")[1];
@@ -1385,7 +1396,6 @@ export default {
         itemList += info + ";";
       }
       itemList = itemList.substring(0, itemList.length - 1);
-      console.log(itemList);
       this.$axios
         .post(this.url + "/api/applyProp/confirmApply", {
           id: item.id,
@@ -1402,7 +1412,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请邮件发送成功");
             this.$message.success("道具申请邮件发送成功");
             this.getApplyProp();
@@ -1423,7 +1432,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请审核通过成功");
             this.$message.success("道具申请审核通过成功");
             this.getApplyProp();
@@ -1431,7 +1439,6 @@ export default {
             console.log(this.responseResult);
             console.log("道具申请审核通过失败");
             this.$message.error("道具申请审核通过失败");
-            return false;
           }
         });
     },
@@ -1449,16 +1456,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("道具申请批量删除完成");
             this.multipleSelection = [];
             this.getApplyProp();
           } else {
-            this.open4(successResponse.data.message);
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("道具申请批量删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -1477,7 +1480,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请审核不通过成功");
             this.$message.success("道具申请审核不通过成功");
             this.getApplyProp();
@@ -1497,7 +1499,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请添加成功");
             this.$message.success("道具申请添加成功");
             this.getApplyProp();
@@ -1505,7 +1506,6 @@ export default {
             console.log(this.responseResult);
             console.log("道具申请添加失败");
             this.$message.error("道具申请添加失败");
-            return false;
           }
         });
     },
@@ -1556,10 +1556,6 @@ export default {
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   }
 };
 </script>
@@ -1570,5 +1566,8 @@ export default {
 }
 .form-box {
   width: 100%;
+}
+.red{
+  color:red;
 }
 </style>

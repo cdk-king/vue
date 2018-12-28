@@ -98,7 +98,7 @@
             >{{ formatServer(item,scope.row.platformId) }}</p>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -107,13 +107,13 @@
             >编辑</el-button>
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleSend(scope.$index, scope.row)"
               v-if="scope.row.sendState!=1 && scope.row.sendState!=2"
             >发送</el-button>
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleReSend(scope.$index, scope.row)"
               v-if="scope.row.sendState==2"
             >重新发送</el-button>
@@ -192,8 +192,10 @@
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.emailContent"
+              v-on:change="changeContent"
               clearable
             ></el-input>
+            <p class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</p>
           </el-form-item>
           <el-form-item label="发送原因">
             <el-input
@@ -207,13 +209,10 @@
           </el-form-item>
           <el-form-item label>
             <el-button type="primary" icon="search" @click="submit">提交</el-button>
+            <el-button @click="addPlatformEmailVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addPlatformEmailVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addPlatformEmailVisible = false">确 定</el-button>
-      </span>
     </el-dialog>
 
     <!-- 编辑框 -->
@@ -272,8 +271,10 @@
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.emailContent"
+              v-on:change="changeContent"
               clearable
             ></el-input>
+            <p class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</p>
           </el-form-item>
           <el-form-item label="发送原因">
             <el-input
@@ -287,13 +288,10 @@
           </el-form-item>
           <el-form-item label>
             <el-button type="primary" icon="search" @click="editPlatformEmail">提交</el-button>
+            <el-button @click="editPlatformEmailVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editPlatformEmailVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editPlatformEmailVisible = false">确 定</el-button>
-      </span>
     </el-dialog>
 
     <!-- 批量删除提示框 -->
@@ -361,7 +359,9 @@ export default {
       },
       delAllVisible: false,
       url: "http://localhost:8011",
-      strPlatform: ""
+      strPlatform: "",
+      maxLengthVisible:false,
+      countMaxLength:600
     };
   },
   components: {
@@ -408,7 +408,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.allServerList = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
@@ -425,14 +424,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
               this.strPlatform += this.platformOptions[i].platformId + ",";
             }
-            console.log(this.strPlatform);
             this.strPlatform = this.strPlatform.substring(
               0,
               this.strPlatform.length - 1
@@ -453,7 +450,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
 
             this.serverOptions = successResponse.data.data;
@@ -476,7 +472,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
 
             this.searchKeyServerOptions = successResponse.data.data;
@@ -520,7 +515,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("邮件列表获取成功");
             //this.$message.success("邮件列表获取成功");
             this.tableData = successResponse.data.data.list;
@@ -555,6 +549,14 @@ export default {
       var tt = new Date(parseInt(date)).toLocaleString();
       return tt;
     },
+    changeContent(){
+      if(this.form.emailContent.length>this.countMaxLength){
+          this.$message.info("超过最大字符长度"+this.countMaxLength);
+          this.maxLengthVisible = true;
+      }else{
+          this.maxLengthVisible = false;
+      }
+    },
     handleAddPlatformEmail() {
       this.form = {
         platformId: "",
@@ -572,6 +574,10 @@ export default {
       }
       if (this.form.emailContent == "") {
         this.$message("请输入正确的邮件内容");
+        return;
+      }
+      if (this.form.emailContent.length > this.countMaxLength) {
+        this.$message("内容长度超过最大限制"+this.countMaxLength);
         return;
       }
       console.log(this.form);
@@ -895,5 +901,8 @@ export default {
 }
 .form-box {
   width: 100%;
+}
+.red{
+  color: red;
 }
 </style>

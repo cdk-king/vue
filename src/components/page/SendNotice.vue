@@ -99,17 +99,16 @@
                   type="textarea"
                   :autosize="{ minRows:4, maxRows: 10}"
                   v-model="form.noticeContent"
+                  v-on:change="changeContent"
                   clearable
                 ></el-input>
 
-                <span
-                  class="grid-content bg-purple-light"
-                  style="margin:20px;color:#888888"
-                >发送内容的格式以每个游戏自己的定义为准</span>
+                <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
               </el-form-item>
 
               <el-form-item label>
                 <el-button type="primary" icon="search" @click="submit">提交</el-button>
+                <el-button type="primary" icon="search" @click="reset">重置</el-button>
               </el-form-item>
             </el-form>
           </div>
@@ -188,14 +187,20 @@
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column prop="addUser" label="编辑人"></el-table-column>
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-message"
               @click="handleSend(scope.$index, scope.row)"
-              v-if="scope.row.sendState!=1"
+              
             >发送</el-button>
+                      <el-button
+            type="text" 
+            icon="el-icon-delete"
+            class="red"
+            @click="handleDel(scope.$index, scope.row)"
+          >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -240,20 +245,11 @@ export default {
       multipleSelection: [],
       show: false,
       dialogVisible: false,
-      aa: this.$cdk,
       cur_page: 1,
       total: 0,
       handleVisible: true,
       checkVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platformName: "渠道1"
-        },
-        {
-          platformId: "2",
-          platformName: "渠道2"
-        }
       ],
       platformValue: "",
       platformLabel: "",
@@ -291,7 +287,9 @@ export default {
       },
       delAllVisible: false,
       url: "http://localhost:8011",
-      strPlatform: ""
+      strPlatform: "",
+      maxLengthVisible:false,
+      countMaxLength:600,
     };
   },
   components: {
@@ -392,6 +390,14 @@ export default {
     },
     selectPlatform() {
       this.getServerList(this.platformValue);
+    },
+    changeContent(){
+      if(this.form.noticeContent.length>this.countMaxLength){
+          this.$message.info("超过最大字符长度"+this.countMaxLength);
+          this.maxLengthVisible = true;
+      }else{
+          this.maxLengthVisible = false;
+      }
     },
     selectServer() {
       if (this.serverOptions.length > 0) {
@@ -509,6 +515,10 @@ export default {
         this.$message("请输入正确的公告内容");
         return;
       }
+      if (this.form.noticeContent > this.countMaxLength) {
+        this.$message("内容长度超过最大限制"+this.countMaxLength);
+        return;
+      }
 
       this.$axios
         .post(this.url + "/addNotice", {
@@ -547,6 +557,20 @@ export default {
     },
     selectSearchKeyServer() {
       this.getNotice();
+    },
+    reset() {
+      this.platformValue = "";
+      this.serverValue = "";
+      this.serverList = [];
+      this.form = {
+        platformId: "",
+        serverId: "",
+        sendType: "",
+        noticeType: "",
+        timeInterval: "",
+        cycleTime: "",
+        noticeContent: ""
+      };
     },
     formatter(row, column) {
       //时间格式化
@@ -619,13 +643,31 @@ export default {
     handleDelAll() {
       this.delAllVisible = true;
     },
+    handleDel(index, row) {
+      var item = this.tableData[index];
+      this.$axios
+        .post(this.url + "/deleteAllNotice", {
+          id: item.id
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            this.$message.success("公告批量删除完成");
+            this.multipleSelection = [];
+            this.getNotice();
+          } else {
+            console.log(this.responseResult);
+            this.$message.error("公告批量删除失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
     saveDelAll() {
       const length = this.multipleSelection.length;
       let str = "";
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllNotice", {
@@ -634,15 +676,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("公告批量删除完成");
             this.multipleSelection = [];
             this.getNotice();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("公告批量删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -651,14 +690,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   }
 };
 </script>
@@ -669,5 +703,8 @@ export default {
 }
 .form-box {
   width: 100%;
+}
+.red{
+  color: red;
 }
 </style>

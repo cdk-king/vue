@@ -79,7 +79,7 @@
           <template slot-scope="scope">
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-download"
               @click="handleDownload(scope.$index, scope.row)"
             >下载</el-button>
           </template>

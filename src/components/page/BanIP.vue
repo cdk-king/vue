@@ -158,7 +158,6 @@
         </el-table-column>
       </el-table>
       <div class="pagination">
-        <!-- layout="prev, pager, next" :total="500"-->
         <el-pagination
           background
           @current-change="handleCurrentChange"
@@ -285,7 +284,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.getBanIp();
@@ -304,7 +302,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
@@ -323,7 +320,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器列表获取成功");
 
             this.searchKeyServerOptions = successResponse.data.data;
@@ -343,7 +339,6 @@ export default {
         strPlatform += this.platformOptions[i].platformId + ",";
       }
       strPlatform = strPlatform.substring(0, strPlatform.length - 1);
-      console.log(strPlatform);
 
       this.$axios
         .post(this.url + "/api/ip/getBanIp", {
@@ -357,7 +352,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("IP封禁列表获取成功");
             //this.$message.success("IP封禁列表获取成功");
             this.tableData = successResponse.data.data.list;
@@ -381,11 +375,8 @@ export default {
       this.getBanIp();
     },
     changePropCount(value) {
-      console.log(value);
-      console.log(this.propData);
     },
     changeMoneyCount(value) {
-      console.log(value);
     },
     formatter(row, column) {
       var date = row[column.property];
@@ -401,7 +392,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             return;
           }
@@ -426,7 +416,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("IP禁封申请添加成功");
             this.$message.success("IP禁封申请添加成功");
             this.getBanIp();
@@ -451,7 +440,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("IP禁封成功");
             this.$message.success("IP禁封成功");
             this.getBanIp();
@@ -476,7 +464,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("IP解除禁封成功");
             this.$message.success("IP解除禁封成功");
             this.getBanIp();
@@ -496,7 +483,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("道具申请审核通过成功");
             this.$message.success("道具申请审核通过成功");
           } else {
@@ -512,7 +498,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/api/ip/deleteAllBanIp", {
@@ -521,7 +506,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("批量删除成功");
             this.multipleSelection = [];
             this.getBanIp();
@@ -537,7 +521,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     handleDelete(index, row) {
       var item = this.tableData[index];
@@ -548,7 +531,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("删除成功");
             this.$message.success("删除成功");
             this.getBanIp();
@@ -571,7 +553,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getBanIp();
     }
   }

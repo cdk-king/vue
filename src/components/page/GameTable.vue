@@ -150,6 +150,8 @@
 </template>
 
 <script>
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'GameTable',
         data() {
@@ -197,9 +199,7 @@
             }
         },
         created() {
-            if(this.$url!=null){
-            this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getData();
             this.right();
         },
@@ -227,7 +227,6 @@
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             getData() {
@@ -247,13 +246,9 @@
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
-                        //this.$message.success("游戏列表获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏列表获取失败");
                     }
@@ -267,15 +262,9 @@
                  this.getData();
             },
             formatter(row, column) {
-                //时间格式化
-                    
-                var date = row[column.property];  
-                if (date == undefined) {  
-                    return "";  
-                }
-
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                //时间格式化               
+                var date = row[column.property];
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;
@@ -324,7 +313,6 @@
                 for (let i = 0; i < length; i++) {
                     str += this.multipleSelection[i].id + ',';
                 }
-                console.log(str);
                 //批量删除处理
                 this.$axios.post(this.url+'/deleteAllGame',{
                         id: str
@@ -332,13 +320,11 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("游戏批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏批量删除失败");
                     }
@@ -389,12 +375,10 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("游戏添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("游戏添加失败");
                         }
@@ -421,11 +405,9 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("游戏信息修改成功");
                         this.getData();
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("游戏信息修改失败");
                     }
@@ -441,11 +423,9 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`游戏冻结成功`);
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏冻结失败');
                         }
@@ -463,11 +443,9 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("游戏解冻成功");
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏解冻失败');
                         }
@@ -486,12 +464,10 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`游戏删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('游戏删除失败');
                         }

@@ -154,7 +154,7 @@
 
 <script>
 let id = 1000;
-
+import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   data() {
     var data2 = [
@@ -210,9 +210,7 @@ export default {
     };
   },
   created() {
-    if(this.$url!=null){
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getData();
   },
   methods: {
@@ -222,13 +220,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -239,7 +235,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("服务器树状结构获取成功");
             this.TreeList = successResponse.data.data;
             this.MapData(this.TreeList);
@@ -271,10 +266,8 @@ export default {
         }).then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("所有服务器获取成功");
             this.tableData = successResponse.data.data.list;
-            console.log(this.tableData);
           } else {
             console.log(this.responseResult);
             console.log("所有服务器获取失败");
@@ -328,9 +321,6 @@ export default {
       this.treeData = router;
       var ob = {};
       ob["list"] = router;
-      console.log(ob);
-      console.log(Json.stringify(ob));
-      console.log(this.treeData);
     },
     // 保存编辑
     saveEdit() {
@@ -352,11 +342,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("服务器信息修改成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("服务器信息修改失败");
           }
@@ -390,12 +378,10 @@ export default {
         .then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
             if(successResponse.data.code === 200){
-                console.log(this.responseResult);
                 this.$message.success("服务器添加成功");
                 this.tableData.push(this.form);
                 this.getData();
             }else{
-                console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("服务器添加失败");
             }
@@ -414,12 +400,10 @@ export default {
             .then(successResponse =>{
                 this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                 if(successResponse.data.code === 200){
-                    console.log(this.responseResult);
                     this.$message.success(`服务器删除成功`);
                     //必须异步处理
                     this.getData();
                 }else{
-                    console.log('error');
                     console.log(this.responseResult);
                     this.$message.error('服务器删除失败');
                 }
@@ -448,11 +432,9 @@ export default {
         
         if(parent.data.tag=='platform'){
           const platformId = parent.data.id;
-          console.log(platformId);
           this.form.platformId = platformId
         }
         this.addServerVisible = true;
-        console.log(this.form.platformId);
     },
 
     remove(node, data) {
@@ -471,9 +453,6 @@ export default {
       const id = data.id;
       const tag = data.tag;
       this.showVisible = true;
-      console.log("id:" + id);
-      console.log("tag:" + tag);
-      console.log(JSON.stringify(this.tableData));
       const item = this.tableData[0];
       if(tag=='server'){
         for (var i = 0; i < this.tableData.length; i++) {
@@ -528,8 +507,6 @@ export default {
       const index = children.findIndex(d => d.id === data.id);
       const id = data.id;
       const tag = data.tag;
-      console.log("id:" + id);
-      console.log("tag:" + tag);
       const item = this.tableData[0];
       if(tag=="server"){
         for (var i = 0; i < this.tableData.length; i++) {
@@ -631,7 +608,6 @@ export default {
   },
   filters: {
     filters1: function(arg) {
-      console.log("arg:" + arg);
       if (arg == 1) {
         return "已冻结";
       } else {

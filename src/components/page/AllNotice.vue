@@ -105,6 +105,7 @@
             >{{item}}</p>
           </template>
         </el-table-column>
+        <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="startDatetime" label="发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column label="错误服务器id列表">

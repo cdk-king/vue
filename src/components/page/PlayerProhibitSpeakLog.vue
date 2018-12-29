@@ -74,6 +74,7 @@
 <script>
 import bus from '../common/bus';
 import setLocalThisUrl from '../../code/setLocalThisUrl';
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'playerLogTable',
         data() {
@@ -127,10 +128,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
         },
         created() {
             setLocalThisUrl(this);
-            console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
-            console.log(this.strPlatform);
-
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
@@ -150,7 +148,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             //筛选当前用户游戏的玩家
@@ -169,15 +166,10 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("禁言记录获取成功");
-                        //this.$message.success("禁言记录获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("禁言记录获取失败");
                     }
@@ -186,7 +178,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             //当前游戏的平台
             getPlatformList(gameId) {
             var userData =JSON.parse(localStorage.getItem('userData'));
-            console.log(userData);
             this.$axios
                 .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 userId:userData.id,
@@ -195,7 +186,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
@@ -220,11 +210,9 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道服务器列表获取失败");
                 }
@@ -249,13 +237,9 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 this.getData();
             },
             formatDatetime(row, column) {
-                //时间格式化    
-                var date = row[column.property];  
-                if (date == undefined) {  
-                    return "";  
-                }
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                //时间格式化
+                var date = row[column.property];
+                return formatDatetime(date);
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

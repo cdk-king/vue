@@ -226,6 +226,8 @@
 </template>
 
 <script>
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "channelTable",
   data() {
@@ -284,9 +286,7 @@ export default {
     };
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getPlatformList();
     this.getData();
     this.right();
@@ -306,7 +306,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("平台列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
@@ -322,7 +321,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("角色列表获取成功");
             this.roleList = successResponse.data.data;
           } else {
@@ -347,7 +345,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     getData() {
@@ -365,12 +362,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.tableData = successResponse.data.data.list;
-            console.log(this.tableData);
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道列表获取失败");
           }
@@ -384,14 +378,9 @@ export default {
       this.getData();
     },
     formatter(row, column) {
-      //时间格式化
+      //时间格式化               
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     filterTag(value, row) {
       return row.tag === value;
@@ -443,7 +432,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/api/channel/deleteChannel", {
@@ -452,12 +440,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("通道批量删除完成");
             this.multipleSelection = [];
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道批量删除失败");
           }
@@ -507,12 +493,10 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("通道添加成功");
               this.tableData.push(this.form);
               this.getData();
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("通道添加失败");
             }
@@ -536,11 +520,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("通道信息修改成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道信息修改失败");
           }
@@ -557,11 +539,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`通道冻结成功`);
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道冻结失败");
           }
@@ -579,11 +559,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("通道解冻成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道解冻失败");
           }
@@ -601,12 +579,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`通道删除成功`);
             //必须异步处理
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("通道删除失败");
           }

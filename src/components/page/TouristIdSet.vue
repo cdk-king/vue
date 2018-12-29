@@ -80,8 +80,6 @@ export default {
     getData() {
       //每次需要显示游客Id时，会设置一次this.$touristId和touristName
       this.getTourist();
-
-      console.log("this.$gameId:" + this.$gameId);
       this.getAllUserList();
     },
     getTourist() {
@@ -91,12 +89,8 @@ export default {
           //stringify json => str
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(successResponse.data);
-
             var touristId = successResponse.data.data.split("|")[0];
             var touristName = successResponse.data.data.split("|")[1];
-            console.log("touristId:" + touristId);
-            console.log("touristName:" + touristName);
             if (touristId != "0" && touristId != "") {
               this.$setTouristId(parseInt(touristId));
               this.$setTouristName(parseInt(touristName));
@@ -107,7 +101,6 @@ export default {
             }
           } else {
             this.$message.error(successResponse.data.message);
-            console.log("error submit!!");
             console.log(this.responseResult);
           }
         })
@@ -124,7 +117,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户列表获取成功");
             //再次设置this.$touristId
             this.$setTouristId(this.form.userId);
@@ -144,7 +136,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户列表获取成功");
             this.userOptions = successResponse.data.data.list;
             this.setUserName();
@@ -156,7 +147,6 @@ export default {
         .catch(failResponse => {});
     },
     selectUser() {
-      console.log(this.form.userId);
     },
     setUserName() {
       for (var i = 0; i < this.userOptions.length; i++) {

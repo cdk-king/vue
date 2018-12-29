@@ -61,6 +61,7 @@
 
 <script>
     import bus from '../common/bus';
+    import setLocalThisUrl from "../../code/setLocalThisUrl";
     import XLSX from 'xlsx';
     export default {
         name: 'upload',
@@ -87,9 +88,7 @@
             
         },
         created(){
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -101,7 +100,6 @@
         },
         methods:{
             getData(){
-                console.log("this.$gameId:"+this.$gameId);
                 this.getPlatformList(this.$gameId);
             },
             getPlatformList(gameId) {
@@ -115,11 +113,9 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
                 }
@@ -141,7 +137,6 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.loading.close();
                         this.$message.success("礼包导入成功");
                     }else{
@@ -159,7 +154,6 @@
                 
             },
             handleChange(file,fileList){
-                console.log(file.raw);
                 const reader = new FileReader();
 
                  reader.readAsText(file.raw, "gb2312");
@@ -169,7 +163,6 @@
                         var list = fileText.split("\n");
                         for(var i = 0;i<list.length;i++){
                             var data = list[i].split('|');
-                            console.log(data.length);
                             if(data.length>1){
                             var map = new Object();
                             map.giftId = data[0];
@@ -181,13 +174,10 @@
                             }
                             
                         }
-                        console.log(this.propList);
                         this.strGiftList = JSON.stringify(this.giftList);
-                        console.log(this.strGiftList);
                     }.bind(this)
             },
             handleChangeXlsx(file,fileList){
-                console.log(file); 
                  var self = this;
                 // 导入excel
                 var f = file.raw;
@@ -195,7 +185,6 @@
                 let $t = this;
                 //定义onload事件
                 reader.onload = function(e) {
-                    console.log(e);
                     var data = e.target.result;
                     
                     if ($t.rABS) {
@@ -209,8 +198,6 @@
                         });
                     }
                     let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
-                    console.log(json);
-                    console.log(JSON.stringify(json));
                     //self.result = JSON.stringify(json);
                     $t.dealFile(json); // analyzeData: 解析导入数据
                 }
@@ -224,8 +211,6 @@
             },
             dealFile(json){
                 //第一个对象是类型
-                console.log(json.length);
-                console.log(json);
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                         map.giftId = json[i].id;
@@ -238,12 +223,10 @@
                     this.giftList.push(map);
                 }
                 this.strGiftList = JSON.stringify(this.giftList);
-                console.log(JSON.stringify(this.giftList))
             },
             upload(e){
                 
                 const file = e.target.files[0];
-                console.log(file);
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");
@@ -251,12 +234,10 @@
                         var fileText = e.target.result.split("\n");
                         for(var i = 0;i<fileText.length;i++){
                             var data = fileText[i].split('|')
-                            console.log(fileText[i]);
                         }
                     }
             },
             selectPlatform() {
-                console.log(this.form.platformId);
             },
 
         },

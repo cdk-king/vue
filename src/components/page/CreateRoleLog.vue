@@ -6,6 +6,12 @@
             </el-breadcrumb>
         </div>
         <div class="container">
+            <div class="plugins-tips">
+                备注：
+                <br/>
+                日志仅显示20天内的数据
+                <br/>
+            </div>
                 <el-collapse v-model="activeNames" >
                 <el-collapse-item title="折叠" name="1">
                     <div class="form-box" style="width:100%">
@@ -40,12 +46,6 @@
                                 <el-input v-model="searchKey.vRoleName" placeholder="角色名" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
-                        <el-form-item label="客户端所在ip">
-                                <el-input v-model="searchKey.vClientIp" placeholder="客户端所在ip" class="handle-input " style="width:160px"></el-input>
-                                <span style="margin-left:22px">登录渠道</span>
-                                <el-input v-model="searchKey.iLoginWay" placeholder="登录渠道" class="handle-input " style="width:160px"></el-input>
-                            
-                        </el-form-item>
                         <el-form-item label="">
                             <el-button type="primary" icon="search" @click="search">查询</el-button>
                         </el-form-item>
@@ -61,23 +61,7 @@
                 </el-table-column>
                 <el-table-column prop="serverName" label="服务器" >
                 </el-table-column>
-                <el-table-column prop="iEventId" label="事件ID" >
-                </el-table-column>
-                <el-table-column prop="iWorldId" label="游戏大区ID" >
-                </el-table-column>
-                <el-table-column prop="iUin" label="用户ID" >
-                </el-table-column>
-                <el-table-column prop="dtEventTime" label="记录时间" :formatter="formatDatetime">
-                </el-table-column>
-                <el-table-column prop="iRoleId" label="角色ID" >
-                </el-table-column>
-                <el-table-column prop="vRoleName" label="角色名" >
-                </el-table-column>
-                <el-table-column prop="iJobId" label="角色职业" >
-                </el-table-column>
-                <el-table-column prop="vClientIp" label="客户端所在ip" >
-                </el-table-column>
-                <el-table-column prop="iLoginWay" label="登录渠道" >
+                <el-table-column :prop="item.name" :label="item.desc" v-for="item in formKey" :key="item.name" :formatter="formatDatetime">
                 </el-table-column>
 
             </el-table>
@@ -121,8 +105,6 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:"",
                     iRoleId:"",
                     vRoleName:"",
-                    vClientIp:"",
-                    iLoginWay:""
                 },
                 platformOptions: [
 
@@ -133,14 +115,16 @@ import formatDatetime from "../../code/formatDatetime";
                 id:"",
                 strPlatform:"",
                 serverList:[],
-                serverIdList:""
+                serverIdList:"",
+                logXml:"",
+                formKey:[],
             }
         },
         created() {
             setLocalThisUrl(this);
-            console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
             this.getAllServerList();
+            this.getLogXml();
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -155,11 +139,27 @@ import formatDatetime from "../../code/formatDatetime";
         mounted() {
         },
         methods: {
-            // 分页导航
-            handleCurrentChange(val) {
-                this.cur_page = val;
-                console.log("page:"+val);
-                this.getData();
+            getLogXml(){
+                    this.$axios.post(this.url+'/api/log/getLogXml', {
+                }).then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        this.logXml = successResponse.data.data;
+                        this.getFormKey("CreateRole");
+                    }else{
+                        console.log(this.responseResult);
+                        this.$message.error("getLogXml失败");
+                    }
+                })
+            },
+            getFormKey(str){
+                var json = JSON.parse(this.logXml);
+                for(var i = 0;i<json.length;i++){
+                    if(json[i].name==str){
+                        this.formKey = json[i].entry;
+                        break;
+                    }
+                }
             },
             getData() {
                 if(this.searchKey.platformId==""){
@@ -175,8 +175,6 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:this.searchKey.iUin,
                     iRoleId:this.searchKey.iRoleId,
                     vRoleName:this.searchKey.vRoleName,
-                    vClientIp:this.searchKey.vClientIp,
-                    iLoginWay:this.searchKey.iLoginWay
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -203,7 +201,6 @@ import formatDatetime from "../../code/formatDatetime";
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:" + val);
                 this.getData();
             },
             //当前游戏的平台
@@ -285,9 +282,11 @@ import formatDatetime from "../../code/formatDatetime";
                 this.getData();
             },
             formatDatetime(row, column) {
-                //时间格式化               
-                var date = row[column.property];
-                return formatDatetime(date);
+                if(column.property=="dtEventTime"){
+                    var date = row[column.property];
+                    return formatDatetime(date);
+                }
+                return row[column.property];
             },
             filterTag(value, row) {
                 return row.tag === value;

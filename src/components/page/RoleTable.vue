@@ -336,7 +336,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     getRight() {
@@ -504,7 +503,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllRole", {
@@ -513,7 +511,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("角色批量删除完成");
             this.multipleSelection = [];
             this.getData();
@@ -572,9 +569,6 @@ export default {
           deleteRoleRights += ",";
         }
       }
-
-      console.log("InsertRoleRights:" + InsertRoleRights);
-      console.log("deleteRoleRights:" + deleteRoleRights);
 
       //还原操作前的数据
       this.doing = oldDoing;
@@ -641,7 +635,6 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("角色添加成功");
               this.tableData.push(this.form);
               this.getData();
@@ -668,7 +661,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("角色信息修改成功");
             this.getData();
           } else {
@@ -688,7 +680,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`角色冻结成功`);
             this.getData();
           } else {
@@ -709,7 +700,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("角色解冻成功");
             this.getData();
           } else {
@@ -730,7 +720,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`角色删除成功`);
             //必须异步处理
             this.getData();
@@ -747,7 +736,6 @@ export default {
       return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
     },
     removeHandle(event) {
-      console.log(event);
       this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
     }
   },

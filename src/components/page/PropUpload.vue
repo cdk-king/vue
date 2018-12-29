@@ -62,6 +62,7 @@
 <script>
     import bus from '../common/bus';
     import XLSX from 'xlsx';
+    import setLocalThisUrl from "../../code/setLocalThisUrl";
     export default {
         name: 'upload',
         data: function(){
@@ -88,9 +89,7 @@
             
         },
         created(){
-                if(this.$url!=null){
-                this.url = this.$url;
-                }
+            setLocalThisUrl(this);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -102,7 +101,6 @@
         },
         methods:{
             getData(){
-                console.log("this.$gameId:"+this.$gameId);
                 this.getPlatformList(this.$gameId);
             },
             getPlatformList(gameId) {
@@ -116,7 +114,6 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
@@ -141,7 +138,6 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.loading.close();
                         this.$message.success("道具导入成功");
                     }else{
@@ -158,7 +154,6 @@
             
             },
             handleChange(file,fileList){
-                console.log(file.raw);
                 const reader = new FileReader();
 
                  reader.readAsText(file.raw, "gb2312");
@@ -177,13 +172,10 @@
                             this.propList.push(map);
                             }
                         }
-                        console.log(this.propList);
                         this.strPropList = JSON.stringify(this.propList);
-                        console.log(this.strPropList);
                     }.bind(this)
             },
             handleChangeXlsx(file,fileList){
-                console.log(file); 
                  var self = this;
                 // 导入excel
                 var f = file.raw;
@@ -191,7 +183,6 @@
                 let $t = this;
                 //定义onload事件
                 reader.onload = function(e) {
-                    console.log(e);
                     var data = e.target.result;
                     
                     if ($t.rABS) {
@@ -205,7 +196,6 @@
                         });
                     }
                     let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
-                    console.log(json);
                     $t.dealFile(json); // analyzeData: 解析导入数据
                 }
                 if (this.rABS) {
@@ -219,7 +209,6 @@
             dealFile(json){
                 //第一个对象是类型
                 //第二个对象是描述
-                console.log(json.length);
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                     map.propId = json[i].q_id;
@@ -235,12 +224,10 @@
                     this.propList.push(map);
                 }
                 this.strPropList = JSON.stringify(this.propList); 
-                console.log(JSON.stringify(this.propList))
             },
             upload(e){
                 
                 const file = e.target.files[0];
-                console.log(file);
                 const reader = new FileReader();
 
                  reader.readAsText(file, "gb2312");
@@ -250,12 +237,10 @@
                         list = e.target.result.split("\n");
                         for(var i = 0;i<list.length;i++){
                             var data = list[i].split('|')
-                            console.log(list[i]);
                         }
                     }
             },
             selectPlatform() {
-                console.log(this.form.platformId);
             },
         },     
     }

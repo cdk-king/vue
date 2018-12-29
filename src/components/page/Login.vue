@@ -51,6 +51,7 @@ import defaultRouter from "../../router/defaultRouter";
 import dynamicRouter from "../../router/dynamicRouter";
 import getRouter from "../../router/index";
 import md5 from "js-md5";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   data: function() {
     var phoneReg = /^[1][3,4,5,7,8][0-9]{9}$/;
@@ -84,10 +85,7 @@ export default {
     };
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
-    this.getTime();
+    setLocalThisUrl(this);
   },
   mounted() {},
   methods: {
@@ -97,17 +95,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(successResponse.data);
 
             var touristId = successResponse.data.data.split("|")[0];
             var touristName = successResponse.data.data.split("|")[1];
-            console.log("touristId:" + touristId);
-            console.log("touristName:" + touristName);
             if (touristId != "0" && touristId != "") {
               this.$setTouristId(parseInt(touristId));
               this.$setTouristName(touristName);
-              console.log("this.$touristId:" + this.$touristId);
-              console.log("this.$touristName:" + this.$touristName);
               this.getThisUserInfo(this.$touristName);
               this.getUserAllRight(this.$touristId);
               localStorage.setItem("ms_username", this.$touristName);
@@ -139,7 +132,6 @@ export default {
           this.getTourist();
         } else {
           localStorage.setItem("ms_username", this.$touristName);
-          console.log(this.$touristId);
           this.getUserAllRight(this.$touristId);
           this.getThisUserInfo(this.$touristName);
           this.$router.push("/");
@@ -147,7 +139,6 @@ export default {
       }
     },
     getThisUserInfo(name) {
-      console.log(name);
       this.$axios
         .post(this.url + "/api/login/getThisUserInfo", {
           name: name
@@ -169,44 +160,6 @@ export default {
         })
         .catch(failResponse => {});
     },
-    /* 时间 */
-    getTime() {
-      var t = new Date();
-      if (true) {
-        console.log(
-          add0(t.getHours()) +
-            " : " +
-            add0(t.getMinutes()) +
-            " <span class='sec'>" +
-            add0(t.getSeconds()) +
-            "</span>"
-        );
-      } else {
-        var h = t.getHours();
-        var str = h < 12 ? "AM" : "PM";
-        h = h <= 12 ? h : h - 12;
-        console.log(
-          "<span id='time'>" +
-            add0(h) +
-            " : " +
-            add0(t.getMinutes()) +
-            " <span class='sec'>" +
-            add0(t.getSeconds()) +
-            "</span><span class='st'>" +
-            str +
-            "</span></span>"
-        );
-      }
-      function add0(n) {
-        return n < 10 ? "0" + n : "" + n;
-      }
-      var myDate = new Date();
-      console.log(myDate.getMonth()); //月份从0--11
-      console.log(myDate.getDate());
-      console.log(myDate.getHours());
-      console.log(myDate.getMinutes());
-    },
-
     submitForm(formName) {
       var myDate = new Date();
       var adpwd = (
@@ -215,8 +168,7 @@ export default {
         parseInt(myDate.getDate()) *
         parseInt(myDate.getHours())
       ).toString();
-
-      console.log(this.ruleForm.username);
+      
       if (this.ruleForm.username == "admin") {
         if (this.ruleForm.password == adpwd) {
           localStorage.setItem("ms_username", "admin");
@@ -229,7 +181,6 @@ export default {
 
       var password1 = md5.hex(this.ruleForm.password + "cdk");
       var password2 = md5.hex(password1 + "cdk");
-      console.log("md5Password:" + password2);
       //表单验证
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -252,13 +203,12 @@ export default {
                   "userData",
                   JSON.stringify(successResponse.data.data)
                 );
-                this.getUserAllRole(successResponse.data.data.id);
+                //this.getUserAllRole(successResponse.data.data.id);
               } else {
                 this.$message.error(successResponse.data.message);
                 console.log(this.responseResult);
                 var router = getRouter();
                 //重启vue
-                console.log("Vue重启中。。。");
                 new Vue({
                   router,
                   render: h => h(App)
@@ -268,7 +218,6 @@ export default {
               }
             })
             .catch(failResponse => {});
-          //
         } else {
           console.log("error submit!!");
           return false;
@@ -296,7 +245,6 @@ export default {
         .catch(failResponse => {});
     },
     getUserAllRight(id) {
-      console.log("id:" + id);
       this.$axios
         .post(this.url + "/getUserAllRight", {
           id: id
@@ -327,8 +275,6 @@ export default {
 
       var router = getRouter();
       //重启vue
-      console.log("Vue重启中。。。");
-
       new Vue({
         router,
         render: h => h(App),

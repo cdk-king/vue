@@ -175,7 +175,11 @@
         <el-table-column prop="sendType" label="发送类型" :formatter="formatterSendType"></el-table-column>
         <el-table-column prop="emailTitle" label="标题"></el-table-column>
         <el-table-column prop="emailContent" label="内容" width="300"></el-table-column>
+        
         <el-table-column prop="sendReason" label="原因"></el-table-column>
+        <el-table-column prop="playerIdList" label="角色ID"></el-table-column>
+        <el-table-column prop="playerNameList" label="角色名称"></el-table-column>
+        <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column prop="userName" label="编辑人"></el-table-column>
@@ -609,6 +613,10 @@ export default {
 
           addUser: this.userId
         };
+        if(this.form.playerNameList=="" && this.form.playerIdList==""){
+            this.$message("请输入其中一项角色信息");
+            return;
+        }
       }
       if (this.editableTabsValue == "3") {
         data = {

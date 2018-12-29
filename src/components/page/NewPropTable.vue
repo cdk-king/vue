@@ -156,6 +156,8 @@
 
 <script>
 import bus from '../common/bus';
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'newPropTable',
         data() {
@@ -205,14 +207,7 @@ import bus from '../common/bus';
                     platform:""
                 },
                 platformOptions: [
-                    {
-                    platformId: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    platformId: "2",
-                    platform: "渠道2"
-                    }
+
                 ],
                 idx: -1,
                 responseResult:[],
@@ -222,13 +217,9 @@ import bus from '../common/bus';
             }
         },
         created() {       
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
-            console.log("this.$gameId:"+this.$gameId);
+            setLocalThisUrl(this);
             this.getPlatformList(this.$gameId);
             this.getPropTypeList(this.$gameId);
-            console.log(this.strPlatform);
 
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -250,8 +241,6 @@ import bus from '../common/bus';
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
                 if(right.indexOf('Prop_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
@@ -260,13 +249,10 @@ import bus from '../common/bus';
             },
             //重置表单
             rest() {
-                //this.getData();
-                //this.$refs.multipleTable.resetFields();
             },
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             //筛选当前用户游戏的道具
@@ -284,15 +270,10 @@ import bus from '../common/bus';
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data);
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("道具列表获取成功");
-                        //this.$message.success("道具列表获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具列表获取失败");
                     }
@@ -309,18 +290,15 @@ import bus from '../common/bus';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
                         this.strPlatform += this.platformOptions[i].platformId+",";
-                        
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
-                    
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
                 }
@@ -336,12 +314,9 @@ import bus from '../common/bus';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("道具类别列表获取成功");
                     this.propTypeList = successResponse.data.data.list;
-                    //this.getData();
                 } else {
-                    
                     console.log(this.responseResult);
                     console.log("道具类别列表获取失败");
                 }
@@ -363,15 +338,9 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //时间格式化
-                    
-                var date = row[column.property];  
-                if (date == undefined) {  
-                    return "";  
-                }
-
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                //时间格式化               
+                var date = row[column.property];
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;
@@ -379,8 +348,6 @@ import bus from '../common/bus';
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
-                console.log("index:"+index);
-                console.log(item.id);
                 this.form = {
                     id:item.id,
                     propId:item.id,
@@ -392,7 +359,6 @@ import bus from '../common/bus';
                     addDatetime: item.addDatetime,
                     state:item.state,
                 }
-                console.log(this.form.id);
                 this.editVisible = true;
             },
             handleChangeStateToFrozen(index, row) {
@@ -411,7 +377,6 @@ import bus from '../common/bus';
                 this.idx = index;
                 this.delVisible = true;
                 this.id = this.tableData[index].id;
-                
             },
             delAll() {
                 this.del_list = this.del_list.concat(this.multipleSelection);
@@ -423,7 +388,6 @@ import bus from '../common/bus';
                 for (let i = 0; i < length; i++) {
                     str += this.multipleSelection[i].id + ',';
                 }
-                console.log(str);
                 //批量删除处理
                 this.$axios.post(this.url+'/deleteAllProp',{
                         id: str
@@ -431,23 +395,16 @@ import bus from '../common/bus';
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("道具批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
-
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
-                 
                 this.delAllVisible = false;
-
             }, 
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -479,7 +436,6 @@ import bus from '../common/bus';
                     this.$message.error("道具标识不能为空");
                 }else{
                     this.$axios.post(this.url+'/addProp',{ 
-
                         id: this.form.id,
                         propId:this.form.propId,
                         propName:this.form.propName,
@@ -490,32 +446,24 @@ import bus from '../common/bus';
                         addUser: this.form.addUser,
                         state:this.form.state,
                         platformId:this.form.platformId,
-                        
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("道具添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("道具添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
-                    
                 }               
                 this.addpropVisible = false; 
-                
             },
             // 保存编辑
             saveEdit() {
-                    console.log(this.form.id);
                 this.$axios.post(this.url+'/editProp',{
                     id:this.form.id,
                     propId:this.form.propId,
@@ -535,21 +483,12 @@ import bus from '../common/bus';
                         this.$message.success("道具信息修改成功");
                         this.getData();
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
-
-                //受 ES5 的限制，Vue.js 不能检测到对象属性的添加或删除(不包括修改)。因为 Vue.js 在初始化实例时将属性转为 getter/setter
-                //this.$set(this.data,”key”,value’)  添加属性
-                //this.$set(this.tableData, this.idx, this.form);
-                this.editVisible = false;
-                
-                
+                this.editVisible = false;               
             },
             // 确定冻结
             changeStateToFrozen(){
@@ -559,21 +498,16 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`道具冻结成功`);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToFrozenVisible = false;
                 this.rest();
-                
             },
             // 确定解冻
             changeStateToNormal(){
@@ -587,48 +521,36 @@ import bus from '../common/bus';
                             this.$message.success("道具解冻成功");
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
                 this.changeStateToNormalVisible = false;
                 this.rest();
-                
             },
             // 确定删除
             deleteRow(){
-
                 this.$axios.post(this.url+'/deleteProp',{
                         id: this.id, 
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`道具删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    
-                
                 this.tableData.splice(this.idx, 1);
-                
                 this.delVisible = false;
-                
             },
             formatState: function (row, column, cellValue, index) { 
-			return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
+			    return row.state == 1 ? '已冻结' : row.sex == 0 ? '正常' : '正常';
 		    }
         }
     }

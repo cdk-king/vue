@@ -197,6 +197,8 @@
 
 <script>
 import bus from "../common/bus";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "CDK_Use",
   data() {
@@ -257,13 +259,8 @@ export default {
     };
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
-    console.log("this.$gameId:" + this.$gameId);
+    setLocalThisUrl(this);
     this.getPlatformList(this.$gameId);
-    console.log(this.strPlatform);
-
     bus.$on(
       "changeGameId",
       function(obj) {
@@ -286,8 +283,6 @@ export default {
     right() {
       const right = localStorage.getItem("rightTags");
       const username = localStorage.getItem("ms_username");
-      console.log(right);
-      console.log(username);
       if (right.indexOf("Gift_management_Handle") == -1) {
         this.handleVisible = false;
       } else {
@@ -296,13 +291,10 @@ export default {
     },
     //重置表单
     rest() {
-      //this.getData();
-      //this.$refs.multipleTable.resetFields();
     },
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     //筛选当前用户游戏的礼包
@@ -321,17 +313,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("激活码列表获取成功");
-            //this.$message.success("激活码列表获取成功");
             this.tableData = successResponse.data.data.list;
-            console.log(this.tableData);
             this.total = successResponse.data.data.total;
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("激活码列表获取失败");
-            return false;
           }
         });
     },
@@ -346,7 +333,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
@@ -361,7 +347,6 @@ export default {
           } else {
             console.log(this.responseResult);
             console.log("渠道列表获取失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -377,15 +362,9 @@ export default {
       this.getData();
     },
     formatter(row, column) {
-      //时间格式化
-
+      //时间格式化               
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     filterTag(value, row) {
       return row.tag === value;
@@ -393,8 +372,6 @@ export default {
     handleEdit(index, row) {
       this.idx = index;
       const item = this.tableData[index];
-      console.log("index:" + index);
-      console.log(item.id);
       this.form = {
         id: item.id,
         giftName: item.giftName,
@@ -405,7 +382,6 @@ export default {
         addDatetime: item.addDatetime,
         state: item.state
       };
-      console.log(this.form.id);
       this.editVisible = true;
     },
     handleChangeStateToFrozen(index, row) {
@@ -435,7 +411,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllGift", {
@@ -444,15 +419,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("礼包批量删除完成");
             this.multipleSelection = [];
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("礼包批量删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -502,15 +474,12 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("礼包添加成功");
               this.tableData.push(this.form);
               this.getData();
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("礼包添加失败");
-              return false;
             }
           })
           .catch(failResponse => {});
@@ -519,7 +488,6 @@ export default {
     },
     // 保存编辑
     saveEdit() {
-      console.log(this.form.id);
       this.$axios
         .post(this.url + "/editGift", {
           id: this.form.id,
@@ -534,16 +502,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            //this.$router.push('/');
-            //this.$router.replace({path: '/index'})
             this.$message.success("礼包信息修改成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("礼包信息修改失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -558,14 +521,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`礼包冻结成功`);
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("礼包冻结失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -581,14 +541,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("礼包解冻成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("礼包解冻失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -604,15 +561,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`礼包删除成功`);
             //必须异步处理
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("礼包删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -625,15 +579,12 @@ export default {
       return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
     },
     formatCouponId: function(row, column, cellValue, index) {
-      console.log();
-
       return Math.round(parseInt(row.couponId) / 1).toString();
     },
     formatIsUsed: function(row, column, cellValue, index) {
       return parseInt(row.isUsed) == 1 ? "已使用" : "未使用？";
     },
     exchangeCDK() {
-      console.log(this.form.cdk);
       this.$axios
         .post(this.url + "/exchangeCDK", {
           cdk: this.form.cdk,
@@ -642,7 +593,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("CDK兑换成功");
             this.$message.success("CDK兑换成功");
             this.exchangeResult = successResponse.data.data;
@@ -650,15 +600,12 @@ export default {
             this.getData();
           } else {
             console.log(this.responseResult);
-            console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
-            return false;
           }
         })
         .catch(failResponse => {});
     },
     checkCDKIsUse() {
-      console.log(this.form.cdk);
       this.$axios
         .post(this.url + "/api/cdk/checkCDKIsUse", {
           cdk: this.form.cdk,
@@ -667,13 +614,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("CDK校验通过");
             this.$message.success("CDK校验通过");
             this.getData();
           } else {
             console.log(this.responseResult);
-            console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
           }
         })

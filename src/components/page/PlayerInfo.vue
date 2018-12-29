@@ -530,7 +530,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户渠道列表获取成功");
             this.platformOptions = successResponse.data.data.list;
           } else {
@@ -548,7 +547,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道服务器列表获取成功");
              this.serverOptions = [];
             this.serverOptions = successResponse.data.data;
@@ -629,7 +627,6 @@ export default {
         data = data.replace(/LoginBan/g,"isBan");
         data = data.replace(/LoginBanEndTime/g,"banTime");
         data = JSON.parse(data);
-        console.log(data);
         this.tableData = data.PlayerList;
         this.total = this.tableData.length;
         this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
@@ -643,7 +640,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getPlayer();
     },
     formatter(row, column) {
@@ -652,8 +648,6 @@ export default {
       return formatDatetime(date);
     },
     testMessage() {
-      console.log(this.searchForm);
-      console.log(JSON.stringify(this.searchForm));
       this.getPlayer();
     },
     testDialog() {
@@ -682,7 +676,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家详细信息获取成功");
             this.detail = JSON.parse(successResponse.data.data);
           } else {
@@ -734,13 +727,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家禁言成功");
             this.$message.success("玩家禁言成功");
             this.ChangeToProhibitSpeak = false;
             this.getPlayer();
           } else {
-            console.log(this.responseResult);
             console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
           }
@@ -765,13 +756,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家解除禁言成功");
             this.$message.success("玩家解除禁言成功");
             this.ChangeProhibitSpeakToNormal = false;
             this.getPlayer();
           } else {
-            console.log(this.responseResult);
             console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
           }
@@ -809,14 +798,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-              
-            console.log(this.responseResult);
             console.log("玩家禁封成功");
             this.$message.success("玩家禁封成功");
             this.ChangeToBan = false;
             this.getPlayer();
           } else {
-            console.log(this.responseResult);
             console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
           }
@@ -841,13 +827,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("玩家解除禁封成功");
             this.$message.success("玩家解除禁封成功");
             this.ChangeBanToNormal = false;
             this.getPlayer();
           } else {
-            console.log(this.responseResult);
             console.log(successResponse.data.message);
             this.$message.error(successResponse.data.message);
           }
@@ -859,7 +843,6 @@ export default {
     },
     handleSelectionChange(val){
         this.multipleSelection = val;
-        console.log(this.multipleSelection);
     },
     handleDelAll(){
       this.delAllVisible = true;
@@ -878,13 +861,11 @@ export default {
         .then(successResponse =>{
             this.responseResult ="\n"+ JSON.stringify(successResponse.data)
             if(successResponse.data.code === 200){
-                console.log(this.responseResult);
                 this.$message.success("公告批量删除完成");
                 this.multipleSelection = []; 
                 this.getNotice();
 
             }else{
-                console.log('error');
                 console.log(this.responseResult);
                 this.$message.error("公告批量删除失败");
             }

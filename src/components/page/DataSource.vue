@@ -7,12 +7,12 @@
         </div>
         <div class="container">
             <div class="plugins-tips">
-                     备注：
-                    <br/>
-                    一个数据源对应一个且唯一的平台，在添加和修改数据源的时候必须指定对应的平台。
-                    <br/>
-                    </div>
-                <Divider />
+                备注：
+                <br/>
+                一个数据源对应一个且唯一的平台，在添加和修改数据源的时候必须指定对应的平台。
+                <br/>
+            </div>
+            <Divider />
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
 
@@ -228,7 +228,6 @@ import formatDatetime from "../../code/formatDatetime";
         },
         methods: {
             getAllPlatform() {
-            console.log("this.$gameId:" + this.$gameId);
             this.$axios
                 .post(this.url + "/getPlatformListForGameId", {
                     id: this.$gameId
@@ -260,7 +259,6 @@ import formatDatetime from "../../code/formatDatetime";
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             getData() {

@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>现金流日志</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>物品流通日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -44,6 +44,13 @@
                                 <el-input v-model="searchKey.iRoleId" placeholder="角色ID" class="handle-input " style="width:160px"></el-input>
                                 <span style="margin-left:22px">角色名</span>
                                 <el-input v-model="searchKey.vRoleName" placeholder="角色名" class="handle-input " style="width:160px"></el-input>
+                            
+                        </el-form-item>
+                        <el-form-item label="流水号">
+                                <el-input v-model="searchKey.vSN" placeholder="物品ID" class="handle-input " style="width:160px"></el-input>
+                                <span style="margin-left:22px">充值金额</span>
+                                <el-input v-model="searchKey.minIPayDelta" placeholder="最小金额" class="handle-input " style="width:160px"></el-input>—
+                                <el-input v-model="searchKey.maxIPayDelta" placeholder="最大金额" class="handle-input " style="width:160px"></el-input>
                             
                         </el-form-item>
                         <el-form-item label="">
@@ -105,6 +112,10 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:"",
                     iRoleId:"",
                     vRoleName:"",
+                    vSN:"",
+                    minIPayDelta:"",
+                    maxIPayDelta:""
+
                 },
                 platformOptions: [
 
@@ -151,7 +162,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         this.logXml = successResponse.data.data;
-                        this.getFormKey("MoneyFlowProduce");
+                        this.getFormKey("Recharge");
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("getLogXml失败");
@@ -172,7 +183,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.info("请选择平台");
                     return;
                 }
-                this.$axios.post(this.url+'/api/log/getMoneyFlowLog', {
+                this.$axios.post(this.url+'/api/log/getReChargeLog', {
                     platformId:this.searchKey.platformId,
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
@@ -181,15 +192,19 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:this.searchKey.iUin,
                     iRoleId:this.searchKey.iRoleId,
                     vRoleName:this.searchKey.vRoleName,
+                    maxIPayDelta:this.searchKey.maxIPayDelta,
+                    minIPayDelta:this.searchKey.minIPayDelta,
+                    vSN:this.searchKey.vSN
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                         this.mapData();
+
                     }else{
                         console.log(this.responseResult);
-                        this.$message.error("现金流日志获取失败");
+                        this.$message.error("物品流通日志失败");
                     }
                 })
             },
@@ -204,7 +219,7 @@ import formatDatetime from "../../code/formatDatetime";
                     }
                 }
             },
-            // 分页导航
+                // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
                 console.log("page:" + val);
@@ -288,6 +303,10 @@ import formatDatetime from "../../code/formatDatetime";
                 this.serverIdList = this.searchKey.serverId;
                 this.getData();
             },
+            formatIsGetOrLost(row, column){
+                var str = row[column.property];
+                return str=="1" ? "得到":"失去"
+            },
             formatDatetime(row, column) {
                 if(column.property=="dtEventTime"){
                     var date = row[column.property];
@@ -300,7 +319,7 @@ import formatDatetime from "../../code/formatDatetime";
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-            },
+            }
         }
     }
 

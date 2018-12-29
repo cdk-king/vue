@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>现金流日志</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>充值消费日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -11,6 +11,7 @@
                 <br/>
                 日志仅显示20天内的数据
                 <br/>
+                消费类型 1为各种商店购买，2为其他消费如元宝一键扫荡等
             </div>
                 <el-collapse v-model="activeNames" >
                 <el-collapse-item title="折叠" name="1">
@@ -151,7 +152,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         this.logXml = successResponse.data.data;
-                        this.getFormKey("MoneyFlowProduce");
+                        this.getFormKey("Shop");
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("getLogXml失败");
@@ -172,7 +173,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.info("请选择平台");
                     return;
                 }
-                this.$axios.post(this.url+'/api/log/getMoneyFlowLog', {
+                this.$axios.post(this.url+'/api/log/getShopLog', {
                     platformId:this.searchKey.platformId,
                     serverId:this.serverIdList,
                     pageNo: this.cur_page,
@@ -189,7 +190,7 @@ import formatDatetime from "../../code/formatDatetime";
                         this.mapData();
                     }else{
                         console.log(this.responseResult);
-                        this.$message.error("现金流日志获取失败");
+                        this.$message.error("充值消费日志获取失败");
                     }
                 })
             },

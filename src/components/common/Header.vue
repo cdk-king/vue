@@ -162,7 +162,7 @@
                 this.$setGameId(command.id);
                 bus.$emit('changeGameId', {
                     gameId:command.id,
-                    message:"你兄弟告诉你要换游戏了"
+                    message:"已选择游戏："+command.gameName
                 });
                 //this.$emit('increment1',"这个位子是可以加参数的");
                 //this.$store.dispatch('modifyGameId',{gameId:command.id}); 

@@ -151,7 +151,6 @@ export default {
       show: false,
       tableData: [],
       dialogVisible: false,
-      aa: this.$cdk,
       platformOptions: [
         {
           platformId: "1",
@@ -318,7 +317,6 @@ export default {
 
     },
     exchange() {
-      console.log(this.analyseCDK);
       this.$axios
         .post(this.url + "/analyseCDK", {
           analyseCDK: this.analyseCDK
@@ -352,22 +350,15 @@ export default {
         this.$message.error("请输入生成数量");
         return;
       }
-      console.log(this.form.platformId);
-      console.log(this.form.giftId);
-      console.log(this.form);
       var type = 0;
       var CouponID = parseInt(this.form.giftId.toString()) * 1;
       var strCouponID = (CouponID + type).toString();
-      console.log(strCouponID);
-
-      console.log(this.form.couponCount);
       var sign = md5.hex(
         strCouponID +
           this.form.platformId.toString() +
           this.form.couponCount.toString() +
           "cdk"
       );
-      console.log(sign);
       this.$axios
         .post(this.url + "/generateCDK", {
           id: this.form.id,
@@ -385,16 +376,13 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("CDK生成成功");
             this.$message.success("CDK生成成功");
             var data = successResponse.data.data;
-            console.log(JSON.stringify(data));
             this.CDKs = data;
             this.dialogVisible = true;
             this.resetForm();
             this.getCoupon();
-            //this.platformOptions = successResponse.data.data;
           } else {
             console.log(this.responseResult);
             console.log("CDK生成失败");
@@ -446,7 +434,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     byteToString(arr) {
@@ -489,7 +476,6 @@ export default {
             for (var i = 0; i < this.platformOptions.length; i++) {
               this.strPlatform += this.platformOptions[i].platformId + ",";
             }
-            console.log(this.strPlatform);
             this.strPlatform = this.strPlatform.substring(
               0,
               this.strPlatform.length - 1
@@ -503,7 +489,6 @@ export default {
         .catch(failResponse => {});
     },
     getGiftList(platformId) {
-      console.log(platformId);
       this.$axios
         .post(this.url + "/getNewGiftListForPlatformId", {
           platformId: platformId
@@ -528,7 +513,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             return;
           }
@@ -538,7 +522,6 @@ export default {
     getData() {
       //var userData = JSON.parse(localStorage.getItem("userData"));
       //this.id = userData.id;
-      console.log("this.$gameId:" + this.$gameId);
       this.getPlatformList(this.$gameId);
     },
     getCoupon() {
@@ -572,10 +555,6 @@ export default {
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   }
 };
 </script>

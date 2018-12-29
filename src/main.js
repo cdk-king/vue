@@ -71,7 +71,6 @@ router.beforeEach((to, from, next) => {
         //没有登录同时路径不是/login
         next('/login');
     }else if(to.meta.permission){
-        console.log("这里是路由钩子函数");
         // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
         role === 'admin' ? next('/login') : next('/login');
 

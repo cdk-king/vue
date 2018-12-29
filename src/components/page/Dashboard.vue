@@ -106,60 +106,10 @@ export default {
     return {
       name: localStorage.getItem("ms_username"),
       todoList: [
-        {
-          title: "今天要修复100个bug",
-          status: false
-        },
-        {
-          title: "今天要修复100个bug",
-          status: false
-        },
-        {
-          title: "今天要写100行代码加几个bug吧",
-          status: false
-        },
-        {
-          title: "今天要修复100个bug",
-          status: false
-        },
-        {
-          title: "今天要修复100个bug",
-          status: true
-        },
-        {
-          title: "今天要写100行代码加几个bug吧",
-          status: true
-        }
+
       ],
       data: [
-        {
-          name: "2018/09/04",
-          value: 1083
-        },
-        {
-          name: "2018/09/05",
-          value: 941
-        },
-        {
-          name: "2018/09/06",
-          value: 1139
-        },
-        {
-          name: "2018/09/07",
-          value: 816
-        },
-        {
-          name: "2018/09/08",
-          value: 327
-        },
-        {
-          name: "2018/09/09",
-          value: 228
-        },
-        {
-          name: "2018/09/10",
-          value: 1065
-        }
+
       ],
       options: {
         title: "最近七天每天的用户访问量",
@@ -239,7 +189,6 @@ export default {
       function myFun(result) {
         var cityName = result.name;
         map.setCenter(cityName);
-        //alert("当前定位城市:"+cityName);
         selt.cityName = cityName;
       }
       var myCity = new BMap.LocalCity();

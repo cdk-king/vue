@@ -183,9 +183,10 @@
         <el-table-column prop="sendType" label="发送类型" :formatter="formatSendType"></el-table-column>
         <el-table-column prop="timeInterval" label="发送时间间隔"></el-table-column>
         <el-table-column prop="cycleTime" label="循环次数"></el-table-column>
-        <el-table-column prop="noticeContent" label="内容" width="400px"></el-table-column>
+        <el-table-column prop="noticeContent" label="内容" width="300px"></el-table-column>
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column prop="addUser" label="编辑人"></el-table-column>
+        <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
         <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">

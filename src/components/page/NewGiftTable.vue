@@ -149,6 +149,8 @@
 
 <script>
 import bus from '../common/bus';
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'giftTable',
         data() {
@@ -195,14 +197,7 @@ import bus from '../common/bus';
                     platform:""
                 },
                 platformOptions: [
-                    {
-                    platformId: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    platformId: "2",
-                    platform: "渠道2"
-                    }
+
                 ],
                 idx: -1,
                 responseResult:[],
@@ -212,9 +207,7 @@ import bus from '../common/bus';
             }
         },
         created() {
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getPlatformList(this.$gameId);
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -247,7 +240,6 @@ import bus from '../common/bus';
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             //筛选当前用户游戏的礼包
@@ -284,7 +276,6 @@ import bus from '../common/bus';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
@@ -311,13 +302,9 @@ import bus from '../common/bus';
                 this.getData();
             },
             formatter(row, column) {
-                //时间格式化    
-                var date = row[column.gifterty];  
-                if (date == undefined) {  
-                    return "";  
-                }
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                //时间格式化               
+                var date = row[column.property];
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;
@@ -364,7 +351,6 @@ import bus from '../common/bus';
                 for (let i = 0; i < length; i++) {
                     str += this.multipleSelection[i].id + ',';
                 }
-                console.log(str);
                 //批量删除处理
                 this.$axios.post(this.url+'/deleteAllGift',{
                         id: str
@@ -502,7 +488,6 @@ import bus from '../common/bus';
             },
             // 确定删除
             deleteRow(){
-
                 this.$axios.post(this.url+'/deleteGift',{
                         id: this.id, 
                     })

@@ -1,6 +1,5 @@
 <template>
     <div class="sidebar">
-        <!-- background-color="#324157" active-text-color="#20a0ff"-->
         <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#fff"
             text-color="#000" active-text-color="#20a0ff" unique-opened router>
             <template v-for="item in items">
@@ -129,7 +128,7 @@
                                     },
                                     {
                                         index: 'MoneyFlowLog',
-                                        title: '货币消耗' 
+                                        title: '现金流'
                                     },
                                     {
                                         index: 'CreateRoleLog',
@@ -139,6 +138,15 @@
                                         index: 'RoleLoginLog',
                                         title: '角色登录'
                                     },
+                                    {
+                                        index: 'ReCharge',
+                                        title: '充值流水'
+                                    },
+                                    {
+                                        index: 'Shop',
+                                        title: '充值消费'
+                                    },
+                                    
                                 ]
                             },
                             {
@@ -243,7 +251,6 @@
             });
 
             this.mapData();
-
             //this.createSide();
             this.addIsShow(this.items);
         },
@@ -262,9 +269,7 @@
                     }else{
                         this.indexList.push(children[j].path);
                     }
-                    //this.indexList[j] = children[j].path;
                 }
-
             },
             createSide(){
                 var item = [];
@@ -298,7 +303,7 @@
                 for(var i = 0;i<list.length;i++){
                     let a = list[i].toString();
                     if(a.substring(0,list[i].length)=="/"+key){
-                            return true;
+                        return true;
                     }
                 }
                 return false;

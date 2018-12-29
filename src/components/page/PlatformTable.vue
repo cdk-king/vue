@@ -332,7 +332,6 @@ import formatDatetime from "../../code/formatDatetime";
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             getData() {
@@ -478,7 +477,6 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.error("对应角色不能为空");
                 }else{
                     this.$axios.post(this.url+'/addPlatform',{
-
                         platformId: this.form.platformId,
                         platform:this.form.platform,
                         platformTag:this.form.platformTag,

@@ -74,6 +74,7 @@
 <script>
 import bus from '../common/bus';
 import setLocalThisUrl from '../../code/setLocalThisUrl';
+import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'playerLogTable',
         data() {
@@ -124,9 +125,7 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
         },
         created() {
             setLocalThisUrl(this);
-            console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
-            console.log(this.strPlatform);
 
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -144,7 +143,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             //筛选当前用户游戏的玩家
@@ -165,7 +163,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                     if(successResponse.data.code === 200){
                         console.log("禁封记录获取成功");
                         this.tableData = successResponse.data.data.list;
-                        console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
                         console.log(this.responseResult);
@@ -184,13 +181,11 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
-                        this.strPlatform += this.platformOptions[i].platformId+",";
-                        
+                        this.strPlatform += this.platformOptions[i].platformId+","; 
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
@@ -209,7 +204,6 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                 } else {
@@ -237,14 +231,9 @@ import setLocalThisUrl from '../../code/setLocalThisUrl';
                 this.getData();
             },
             formatDatetime(row, column) {
-                //时间格式化               
+                //时间格式化
                 var date = row[column.property];
-                console.log(date);
-                if (date == undefined) {  
-                    return "";  
-                }
-                var tt=new Date(parseInt(date)).toLocaleString();
-                return tt;
+                return formatDatetime(date);
             },
             filterTag(value, row) {
                 return row.tag === value;

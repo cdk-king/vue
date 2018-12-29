@@ -97,6 +97,7 @@
         <el-table-column prop="applyType" label="申请类型" :formatter="formatApplyType"></el-table-column>
         <el-table-column prop="playerAccountList" label="玩家账号"></el-table-column>
         <el-table-column prop="playerNameList" label="玩家名称"></el-table-column>
+        <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState"></el-table-column>
         <el-table-column prop="userName" label="编辑人"></el-table-column>
@@ -1144,6 +1145,10 @@ export default {
           addUser: this.id,
           moneyList: moneyList
         };
+        if(this.form.playerNameList=="" && this.form.playerIdList==""){
+            this.$message("请输入其中一项角色信息");
+            return;
+        }
       }
       if (this.editableTabsValue == "2") {
         data = {

@@ -117,10 +117,12 @@ function getchildren() {
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
      setRouterItem("/Channel","通道管理","Channel_View","Channel.vue",children,right);
      setRouterItem("/GoodFlowLog","物品流通","GoodFlowLog_View","GoodFlowLog.vue",children,right);
-     setRouterItem("/MoneyFlowLog","货币消耗","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
+     setRouterItem("/MoneyFlowLog","现金流","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
      setRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);
      setRouterItem("/RoleLoginLog","角色登录","RoleLoginLog_View","RoleLoginLog.vue",children,right);
      setRouterItem("/DataSource","数据源管理","DataSource_View","DataSource.vue",children,right);
+     setRouterItem("/ReCharge","充值流水","ReCharge_View","ReCharge.vue",children,right);
+     setRouterItem("/Shop","充值消费","Shop_View","Shop.vue",children,right);
 
 
     var otherItem=[{
@@ -132,11 +134,6 @@ function getchildren() {
             path: '/form',
             component: resolve => require(['../components/example/BaseForm.vue'], resolve),
             meta: { title: '基本表单' }
-        },
-        {
-        path: '/form',
-        component: resolve => require(['../components/example/BaseForm.vue'], resolve),
-        meta: { title: '基本表单' }
         },
         {
             path: '/editor',

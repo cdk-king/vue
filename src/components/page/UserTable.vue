@@ -402,7 +402,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     getRole() {
@@ -418,7 +417,6 @@ export default {
         })
         .then(res => {
           console.log("角色列表获取成功");
-          console.log(res.data);
           this.roleData = res.data.data.list;
           this.getData();
         });
@@ -489,8 +487,6 @@ export default {
       this.idx = index;
       const item = this.tableData[index];
       var roles = item.roles;
-      console.log(roles);
-      console.log(this.roleData);
       this.doing = [];
       this.todo = [];
       this.done = [];
@@ -586,7 +582,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post("/deleteAllUser", {
@@ -595,12 +590,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户批量删除完成");
             this.multipleSelection = [];
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户批量删除失败");
           }
@@ -611,7 +604,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     handleAddUser() {
       this.addUserVisible = true;
@@ -657,9 +649,6 @@ export default {
         }
       }
 
-      console.log("InsertUserRoles:" + InsertUserRoles);
-      console.log("deleteUserRoles:" + deleteUserRoles);
-
       //还原操作前的数据
       this.doing = oldDoing;
       this.done = olddone;
@@ -672,12 +661,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户角色添加成功");
-            //this.$message.success("用户角色添加成功");
+            this.$message.success("用户角色添加成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户角色添加失败");
           }
@@ -692,11 +679,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户角色编辑完成");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户角色删除失败");
           }
@@ -722,11 +707,9 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("用户添加成功");
               this.getData();
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("用户添加失败");
             }
@@ -749,11 +732,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户信息编辑成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户信息编辑失败");
           }
@@ -762,7 +743,6 @@ export default {
       this.editVisible = false;
     },
     saveEditPassword() {
-      console.log("password:" + this.passwordform.newPassword);
       if (this.passwordform.newPassword == "") {
         this.$message.error("密码不能为空");
         return false;
@@ -782,10 +762,8 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log(this.responseResult);
               this.$message.success("密码修改成功");
             } else {
-              console.log("error");
               console.log(this.responseResult);
               this.$message.error("密码修改失败");
             }
@@ -803,11 +781,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户冻结成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户冻结失败");
           }
@@ -824,11 +800,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户解冻成功");
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户解冻失败");
           }
@@ -845,12 +819,10 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("用户删除成功");
             this.tableData.splice(this.idx, 1);
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("用户删除失败");
           }
@@ -863,13 +835,11 @@ export default {
     },
 
     removeHandle(event) {
-      console.log(event);
       this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
     }
   },
   filters: {
     filters2: function(arg) {
-      console.log("arg:" + arg);
       if (arg != null && arg != "") {
         var arr = arg.split(",");
         return arr;

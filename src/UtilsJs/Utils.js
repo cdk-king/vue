@@ -18,12 +18,10 @@ Utils.getUserAllRight = function (id,url) {
 
             this.responseResult = "\n" + JSON.stringify(successResponse.data)
             if (successResponse.data.code === 200) {
-                console.log(successResponse.data);
                 console.log("权限获取成功");
                 localStorage.setItem('rightTags', "");
                 localStorage.setItem('rightTags', successResponse.data.data);
                 this.addRouter();
-
             } else {
                 this.$message.error(successResponse.data.message);
                 console.log(this.responseResult);
@@ -35,8 +33,6 @@ Utils.getUserAllRight = function (id,url) {
 Utils.addRouter = function () {
     var dfr = defaultRouter();
     var router = getRouter();
-    //重启vue，亲测有效
-    console.log("Vue重启中。。。");
     new Vue({
         router,
         render: h => h(App)

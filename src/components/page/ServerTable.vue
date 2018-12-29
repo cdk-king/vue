@@ -324,6 +324,8 @@
 </template>
 
 <script>
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "serverTable",
   data() {
@@ -397,9 +399,7 @@ export default {
     };
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getAllPlatform();
     this.getData();
     this.right();
@@ -414,7 +414,6 @@ export default {
   },
   methods: {
     getAllPlatform() {
-      console.log("this.$gameId:" + this.$gameId);
       this.$axios
         .post(this.url + "/getPlatformListForGameId", {
           id: this.$gameId
@@ -433,7 +432,6 @@ export default {
     },
     saveCheckChannel() {
       var len = this.multipleSelection.length;
-      console.log(this.checkchannelData);
       var channel = "";
       for (var i = 0; i < this.checkchannelData.length; i++) {
         channel += this.checkchannelData[i] + ",";
@@ -460,7 +458,6 @@ export default {
       } else {
         var str = "";
         for (let i = 0; i < len; i++) {
-          console.log("cdk" + this.multipleSelection[i].id);
           str += this.multipleSelection[i].id + ",";
         }
         str = str.substring(0, str.length - 1);
@@ -486,7 +483,6 @@ export default {
     },
     generateAllChannelData(allChannel) {
       var len = allChannel.length;
-      console.log(len);
       const data = [];
       for (let i = 0; i < len; i++) {
         data.push({
@@ -495,7 +491,6 @@ export default {
           disabled: false
         });
       }
-      console.log(data);
       this.otherChannelData = data;
     },
     HandleAddAllChannel() {
@@ -505,7 +500,6 @@ export default {
         return;
       }
       this.ServerAddChannelVisible = true;
-      console.log(JSON.stringify(this.multipleSelection));
 
       let str = "";
       for (let i = 0; i < length; i++) {
@@ -519,7 +513,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       this.getAllChannelFormPlatform(this.multipleSelection[0].platformId);
     },
     handleServerAddChannel(index, row){
@@ -655,11 +648,9 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     getData() {
-      console.log(this.searchKey.platformId);
       this.$axios
         .post(this.url + "/getAllServer", {
           pageNo: this.cur_page,
@@ -698,13 +689,9 @@ export default {
       this.getData();
     },
     formatter(row, column) {
-      //时间格式化
-      var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+        //时间格式化               
+        var date = row[column.property];
+        return formatDatetime(date);
     },
     filterTag(value, row) {
       return row.tag === value;

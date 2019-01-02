@@ -580,7 +580,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data != "") {
-            console.log(successResponse.data);
             console.log("服务器列表获取成功");
           }
         })
@@ -592,8 +591,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data != "") {
-            console.log(successResponse.data);
-            console.log("服务器列表获取成功");
+            console.log("服务器列表同步成功");
             this.synServerList = JSON.parse(successResponse.data.data);
             console.log(this.synServerList);
             this.getData();
@@ -607,7 +605,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("游戏列表获取成功");
             this.gameList = successResponse.data.data;
           } else {
@@ -623,7 +620,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("渠道列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
@@ -738,13 +734,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("默认服务器设置成功");
             this.multipleSelection = [];
             this.SetDefaultVisible = false;
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("默认服务器设置失败");
           }
@@ -760,13 +754,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("设置服务器状态成功");
             this.multipleSelection = [];
             this.ChangeStateVisible = false;
             this.getData();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("设置服务器状态失败");
           }
@@ -879,7 +871,6 @@ export default {
     },
     // 保存编辑
     saveEdit() {
-      console.log(this.form.openServiceTime);
       this.$axios
         .post(this.url + "/editServer", {
           id: this.form.id,
@@ -968,7 +959,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success(`服务器删除成功`);
             this.getData();
           } else {

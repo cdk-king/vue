@@ -309,6 +309,7 @@
 <script>
 import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "PlayerInfo",
   data() {
@@ -317,7 +318,6 @@ export default {
       multipleSelection: [],
       show: false,
       dialogVisible: false,
-      aa: this.$cdk,
       cur_page: 1,
       total: 0,
       handleVisible: true,
@@ -396,7 +396,6 @@ export default {
   },
   methods: {
     formatServer(item, platformId) {
-      console.log(JSON.stringify(this.allServerList));
       for (var i = 0; i < this.allServerList.length; i++) {
         if (this.allServerList[i].id == item) {
           return this.allServerList[i].server;
@@ -452,7 +451,6 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("服务器列表获取成功");
-
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
@@ -493,7 +491,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
@@ -517,7 +514,6 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("邮件列表获取成功");
-            //this.$message.success("邮件列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
@@ -537,18 +533,12 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.selectServer();
     },
     formatter(row, column) {
-      //时间格式化
+      //时间格式化               
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     changeContent(){
       if(this.form.emailContent.length>this.countMaxLength){
@@ -569,6 +559,17 @@ export default {
       this.addPlatformEmailVisible = true;
     },
     submit() {
+      if (this.form.platformId == "" || this.form.platformId == undefined) {
+        this.$message("请选择正确的平台");
+        return;
+      }
+      if (
+        this.form.serverList.length == 0 ||
+        this.form.serverList == undefined
+      ) {
+        this.$message("请选择正确的服务器");
+        return;
+      }
       if (this.form.emailTitle == "") {
         this.$message("请输入正确的邮件标题");
         return;
@@ -581,9 +582,6 @@ export default {
         this.$message("内容长度超过最大限制"+this.countMaxLength);
         return;
       }
-      console.log(this.form);
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.form.serverList));
 
       this.$axios
         .post(this.url + "/addPlatformEmail", {
@@ -599,16 +597,13 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("全服邮件添加成功");
             this.$message.success("全服邮件添加成功");
             this.getPlatformEmail();
             this.addPlatformEmailVisible = false;
           } else {
-            console.log(this.responseResult);
             console.log("全服邮件添加失败");
             this.$message.error("全服邮件添加失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -633,8 +628,6 @@ export default {
         this.$message("请输入正确的邮件内容");
         return;
       }
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.form.serverList));
 
       this.$axios
         .post(this.url + "/editPlatformEmail", {
@@ -651,16 +644,13 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("全服邮件编辑成功");
             this.$message.success("全服邮件编辑成功");
             this.getPlatformEmail();
             this.editPlatformEmailVisible = false;
           } else {
-            console.log(this.responseResult);
             console.log("全服邮件编辑失败");
             this.$message.error("全服邮件编辑失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -669,9 +659,7 @@ export default {
       this.dialogVisible = true;
     },
     handleCheckedServer() {
-      console.log(this.form);
-      console.log(this.form.serverList);
-      console.log(this.serverOptions);
+
     },
     selectSearchKeyPlatform() {
       this.getSearchKeyServerList(this.searchKey.platformId);
@@ -680,20 +668,8 @@ export default {
     selectSearchKeyServer() {
       this.getPlatformEmail();
     },
-    formatter(row, column) {
-      //时间格式化
-      var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
-    },
     handleSend(index, row) {
       var item = this.tableData[index];
-
-      console.log(item.serverList);
       var serverList = item.serverList
         .substring(1, item.serverList.length - 1)
         .split(",");
@@ -705,7 +681,6 @@ export default {
         strServerList += serverList[i] + ",";
       }
       strServerList = strServerList.substring(0, strServerList.length - 1);
-      console.log(strServerList);
       this.$axios
         .post(this.url + "/sendPlatformEmail", {
           id: item.id,
@@ -721,11 +696,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("全服邮件发送完成");
             this.getPlatformEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("全服邮件发送失败");
           }
@@ -734,7 +707,6 @@ export default {
     },
     handleReSend(index, row) {
       var item = this.tableData[index];
-      console.log(item.errorList);
       this.$axios
         .post(this.url + "/sendPlatformEmail", {
           id: item.id,
@@ -750,11 +722,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("重新发送完成");
             this.getPlatformEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("重新发送失败");
           }
@@ -762,8 +732,6 @@ export default {
         .catch(failResponse => {});
     },
     handleDelete(index, row) {
-      console.log(index);
-      console.log(this.tableData[index].id);
       this.$axios
         .post(this.url + "/deletePlatformEmail", {
           id: this.tableData[index].id
@@ -771,14 +739,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("全服邮件批量删除完成");
             this.getPlatformEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("全服邮件批量删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -824,8 +789,6 @@ export default {
         startDatetime: this.timestampToStr(item.startDatetime),
         endDatetime: this.timestampToStr(item.endDatetime)
       };
-
-      console.log("serverList:" + item.serverList);
       this.getServerList(item.platformId);
       this.editPlatformEmailVisible = true;
     },
@@ -858,7 +821,6 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
-      console.log(str);
       //批量删除处理
       this.$axios
         .post(this.url + "/deleteAllPlatformEmail", {
@@ -867,15 +829,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("全服邮件批量删除完成");
             this.multipleSelection = [];
             this.getPlatformEmail();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("全服邮件批量删除失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -884,14 +843,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   }
 };
 </script>

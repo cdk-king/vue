@@ -71,8 +71,8 @@
         <el-table-column prop="server" label="服务器"></el-table-column>
 
         <el-table-column prop="releaseTitle" label="标题"></el-table-column>
-        <el-table-column prop="releaseContent" label="内容" width="300px"></el-table-column>
-        <el-table-column prop="propList" label="道具列表" width="120px">
+        <el-table-column prop="releaseContent" label="内容" width="260px"></el-table-column>
+        <el-table-column prop="propList" label="道具列表" width="160px">
           <template slot-scope="scope">
             <p
               style
@@ -80,7 +80,7 @@
               :key="item"
               :label="item"
               :value="item"
-            >{{item}}</p>
+            >{{formatPropName(item, scope.row.platformId)}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="moneyCount" label="货币">
@@ -100,7 +100,7 @@
         <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="applyDatetime" label="最后发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="applyState" label="邮件发送状态" :formatter="formatApplyState"></el-table-column>
-        <el-table-column prop="userName" label="编辑人"></el-table-column>
+        <el-table-column prop="userName" label="申请人"></el-table-column>
         <el-table-column label="操作" align="center" width="120px" fixed="right">
           <template slot-scope="scope">
             <el-button
@@ -195,8 +195,8 @@
             <el-table :data="propData" border class="table" ref="multipleTable">
               <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
-              <el-table-column prop="propType" label="道具类别"></el-table-column>
-              <el-table-column prop="propDescribe" label="道具描述"></el-table-column>
+              <el-table-column prop="propType" label="道具类别" :formatter="formatPropTypeName"></el-table-column>
+              <el-table-column prop="propDescribe" width="200px" label="道具描述"></el-table-column>
               <el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
@@ -210,11 +210,11 @@
               </el-table-column>
               <el-table-column label="是否绑定" align="center">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px" @change="radioChange(scope.$index)">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px" @change="radioChange(scope.$index)">绑定</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" align="center" style="text-align:center">
+              <el-table-column label="操作" align="center" style="text-align:center" width="120px">
                 <template slot-scope="scope" >
                   <el-button
                     type="text"  style="margin-left:0px"
@@ -313,9 +313,9 @@
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="申请人">
+            <!-- <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="申请说明">
               <el-input
@@ -335,9 +335,9 @@
         </el-tab-pane>
         <el-tab-pane label="全服玩家道具邮件申请" name="2">
           <el-form ref="form" :model="form" label-width="200px">
-            <el-form-item label="申请人">
+            <!-- <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="申请说明">
               <el-input
@@ -405,7 +405,7 @@
           </el-form-item>
           <Divider/>
           <el-form-item label="需要发送的道具">
-            <el-select v-model="form.propId" @change="selectProp" placeholder="请选择道具">
+            <el-select v-model="form.propId" @change="selectProp" filterable placeholder="请选择道具">
               <el-option
                 v-for="item in propOptions"
                 :key="item.propId"
@@ -420,9 +420,9 @@
             <el-table :data="propData" border class="table" ref="multipleTable">
               <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
-              <el-table-column prop="propType" label="道具类别"></el-table-column>
-              <el-table-column prop="propDescribe" label="道具描述"></el-table-column>
-              \<el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
+              <el-table-column prop="propType" label="道具类别" :formatter="formatPropTypeName"></el-table-column>
+              <el-table-column prop="propDescribe" width="200px" label="道具描述"></el-table-column>
+              <el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
                   <el-input
@@ -435,11 +435,11 @@
               </el-table-column>
               <el-table-column label="是否绑定">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px" @change="radioChange(scope.$index)">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px" @change="radioChange(scope.$index)">绑定</el-radio>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" align="center">
+              <el-table-column label="操作" align="center" width="120px">
                 <template slot-scope="scope">
 
                   <el-button
@@ -537,9 +537,9 @@
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="申请人">
+            <!-- <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="申请说明">
               <el-input
@@ -559,9 +559,9 @@
         </el-tab-pane>
         <el-tab-pane label="全服玩家道具邮件申请" name="2">
           <el-form ref="form" :model="form" label-width="200px">
-            <el-form-item label="申请人">
+            <!-- <el-form-item label="申请人">
               <el-input style="width:215px" placeholder="请输入" v-model="form.applyUser" clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="申请说明">
               <el-input
@@ -597,7 +597,7 @@
     </el-dialog>
 
     <!-- 发送道具申请邮件提示框 -->
-    <el-dialog title="批量删除提示" :visible.sync="showApplyVisible" width="300px" center>
+    <el-dialog title="发送道具申请" :visible.sync="showApplyVisible" width="300px" center>
       <div class="del-dialog-cnt">道具申请邮件申请后将不可撤销，是否确定发送？</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showApplyVisible = false">取 消</el-button>
@@ -610,6 +610,8 @@
 <script>
 import Vue from "vue";
 import bus from "../common/bus";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "AppleProp",
   data() {
@@ -619,14 +621,7 @@ export default {
       show: false,
       dialogVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platform: "渠道1"
-        },
-        {
-          platformId: "2",
-          platform: "渠道2"
-        }
+
       ],
       platformValue: "",
       platformLabel: "",
@@ -686,7 +681,8 @@ export default {
       url: "http://localhost:8011",
       strPlatform: "",
       maxLengthVisible:false,
-      countMaxLength:600
+      countMaxLength:600,
+      allPropOptions:[]
     };
   },
   components: {
@@ -704,9 +700,8 @@ export default {
     }
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
+    this.getPropTypeList(this.$gameId);
     this.getData();
 
     bus.$on(
@@ -715,15 +710,31 @@ export default {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
         this.getPlatformList(this.id);
+        this.getPropTypeList(this.$gameId);
         this.getMoneyTypeList();
         this.getPropQualityList();
       }.bind(this)
     );
   },
   methods: {
+    getPropTypeList(gameId) {
+      this.$axios
+        .post(this.url + "/api/newProp/getPropTypeList", {
+          gameId: gameId
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("道具类别列表获取成功");
+            this.propTypeList = successResponse.data.data.list;
+          } else {
+            console.log(this.responseResult);
+            console.log("道具类别列表获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
     handleClick(tab, event) {
-      console.log(tab);
-      console.log(tab.name);
     },
     handleDelProp(index, row) {
       this.propData.splice(index, 1);
@@ -772,7 +783,6 @@ export default {
       }
     },
     selectProp() {
-      console.log(this.form.prop);
     },
     addMoneyToList() {
       //找到相同项的货币数量加一
@@ -787,7 +797,6 @@ export default {
         }
       }
       //否则添加新的货币
-      console.log(this.form.moneyType);
       if(this.form.moneyType!="" && this.form.moneyType!=null ){
         var moneyType = this.form.moneyType;
         var moneyCount = 1;
@@ -825,7 +834,7 @@ export default {
         }
       }
       this.form.prop.propCount = 1;
-      this.form.prop.propBind = "0";
+      this.form.prop.propBind = '0';
       if(this.propData.length<5){
           this.propData.push(this.form.prop);
       }else{
@@ -880,26 +889,15 @@ export default {
             console.log("申请道具列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
-            //this.mapDate();
+            //获取table后关闭所有窗口，避免闪烁
+            this.editVisible = false;
+            this.showApplyVisible = false;
+            this.addVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("申请道具列表获取失败");
           }
         });
-    },
-    mapDate() {
-      var list = [];
-
-      for (var i = 0; i < this.tableData.length; i++) {
-        var item = this.tableData[i];
-        var propList = item.propList.split(",");
-        for (var j = 0; j < propList.length; j++) {
-          var propInfo = propList[j].split("-");
-          list.push(propInfo);
-        }
-        this.tableData[i].propList = list;
-        list = [];
-      }
     },
     getPlayerTypeList() {
       this.$axios
@@ -915,29 +913,33 @@ export default {
           }
         });
     },
+    radioChange(index){
+        //强制刷新界面
+        var item = this.propData[index];
+        this.$set(this.propData,index,item);
+    },
     handleDelAll() {
       this.delAllVisible = true;
     },
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getApplyProp();
     },
-    getPropList(platformId) {
+    getAllPropList() {
       this.$axios
         .post(this.url + "/getPropUplaod", {
           pageNo: 1,
           pageSize: 10,
           isPage: "",
-          platformId: platformId,
-          strPlatform: platformId
+          platformId: 0,
+          strPlatform: this.strPlatform
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("道具列表获取成功");
-            this.propOptions = successResponse.data.data.list;
+            this.allPropOptions = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
             this.$message.error("道具列表获取失败");
@@ -963,8 +965,10 @@ export default {
               0,
               this.strPlatform.length - 1
             );
+            
+            this.getAllPropList();
             this.getApplyProp();
-          } else {
+          } else { 
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
@@ -1008,7 +1012,11 @@ export default {
     },
     selectPlatform() {
       this.getServerList(this.form.platformId);
-      this.getPropList(this.form.platformId);
+      for(var k = 0;k<this.allPropOptions.length;k++){
+          if(this.form.platformId==this.allPropOptions[k].platformId){
+              this.propOptions.push(this.allPropOptions[k]);
+          }
+      }
     },
     selectSearchKeyPlatform() {
       this.getSearchKeyServerList(this.searchKey.platformId);
@@ -1032,13 +1040,9 @@ export default {
       this.getApplyProp();
     },
     formatter(row, column) {
-      //时间格式化
+      //时间格式化               
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     selectServer() {
       if (this.serverOptions.length > 0) {
@@ -1172,7 +1176,7 @@ export default {
             console.log("道具申请添加成功");
             this.$message.success("道具申请添加成功");
             this.getApplyProp();
-            this.addVisible = false;
+            
           } else {
             console.log(this.responseResult);
             console.log("道具申请添加失败");
@@ -1185,8 +1189,8 @@ export default {
       
       this.propData =[];
       this.moneyList = [];
+      this.propOptions=[];
       var item = this.tableData[index];
-      
       this.form = {
         id: item.id,
         platformId: item.platformId,
@@ -1198,55 +1202,45 @@ export default {
         playerAccountList: item.playerAccountList,
         playerIdList: item.playerIdList,
         applyUser: item.applyUser,
-        applyReason: item.applyReason
+        applyReason: item.applyReason,
       };
       this.getServerList(item.platformId);
-      this.$axios
-      .post(this.url + "/getPropUplaod", {
-        pageNo: 1,
-        pageSize: 10,
-        isPage: "",
-        platformId: item.platformId,
-        strPlatform: item.platformId
-      })
-      .then(successResponse => {
-        this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        if (successResponse.data.code === 200) {
-            console.log("道具列表获取成功");
-            this.propOptions = successResponse.data.data.list;
-            var arr = item.propList.split(",");
-            for(var i = 0;i<arr.length;i++){
-              var ob = {};
-                ob.propId = arr[i].split("-")[0];
-                ob.propCount = arr[i].split("-")[1];
-                ob.propBind = arr[i].split("-")[2];
-                ob.propQuality = arr[i].split("-")[3];
-                for(var j = 0;j<this.propOptions.length;j++){
-                    if(ob.propId==this.propOptions[j].propId){
-                      ob.propName = this.propOptions[j].propName;
-                      ob.propType = this.propOptions[j].propType;
-                      ob.propDescribe = this.propOptions[j].propDescribe;
-                      ob.propMaxCount = this.propOptions[j].propMaxCount;
-                      
-                      this.propData.push(ob);
-                      break;
-                    }
-                }
-            }
-            arr = item.moneyList.split(",");
-            for(var i = 0;i<arr.length;i++){
-                var ob = {};
-                ob.moneyType = arr[i].split("|")[0];
-                ob.moneyCount = arr[i].split("|")[1];
-                this.moneyList.push(ob);
-            }
-            this.editVisible = true;
-        } else {
-          console.log(this.responseResult);
-          this.$message.error("道具列表获取失败");
+
+      for(var k = 0;k<this.allPropOptions.length;k++){
+          if(item.platformId==this.allPropOptions[k].platformId){
+              this.propOptions.push(this.allPropOptions[k]);
+          }
+      }
+
+      var arr = item.propList.split(",");
+      for(var i = 0;i<arr.length;i++){
+        var ob = {};
+          ob.propId = arr[i].split("-")[0];
+          ob.propCount = arr[i].split("-")[1];
+          ob.propBind = arr[i].split("-")[2];
+          ob.propQuality = arr[i].split("-")[3];
+          for(var j = 0;j<this.propOptions.length;j++){
+              if(ob.propId==this.propOptions[j].propId ){
+                ob.propName = this.propOptions[j].propName;
+                ob.propType = this.propOptions[j].propType;
+                ob.propDescribe = this.propOptions[j].propDescribe;
+                ob.propMaxCount = this.propOptions[j].propMaxCount;
+                
+                this.propData.push(ob);
+                break;
+              }
+          }
+      }
+      if(item.moneyList!=""){
+        arr = item.moneyList.split(",");
+        for(var i = 0;i<arr.length;i++){
+            var ob = {};
+            ob.moneyType = arr[i].split("|")[0];
+            ob.moneyCount = arr[i].split("|")[1];
+            this.moneyList.push(ob);
         }
-      });
-      
+      }
+      this.editVisible = true;
     },
     editApply() {
       var data = {};
@@ -1354,7 +1348,7 @@ export default {
             console.log("道具申请修改成功");
             this.$message.success("道具申请修改成功");
             this.getApplyProp();
-            this.editVisible = false;
+            
           } else {
             console.log(this.responseResult);
             console.log("道具申请修改失败");
@@ -1378,6 +1372,8 @@ export default {
       };
       this.propData = [];
       this.moneyList = [];
+      this.serverOptions = [];
+      this.propOptions = [];
       this.addVisible = true;
     },
     handleApply(index, row) {
@@ -1419,8 +1415,9 @@ export default {
           if (successResponse.data.code === 200) {
             console.log("道具申请邮件发送成功");
             this.$message.success("道具申请邮件发送成功");
+            
             this.getApplyProp();
-            this.showApplyVisible = false;
+            
           } else {
             console.log(this.responseResult);
             console.log("道具申请邮件发送失败");
@@ -1544,10 +1541,10 @@ export default {
     },
     formatApplyState(row, column, cellValue, index) {
       return row.applyState == 1
-        ? "邮件发送成功"
+        ? "发送成功"
         : row.applyState == 2
-        ? "邮件发送失败"
-        : "邮件未发送";
+        ? "发送失败"
+        : "未发送";
     },
     formatApplyType(row, column, cellValue, index) {
       return row.applyType == 1 ? "角色申请" : "全服申请";
@@ -1556,6 +1553,21 @@ export default {
       for (var i = 0; i < this.moneyTypeOptions.length; i++) {
         if (row.moneyType == this.moneyTypeOptions[i].moneyId) {
           return this.moneyTypeOptions[i].moneyType;
+        }
+      }
+    },
+    formatPropTypeName(row, column, cellValue, index) {
+      for (var i = 0; i < this.propTypeList.length; i++) {
+        if (row.propType == this.propTypeList[i].propTypeId) {
+          return this.propTypeList[i].propType;
+        }
+      }
+    },
+    formatPropName(item,platformId) {
+      //十分消耗性能
+      for (var i = 0; i < this.allPropOptions.length; i++) {
+        if (item.split('-')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) {
+          return this.allPropOptions[i].propName+"-"+item.split('-')[1]+"个";
         }
       }
     }

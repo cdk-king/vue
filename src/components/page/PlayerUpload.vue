@@ -57,10 +57,6 @@
             <div class="plugins-tips">
             {{strplayerList}}
             </div>
-
-            <!-- <div class="crop-demo-btn">选择文件
-            <input class="crop-input" type="file"   @change="upload"/>
-            </div> -->
         </div>
     </div>
 </template>
@@ -105,7 +101,6 @@
         },
         methods:{
             getData(){
-                console.log("this.$gameId:"+this.$gameId);
                 this.getPlatformList(this.$gameId);
             },
             getPlatformList(gameId) {
@@ -119,14 +114,11 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -139,14 +131,11 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("渠道服务器列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -163,7 +152,6 @@
                         console.log(this.responseResult);
                         this.$message.success("玩家导入成功");
                     }else{
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("玩家导入失败");
                     }
@@ -174,7 +162,6 @@
                 
             },
             handleChange(file,fileList){
-                console.log(file.raw);
                 const reader = new FileReader();
 
                  reader.readAsText(file.raw, "gb2312");
@@ -193,39 +180,19 @@
                             map.diamond = data[6];
                             map.rechargeAmount = data[7];
                             map.level = data[8];
-                            
                             map.combatPower = data[9];
                             map.isProhibitSpeak = data[10];
                             map.isBan = data[11];
                             map.registrationTime = data[12];
                             this.playerList.push(map);
                         }
-                        console.log(this.playerList);
                         this.strplayerList = JSON.stringify(this.playerList);
-                        console.log(this.strplayerList);
                     }.bind(this)
             },
-            upload(e){
-                
-                const file = e.target.files[0];
-                console.log(file);
-                const reader = new FileReader();
-
-                 reader.readAsText(file, "gb2312");
-                 reader.onload = function (e) {
-                        var fileText = e.target.result.split("\n");
-                        for(var i = 0;i<fileText.length;i++){
-                            var data = fileText[i].split('|')
-                            console.log(fileText[i]);
-                        }
-                    }
-            },
             selectPlatform() {
-                console.log(this.form.platformId);
                 this.getServerList(this.form.platformId);
             },
             selectServer() {
-                console.log(this.form.serverId);
             },
         },
         

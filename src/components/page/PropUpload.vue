@@ -225,21 +225,6 @@
                 }
                 this.strPropList = JSON.stringify(this.propList); 
             },
-            upload(e){
-                
-                const file = e.target.files[0];
-                const reader = new FileReader();
-
-                 reader.readAsText(file, "gb2312");
-                 reader.onload = function (e) {
-                        var fileText = e.target.result;
-                        fileText = fileText.replace(/(\t)|(\r)/g,"");
-                        list = e.target.result.split("\n");
-                        for(var i = 0;i<list.length;i++){
-                            var data = list[i].split('|')
-                        }
-                    }
-            },
             selectPlatform() {
             },
         },     

@@ -143,6 +143,8 @@
 import bus from "../common/bus";
 import crypto from "crypto";
 import md5 from "js-md5";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "AppleGiftCDK",
   props: ["value"],
@@ -152,14 +154,6 @@ export default {
       tableData: [],
       dialogVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platform: "渠道1"
-        },
-        {
-          platformId: "2",
-          platform: "渠道2"
-        }
       ],
       giftOptions: [],
       platformValue: "",
@@ -211,9 +205,7 @@ export default {
     }
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -259,7 +251,6 @@ export default {
         },config)
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-            console.log(successResponse.data);
           //window.location.href = window.URL.createObjectURL(successResponse.data);
 
           //A File, Blob or MediaSource object to create an object URL for.
@@ -298,8 +289,6 @@ export default {
         },config)
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-            console.log( this.responseResult);
-            console.log(successResponse.data);
 
           var fileName = "img.jpg";
           //A File, Blob or MediaSource object to create an object URL for.
@@ -324,7 +313,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("CDK解析成功");
             this.exchangeResult = successResponse.data.data;
             this.exchangeVisible = true;
@@ -520,8 +508,6 @@ export default {
       }
     },
     getData() {
-      //var userData = JSON.parse(localStorage.getItem("userData"));
-      //this.id = userData.id;
       this.getPlatformList(this.$gameId);
     },
     getCoupon() {

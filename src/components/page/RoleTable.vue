@@ -47,13 +47,13 @@
         <el-table-column prop="state" label="状态" :formatter="formatState"></el-table-column>
         <el-table-column prop="role_describe" label="描述"></el-table-column>
         <el-table-column label="权限">
-          <template slot-scope="aa">
+          <template slot-scope="right">
             <el-collapse>
               <el-collapse-item title="折叠" name="1">
                 <ul>
                   <li
                     class="li-small"
-                    v-for="item in aa.row.rights"
+                    v-for="item in right.row.rights"
                     v-bind:key="item"
                   >{{ item | filters_rightItem }}</li>
                 </ul>

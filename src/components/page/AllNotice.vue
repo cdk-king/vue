@@ -83,7 +83,7 @@
 
         <el-table-column prop="noticeTitle" label="标题"></el-table-column>
         <el-table-column prop="noticeContent" label="内容" width="300"></el-table-column>
-        <el-table-column prop="propList" label="道具列表" width="200">
+        <el-table-column prop="propList" label="道具列表" width="160">
           <template slot-scope="scope">
             <p
               style
@@ -91,7 +91,7 @@
               :key="item"
               :label="item"
               :value="item"
-            >{{item}}</p>
+            >{{formatPropName(item,scope.row.platformId)}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="moneyCount" label="货币">
@@ -119,7 +119,7 @@
             >{{item}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="userName" label="编辑人"></el-table-column>
+        <el-table-column prop="userName" label="申请人"></el-table-column>
         <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
@@ -238,6 +238,7 @@
               <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
               <el-table-column prop="propType" label="道具类别" :formatter="formatPropTypeName"></el-table-column>
+              <el-table-column prop="propDescribe" width="200px" label="道具描述"></el-table-column>
               <el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
@@ -251,12 +252,12 @@
               </el-table-column>
               <el-table-column label="是否绑定">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px" @change="radioChange(scope.$index)">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px" @change="radioChange(scope.$index)">绑定</el-radio>
                 </template>
               </el-table-column>
 
-              <el-table-column label="操作" align="center">
+              <el-table-column label="操作" align="center" width="120px">
                 <template slot-scope="scope">
                   
                   <el-button
@@ -412,7 +413,8 @@
             <el-table :data="propData" border class="table" ref="multipleTable">
               <el-table-column prop="propId" label="道具ID"></el-table-column>
               <el-table-column prop="propName" label="道具名称"></el-table-column>
-              <el-table-column prop="propType" label="道具类别"></el-table-column>
+              <el-table-column prop="propType" label="道具类别" :formatter="formatPropTypeName"></el-table-column>
+              <el-table-column prop="propDescribe" width="200px" label="道具描述"></el-table-column>
               <el-table-column prop="propMaxCount" label="最大堆叠数量"></el-table-column>
               <el-table-column prop="propCount" label="数量">
                 <template slot-scope="scope">
@@ -426,12 +428,12 @@
               </el-table-column>
               <el-table-column label="是否绑定">
                 <template slot-scope="scope">
-                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px">不绑定</el-radio>
-                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px">绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="0" style="margin-left:0px" @change="radioChange(scope.$index)">不绑定</el-radio>
+                  <el-radio v-model="propData[scope.$index].propBind" label="1" style="margin-left:0px" @change="radioChange(scope.$index)">绑定</el-radio>
                 </template>
               </el-table-column>
 
-              <el-table-column label="操作" align="center">
+              <el-table-column label="操作" align="center" width="120px">
                 <template slot-scope="scope">
                   <el-button
                     type="text" style="margin-left:0px"
@@ -521,6 +523,8 @@
 
 <script>
 import bus from "../common/bus";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "PlayerInfo",
   data() {
@@ -528,7 +532,6 @@ export default {
       multipleSelection: [],
       show: false,
       dialogVisible: false,
-      aa: this.$cdk,
       cur_page: 1,
       total: 0,
       handleVisible: true,
@@ -536,14 +539,6 @@ export default {
       addPlatformNoticeVisible: false,
       editPlatformNoticeVisible: false,
       platformOptions: [
-        {
-          platformId: "1",
-          platformName: "渠道1"
-        },
-        {
-          platformId: "2",
-          platformName: "渠道2"
-        }
       ],
       platformValue: "",
       platformLabel: "",
@@ -585,7 +580,8 @@ export default {
       propTypeList: [],
       url: "http://localhost:8011",
       strPlatform: "",
-      countMaxLength:600
+      countMaxLength:600,
+      allPropOptions:[]
     };
   },
   components: {
@@ -603,9 +599,7 @@ export default {
     }
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getMoneyTypeList(this.$gameId);
     this.getPropTypeList(this.$gameId);
     this.getData();
@@ -730,12 +724,33 @@ export default {
               this.strPlatform.length - 1
             );
             this.getPlatformNotice();
+            this.getAllPropList();
           } else {
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
         })
         .catch(failResponse => {});
+    },
+    getAllPropList() {
+      this.$axios
+        .post(this.url + "/getPropUplaod", {
+          pageNo: 1,
+          pageSize: 10,
+          isPage: "",
+          platformId: 0,
+          strPlatform: this.strPlatform
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("全平台道具列表获取成功");
+            this.allPropOptions = successResponse.data.data.list;
+          } else {
+            console.log(this.responseResult);
+            this.$message.error("全平台道具列表获取失败");
+          }
+        });
     },
     getServerList(platformId) {
       this.$axios
@@ -746,7 +761,6 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("服务器列表获取成功");
-
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
@@ -771,49 +785,31 @@ export default {
 
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
-            this.open4(successResponse.data.message);
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
         })
         .catch(failResponse => {});
     },
-    getPropList(platformId) {
-      this.$axios
-        .post(this.url + "/getPropUplaod", {
-          pageNo: 1,
-          pageSize: 10,
-          isPage: "",
-          platformId: platformId,
-          strPlatform: platformId
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("道具列表获取成功");
-            this.propOptions = successResponse.data.data.list;
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("道具列表获取失败");
-          }
-        });
-    },
     selectPlatform() {
       this.getServerList(this.form.platformId);
-      this.getPropList(this.form.platformId);
+
+      for(var k = 0;k<this.allPropOptions.length;k++){
+          if(this.form.platformId==this.allPropOptions[k].platformId){
+              this.propOptions.push(this.allPropOptions[k]);
+          }
+      }
     },
     selectServer() {
       if (this.serverOptions.length > 0) {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
       }
-
       this.getPlatformNotice();
     },
     getPlatformNotice() {
@@ -826,15 +822,16 @@ export default {
           pageSize: 10,
           isPage: "isPage",
           strPlatform: this.strPlatform
-          //searchKey: JSON.stringify(this.searchKey)
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("公告列表获取成功");
-            //this.$message.success("公告列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
+            //获取table后关闭所有窗口，避免闪烁
+            this.editPlatformNoticeVisible = false;
+            this.addPlatformNoticeVisible = false;
           } else {
             console.log(this.responseResult);
             console.log("公告列表获取失败");
@@ -852,17 +849,12 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.selectServer();
     },
     formatter(row, column) {
-      //时间格式化
+      //时间格式化               
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     handleAddPlatformNotice() {
       this.form = {
@@ -873,7 +865,11 @@ export default {
       };
       this.propData = [];
       this.moneyList = [];
+      this.serverOptions = [];
+      this.propOptions = [];
+      this.checkVisible = false;
       this.addPlatformNoticeVisible = true;
+
     },
     addMoneyToList() {
       //找到相同项的货币数量加一
@@ -896,6 +892,11 @@ export default {
       item.moneyCount = moneyCount;
       this.moneyList.push(item);
       }
+    },
+    radioChange(index){
+        //强制刷新界面
+        var item = this.propData[index];
+        this.$set(this.propData,index,item);
     },
     addPropToList() {
       //找到相同项的道具数量加一
@@ -958,9 +959,6 @@ export default {
         this.$message("内容长度超过最大限制"+this.countMaxLength);
         return;
       }
-      console.log(this.form);
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.form.serverList));
 
       var list = "";
       if (this.propData.length != 0) {
@@ -983,7 +981,6 @@ export default {
             list += "|0";
             break;
           }
-          console.log(this.propData[i].propBind);
           list += this.propData[i].propId + "|" + this.propData[i].propCount;
           if (this.propData[i].propBind) {
             list += "|" + this.propData[i].propBind;
@@ -1031,16 +1028,14 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("全服公告添加成功");
             this.$message.success("全服公告添加成功");
             this.getPlatformNotice();
-            this.addPlatformNoticeVisible = false;
+            
           } else {
             console.log(this.responseResult);
             console.log("全服公告添加失败");
             this.$message.error("全服公告添加失败");
-            return false;
           }
         })
         .catch(failResponse => {});
@@ -1054,8 +1049,6 @@ export default {
         this.$message("请输入正确的公告内容");
         return;
       }
-      console.log(JSON.stringify(this.form));
-      console.log(JSON.stringify(this.form.serverList));
 
       var list = "";
       if (this.propData.length != 0) {
@@ -1078,7 +1071,6 @@ export default {
             list += "|0";
             break;
           }
-          console.log(this.propData[i].propBind);
           list += this.propData[i].propId + "|" + this.propData[i].propCount;
           if (this.propData[i].propBind) {
             list += "|" + this.propData[i].propBind;
@@ -1126,7 +1118,7 @@ export default {
             console.log("全服公告编辑成功");
             this.$message.success("全服公告编辑成功");
             this.getPlatformNotice();
-            this.editPlatformNoticeVisible = false;
+            
           } else {
             console.log(this.responseResult);
             console.log("全服公告编辑失败");
@@ -1164,7 +1156,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             var error = successResponse.data.data.error;
             if (error.length != 0) {
               //发送失败，返回失败服务器ID列表
@@ -1207,10 +1198,8 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             var recodes = successResponse.data.data.codes;
             var error = successResponse.data.data.error;
-            console.log(recodes);
             if (error.length != 0) {
               //发送失败，返回失败服务器ID列表
               this.$message.error("公告发送失败");
@@ -1229,8 +1218,6 @@ export default {
         .catch(failResponse => {});
     },
     handleDelete(index, row) {
-      console.log(index);
-      console.log(this.tableData[index].id);
       this.$axios
         .post(this.url + "/deletePlatformNotice", {
           id: this.tableData[index].id
@@ -1238,7 +1225,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("公告删除完成");
             this.getPlatformNotice();
           } else {
@@ -1290,54 +1276,45 @@ export default {
       };
       this.propData = [];
       this.moneyList = [];
-
+      this.propOptions = [];
       this.getServerList(item.platformId);
       this.editPlatformNoticeVisible = true;
-////////////
-      this.$axios
-      .post(this.url + "/getPropUplaod", {
-        pageNo: 1,
-        pageSize: 10,
-        isPage: "",
-        platformId: item.platformId,
-        strPlatform: item.platformId
-      })
-      .then(successResponse => {
-        this.responseResult = "\n" + JSON.stringify(successResponse.data);
-        if (successResponse.data.code === 200) {
-            console.log("道具列表获取成功");
-            this.propOptions = successResponse.data.data.list;
-            var arr = item.propList.split(";");
-            for(var i = 0;i<arr.length;i++){
+
+      for(var k = 0;k<this.allPropOptions.length;k++){
+          if(item.platformId==this.allPropOptions[k].platformId){
+              this.propOptions.push(this.allPropOptions[k]);
+          }
+      }
+
+      var arr = item.propList.split(";");
+      for(var i = 0;i<arr.length;i++){
+        var ob = {};
+          ob.propId = arr[i].split("|")[0];
+          ob.propCount = arr[i].split("|")[1];
+          ob.propBind = arr[i].split("|")[2];
+          ob.propQuality = arr[i].split("|")[3];
+          for(var j = 0;j<this.propOptions.length;j++){
+              if(ob.propId==this.propOptions[j].propId){
+                ob.propName = this.propOptions[j].propName;
+                ob.propType = this.propOptions[j].propType;
+                ob.propDescribe = this.propOptions[j].propDescribe;
+                ob.propMaxCount = this.propOptions[j].propMaxCount;
+                this.propData.push(ob);
+                break;
+              }
+          }
+      }
+      if(item.moneyList!=""){
+          arr = item.moneyList.split(",");
+          for(var i = 0;i<arr.length;i++){
               var ob = {};
-                ob.propId = arr[i].split("|")[0];
-                ob.propCount = arr[i].split("|")[1];
-                ob.propBind = arr[i].split("|")[2];
-                ob.propQuality = arr[i].split("|")[3];
-                for(var j = 0;j<this.propOptions.length;j++){
-                    if(ob.propId==this.propOptions[j].propId){
-                      ob.propName = this.propOptions[j].propName;
-                      ob.propType = this.propOptions[j].propType;
-                      ob.propDescribe = this.propOptions[j].propDescribe;
-                      ob.propMaxCount = this.propOptions[j].propMaxCount;
-                      this.propData.push(ob);
-                      break;
-                    }
-                }
-            }
-            arr = item.moneyList.split(",");
-            for(var i = 0;i<arr.length;i++){
-                var ob = {};
-                ob.moneyType = arr[i].split("|")[0];
-                ob.moneyCount = arr[i].split("|")[1];
-                this.moneyList.push(ob);
-            }
-            this.editVisible = true;
-        } else {
-          console.log(this.responseResult);
-          this.$message.error("道具列表获取失败");
-        }
-      });
+              ob.moneyType = arr[i].split("|")[0];
+              ob.moneyCount = arr[i].split("|")[1];
+              this.moneyList.push(ob);
+          }
+      }
+
+      this.editVisible = true;
     },
     search() {
       this.getPlatformNotice();
@@ -1380,7 +1357,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("全服公告批量删除完成");
             this.multipleSelection = [];
             this.getPlatformNotice();
@@ -1395,7 +1371,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     formatMoneyTypeName(row, column, cellValue, index) {
       for (var i = 0; i < this.moneyTypeOptions.length; i++) {
@@ -1410,13 +1385,16 @@ export default {
           return this.propTypeList[i].propType;
         }
       }
+    },
+    formatPropName(item,platformId) {
+      for (var i = 0; i < this.allPropOptions.length; i++) {
+        if (item.split('|')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) { 
+          return this.allPropOptions[i].propName+"-"+item.split('|')[1]+"个" ;
+        }
+      }
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   }
 };
 </script>

@@ -51,6 +51,7 @@
 <script>
     import bus from '../common/bus';
     import md5 from 'js-md5';
+    import setLocalThisUrl from "../../code/setLocalThisUrl";
     export default {
         name: 'register',
         data: function(){
@@ -73,9 +74,7 @@
             
         },
         created(){
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -87,7 +86,6 @@
         },
         methods:{
             getData(){         
-                console.log("this.$gameId:"+this.$gameId);
             },
             submitForm(formName){
                 var password1 = md5.hex(this.form.password+"cdk");
@@ -102,7 +100,6 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("用户注册成功");
                     this.$message.success("用户注册成功");
                     this.form = [];

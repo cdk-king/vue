@@ -128,12 +128,12 @@
                 
                 <el-table-column label="操作"  align="center" v-if="handleVisible">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="handleDetail(scope.$index, scope.row)" >详细信息</el-button>
+                        <el-button type="text" icon="el-icon-info" @click="handleDetail(scope.$index, scope.row)" >详细信息</el-button>
                         
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeToProhibitSpeak(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak!=1">禁言</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeProhibitSpeakToNormal(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak==1">解除禁言</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeToBan(scope.$index, scope.row)" v-if="scope.row.isBan!=1">禁封</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleChangeBanToNormal(scope.$index, scope.row)" v-if="scope.row.isBan==1">解除禁封</el-button>
+                        <el-button type="text" icon="el-icon-error" @click="handleChangeToProhibitSpeak(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak!=1">禁言</el-button>
+                        <el-button type="text" icon="el-icon-success" @click="handleChangeProhibitSpeakToNormal(scope.$index, scope.row)" v-if="scope.row.isProhibitSpeak==1">解除禁言</el-button>
+                        <el-button type="text" icon="el-icon-error" @click="handleChangeToBan(scope.$index, scope.row)" v-if="scope.row.isBan!=1">禁封</el-button>
+                        <el-button type="text" icon="el-icon-success" @click="handleChangeBanToNormal(scope.$index, scope.row)" v-if="scope.row.isBan==1">解除禁封</el-button>
                     </template>
                 </el-table-column>
 
@@ -158,7 +158,7 @@
                     <span  class="span-right">玩家角色名:</span>
                 </div></el-col>
                 <el-col :span="6"><div class="grid-content bg-purple">
-                    <span>{{detail.AccountName}}</span>
+                    <span>{{detail.Name}}</span>
                 </div></el-col>
                 </el-row>
 
@@ -296,13 +296,26 @@
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
-        <!-- 编辑禁言提示框 -->
+        <!-- 禁言提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁言？</div>
+            <div class="del-dialog-cnt" style="text-align:center;margin-bottom:20px;">是否确定禁言？</div>
 
-            <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="禁言时间">
-                    <el-input v-model="form.prohibitSpeakTime"></el-input>
+            <el-form ref="form" :model="form" label-width="50px">
+                <el-form-item label="">
+                    <el-switch
+                    v-model="form.isForever"
+                    active-text="限时禁言"
+                    inactive-text="永久禁言">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="天数"  v-if="form.isForever">
+                    <el-input v-model="form.prohibitSpeakDay"></el-input>
+                </el-form-item>
+                <el-form-item label="小时"  v-if="form.isForever">
+                    <el-input v-model="form.prohibitSpeakHour"></el-input>
+                </el-form-item>
+                <el-form-item label="分钟"  v-if="form.isForever">
+                    <el-input v-model="form.prohibitSpeakMin"></el-input>
                 </el-form-item>
             </el-form>
 
@@ -311,7 +324,7 @@
                 <el-button type="primary" @click="ToProhibitSpeak">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- 编辑批量禁言提示框 -->
+        <!-- 批量禁言提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeAllToProhibitSpeak" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量禁言？</div>
             <span slot="footer" class="dialog-footer">
@@ -320,7 +333,7 @@
             </span>
         </el-dialog>
 
-        <!-- 编辑解除禁言提示框 -->
+        <!-- 解除禁言提示框 -->
         <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定解除禁言？</div>
             <span slot="footer" class="dialog-footer">
@@ -328,7 +341,7 @@
                 <el-button type="primary" @click="ProhibitSpeakToNormal">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- 编辑批量解除禁言提示框 -->
+        <!-- 批量解除禁言提示框 -->
         <el-dialog title="解冻提示" :visible.sync="ChangeAllProhibitSpeakToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量解除禁言？</div>
             <span slot="footer" class="dialog-footer">
@@ -337,14 +350,27 @@
             </span>
         </el-dialog>
 
-        <!-- 编辑禁封提示框 -->
+        <!-- 禁封提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
-            <div class="del-dialog-cnt">是否确定禁封？</div>
+            <div class="del-dialog-cnt" style="text-align:center;margin-bottom:20px;">是否确定禁封？</div>
 
 
-            <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="禁封时间">
-                    <el-input v-model="form.banTime"></el-input>
+            <el-form ref="form" :model="form" label-width="50px">
+                <el-form-item label="">
+                    <el-switch
+                    v-model="form.isForever"
+                    active-text="限时禁封"
+                    inactive-text="永久禁封">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="天数"  v-if="form.isForever">
+                    <el-input v-model="form.banDay"></el-input>
+                </el-form-item>
+                <el-form-item label="小时"  v-if="form.isForever">
+                    <el-input v-model="form.banHour"></el-input>
+                </el-form-item>
+                <el-form-item label="分钟"  v-if="form.isForever">
+                    <el-input v-model="form.banMin"></el-input>
                 </el-form-item>
             </el-form>
 
@@ -353,7 +379,7 @@
                 <el-button type="primary" @click="ToBan">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- 编辑批量禁封提示框 -->
+        <!-- 批量禁封提示框 -->
         <el-dialog title="冻结提示" :visible.sync="ChangeAllToBan" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量禁封？</div>
             <span slot="footer" class="dialog-footer">
@@ -362,7 +388,7 @@
             </span>
         </el-dialog>
 
-        <!-- 编辑解除禁封提示框 -->
+        <!-- 解除禁封提示框 -->
         <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定解除禁封？</div>
             <span slot="footer" class="dialog-footer">
@@ -370,7 +396,7 @@
                 <el-button type="primary" @click="BanToNormal">确 定</el-button>
             </span>
         </el-dialog>  
-        <!-- 编辑批量解除禁封提示框 -->
+        <!-- 批量解除禁封提示框 -->
         <el-dialog title="解冻提示" :visible.sync="ChangeAllBanToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量解除禁封？</div>
             <span slot="footer" class="dialog-footer">
@@ -403,7 +429,6 @@ export default {
       dialogVisible: false,
       delAllVisible: false,
       detailVisible: false,
-      aa: this.$cdk,
       cur_page: 1,
       pageSize:10,
       handleVisible: false,
@@ -452,7 +477,6 @@ export default {
         maxRegistrationTime: "",
         minCombatPower: "",
         maxCombatPower: "",
-        
       },
       url:"http://localhost:8011",
       total:0
@@ -460,7 +484,6 @@ export default {
   },
   components: {
   },
-
   computed: {
     data() {
       return this.tableData;
@@ -473,15 +496,12 @@ export default {
       return role;
     },
     getPlatformName(){
-        //用闭包去实现传参
         return function(platformId){
-            var item;
             for(var i = 0;i<this.platformOptions.length;i++){
-                if(this.platformOptions[i].id==platformId){
+                if(this.platformOptions[i].platformId==platformId){
                     return this.platformOptions[i].platform;
                 }
             }
-
         }
     },
     getServerName(){
@@ -530,11 +550,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -713,6 +733,38 @@ export default {
         this.ChangeAllBanToNormal = true;
     },
     ToProhibitSpeak() {
+
+        this.form.prohibitSpeakTime = 0;
+        if(this.form.isForever==undefined || this.form.isForever == false){
+            //永久禁封
+            
+        }else if(this.form.isForever==true){
+            if(this.form.prohibitSpeakDay!=undefined && this.form.prohibitSpeakDay!="" && this.form.prohibitSpeakDay!="0" ){
+                if(!parseInt(this.form.prohibitSpeakDay)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakDay)*60*60*24;
+            }
+            if(this.form.prohibitSpeakHour!=undefined && this.form.prohibitSpeakHour!="" && this.form.prohibitSpeakHour!="0"){
+                if(!parseInt(this.form.prohibitSpeakHour)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakHour)*60*60;
+            }
+            if(this.form.prohibitSpeakMin!=undefined && this.form.prohibitSpeakMin!="" && this.form.prohibitSpeakMin!="0"){
+                if(!parseInt(this.form.prohibitSpeakMin)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakMin)*60;
+            }
+        }
+
         this.$axios
         .post(this.url+"/api/player/talkBan", {
             platformId: this.platformValue,
@@ -783,6 +835,36 @@ export default {
       this.ChangeBanToNormal = true;
     },
     ToBan() {
+        this.form.banTime = 0;
+        if(this.form.isForever==undefined || this.form.isForever == false){
+            //永久禁封
+            
+        }else if(this.form.isForever==true){
+            if(this.form.banDay!=undefined && this.form.banDay!="" && this.form.banDay!="0" ){
+                if(!parseInt(this.form.banDay)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.banTime += parseInt(this.form.banDay)*60*60*24;
+            }
+            if(this.form.banHour!=undefined && this.form.banHour!="" && this.form.banHour!="0"){
+                if(!parseInt(this.form.banHour)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.banTime += parseInt(this.form.banHour)*60*60;
+            }
+            if(this.form.banMin!=undefined && this.form.banMin!="" && this.form.banMin!="0"){
+                if(!parseInt(this.form.banMin)){
+                    console.log("请输入正确的数字");
+                    this.$message.error("请输入正确的数字");
+                    return;
+                }
+                this.form.banTime += parseInt(this.form.banMin)*60;
+            }
+        }
 
         this.$axios
         .post(this.url+"/api/player/Ban", {
@@ -853,7 +935,6 @@ export default {
         for (let i = 0; i < length; i++) {
             str += this.multipleSelection[i].id + ',';
         }
-        console.log(str);
         //批量删除处理
         this.$axios.post('/',{
                 id: str
@@ -876,10 +957,6 @@ export default {
     }
   },
   watch: {
-    aa: function(curVal, oldVal) {
-      console.log(curVal);
-      this.$message(curVal);
-    }
   },
   filters:{
     //这里不能访问this  

@@ -75,7 +75,7 @@ export default {
       },
       rules: {
         username: [
-          { required: true, message: "请输入用户名", trigger: "blur" } //,validator: validatePhone
+          { required: true, message: "请输入用户名", trigger: "blur" } 
         ],
         password: [{ required: true, message: "请输入密码", trigger: "blur" }]
       },
@@ -150,11 +150,9 @@ export default {
               "userData",
               JSON.stringify(successResponse.data.data)
             );
-            console.log(localStorage.getItem("userData"));
             console.log("当前用户信息获取成功");
           } else {
             this.$message.error(successResponse.data.message);
-            console.log("error");
             console.log(this.responseResult);
           }
         })
@@ -234,8 +232,8 @@ export default {
           if (successResponse.data.code === 200) {
             console.log("角色获取成功");
             localStorage.setItem("roles", "");
-            //找不到引用
             localStorage.setItem("roles", successResponse.data.data);
+            //获取用户权限
             this.getUserAllRight(id);
           } else {
             this.$message.error(successResponse.data.message);
@@ -257,7 +255,7 @@ export default {
             localStorage.setItem("rightTags", successResponse.data.data);
             this.addRouter();
           } else {
-            this.$message.error(successResponse.data.message);
+            this.$message.error("用户权限获失败");
             console.log(this.responseResult);
           }
         })

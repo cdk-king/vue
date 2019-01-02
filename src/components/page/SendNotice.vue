@@ -196,7 +196,7 @@
               @click="handleSend(scope.$index, scope.row)"
               
             >发送</el-button>
-                      <el-button
+            <el-button
             type="text" 
             icon="el-icon-delete"
             class="red"
@@ -238,6 +238,7 @@
 <script>
 import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "PlayerInfo",
   data() {
@@ -405,7 +406,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
@@ -483,19 +483,25 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.selectServer();
     },
     formatter(row, column) {
       //时间格式化
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     submit() {
+      if (this.platformValue == "" || this.platformValue == undefined) {
+        this.$message("请选择正确的平台");
+        return;
+      }
+      if (
+        this.serverList.length == 0 ||
+        this.serverList == undefined
+      ) {
+        this.$message("请选择正确的服务器");
+        return;
+      }
       if (this.form.noticeType == "") {
         this.$message("请选择正确的消息类型");
         return;

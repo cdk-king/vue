@@ -189,6 +189,7 @@
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
+              v-if="scope.row.sendState!=1"
             >编辑</el-button>
             <el-button
               type="text"
@@ -327,6 +328,7 @@
 <script>
 import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "PlayerInfo",
   data() {
@@ -484,7 +486,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
             this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
@@ -559,7 +560,6 @@ export default {
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.selectServer();
     },
     changeContent(){
@@ -571,12 +571,9 @@ export default {
       }
     },
     formatter(row, column) {
+      //时间格式化
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     handleClick(tab, event) {
     },
@@ -596,6 +593,10 @@ export default {
       }
       if (this.form.emailContent == "") {
         this.$message("内容不能为空");
+        return;
+      }
+      if (this.form.emailContent.length > this.countMaxLength) {
+        this.$message("内容超过最大字数上限");
         return;
       }
       if (this.editableTabsValue == "2") {
@@ -626,7 +627,6 @@ export default {
           emailContent: this.form.emailContent,
           sendReason: this.form.sendReason,
           sendType: 3,
-
           addUser: this.userId
         };
       }
@@ -664,6 +664,10 @@ export default {
         this.$message("内容不能为空");
         return;
       }
+      if (this.form.emailContent.length > this.countMaxLength) {
+        this.$message("内容超过最大字数上限");
+        return;
+      }
       if (this.form.sendType == 2) {
         data = {
           id: this.form.id,
@@ -673,11 +677,9 @@ export default {
           emailContent: this.form.emailContent,
           sendReason: this.form.sendReason,
           sendType: 2,
-
           playerNameList: this.form.playerNameList,
           playerAccountList: this.form.playerAccountList,
           playerIdList: this.form.playerIdList,
-
           addUser: this.userId
         };
       }
@@ -690,7 +692,6 @@ export default {
           emailContent: this.form.emailContent,
           sendReason: this.form.sendReason,
           sendType: 3,
-
           addUser: this.userId
         };
       }
@@ -702,6 +703,7 @@ export default {
             console.log("邮件编辑成功");
             this.$message.success("邮件编辑成功");
             this.getEmail();
+            this.dialogVisible = false;
           } else {
             console.log(this.responseResult);
             console.log("邮件编辑失败");

@@ -224,19 +224,6 @@
                 }
                 this.strGiftList = JSON.stringify(this.giftList);
             },
-            upload(e){
-                
-                const file = e.target.files[0];
-                const reader = new FileReader();
-
-                 reader.readAsText(file, "gb2312");
-                 reader.onload = function (e) {
-                        var fileText = e.target.result.split("\n");
-                        for(var i = 0;i<fileText.length;i++){
-                            var data = fileText[i].split('|')
-                        }
-                    }
-            },
             selectPlatform() {
             },
 

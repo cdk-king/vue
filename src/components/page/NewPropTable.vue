@@ -20,6 +20,9 @@
                 </el-select>
                 <span class="grid-content bg-purple-light">状态：</span>
 
+                <span class="grid-content bg-purple-light">道具ID：</span>
+                <el-input v-model="searchKey.propId" placeholder="筛选道具ID" class="handle-input " style="width:150px"></el-input>
+
                 <span class="grid-content bg-purple-light">道具名：</span>
                 <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
 
@@ -262,7 +265,7 @@ import formatDatetime from "../../code/formatDatetime";
                     pageSize: 10,
                     isPage:"isPage",
                     id:'',
-                    propId:'',
+                    propId:this.searchKey.propId,
                     propName:this.searchKey.propName,
                     propType:this.searchKey.propTypeId,
                     platformId:this.searchKey.platformId,
@@ -479,7 +482,6 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("道具信息修改成功");
                         this.getData();
                     }else{
@@ -517,7 +519,6 @@ import formatDatetime from "../../code/formatDatetime";
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("道具解冻成功");
                             this.getData();
                         }else{
@@ -538,7 +539,6 @@ import formatDatetime from "../../code/formatDatetime";
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             this.$message.success(`道具删除成功`);
-                            //必须异步处理
                             this.getData();
                         }else{
                             console.log(this.responseResult);

@@ -9,7 +9,7 @@
             <div class="plugins-tips">
                 备注：
                 <br/>
-                一个数据源对应一个且唯一的平台，在添加和修改数据源的时候必须指定对应的平台。
+                一个平台对应一个且唯一的数据源，在添加和修改数据源的时候必须指定对应的平台。
                 <br/>
             </div>
             <Divider />
@@ -65,6 +65,7 @@
                 <el-table-column label="操作"  align="center" v-if="handleVisible" fixed="right">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <el-button type="text" icon="el-icon-edit" @click="handleTestDS(scope.$index, scope.row)">测试数据源</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
@@ -295,6 +296,32 @@ import formatDatetime from "../../code/formatDatetime";
             filterTag(value, row) {
                 return row.tag === value;
             },
+            handleTestDS(index, row){
+                this.idx = index;
+                const item = this.tableData[index];
+                const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+                });
+                this.$axios.post(this.url+'/api/db/testDataSource',{
+                        platformId: item.platformId
+                })
+                .then(successResponse =>{
+                    this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                    if(successResponse.data.code === 200){
+                        console.log(this.responseResult);
+                        this.$message.success("数据源测试成功");
+                        loading.close();
+                    }else{
+                        loading.close();
+                        console.log(this.responseResult);
+                        this.$message.error("数据源测试失败");
+                    }
+                })
+                .catch(failResponse => {})
+            },
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
@@ -309,6 +336,7 @@ import formatDatetime from "../../code/formatDatetime";
                     addDatetime: item.addDatetime,
                     isDelete:item.isDelete
                 }
+                this.mapPlatform();
                 this.editVisible = true;
             },
             handleDelete(index, row) {
@@ -333,7 +361,7 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        this.$message.success("数据源批量删除完成");
+                        this.$message.success("数据源批量删除成功");
                         this.multipleSelection = []; 
                         this.getData();
                     }else{
@@ -350,8 +378,17 @@ import formatDatetime from "../../code/formatDatetime";
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
+            mapPlatform(){
+                for(var i = 0;i<this.tableData.length;i++){
+                    for(var j = 0;j<this.platformOptions.length;j++){
+                        if(this.tableData[i].platformId==this.platformOptions[j].platformId){
+                            this.platformOptions.splice(j,1);
+                        }
+                    }
+                }
+            },
             handleAddplatform(){
-                this.addplatformVisible = true;
+                
                 this.form = {
                     id:'',
                     platformId:'',
@@ -363,6 +400,12 @@ import formatDatetime from "../../code/formatDatetime";
                     addDatetime: '',
                     isDelete:''
                 }
+                if(this.platformOptions.length==0){
+                    this.$message.info("暂无可添加数据源的平台");
+                    return;
+                }
+                this.mapPlatform();
+                this.addplatformVisible = true;
             },
             saveAddplatform(){
                 if(this.form.dataSource_id==""){

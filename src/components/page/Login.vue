@@ -218,7 +218,6 @@ export default {
             .catch(failResponse => {});
         } else {
           console.log("error submit!!");
-          return false;
         }
       });
     },
@@ -253,6 +252,7 @@ export default {
             console.log("权限获取成功");
             localStorage.setItem("rightTags", "");
             localStorage.setItem("rightTags", successResponse.data.data);
+            //添加修改权限
             this.addRouter();
           } else {
             this.$message.error("用户权限获失败");
@@ -267,9 +267,7 @@ export default {
       //实验显示这样修改参数对实际路由没用任何影响
       this.$router.options.routes = dfr;
 
-      //‘vue-router 有方法router.addRoutes(routes) 动态添加更多的路由规则。
-      //只能动态添加，暂无删减api
-      //router.addRoutes(dfr);
+      //vue-router 有方法router.addRoutes(routes) 动态添加更多的路由规则。暂无删减路由api
 
       var router = getRouter();
       //重启vue

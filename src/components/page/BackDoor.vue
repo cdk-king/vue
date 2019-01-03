@@ -9,12 +9,8 @@
       </el-breadcrumb>
     </div>
     <div class="container">
-      <!-- <div class="content-title">MD5生成</div> -->
       <div class="plugins-tips"></div>
       <Divider/>
-
-      
-      
       <el-form ref="form" :model="form" label-width="150px">
         <el-form-item class="el-form-item" label="选择账号">
           <el-select v-model="form.userId" @change="selectUser" placeholder="请选择账号">
@@ -101,7 +97,6 @@ export default {
         serverId: 0,
         newPassword:"",
         checkPassword:"",
-        
       },
       strMD5:""
     };

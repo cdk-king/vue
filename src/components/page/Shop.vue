@@ -140,12 +140,6 @@ import formatDatetime from "../../code/formatDatetime";
         mounted() {
         },
         methods: {
-            // 分页导航
-            handleCurrentChange(val) {
-                this.cur_page = val;
-                console.log("page:"+val);
-                this.getData();
-            },
             getLogXml(){
                     this.$axios.post(this.url+'/api/log/getLogXml', {
                 }).then(successResponse =>{
@@ -173,6 +167,12 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.info("请选择平台");
                     return;
                 }
+                const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+                });
                 this.$axios.post(this.url+'/api/log/getShopLog', {
                     platformId:this.searchKey.platformId,
                     serverId:this.serverIdList,
@@ -188,7 +188,9 @@ import formatDatetime from "../../code/formatDatetime";
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                         this.mapData();
+                        loading.close();
                     }else{
+                        loading.close();
                         console.log(this.responseResult);
                         this.$message.error("充值消费日志获取失败");
                     }
@@ -208,7 +210,6 @@ import formatDatetime from "../../code/formatDatetime";
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:" + val);
                 this.getData();
             },
             //当前游戏的平台

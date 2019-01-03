@@ -215,7 +215,7 @@ export default {
         this.idx = index;
         var item = this.tableData[index];
         var fileName = item.fileName+"."+item.fileType;
-        var filePath = "file/";
+        var filePath = "/";
         console.log(fileName);
         console.log(filePath);
         //window.location.href = "http://127.0.0.1:8011/download";
@@ -232,7 +232,6 @@ export default {
         },config)
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-            console.log(successResponse.data);
           let url = window.URL.createObjectURL(successResponse.data)
           let link = document.createElement('a')
           link.style.display = 'none'

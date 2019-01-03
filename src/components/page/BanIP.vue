@@ -353,7 +353,6 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("IP封禁列表获取成功");
-            //this.$message.success("IP封禁列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
@@ -510,7 +509,6 @@ export default {
             this.multipleSelection = [];
             this.getBanIp();
           } else {
-            console.log("error");
             console.log(this.responseResult);
             this.$message.error("批量删除失败");
           }

@@ -54,9 +54,9 @@
         <el-table-column prop="account" label="账号" width="100"></el-table-column>
         <el-table-column prop="name" label="用户名" width="100"></el-table-column>
         <el-table-column label="角色" width="120">
-          <template slot-scope="aa">
+          <template slot-scope="role">
             <ul>
-              <li v-for="item in aa.row.roles" v-bind:key="item">{{ item | filters_roleItem }}</li>
+              <li v-for="item in role.row.roles" v-bind:key="item">{{ item | filters_roleItem }}</li>
             </ul>
           </template>
         </el-table-column>

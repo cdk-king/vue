@@ -87,9 +87,9 @@
 
         <el-table-column prop="platformTag" label="平台标识"></el-table-column>
         <el-table-column prop="channel" label="平台通道">
-          <template slot-scope="aa">
+          <template slot-scope="channel">
             <ul style="text-align:center">
-              <li v-for="item in aa.row.channel.split(',')" v-bind:key="item">{{item}}</li>
+              <li v-for="item in channel.row.channel.split(',')" v-bind:key="item">{{item}}</li>
             </ul>
           </template>
         </el-table-column>

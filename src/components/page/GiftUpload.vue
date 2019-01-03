@@ -11,10 +11,12 @@
             <div class="plugins-tips">
                 请将礼包信息按下边规定表头格式写入到Excel文件中
                 <br/>
-                一行数据对应一个礼包，示例：
-                id、limit、expire_time、goods_prize1、value_prize1
+                一行数据对应一个礼包，默认从第四行开始读取数据
                 <br/>
-                默认从第四行开始读取数据
+                相关字段：id、limit、expire_time、goods_prize1、value_prize1
+                <br/>
+                示例文件：<a @click="handleDownload('礼包表示例.xls')">礼包表示例.xls</a>
+                <!-- <a href="礼包表示例.xls">礼包表示例.xls</a> -->
                </div>
 
             <el-upload
@@ -51,10 +53,6 @@
             <div class="plugins-tips">
             {{strGiftList}}
             </div>
-
-            <!-- <div class="crop-demo-btn">选择文件
-            <input class="crop-input" type="file"   @change="upload"/>
-            </div> -->
         </div>
     </div>
 </template>
@@ -155,7 +153,6 @@
             },
             handleChange(file,fileList){
                 const reader = new FileReader();
-
                  reader.readAsText(file.raw, "gb2312");
                  reader.onload = function (e) {
                         this.giftList = [];
@@ -172,7 +169,6 @@
                             map.value_prize1 = data[4];
                             this.giftList.push(map);
                             }
-                            
                         }
                         this.strGiftList = JSON.stringify(this.giftList);
                     }.bind(this)
@@ -186,7 +182,6 @@
                 //定义onload事件
                 reader.onload = function(e) {
                     var data = e.target.result;
-                    
                     if ($t.rABS) {
                         $t.wb = XLSX.read(btoa(this.fixdata(data)), {
                         // 手动转化
@@ -198,8 +193,7 @@
                         });
                     }
                     let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
-                    //self.result = JSON.stringify(json);
-                    $t.dealFile(json); // analyzeData: 解析导入数据
+                    $t.dealFile(json); //解析导入数据
                 }
                 if (this.rABS) {
                     
@@ -210,7 +204,6 @@
                 }
             },
             dealFile(json){
-                //第一个对象是类型
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                         map.giftId = json[i].id;
@@ -226,7 +219,36 @@
             },
             selectPlatform() {
             },
-
+            handleDownload(fileName){
+                var filePath = "./";
+                //window.location.href = "http://127.0.0.1:8011/download";
+                let config = {
+                responseType: "blob",
+                headers:{
+                    "Content-type":"application/json;charset=UTF-8"
+                }
+                };
+                this.$axios
+                .post(this.url + "/api/file/fileDownload", {
+                    fileName:fileName,
+                    filePath:filePath
+                },config)
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                let url = window.URL.createObjectURL(successResponse.data)
+                let link = document.createElement('a')
+                link.style.display = 'none'
+                link.href = url
+                link.setAttribute('download', fileName)
+                document.body.appendChild(link)
+                link.click();
+                URL.revokeObjectURL(link.href) // 释放URL 对象
+                document.body.removeChild(link);
+                this.getData();
+                this.uploadVisible = false;
+                })
+                .catch(failResponse => {});
+            }
         },
         
     }

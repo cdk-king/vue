@@ -222,7 +222,6 @@ export default {
     handleDownload(index, row) {
         this.idx = index;
         var item = this.tableData[index];
-        console.log(item.fileUrl);
         var len = item.fileUrl.split('/').length;
         var fileName = item.fileUrl.split('/')[len-1];
         var filePath = "";

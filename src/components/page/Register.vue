@@ -108,7 +108,6 @@
 
                 } else {
                     console.log(this.responseResult);
-                    console.log(successResponse.data.message);
                     this.$message.error(successResponse.data.message);
                     this.form = [];
                 }

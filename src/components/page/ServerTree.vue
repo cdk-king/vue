@@ -401,7 +401,6 @@ export default {
                 this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                 if(successResponse.data.code === 200){
                     this.$message.success(`服务器删除成功`);
-                    //必须异步处理
                     this.getData();
                 }else{
                     console.log(this.responseResult);
@@ -497,7 +496,6 @@ export default {
             gameName: ""
           };
       }
-      
 
       this.showVisible = true;
     },

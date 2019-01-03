@@ -156,7 +156,6 @@
             }, 
             saveEditPassword(){
                 var userId =JSON.parse(localStorage.getItem('userData')).id;
-                console.log("password:"+this.passwordform.newPassword);
                 if(this.passwordform.newPassword==""){
                     this.$message.error("密码不能为空");
                     return false;
@@ -173,12 +172,9 @@
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("密码修改成功");
                             this.passwordform={};
                         }else{
-                            this.open4(successResponse.data.message);
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("密码修改失败");
                         }
@@ -191,7 +187,6 @@
                 var name = this.userOptions.name;
                 var phone = this.userOptions.phone;
                 var email = this.userOptions.email;
-                //Undefined判断
                 if(this.form.name!=undefined){
                     if(this.form.name.trim()!=""){
                     name = this.form.name;
@@ -215,13 +210,10 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("用户信息编辑成功");
                         this.form={};
                         this.getUserInfo();
                     }else{
-                        this.open4(successResponse.data.message);
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("用户信息编辑失败");
                     }
@@ -229,15 +221,12 @@
                 .catch(failResponse => {})
             },
             handleSelect(key, keyPath) {
-                console.log(key, keyPath);
             },
             getData(){            
-                console.log("this.$gameId:"+this.$gameId);
 
             },
             getUserInfo() {
                 var userData =JSON.parse(localStorage.getItem('userData'));
-                console.log(userData);
                 this.$axios
                 .post(this.url+"/api/user/getUserById", {
                         id:userData.id
@@ -245,12 +234,10 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("用户获取成功");
                     this.userOptions = successResponse.data.data.list[0];
                     localStorage.setItem('userData',JSON.stringify(successResponse.data.data.list[0]));
                 } else {
-                    this.open4(successResponse.data.message);
                     console.log(this.responseResult);
                     console.log("用户获取失败");
                 }
@@ -258,7 +245,6 @@
                 .catch(failResponse => {});
             },
             selectUser() {
-                console.log(this.form.userId);
                  
             },
         },

@@ -72,7 +72,7 @@
 
         <el-table-column prop="releaseTitle" label="标题"></el-table-column>
         <el-table-column prop="releaseContent" label="内容" width="260px"></el-table-column>
-        <el-table-column prop="propList" label="道具列表" width="160px">
+        <el-table-column prop="propList" label="道具列表" width="175px">
           <template slot-scope="scope">
             <p
               style
@@ -83,7 +83,7 @@
             >{{formatPropName(item, scope.row.platformId)}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="moneyCount" label="货币">
+        <el-table-column prop="moneyCount" label="货币" width="140px">
           <template slot-scope="scope">
             <p
               style
@@ -91,7 +91,7 @@
               :key="item"
               :label="item"
               :value="item"
-            >{{item}}</p>
+            >{{formatMoneyType(item)}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="applyType" label="申请类型" :formatter="formatApplyType"></el-table-column>
@@ -255,7 +255,7 @@
                 <template slot-scope="scope">
                   <el-input
                     placeholder="请输入数量"
-                    v-on:change="changeMoneyCount"
+                    v-on:change="changeMoneyCount(scope.$index)"
                     v-model="moneyList[scope.$index].moneyCount"
                     clearable
                   >{{scope.row.moneyCount}}</el-input>
@@ -480,7 +480,7 @@
                 <template slot-scope="scope">
                   <el-input
                     placeholder="请输入数量"
-                    v-on:change="changeMoneyCount"
+                    v-on:change="changeMoneyCount(scope.$index)"
                     v-model="moneyList[scope.$index].moneyCount"
                     clearable
                   >{{scope.row.moneyCount}}</el-input>
@@ -826,17 +826,17 @@ export default {
         }
       }
       //否则添加新的道具
+      var item = {};
       for (var j = 0; j < this.propOptions.length; j++) {
-        var item = this.propOptions[j];
-        if (item.propId == this.form.propId) {
-          this.form.prop = item;
+        if (this.propOptions[j].propId == this.form.propId) {
+          item = this.propOptions[j];
           break;
         }
       }
-      this.form.prop.propCount = 1;
-      this.form.prop.propBind = '0';
+      item.propCount = 1;
+      item.propBind = '0';
       if(this.propData.length<5){
-          this.propData.push(this.form.prop);
+          this.propData.push(item);
       }else{
           this.$message.info("超过最大品种数量5");
       }
@@ -1027,14 +1027,27 @@ export default {
     },
     changePropCount(index) {
         var item = this.propData[index];
+        //解除引用
         var arr = JSON.parse(JSON.stringify(item));
+        if(!parseInt(arr.propCount) || arr.propCount=="" || arr.propCount=="0" || parseInt(arr.propCount)<0){
+            //arr.propCount=1;
+            arr.propCount="1";
+            this.$set(this.propData,index,arr);
+        }
         if(arr.propCount>item.propMaxCount){
             this.$message.info("超过最大堆叠数量");
             arr.propCount = item.propMaxCount;
             this.$set(this.propData,index,arr);
         }
     },
-    changeMoneyCount(value) {
+    changeMoneyCount(index) {
+        var item = this.moneyList[index];
+        //解除引用
+        var arr = JSON.parse(JSON.stringify(item));
+        if(!parseInt(arr.moneyCount) || arr.moneyCount=="" || arr.moneyCount=="0" || parseInt(arr.moneyCount)<0){
+            arr.moneyCount=1;
+            this.$set(this.moneyList,index,arr);
+        }
     },
     search() {
       this.getApplyProp();
@@ -1092,6 +1105,11 @@ export default {
       }
       var list = "";
       for (var i = 0; i < this.propData.length; i++) {
+        //判断道具数量是否正确
+        if(!parseInt(this.propData[i].propCount) || this.propData[i].propCount=="" || this.propData[i].propCount=="0" || parseInt(this.propData[i].propCount)<0){
+          this.$message("请输入正确的道具数量");
+          return;
+        }
         //判断是否最后
         if (i + 1 >= this.propData.length) {
           list += this.propData[i].propId + "-" + this.propData[i].propCount;
@@ -1125,6 +1143,11 @@ export default {
       }
       var moneyList = "";
       for (var j = 0; j < this.moneyList.length; j++) {
+        //判断货币数量是否正确
+        if(!parseInt(this.moneyList[j].moneyCount) || this.moneyList[j].moneyCount=="" || this.moneyList[j].moneyCount=="0" || parseInt(this.moneyList[j].moneyCount)<0){
+          this.$message("请输入正确的货币数量");
+          return;
+        }
         moneyList +=
           this.moneyList[j].moneyType +
           "|" +
@@ -1214,7 +1237,7 @@ export default {
 
       var arr = item.propList.split(",");
       for(var i = 0;i<arr.length;i++){
-        var ob = {};
+          var ob = {};
           ob.propId = arr[i].split("-")[0];
           ob.propCount = arr[i].split("-")[1];
           ob.propBind = arr[i].split("-")[2];
@@ -1232,7 +1255,7 @@ export default {
           }
       }
       if(item.moneyList!=""){
-        arr = item.moneyList.split(",");
+        arr = item.moneyList.split(";");
         for(var i = 0;i<arr.length;i++){
             var ob = {};
             ob.moneyType = arr[i].split("|")[0];
@@ -1266,6 +1289,11 @@ export default {
       }
       var list = "";
       for (var i = 0; i < this.propData.length; i++) {
+        //判断道具数量是否正确
+        if(!parseInt(this.propData[i].propCount) || this.propData[i].propCount=="" || this.propData[i].propCount=="0" || parseInt(this.propData[i].propCount)<0){
+          this.$message("请输入正确的道具数量");
+          return;
+        }
         //判断是否是最后一个元素
         if (i + 1 >= this.propData.length) {
           list += this.propData[i].propId + "-" + this.propData[i].propCount;
@@ -1299,6 +1327,11 @@ export default {
       }
       var moneyList = "";
       for (var j = 0; j < this.moneyList.length; j++) {
+        //判断货币数量是否正确
+        if(!parseInt(this.moneyList[j].moneyCount) || this.moneyList[j].moneyCount=="" || this.moneyList[j].moneyCount=="0" || parseInt(this.moneyList[j].moneyCount)<0){
+          this.$message("请输入正确的货币数量");
+          return;
+        }
         moneyList +=
           this.moneyList[j].moneyType +
           "|" +
@@ -1565,9 +1598,20 @@ export default {
     },
     formatPropName(item,platformId) {
       //十分消耗性能
-      for (var i = 0; i < this.allPropOptions.length; i++) {
-        if (item.split('-')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) {
-          return this.allPropOptions[i].propName+"-"+item.split('-')[1]+"个";
+      if(item!=""){
+        for (var i = 0; i < this.allPropOptions.length; i++) {
+          if (item.split('-')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) {
+            return this.allPropOptions[i].propName+"-"+item.split('-')[1]+"个";
+          }
+        }
+      }
+    },
+    formatMoneyType(item) {
+      if(item!=""){
+        for (var i = 0; i < this.moneyTypeOptions.length; i++) {
+          if (item.split('|')[0] == this.moneyTypeOptions[i].moneyId) {
+            return this.moneyTypeOptions[i].moneyType+"-"+item.split('|')[1];
+          }
         }
       }
     }

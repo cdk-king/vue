@@ -3,8 +3,6 @@ import App from './App';
 //获取路由
 import getRouter from './router/index';
 
-import md5 from 'js-md5';
-
 let Base64 = require('js-base64').Base64;
 
 import store from './store';
@@ -47,9 +45,9 @@ Vue.prototype.$setTouristName = function(name){
 };
 //url
 //测试环境
-//Vue.prototype.$url = "http://127.0.0.1:8011";
+Vue.prototype.$url = "http://127.0.0.1:8011";
 //生成环境
-Vue.prototype.$url = "";
+//Vue.prototype.$url = "";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
 };

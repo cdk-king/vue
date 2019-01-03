@@ -149,7 +149,6 @@
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("玩家导入成功");
                     }else{
                         console.log(this.responseResult);
@@ -163,7 +162,6 @@
             },
             handleChange(file,fileList){
                 const reader = new FileReader();
-
                  reader.readAsText(file.raw, "gb2312");
                  reader.onload = function (e) {
                         this.playerList = [];

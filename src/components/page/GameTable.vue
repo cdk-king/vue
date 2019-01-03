@@ -457,7 +457,6 @@ import formatDatetime from "../../code/formatDatetime";
             },
             // 确定删除
             deleteRow(){
-
                 this.$axios.post(this.url+'/deleteGame',{
                         id: this.id, 
                     })
@@ -465,7 +464,6 @@ import formatDatetime from "../../code/formatDatetime";
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             this.$message.success(`游戏删除成功`);
-                            //必须异步处理
                             this.getData();
                         }else{
                             console.log(this.responseResult);

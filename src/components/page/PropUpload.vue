@@ -11,12 +11,13 @@
             <div class="plugins-tips">
                 请将道具信息按下边规定表头格式写入到Excel文件中
                 <br/>
-                一行数据对应一个道具，示例：
-                q_id、q_name、q_type、q_describe
+                一行数据对应一个道具，默认从第四行开始读取数据
                 <br/>
-                默认从第四行开始读取数据
+                相关字段：q_id、q_name、q_type、q_describe、q_max_count
+                <br/>
+                示例文件：<a @click="handleDownload('道具表示例.xls')">道具表示例.xlsx</a>
                </div>
-
+                
             <el-upload
                 class="upload-demo"
                 drag
@@ -51,10 +52,6 @@
             <div class="plugins-tips">
             {{strPropList}}
             </div>
-
-            <!-- <div class="crop-demo-btn">选择文件
-            <input class="crop-input" type="file"   @change="upload"/>
-            </div> -->
         </div>
     </div>
 </template>
@@ -196,7 +193,7 @@
                         });
                     }
                     let json = XLSX.utils.sheet_to_json($t.wb.Sheets[$t.wb.SheetNames[0]]);
-                    $t.dealFile(json); // analyzeData: 解析导入数据
+                    $t.dealFile(json); //解析导入数据
                 }
                 if (this.rABS) {
                     
@@ -207,8 +204,6 @@
                 }
             },
             dealFile(json){
-                //第一个对象是类型
-                //第二个对象是描述
                 for(var i = 2;i<json.length;i++){
                     var map = new Object();
                     map.propId = json[i].q_id;
@@ -227,6 +222,37 @@
             },
             selectPlatform() {
             },
+            handleDownload(fileName){
+                var filePath = "./";
+                //window.location.href = "http://127.0.0.1:8011/download";
+                let config = {
+                responseType: "blob",
+                headers:{
+                    "Content-type":"application/json;charset=UTF-8"
+                }
+                };
+                console.log(fileName);
+                this.$axios
+                .post(this.url + "/api/file/fileDownload", {
+                    fileName:fileName,
+                    filePath:filePath
+                },config)
+                .then(successResponse => {
+                this.responseResult = "\n" + JSON.stringify(successResponse.data);
+                let url = window.URL.createObjectURL(successResponse.data)
+                let link = document.createElement('a')
+                link.style.display = 'none'
+                link.href = url
+                link.setAttribute('download', fileName)
+                document.body.appendChild(link)
+                link.click();
+                URL.revokeObjectURL(link.href) // 释放URL 对象
+                document.body.removeChild(link);
+                this.getData();
+                this.uploadVisible = false;
+                })
+                .catch(failResponse => {});
+            }
         },     
     }
 </script>

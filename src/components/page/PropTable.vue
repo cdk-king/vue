@@ -9,7 +9,7 @@
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">平台：</span>
-                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠道平台" class="handle-select mr10">
+                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
@@ -76,7 +76,7 @@
         <el-dialog title="添加道具" :modal="false"  :close-on-click-modal="false" :visible.sync="addpropVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
-                    <el-select v-model="form.platformId" placeholder="请选择渠道平台">
+                    <el-select v-model="form.platformId" placeholder="请选择平台">
                         <el-option
                         v-for="item in platformOptions"
                         :key="item.platformId"
@@ -215,14 +215,7 @@ import bus from '../common/bus';
                     platform:""
                 },
                 platformOptions: [
-                    {
-                    platformId: "1",
-                    platform: "渠道1"
-                    },
-                    {
-                    platformId: "2",
-                    platform: "渠道2"
-                    }
+
                 ],
                 idx: -1,
                 responseResult:[],
@@ -231,11 +224,7 @@ import bus from '../common/bus';
             }
         },
         created() {
-            
-
-            console.log("this.$gameId:"+this.$gameId);
             this.getPlatformList(this.$gameId);
-            console.log(this.strPlatform);
 
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
@@ -257,8 +246,6 @@ import bus from '../common/bus';
             right(){
                 const right = localStorage.getItem('rightTags');
                 const username = localStorage.getItem('ms_username');
-                console.log(right);
-                console.log(username);
                 if(right.indexOf('Prop_management_Handle')==-1){
                     this.handleVisible = false;
                 }else{
@@ -271,7 +258,6 @@ import bus from '../common/bus';
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                console.log("page:"+val);
                 this.getData();
             },
             //筛选当前用户游戏的道具
@@ -293,18 +279,14 @@ import bus from '../common/bus';
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         console.log("道具列表获取成功");
                         //this.$message.success("道具列表获取成功");
                         this.tableData = successResponse.data.data.list;
                         console.log(this.tableData);
                         this.total = successResponse.data.data.total;
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具列表获取失败");
-                        return false;
                     }
                 })
             },
@@ -319,7 +301,6 @@ import bus from '../common/bus';
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log(this.responseResult);
                     console.log("渠道列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
@@ -329,11 +310,9 @@ import bus from '../common/bus';
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
-                } else {
-                    
+                } else {                  
                     console.log(this.responseResult);
                     console.log("渠道列表获取失败");
-                    return false;
                 }
                 })
                 .catch(failResponse => {});
@@ -365,8 +344,6 @@ import bus from '../common/bus';
             handleEdit(index, row) {
                 this.idx = index;
                 const item = this.tableData[index];
-                console.log("index:"+index);
-                console.log(item.id);
                 this.form = {
                     id:item.id,
                     propName:item.propName,
@@ -377,7 +354,6 @@ import bus from '../common/bus';
                     addDatetime: item.addDatetime,
                     state:item.state,
                 }
-                console.log(this.form.id);
                 this.editVisible = true;
             },
             handleChangeStateToFrozen(index, row) {
@@ -408,7 +384,6 @@ import bus from '../common/bus';
                 for (let i = 0; i < length; i++) {
                     str += this.multipleSelection[i].id + ',';
                 }
-                console.log(str);
                 //批量删除处理
                 this.$axios.post('/deleteAllProp',{
                         id: str
@@ -416,17 +391,13 @@ import bus from '../common/bus';
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log(this.responseResult);
                         this.$message.success("道具批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
 
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具批量删除失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -475,16 +446,12 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("道具添加成功");
                             this.tableData.push(this.form);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error("道具添加失败");
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -495,7 +462,6 @@ import bus from '../common/bus';
             },
             // 保存编辑
             saveEdit() {
-                    console.log(this.form.id);
                 this.$axios.post('/editProp',{
                     id:this.form.id,
                     propName:this.form.propName,
@@ -514,11 +480,8 @@ import bus from '../common/bus';
                         this.$message.success("道具信息修改成功");
                         this.getData();
                     }else{
-                        
-                        console.log('error');
                         console.log(this.responseResult);
                         this.$message.error("道具信息修改失败");
-                        return false;
                     }
                 })
                 .catch(failResponse => {})
@@ -532,15 +495,11 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`道具冻结成功`);
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具冻结失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -556,15 +515,11 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success("道具解冻成功");
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具解冻失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})
@@ -581,16 +536,12 @@ import bus from '../common/bus';
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
-                            console.log(this.responseResult);
                             this.$message.success(`道具删除成功`);
                             //必须异步处理
                             this.getData();
                         }else{
-                            
-                            console.log('error');
                             console.log(this.responseResult);
                             this.$message.error('道具删除失败');
-                            return false;
                         }
                     })
                     .catch(failResponse => {})    

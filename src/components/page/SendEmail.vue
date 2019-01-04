@@ -104,13 +104,13 @@
                   </el-form-item>
 
                   <el-form-item label>
-                    <el-button type="primary" icon="search" @click="submit">提交</el-button>
+                    <el-button type="primary" icon="search" @click="submit">提交邮件申请</el-button>
                     <el-button type="primary" icon="search" @click="reset">重置</el-button>
                   </el-form-item>
                 </el-tab-pane>
                 <el-tab-pane label="全服发送" name="3">
                   <el-form-item label>
-                    <el-button type="primary" icon="search" @click="submit">提交</el-button>
+                    <el-button type="primary" icon="search" @click="submit">提交邮件申请</el-button>
                     <el-button type="primary" icon="search" @click="reset">重置</el-button>
                   </el-form-item>
                 </el-tab-pane>
@@ -224,7 +224,7 @@
           <el-select
             v-model="form.platformId"
             @change="selectPlatform"
-            placeholder="请选择渠道平台"
+            placeholder="请选择平台"
             style="width:180px"
           >
             <el-option

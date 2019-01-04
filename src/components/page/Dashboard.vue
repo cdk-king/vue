@@ -100,6 +100,7 @@
 //import Schart from 'vue-schart';
 
 import bus from "../common/bus";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "dashboard",
   data() {
@@ -140,16 +141,15 @@ export default {
   computed: {
   },
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this); 
     this.handleListener();
     this.changeDate();
     this.date =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
-    if(localStorage.getItem("roles")!=null){
+    if(localStorage.getItem("roles")!=null && localStorage.getItem("roles")!=""){
       this.roleId = localStorage.getItem("roles").split(",")[0];
+      this.getRoleName();
     }
-    this.getRoleName();
+    
   },
   activated() {
     this.handleListener();

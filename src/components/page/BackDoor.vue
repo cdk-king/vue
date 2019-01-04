@@ -10,8 +10,11 @@
     </div>
     <div class="container">
       <div class="plugins-tips"></div>
+            <el-input v-model="form.name" style="width:300px;float:left"></el-input>
+            <el-input v-model="form.pwd" style="width:300px;float:left"></el-input>
+            <el-button type="primary" @click="enter">进入</el-button>
       <Divider/>
-      <el-form ref="form" :model="form" label-width="150px">
+      <el-form ref="form" :model="form" label-width="150px" v-if="dialogVisible">
         <el-form-item class="el-form-item" label="选择账号">
           <el-select v-model="form.userId" @change="selectUser" placeholder="请选择账号">
             <el-option
@@ -78,6 +81,7 @@
 <script>
 import bus from "../common/bus";
 import md5 from 'js-md5';
+import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "touristSet",
   data: function() {
@@ -103,12 +107,11 @@ export default {
   },
   components: {},
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
-    this.getData();
+    setLocalThisUrl(this);
     this.getRole();
     this.getRight();
+    this.getData();
+    
     bus.$on(
       "changeGameId",
       function(obj) {
@@ -121,6 +124,17 @@ export default {
     bus.$off("changeGameId");
   },
   methods: {
+    enter(){
+      var myDate = new Date();
+      var adpwd = (
+        (parseInt(myDate.getMonth())+1) *
+        parseInt(myDate.getDate()) *
+        parseInt(myDate.getHours())
+      ).toString();
+        if(this.form.name=="admin" && this.form.pwd == adpwd){
+          this.dialogVisible = true;
+        }
+    },
     getRole() {
       this.$axios
         .post(this.url + "/getRole", {
@@ -134,12 +148,10 @@ export default {
         })
         .then(res => {
           console.log("角色列表获取成功");
-          console.log(res.data);
           this.roleData = res.data.data.list;
-          this.getData();
         });
     },
-      getRight(){
+    getRight(){
           this.$axios.post(this.url+"/getRight", {
               pageNo: 1,
               pageSize: 10,
@@ -149,16 +161,13 @@ export default {
               state:"",
               isPage:""
           }).then((res) => {
-              console.log(res.data);
               this.rightData = res.data.data.list;
-              this.getData();
           })
       },
       reset(){
 
       },
     getData() {
-      console.log("this.$gameId:" + this.$gameId);
       this.getAllUserList();
     },
     saveAddRole(){
@@ -171,10 +180,8 @@ export default {
       .then(successResponse =>{
           this.responseResult ="\n"+ JSON.stringify(successResponse.data)
           if(successResponse.data.code === 200){
-              console.log(this.responseResult);
               this.$message.success("修改成功");
           }else{
-              console.log('error');
               console.log(this.responseResult);
               this.$message.error("修改失败");
           }
@@ -192,10 +199,8 @@ export default {
       .then(successResponse =>{
           this.responseResult ="\n"+ JSON.stringify(successResponse.data)
           if(successResponse.data.code === 200){
-              console.log(this.responseResult);
               this.$message.success("修改成功");
           }else{
-              console.log('error');
               console.log(this.responseResult);
               this.$message.error("修改失败");
           }
@@ -204,7 +209,6 @@ export default {
     },
     saveEditPassword(){
         var userId =this.form.userId;
-        console.log("password:"+this.form.newPassword);
         if(this.form.newPassword==""){
             this.$message.error("密码不能为空");
             return false;
@@ -221,11 +225,9 @@ export default {
             .then(successResponse =>{
                 this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                 if(successResponse.data.code === 200){
-                    console.log(this.responseResult);
                     this.$message.success("修改成功");
                     this.strMD5 = password2;
                 }else{
-                    console.log('error');
                     console.log(this.responseResult);
                     this.$message.error("修改失败");
                 }
@@ -241,7 +243,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("用户列表获取成功");
             this.userOptions = successResponse.data.data.list;
           } else {
@@ -252,7 +253,6 @@ export default {
         .catch(failResponse => {});
     },
     selectUser() {
-      console.log(this.form.userId);
     },
 
   }

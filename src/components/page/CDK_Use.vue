@@ -14,8 +14,8 @@
         <Divider/>
         <div class="form-box" v-if="true">
           <el-form ref="form" :model="form" label-width="150px">
-            <el-form-item class="el-form-item" label="选择渠道">
-              <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+            <el-form-item class="el-form-item" label="选择平台">
+              <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                 <el-option
                   v-for="item in platformOptions"
                   :key="item.platformId"
@@ -39,7 +39,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -53,22 +53,21 @@
 
         <span class="grid-content bg-purple-light">礼包ID：</span>
         <el-input
+          v-model="searchKey.giftId"
+          placeholder="筛选礼包ID"
+          class="handle-input"
+          style="width:150px"
+        ></el-input>
+
+        <span class="grid-content bg-purple-light">礼包名：</span>
+        <el-input
           v-model="searchKey.giftName"
           placeholder="筛选礼包名"
           class="handle-input"
           style="width:150px"
         ></el-input>
 
-        <span class="grid-content bg-purple-light">礼包标识：</span>
-        <el-input
-          v-model="searchKey.giftTag"
-          placeholder="筛选礼包标识"
-          class="handle-input"
-          style="width:150px"
-        ></el-input>
-
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        <!-- <el-button type="primary" icon="search" @click="handleImportGift">导入</el-button> -->
       </div>
       <el-table
         :data="data"
@@ -80,6 +79,7 @@
         <el-table-column prop="id" label="ID"></el-table-column>
         <el-table-column prop="cdk" label="CDK"></el-table-column>
         <el-table-column prop="couponId" label="礼包ID" :formatter="formatCouponId"></el-table-column>
+        <el-table-column prop="giftName" label="礼包名" ></el-table-column>
         <el-table-column prop="sequenceId" label="序列号"></el-table-column>
         <el-table-column prop="platform" label="所在平台"></el-table-column>
         <el-table-column prop="isUsed" label="状态" :formatter="formatIsUsed"></el-table-column>
@@ -93,72 +93,6 @@
         ></el-pagination>
       </div>
     </div>
-
-    <!-- 添加弹出框 -->
-    <el-dialog title="添加礼包" :visible.sync="addgiftVisible" width="30%">
-      <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="平台">
-          <el-select v-model="form.platformId" placeholder="请选择渠道平台">
-            <el-option
-              v-for="item in platformOptions"
-              :key="item.platformId"
-              :label="item.platform"
-              :value="item.platformId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="礼包名称">
-          <el-input v-model="form.giftName"></el-input>
-        </el-form-item>
-        <el-form-item label="礼包标识">
-          <el-input v-model="form.giftTag"></el-input>
-        </el-form-item>
-        <el-form-item label="礼包描述">
-          <el-input v-model="form.gift_describe"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addgiftVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveAddgift">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 编辑弹出框 -->
-    <el-dialog title="编辑礼包" :visible.sync="editVisible" width="30%">
-      <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="礼包名称">
-          <el-input v-model="form.giftName"></el-input>
-        </el-form-item>
-        <el-form-item label="礼包标识">
-          <el-input v-model="form.giftTag"></el-input>
-        </el-form-item>
-        <el-form-item label="礼包描述">
-          <el-input v-model="form.gift_describe"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveEdit">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 编辑冻结提示框 -->
-    <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-      <div class="del-dialog-cnt">冻结后将停止礼包使用，是否确定冻结？</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 编辑解冻提示框 -->
-    <el-dialog title="解冻提示" :visible.sync="changeStateToNormalVisible" width="300px" center>
-      <div class="del-dialog-cnt">是否确定解冻？</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="changeStateToNormalVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeStateToNormal">确 定</el-button>
-      </span>
-    </el-dialog>
 
     <!-- 删除提示框 -->
     <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
@@ -214,8 +148,6 @@ export default {
       editVisible: false,
       delVisible: false,
       editPasswordVisible: false,
-      changeStateToFrozenVisible: false,
-      changeStateToNormalVisible: false,
       addgiftVisible: false,
       handleVisible: true,
       delAllVisible: false,
@@ -231,7 +163,7 @@ export default {
         id: "",
         platformId: "",
         giftName: "",
-        giftTag: "",
+        giftId: "",
         gift_describe: "",
         sort: "",
         addUser: "",
@@ -241,14 +173,6 @@ export default {
         platform: ""
       },
       platformOptions: [
-        {
-          platformId: "1",
-          platform: "渠道1"
-        },
-        {
-          platformId: "2",
-          platform: "渠道2"
-        }
       ],
       idx: -1,
       responseResult: [],
@@ -306,7 +230,7 @@ export default {
           isPage: "isPage",
           id: "",
           giftName: this.searchKey.giftName,
-          giftTag: this.searchKey.giftTag,
+          giftId: this.searchKey.giftId,
           platformId: this.searchKey.platformId,
           strPlatform: this.strPlatform
         })
@@ -369,21 +293,6 @@ export default {
     filterTag(value, row) {
       return row.tag === value;
     },
-    handleEdit(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.form = {
-        id: item.id,
-        giftName: item.giftName,
-        giftTag: item.giftTag,
-        gift_describe: item.gift_describe,
-        sort: item.sort,
-        addUser: item.addUser,
-        addDatetime: item.addDatetime,
-        state: item.state
-      };
-      this.editVisible = true;
-    },
     handleChangeStateToFrozen(index, row) {
       this.idx = index;
       const item = this.tableData[index];
@@ -434,124 +343,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleAddgift() {
-      this.addgiftVisible = true;
-      this.form = {
-        id: "",
-        giftName: "",
-        giftTag: "",
-        gift_describe: "",
-        giftParentId: "",
-        giftSort: "",
-        addUser: "",
-        addDatetime: "",
-        state: ""
-      };
-    },
-    handleImportGift() {
-      this.$router.push("/GiftUpload");
-    },
-    saveAddgift() {
-      if (this.form.giftName == "") {
-        console.log("礼包名称不能为空");
-        this.$message.error("礼包名称不能为空");
-      } else if (this.form.giftTag == "") {
-        console.log("礼包标识不能为空");
-        this.$message.error("礼包标识不能为空");
-      } else {
-        this.$axios
-          .post(this.url + "/addGift", {
-            id: this.form.id,
-            giftName: this.form.giftName,
-            giftTag: this.form.giftTag,
-            giftType: this.form.giftType,
-            gift_describe: this.form.gift_describe,
-            sort: this.form.sort,
-            addUser: this.form.addUser,
-            state: this.form.state,
-            platformId: this.form.platformId
-          })
-          .then(successResponse => {
-            this.responseResult = "\n" + JSON.stringify(successResponse.data);
-            if (successResponse.data.code === 200) {
-              this.$message.success("礼包添加成功");
-              this.tableData.push(this.form);
-              this.getData();
-            } else {
-              console.log(this.responseResult);
-              this.$message.error("礼包添加失败");
-            }
-          })
-          .catch(failResponse => {});
-      }
-      this.addgiftVisible = false;
-    },
-    // 保存编辑
-    saveEdit() {
-      this.$axios
-        .post(this.url + "/editGift", {
-          id: this.form.id,
-          giftName: this.form.giftName,
-          giftTag: this.form.giftTag,
-          gift_describe: this.form.gift_describe,
-          sort: this.form.sort,
-          addUser: this.form.addUser,
-          addDatetime: this.form.addDatetime,
-          state: this.form.state
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            this.$message.success("礼包信息修改成功");
-            this.getData();
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("礼包信息修改失败");
-          }
-        })
-        .catch(failResponse => {});
-      this.editVisible = false;
-    },
-    // 确定冻结
-    changeStateToFrozen() {
-      this.$axios
-        .post(this.url + "/changeStateToFrozen_Gift", {
-          id: this.id
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            this.$message.success(`礼包冻结成功`);
-            this.getData();
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("礼包冻结失败");
-          }
-        })
-        .catch(failResponse => {});
-      this.changeStateToFrozenVisible = false;
-      this.rest();
-    },
-    // 确定解冻
-    changeStateToNormal() {
-      this.$axios
-        .post(this.url + "/changeStateToNormal_Gift", {
-          id: this.id
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            this.$message.success("礼包解冻成功");
-            this.getData();
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("礼包解冻失败");
-          }
-        })
-        .catch(failResponse => {});
-      this.changeStateToNormalVisible = false;
-      this.rest();
-    },
     // 确定删除
     deleteRow() {
       this.$axios
@@ -573,9 +364,6 @@ export default {
       this.tableData.splice(this.idx, 1);
 
       this.delVisible = false;
-    },
-    formatState: function(row, column, cellValue, index) {
-      return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
     },
     formatCouponId: function(row, column, cellValue, index) {
       return Math.round(parseInt(row.couponId) / 1).toString();

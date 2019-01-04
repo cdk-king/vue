@@ -9,7 +9,7 @@
             <div class="handle-box">
                 <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
                 <span class="grid-content bg-purple-light">平台：</span>
-                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择渠道平台" class="handle-select mr10">
+                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
@@ -26,7 +26,7 @@
                 <el-input v-model="searchKey.giftTag" placeholder="筛选礼包标识" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="search" @click="handleImportGift">导入</el-button>
+                <el-button type="primary" icon="search" @click="handleImportGift">导入礼包信息</el-button>
             </div>
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column prop="id" label="ID"  >
@@ -66,7 +66,7 @@
         <el-dialog title="添加礼包" :visible.sync="addgiftVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台">
-                    <el-select v-model="form.platformId" placeholder="请选择渠道平台">
+                    <el-select v-model="form.platformId" placeholder="请选择平台">
                         <el-option
                         v-for="item in platformOptions"
                         :key="item.platformId"
@@ -276,7 +276,7 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log("渠道列表获取成功");
+                    console.log("平台列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
@@ -286,7 +286,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.getData();
                 } else {
                     console.log(this.responseResult);
-                    console.log("渠道列表获取失败");
+                    console.log("平台列表获取失败");
                 }
                 })
                 .catch(failResponse => {});

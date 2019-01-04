@@ -184,7 +184,7 @@
               <el-option
                 v-for="item in propOptions"
                 :key="item.propId"
-                :label="item.propName"
+                :label="item.propId+'—'+item.propName"
                 :value="item.propId"
               ></el-option>
             </el-select>
@@ -409,7 +409,7 @@
               <el-option
                 v-for="item in propOptions"
                 :key="item.propId"
-                :label="item.propName"
+                :label="item.propId+'—'+item.propName"
                 :value="item.propId"
               ></el-option>
             </el-select>

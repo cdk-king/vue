@@ -721,7 +721,6 @@ export default {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             this.$message.success(`角色删除成功`);
-            //必须异步处理
             this.getData();
           } else {
             console.log(this.responseResult);
@@ -736,7 +735,6 @@ export default {
       return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
     },
     removeHandle(event) {
-      this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
     }
   },
   filters: {

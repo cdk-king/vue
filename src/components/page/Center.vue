@@ -44,17 +44,17 @@
 
                     </el-form>
                     <p slot="footer" class="dialog-footer" style="width:100%; text-align:left;padding-left:100px">
-                        <el-button @click="reset">取 消</el-button>
-                        <el-button type="primary" @click="saveEditPassword">确 定</el-button>
+                        <el-button type="primary" @click="saveEditPassword">修 改</el-button>
+                        <el-button @click="reset">取 消</el-button>     
                     </p>
                 </div>
                 <div v-show="show2" class="div-box">
                     <div class="plugins-tips">
                         <el-form  ref="userOptions"  :model="userOptions" label-width="100px" style="width:100%">
-                            <el-form-item label="用户名">
+                            <el-form-item label="用户名:">
                                 <span  style="width:300px;text-align:left;float:left;">{{userOptions.name}}</span>
                             </el-form-item>
-                            <el-form-item label="手机号码">
+                            <el-form-item label="手机号码:">
                                 <span  style="width:300px;text-align:left;float:left;">{{userOptions.phone}}</span>
                             </el-form-item>
                         </el-form>
@@ -70,8 +70,8 @@
 
                     </el-form>
                     <p slot="footer" class="dialog-footer" style="width:100%; text-align:left;padding-left:100px">
-                        <el-button @click="reset">取 消</el-button>
-                        <el-button type="primary" @click="saveEditInfo">确 定</el-button>
+                        <el-button type="primary" @click="saveEditInfo">修 改</el-button>
+                        <el-button @click="reset">取 消</el-button>          
                     </p>
                 </div>
         </div>
@@ -81,7 +81,7 @@
 <script>
     import bus from '../common/bus';
     import md5 from 'js-md5';
-    
+    import setLocalThisUrl from "../../code/setLocalThisUrl";
     export default {
         name: 'center',
         data: function(){
@@ -126,9 +126,7 @@
             
         },
         created(){
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);

@@ -86,8 +86,11 @@
                 this.getData();
             },
             getData(){
-                var userData = JSON.parse(localStorage.getItem("userData"));
                 
+                var userData = JSON.parse(localStorage.getItem("userData"));
+                if(userData==null || userData==""){
+                    return;
+                }
                 this.$axios
                     .post(this.url+"/getGameListForUser", {
                     id: userData.id
@@ -115,6 +118,7 @@
                     localStorage.removeItem('ms_username')
                     localStorage.removeItem('rightTags')
                     localStorage.removeItem('roles')
+                    localStorage.removeItem('userData');
                     //跳转到登录界面
                     this.$router.push('/login');
                 }

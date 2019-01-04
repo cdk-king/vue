@@ -209,8 +209,8 @@
         <el-form-item label="服务器描述">
           <el-input v-model="form.server_describe"></el-input>
         </el-form-item>
-        <el-form-item label="所属渠道">
-          <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
+        <el-form-item label="所属平台">
+          <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
             <el-option
               v-for="item in platformList"
               :key="item.platformId"
@@ -620,11 +620,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("渠道列表获取成功");
+            console.log("平台列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
             console.log(this.responseResult);
-            console.log("渠道列表获取失败");
+            console.log("平台列表获取失败");
           }
         })
         .catch(failResponse => {});

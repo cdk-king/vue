@@ -22,7 +22,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -57,7 +57,7 @@
         ></el-input>
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        <el-button type="primary" icon="search" @click="handleAddPlatformEmail">添加</el-button>
+        <el-button type="primary" icon="search" @click="handleAddPlatformEmail">添加全服邮件申请</el-button>
       </div>
 
       <el-table
@@ -152,7 +152,7 @@
             <el-select
               v-model="form.platformId"
               @change="selectPlatform"
-              placeholder="请选择渠道平台"
+              placeholder="请选择平台"
               style="width:180px"
             >
               <el-option
@@ -231,7 +231,7 @@
             <el-select
               v-model="form.platformId"
               @change="selectPlatform"
-              placeholder="请选择渠道平台"
+              placeholder="请选择平台"
               style="width:180px"
             >
               <el-option
@@ -372,9 +372,6 @@ export default {
     data() {
       return this.tableData;
     },
-    cdk: function() {
-      return this.$cdk;
-    },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
@@ -424,7 +421,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -437,7 +434,7 @@ export default {
             this.getPlatformEmail();
           } else {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});

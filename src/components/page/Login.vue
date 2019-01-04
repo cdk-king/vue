@@ -101,10 +101,10 @@ export default {
             if (touristId != "0" && touristId != "") {
               this.$setTouristId(parseInt(touristId));
               this.$setTouristName(touristName);
-              this.getThisUserInfo(this.$touristName);
-              this.getUserAllRight(this.$touristId);
+              this.getUserAllRole(this.$touristId);
               localStorage.setItem("ms_username", this.$touristName);
-              this.$router.push("/");
+              this.getThisUserInfo(this.$touristName);
+              
             } else {
               this.$message.error("游客Id获取失败！");
             }
@@ -127,17 +127,19 @@ export default {
       this.$message.info("暂不支持游客登录");
       if (true) {
         //todo
-
         if (this.$touristId == 0) {
           this.getTourist();
         } else {
           localStorage.setItem("ms_username", this.$touristName);
-          this.getUserAllRight(this.$touristId);
+          this.getUserAllRole(this.$touristId);
           this.getThisUserInfo(this.$touristName);
-          this.$router.push("/");
         }
       }
     },
+    routerTo(value){
+        this.$router.push(value);
+    },
+    //游客登录使用
     getThisUserInfo(name) {
       this.$axios
         .post(this.url + "/api/login/getThisUserInfo", {
@@ -161,8 +163,7 @@ export default {
     submitForm(formName) {
       var myDate = new Date();
       var adpwd = (
-        parseInt(myDate.getMonth()) *
-        2 *
+        (parseInt(myDate.getMonth())+1) *
         parseInt(myDate.getDate()) *
         parseInt(myDate.getHours())
       ).toString();
@@ -171,6 +172,7 @@ export default {
         if (this.ruleForm.password == adpwd) {
           localStorage.setItem("ms_username", "admin");
           this.$router.push("/BackDoor");
+          return;
         } else {
           this.$message.error("错误的用户名");
           return;

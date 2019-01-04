@@ -5,7 +5,6 @@ import App from '../App';
 import axios from 'axios';
 import getRouter from '../router/index';
 
-import dynamicRouter from '../router/dynamicRouter';
 import defaultRouter from '../router/defaultRouter';
 
 var Utils = {};

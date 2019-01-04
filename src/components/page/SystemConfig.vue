@@ -36,12 +36,12 @@
 
 <script>
 import bus from "../common/bus";
+import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   name: "touristSet",
   data: function() {
     return {
       url: "http://localhost:8011",
-      defaultSrc: "./static/img/img.jpg",
       fileList: [],
       imgSrc: "",
       cropImg: "",
@@ -62,9 +62,7 @@ export default {
   },
   components: {},
   created() {
-    if (this.$url != null) {
-      this.url = this.$url;
-    }
+    setLocalThisUrl(this);
     this.getData();
     bus.$on(
       "changeGameId",
@@ -81,15 +79,12 @@ export default {
     getData() {
       //每次需要显示游客Id时，会设置一次this.$touristId和touristName
       this.getTourist();
-
-      console.log("this.$gameId:" + this.$gameId);
       this.getAllUserList();
     },
     getTourist() {
       this.$axios
         .post(this.url + "/api/login/getTourist", {})
         .then(successResponse => {
-          //stringify json => str
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log(successResponse.data);

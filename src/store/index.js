@@ -5,12 +5,8 @@ import * as actions from './actions'
 import * as mutations from './mutations'
  
 Vue.use(Vuex)
-// 首先声明一个需要全局维护的状态 state,比如 我这里举例的resturantName
 const state = {
-    resturantName: '飞歌餐馆',// 默认值
     gameId:0
-    // id: xxx  如果还有全局状态也可以在这里添加
-    // name:xxx
 }
  
 // 注册上面引入的各大模块

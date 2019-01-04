@@ -380,7 +380,7 @@ export default {
   },
   mounted() {
     this.right();
-  },
+  }, 
   methods: {
     right() {
       const right = localStorage.getItem("rightTags");
@@ -833,9 +833,7 @@ export default {
     formatState: function(row, column, cellValue, index) {
       return row.state == 1 ? "已冻结" : row.sex == 0 ? "正常" : "正常";
     },
-
     removeHandle(event) {
-      this.$message.success(`从 ${event.from.id} 移动到 ${event.to.id} `);
     }
   },
   filters: {

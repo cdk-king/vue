@@ -56,7 +56,7 @@
         ></el-input>
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        <el-button type="primary" icon="search" @click="handleAddPlatformNotice">添加</el-button>
+        <el-button type="primary" icon="search" @click="handleAddPlatformNotice">添加全服公告申请</el-button>
       </div>
 
       <el-table
@@ -226,7 +226,7 @@
               <el-option
                 v-for="item in propOptions"
                 :key="item.propId"
-                :label="item.propName"
+                :label="item.propId+'—'+item.propName"
                 :value="item.propId"
               ></el-option>
             </el-select>
@@ -326,7 +326,7 @@
             </el-table>
           </el-form-item>
           <el-form-item label>
-            <el-button type="primary" icon="search" @click="submit">提交</el-button>
+            <el-button type="primary" icon="search" @click="submit">提 交</el-button>
             <el-button @click="addPlatformNoticeVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
@@ -352,7 +352,7 @@
             <el-select
               v-model="form.platformId"
               @change="selectPlatform"
-              placeholder="请选择渠道平台"
+              placeholder="请选择平台"
               style="width:180px"
             >
               <el-option
@@ -403,7 +403,7 @@
               <el-option
                 v-for="item in propOptions"
                 :key="item.propId"
-                :label="item.propName"
+                :label="item.propId+'—'+item.propName"
                 :value="item.propId"
               ></el-option>
             </el-select>

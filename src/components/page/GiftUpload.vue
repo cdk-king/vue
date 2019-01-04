@@ -33,11 +33,11 @@
 
             <Divider />
                 <div class="plugins-tips">
-                    请先选择渠道平台后再导入数据库
+                    请先选择平台后再导入数据库
                 </div>
             <el-form ref="form" :model="form" label-width="150px">
-                <el-form-item class="el-form-item" label="选择渠道">
-                    <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+                <el-form-item class="el-form-item" label="选择平台">
+                    <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
                         <el-option
                         v-for="item in platformOptions"
                         :key="item.platformId"
@@ -76,7 +76,7 @@
                 platformOptions: [
                 ],
                 form:{
-                    platformId:0
+                    platformId:""
                 },
                 loading:null,
                 url:"http://localhost:8011",
@@ -111,11 +111,11 @@
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log("渠道列表获取成功");
+                    console.log("平台列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
                     console.log(this.responseResult);
-                    console.log("渠道列表获取失败");
+                    console.log("平台列表获取失败");
                 }
                 })
                 .catch(failResponse => {});

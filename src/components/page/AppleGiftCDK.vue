@@ -33,7 +33,7 @@
               <el-option
                 v-for="item in giftOptions"
                 :key="item.giftId"
-                :label="item.giftName"
+                :label="item.giftId+'—'+item.giftName"
                 :value="item.giftId"
               ></el-option>
             </el-select>
@@ -66,7 +66,41 @@
           </el-form-item>
         </el-form>
       </div>
+      <div class="handle-box">
+        <span class="grid-content bg-purple-light">平台：</span>
+        <el-select
+          v-model="searchKey.platformId"
+          @change="selectPlatform"
+          placeholder="请选择平台"
+          class="handle-select mr10"
+        >
+          <el-option key="0" label="全部" value="0"></el-option>
+          <el-option
+            v-for="item in platformOptions"
+            :key="item.platformId"
+            :label="item.platform"
+            :value="item.platformId"
+          ></el-option>
+        </el-select>
 
+        <span class="grid-content bg-purple-light">礼包ID：</span>
+        <el-input
+          v-model="searchKey.giftId"
+          placeholder="筛选礼包ID"
+          class="handle-input"
+          style="width:150px"
+        ></el-input>
+
+        <span class="grid-content bg-purple-light">礼包名：</span>
+        <el-input
+          v-model="searchKey.giftName"
+          placeholder="筛选礼包名"
+          class="handle-input"
+          style="width:150px"
+        ></el-input>
+
+        <el-button type="primary" icon="search" @click="search">搜索</el-button>
+      </div>
       <el-table :data="tableData" border class="table" ref="multipleTable">
         <el-table-column prop="couponId" label="礼包ID"></el-table-column>
         <el-table-column prop="couponCount" label="数量"></el-table-column>
@@ -176,7 +210,9 @@ export default {
         endDatetime: ""
       },
       searchKey: {
-        platformId: 0
+        platformId: "",
+        giftId:"",
+        giftName:""
       },
       id: 0,
       serverIp: "",
@@ -495,6 +531,9 @@ export default {
     selectPlatform() {
       this.getGiftList(this.form.platformId);
     },
+    search(){
+      this.getCoupon();
+    },
     selectServer() {
       if (this.serverOptions.length > 0) {
         for (let i = 0; i < this.serverOptions.length; i++) {
@@ -515,6 +554,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
+          giftId:this.searchKey.giftId,
+          giftName:this.searchKey.giftName,
           platformId: this.searchKey.platformId,
           strPlatform: this.strPlatform
         })
@@ -545,6 +586,9 @@ export default {
 </script>
 
 <style scoped>
+.handle-box {
+  margin-bottom: 20px;
+}
 .el-form-item {
   width: 100%;
 }

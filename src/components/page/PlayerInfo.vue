@@ -115,13 +115,13 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="platform"  label="平台" >
-                    <template slot-scope="scope">
-                            <span  style="color:#000000">{{getPlatformName(platformValue)}}</span> 
+                    <template slot-scope="">
+                            <span  style="color:#000000">{{getPlatformName(platformValue)}}</span>
 
                     </template>
                 </el-table-column>
                 <el-table-column prop="server"  label="服务器" >
-                    <template slot-scope="scope">
+                    <template slot-scope="">
                             <span style="color:#000000">{{getServerName(serverValue) }}</span>
                     </template>
                 </el-table-column>

@@ -215,7 +215,7 @@ export default {
         this.idx = index;
         var item = this.tableData[index];
         var fileName = item.fileName+"."+item.fileType;
-        var filePath = "/";
+        var filePath = "file/";
         console.log(fileName);
         console.log(filePath);
         //window.location.href = "http://127.0.0.1:8011/download";

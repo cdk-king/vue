@@ -23,7 +23,7 @@
                 <el-select
                   v-model="platformValue"
                   @change="selectPlatform"
-                  placeholder="请选择渠道平台"
+                  placeholder="请选择平台"
                   style="width:180px"
                 >
                   <el-option
@@ -83,7 +83,7 @@
                 <span
                   class="grid-content bg-purple-light"
                   style="margin:20px;color:#888888"
-                >秒（一天为86400秒），定时发送需要填写，默认为60秒间隔</span>
+                >单位秒，定时发送需要填写，默认为60秒间隔</span>
               </el-form-item>
               <el-form-item label="循环次数">
                 <el-input style="width:180px" placeholder="循环次数" v-model="form.cycleTime" clearable></el-input>
@@ -107,7 +107,7 @@
               </el-form-item>
 
               <el-form-item label>
-                <el-button type="primary" icon="search" @click="submit">提交</el-button>
+                <el-button type="primary" icon="search" @click="submit">提交广播申请</el-button>
                 <el-button type="primary" icon="search" @click="reset">重置</el-button>
               </el-form-item>
             </el-form>
@@ -120,7 +120,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -300,9 +300,6 @@ export default {
   computed: {
     data() {
       return this.tableData;
-    },
-    cdk: function() {
-      return this.$cdk;
     },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");

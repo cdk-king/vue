@@ -137,7 +137,14 @@
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         this.loading.close();
-                        this.$message.success("道具导入成功");
+                        this.$message.success("道具信息导入成功");
+                        //添加组件通讯
+                        bus.$emit('propDataUpload', {
+                            gameId:this.$gameId,
+                            platformId:this.form.platformId,
+                            message:"道具信息导入成功"
+                        });
+
                     }else{
                         this.loading.close();
                         console.log(this.responseResult);

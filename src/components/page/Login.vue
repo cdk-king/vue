@@ -101,6 +101,8 @@ export default {
             if (touristId != "0" && touristId != "") {
               this.$setTouristId(parseInt(touristId));
               this.$setTouristName(touristName);
+              this.$message.info(touristName);
+              console.log(this.$touristName);
               this.getUserAllRole(this.$touristId);
               localStorage.setItem("ms_username", this.$touristName);
               this.getThisUserInfo(this.$touristName);
@@ -124,12 +126,19 @@ export default {
       //this.$router.push('/register');
     },
     loginInTourist() {
+      localStorage.removeItem('ms_username');
+      localStorage.setItem("rightTags", "");
+      localStorage.removeItem('rightTags');
+      localStorage.removeItem('roles');
+      localStorage.removeItem('userData');
       this.$message.info("暂不支持游客登录");
       if (true) {
         //todo
         if (this.$touristId == 0) {
+          
           this.getTourist();
         } else {
+          console.log(this.$touristName);
           localStorage.setItem("ms_username", this.$touristName);
           this.getUserAllRole(this.$touristId);
           this.getThisUserInfo(this.$touristName);

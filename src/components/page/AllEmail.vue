@@ -391,6 +391,9 @@ export default {
       }.bind(this)
     );
   },
+  beforeDestroy () {
+      bus.$off('changeGameId');
+  },
   methods: {
     formatServer(item, platformId) {
       for (var i = 0; i < this.allServerList.length; i++) {

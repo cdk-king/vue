@@ -592,9 +592,6 @@ export default {
     data() {
       return this.tableData;
     },
-    cdk: function() {
-      return this.$cdk;
-    },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
@@ -615,6 +612,14 @@ export default {
         this.getPropTypeList(this.$gameId);
       }.bind(this)
     );
+    bus.$on('propDataUpload',function(obj){
+        console.log(obj.message);
+        this.getAllPropList();
+    }.bind(this))  
+  },
+  beforeDestroy() {
+    bus.$off("changeGameId");
+    bus.$off("propDataUpload");
   },
   methods: {
     handleDelProp(index, row) {
@@ -1425,6 +1430,9 @@ export default {
     formatPropName(item,platformId) {
       //十分消耗性能
       if(item!=""){
+        if(this.allPropOptions.length==0){
+            return item;
+        }        
         for (var i = 0; i < this.allPropOptions.length; i++) {
           if (item.split('|')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) { 
             return this.allPropOptions[i].propName+"-"+item.split('|')[1]+"个" ;
@@ -1434,6 +1442,9 @@ export default {
     },
     formatMoneyType(item) {
       if(item!=""){
+        if(this.moneyTypeOptions.length==0){
+            return item;
+        }
         for (var i = 0; i < this.moneyTypeOptions.length; i++) {
           if (item.split('|')[0] == this.moneyTypeOptions[i].ValueTypeId) {
             return this.moneyTypeOptions[i].ValueTypeName+"-"+item.split('|')[1];

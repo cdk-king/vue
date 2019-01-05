@@ -4,7 +4,7 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
-        <div class="logo">后台管理系统</div>
+        <div class="logo">游戏管理系统</div>
             <i class="el-icon-lx-sort el-select"></i>
             <el-dropdown class="el-select" @command="handleChangGame">
             
@@ -115,9 +115,10 @@
                 //用户注销
                 if(command == 'loginout'){
                     //清除缓存信息
-                    localStorage.removeItem('ms_username')
-                    localStorage.removeItem('rightTags')
-                    localStorage.removeItem('roles')
+                    localStorage.removeItem('ms_username');
+                    localStorage.setItem("rightTags", "");
+                    localStorage.removeItem('rightTags');
+                    localStorage.removeItem('roles');
                     localStorage.removeItem('userData');
                     //跳转到登录界面
                     this.$router.push('/login');

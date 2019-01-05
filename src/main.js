@@ -45,9 +45,9 @@ Vue.prototype.$setTouristName = function(name){
 };
 //url
 //测试环境
-Vue.prototype.$url = "http://127.0.0.1:8011";
+//Vue.prototype.$url = "http://127.0.0.1:8011";
 //生成环境
-//Vue.prototype.$url = "";
+Vue.prototype.$url = "";
 Vue.prototype.$setUrl = function(url){
     Vue.prototype.$url = url;
 };

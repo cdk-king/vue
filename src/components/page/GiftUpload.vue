@@ -137,6 +137,12 @@
                     if(successResponse.data.code === 200){
                         this.loading.close();
                         this.$message.success("礼包导入成功");
+                        //添加组件通讯
+                        bus.$emit('giftDataUpload', {
+                            gameId:this.$gameId,
+                            platformId:this.form.platformId,
+                            message:"礼包信息导入成功"
+                        });
                     }else{
                         console.log(this.responseResult);
                         this.loading.close();

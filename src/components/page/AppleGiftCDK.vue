@@ -232,9 +232,6 @@ export default {
   components: {
   },
   computed: {
-    cdk: function() {
-      return this.$store.state.gameId;
-    },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
@@ -250,9 +247,16 @@ export default {
         this.getData();
       }.bind(this)
     );
+    bus.$on('giftDataUpload',function(obj){
+        console.log(obj.message);
+        if(this.form.platformId!=""){
+            this.getGiftList(this.form.platformId);
+        }
+    }.bind(this))
   },
   beforeDestroy() {
     bus.$off("changeGameId");
+    bus.$off("giftDataUpload");
   },
   methods: {
     handleDownload(index, row) {
@@ -264,11 +268,7 @@ export default {
         for(var i = 0;i<len-1;i++){
             filePath+=item.fileUrl.split('/')[i]+"/";
         }
-        console.log(fileName);
-        console.log(filePath);
-        //window.location.href = "http://127.0.0.1:8011/download";
         let config = {
-        //二进制大对象，是一个可以存储二进制文件的容器
         responseType: "blob",
         //responseType: "arraybuffer",
         headers:{
@@ -287,9 +287,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           //window.location.href = window.URL.createObjectURL(successResponse.data);
-
-          //A File, Blob or MediaSource object to create an object URL for.
-
           let url = window.URL.createObjectURL(successResponse.data)
           let link = document.createElement('a')
           link.style.display = 'none'
@@ -297,15 +294,14 @@ export default {
           link.setAttribute('download', fileName)
           document.body.appendChild(link)
           link.click();
-          
-          //URL.revokeObjectURL(link.href) // 释放URL 对象
-          //document.body.removeChild(link)
+          // 释放URL 对象
+          URL.revokeObjectURL(link.href) 
+          document.body.removeChild(link)
             
         })
         .catch(failResponse => {});
     },
     testDownload() {
-        //window.location.href = "http://127.0.0.1:8011/download";
         let config = {
         //responseType: "arraybuffer",
         //BLOB (binary large object)，二进制大对象，是一个可以存储二进制文件的容器。
@@ -324,9 +320,7 @@ export default {
         },config)
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-
           var fileName = "img.jpg";
-          //A File, Blob or MediaSource object to create an object URL for.
           let url = window.URL.createObjectURL(successResponse.data)
           let link = document.createElement('a')
           link.style.display = 'none'
@@ -334,8 +328,9 @@ export default {
           link.setAttribute('download', fileName)
           document.body.appendChild(link)
           link.click();
-          //URL.revokeObjectURL(link.href) // 释放URL 对象
-          //document.body.removeChild(link)
+          // 释放URL 对象
+          URL.revokeObjectURL(link.href) 
+          document.body.removeChild(link)
         })
         .catch(failResponse => {});
 
@@ -570,11 +565,6 @@ export default {
             this.$message.error("列表获取失败");
           }
         });
-    },
-    
-    testMessage() {
-      this.$message.success("success");
-      this.$message.success(this.$cdk);
     },
     testDialog() {
       this.dialogVisible = true;

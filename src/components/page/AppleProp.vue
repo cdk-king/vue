@@ -691,9 +691,6 @@ export default {
     data() {
       return this.tableData;
     },
-    cdk: function() {
-      return this.$cdk;
-    },
     ms_username: function() {
       const role = localStorage.getItem("ms_username");
       return role;
@@ -715,6 +712,15 @@ export default {
         this.getPropQualityList();
       }.bind(this)
     );
+    bus.$on('propDataUpload',function(obj){
+        console.log(obj.message);
+        this.getAllPropList();
+        this.getApplyProp();
+    }.bind(this))   
+  },
+  beforeDestroy() {
+    bus.$off("changeGameId");
+    bus.$off("propDataUpload");
   },
   methods: {
     getPropTypeList(gameId) {
@@ -1560,7 +1566,10 @@ export default {
         applyUser: "",
         applyReason: ""
       };
-      this.propData = {};
+      this.propData = [];
+      this.moneyList = [];
+      this.serverOptions = [];
+      this.propOptions = [];
     },
     testDialog() {
       this.dialogVisible = true;
@@ -1599,6 +1608,9 @@ export default {
     formatPropName(item,platformId) {
       //十分消耗性能
       if(item!=""){
+        if(this.allPropOptions.length==0){
+            return item;
+        }
         for (var i = 0; i < this.allPropOptions.length; i++) {
           if (item.split('-')[0] == this.allPropOptions[i].propId && platformId == this.allPropOptions[i].platformId) {
             return this.allPropOptions[i].propName+"-"+item.split('-')[1]+"个";
@@ -1608,6 +1620,9 @@ export default {
     },
     formatMoneyType(item) {
       if(item!=""){
+        if(this.moneyTypeOptions.length==0){
+            return item;
+        }
         for (var i = 0; i < this.moneyTypeOptions.length; i++) {
           if (item.split('|')[0] == this.moneyTypeOptions[i].moneyId) {
             return this.moneyTypeOptions[i].moneyType+"-"+item.split('|')[1];

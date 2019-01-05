@@ -228,9 +228,17 @@ import formatDatetime from "../../code/formatDatetime";
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
                 this.getPropTypeList(this.$gameId);
-            }.bind(this))      
+            }.bind(this))
+            bus.$on('propDataUpload',function(obj){
+                console.log(obj.message);
+                this.getData();
+            }.bind(this))    
             
             this.right();
+        },
+        beforeDestroy() {
+            bus.$off("changeGameId");
+            bus.$off("propDataUpload");
         },
         computed: {
             data() {

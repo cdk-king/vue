@@ -195,6 +195,9 @@ export default {
 
     this.right();
   },
+  beforeDestroy () {
+      bus.$off('changeGameId');
+  },
   computed: {
     data() {
       return this.tableData;

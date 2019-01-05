@@ -12,7 +12,7 @@
                 class="el-menu-demo notoselect"
                 mode="horizontal"
                 @select="handleSelect"
-                background-color="#EAEAEA"
+                background-color="#fff"
                 text-color="#000"
                 active-text-color="#5CACEE">
                 <el-menu-item index="1" disabled>处理中心</el-menu-item>
@@ -32,8 +32,8 @@
                 <el-menu-item index="4"  @click="changeShow('show2')">信息修改</el-menu-item>
                 <el-menu-item index="5" @click="changeShow('show1')">密码修改</el-menu-item>
             </el-menu>
-            <Divider />
-                <div v-show="show1" class="div-box">
+                <div v-show="show1" class="" style="margin:20px">
+                    <div class="content-title">密码修改</div>
                     <el-form ref="form" :model="passwordform" label-width="100px" style="width:100%">
                         <el-form-item label="输入新密码">
                             <el-input v-model="passwordform.newPassword" style="width:300px;float:left"></el-input>
@@ -44,35 +44,74 @@
 
                     </el-form>
                     <p slot="footer" class="dialog-footer" style="width:100%; text-align:left;padding-left:100px">
-                        <el-button type="primary" @click="saveEditPassword">修 改</el-button>
+                        <el-button type="primary" @click="saveEditPassword">修改密码</el-button>
                         <el-button @click="reset">取 消</el-button>     
                     </p>
                 </div>
-                <div v-show="show2" class="div-box">
+                <div v-show="show2" class="">
                     <div class="plugins-tips">
-                        <el-form  ref="userOptions"  :model="userOptions" label-width="100px" style="width:100%">
-                            <el-form-item label="用户名:">
+                        <div class="content-title">个人信息
+                            <el-button type="primary" @click="handelEditInfo" style="float:right">编辑个人信息</el-button>
+                        </div>
+                        
+                        <el-form  ref="userOptions"  :model="userOptions" label-width="110px" style="width:100%">
+                            <el-form-item label="账号：">
+                                <span  style="width:300px;text-align:left;float:left;">{{userOptions.account}}</span>
+                            </el-form-item>
+                            <el-form-item label="用户名：">
                                 <span  style="width:300px;text-align:left;float:left;">{{userOptions.name}}</span>
                             </el-form-item>
-                            <el-form-item label="手机号码:">
+                            <el-form-item label="手机号码：">
                                 <span  style="width:300px;text-align:left;float:left;">{{userOptions.phone}}</span>
                             </el-form-item>
+                            <el-form-item label="出生日期：">
+                                <span  style="width:300px;text-align:left;float:left;">{{formatterDate(userOptions.birthday)}}</span>
+                            </el-form-item>
+                            <el-form-item label="性别：">
+                                <span  style="width:300px;text-align:left;float:left;">{{formatterSex(userOptions.sex)}}</span>
+                            </el-form-item>
+                            <el-form-item label="邮箱：">
+                                <span  style="width:300px;text-align:left;float:left;">{{userOptions.email}}</span>
+                            </el-form-item>
+                            
                         </el-form>
                     </div>
-                    <Divider />
-                    <el-form ref="form" :model="form" label-width="100px" style="width:100%">
+                    <!-- 编辑提示框 -->
+                    <el-dialog title="编辑个人信息" :visible.sync="editVisible" width="600px" center>
+                    <el-form ref="form" :model="form" label-width="150px" style="width:100%">
+                        <el-form-item label="账号">
+                            <el-input v-model="form.account" style="width:300px;float:left"></el-input>
+                        </el-form-item>
                         <el-form-item label="用户名">
                             <el-input v-model="form.name" style="width:300px;float:left"></el-input>
                         </el-form-item>
                         <el-form-item label="手机号码">
                             <el-input v-model="form.phone" style="width:300px;float:left"></el-input>
                         </el-form-item>
+                        <el-form-item label="出生日期">
+                            <el-date-picker
+                            v-model="form.birthday"
+                            type="date"
+                            placeholder="选择日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-radio-group v-model="form.sex">
+                                <el-radio :label="1">男</el-radio>
+                                <el-radio :label="0">女</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="邮箱">
+                            <el-input v-model="form.email" style="width:300px;float:left"></el-input>
+                        </el-form-item>
 
                     </el-form>
-                    <p slot="footer" class="dialog-footer" style="width:100%; text-align:left;padding-left:100px">
+                    <span slot="footer" class="dialog-footer">
                         <el-button type="primary" @click="saveEditInfo">修 改</el-button>
-                        <el-button @click="reset">取 消</el-button>          
-                    </p>
+                        <el-button @click="reset">取 消</el-button>    
+                    </span>
+                    </el-dialog>
+
                 </div>
         </div>
     </div>
@@ -82,6 +121,7 @@
     import bus from '../common/bus';
     import md5 from 'js-md5';
     import setLocalThisUrl from "../../code/setLocalThisUrl";
+    import formatDatetime from "../../code/formatDatetime";
     export default {
         name: 'center',
         data: function(){
@@ -91,7 +131,7 @@
                 fileList: [],
                 imgSrc: '',
                 cropImg: '',
-                dialogVisible: false,
+                editVisible: false,
                 fileList: [],
                 playerList: [],
                 strplayerList: "",
@@ -102,8 +142,12 @@
 
                 ],
                 form:{
+                    account:"",
                     name:"",
                     phone:"",
+                    email:"",
+                    age:"",
+                    sex:"",
                     platformId:0,
                     serverId:0,
                     email:""
@@ -138,6 +182,20 @@
             bus.$off('changeGameId');
         },
         methods:{
+            handelEditInfo(){
+                this.form = {
+                    account:this.userOptions.account,
+                    name:this.userOptions.name,
+                    phone:this.userOptions.phone,
+                    birthday:this.userOptions.birthday,
+                    sex:this.userOptions.sex,
+                    email:this.userOptions.email
+                }
+                this.editVisible = true;
+            },
+            saveEdit(){
+
+            },
             changeShow(show){
                 if(show=="show2"){
                     this.show1 = false;
@@ -151,6 +209,7 @@
             reset(){
                 this.form={};
                 this.passwordform={};
+                this.editVisible = false;
             }, 
             saveEditPassword(){
                 var userId =JSON.parse(localStorage.getItem('userData')).id;
@@ -182,28 +241,22 @@
             },
             saveEditInfo(){
                 var userId =JSON.parse(localStorage.getItem('userData')).id;
-                var name = this.userOptions.name;
-                var phone = this.userOptions.phone;
-                var email = this.userOptions.email;
-                if(this.form.name!=undefined){
-                    if(this.form.name.trim()!=""){
-                    name = this.form.name;
-                    }
-                }
-                if(this.form.phone!=undefined){
-                    if(this.form.phone.trim()!=""){
-                        phone = this.form.phone;
-                    }
-                }
+                var account = this.form.account;
+                var name = this.form.name;
+                var phone = this.form.phone;
+                var birthday = this.form.birthday;
+                var sex = this.form.sex;
+                var email = this.form.email;
                 
                 this.$axios.post(this.url+'/editUser',{
                     id: userId,
-                    account: name,
+                    account: account,
                     name: name,
                     type: "",
+                    birthday:birthday,
+                    sex:sex,
                     phone: phone,
                     email:email
-
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -211,12 +264,31 @@
                         this.$message.success("用户信息编辑成功");
                         this.form={};
                         this.getUserInfo();
+                        this.editVisible = false;
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("用户信息编辑失败");
                     }
                 })
                 .catch(failResponse => {})
+            },
+            formatterSex(value) {
+                if(value=="1"){
+                    return "男";
+                }else if(value=="0") {
+                    return "女";
+                }else{
+                    return "";
+                }
+            },
+            formatterDate(date) {
+                //日期格式化
+                if(date==undefined || date==null || date==""){
+                    return "";
+                }
+                var newDate = new Date(date);
+                var tt = new Date(date).toLocaleDateString();
+                return tt;
             },
             handleSelect(key, keyPath) {
             },

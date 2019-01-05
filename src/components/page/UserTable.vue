@@ -540,7 +540,9 @@ export default {
         name: item.name,
         type: item.type,
         phone: item.phone,
-        email: item.email
+        email: item.email,
+        birthday:item.birthday,
+        sex:item.sex
       };
       this.editVisible = true;
     },
@@ -727,7 +729,9 @@ export default {
           name: this.form.name,
           type: this.form.type,
           phone: this.form.phone,
-          email: this.form.email
+          email: this.form.email,
+          birthday:this.form.birthday,
+          sex:this.form.sex,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

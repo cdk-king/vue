@@ -4,7 +4,13 @@ function formatDatetime(datetime) {
     if (date == undefined) {
       return "";
     }
-    var tt = new Date(parseInt(date)).toLocaleString();
+    var tt;
+    if(parseInt(date)){
+      tt = new Date(parseInt(date)).toLocaleString();
+    }else{
+      tt = new Date(date).toLocaleString();
+    }
+    
     return tt;
   }
   export default formatDatetime;

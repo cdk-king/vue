@@ -155,6 +155,7 @@ import formatDatetime from "../../code/formatDatetime";
         name: 'giftTable',
         data() {
             return {
+                url:"http://localhost:8011",
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
@@ -203,7 +204,6 @@ import formatDatetime from "../../code/formatDatetime";
                 responseResult:[],
                 id:"",
                 strPlatform:"",
-                url:"http://localhost:8011",
             }
         },
         created() {
@@ -213,8 +213,15 @@ import formatDatetime from "../../code/formatDatetime";
                 console.log(obj.message);
                 this.getPlatformList(this.$gameId);
             }.bind(this)) 
-            
+            bus.$on('giftDataUpload',function(obj){
+                console.log(obj.message);
+                this.getData();
+            }.bind(this))
             this.right();
+        },
+        beforeDestroy() {
+            bus.$off("changeGameId");
+            bus.$off("giftDataUpload");
         },
         computed: {
             data() {

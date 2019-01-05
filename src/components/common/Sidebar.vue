@@ -252,6 +252,8 @@
 
             this.mapData();
             //this.createSide();
+            
+            //todo 每次更新都执行addIsShow
             this.addIsShow(this.items);
         },
         methods:{

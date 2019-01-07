@@ -12,24 +12,29 @@
     <div class="container">
       <div class="content-title">文件中转</div>
 
-      <div class="plugins-tips"></div>
-      <el-form ref="form" :model="form" label-width="50px">
-        <el-form-item class="el-form-item" label="选择平台" v-if="false">
-          <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
-            <el-option
-              v-for="item in platformOptions"
-              :key="item.platformId"
-              :label="item.platform"
-              :value="item.platformId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-      </el-form>
+      <div class="plugins-tips">
+          备注：
+        <br>文件中转只能看到自己平台的文件，上传文件必须先选择平台
+      </div>
       
       <Divider/>
       <div class="handle-box">
               <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+              <span class="grid-content bg-purple-light">平台：</span>
+              <el-select
+                v-model="searchKey.platformId"
+                @change="selectSearchKeyPlatform"
+                placeholder="请选择平台"
+                style="width:150px"
+              >
+                <el-option key="0" label="全部" value="0"></el-option>
+                <el-option
+                  v-for="item in platformOptions"
+                  :key="item.platformId"
+                  :label="item.platform"
+                  :value="item.platformId"
+                ></el-option>
+              </el-select>
               <span class="grid-content bg-purple-light">原文件名：</span>
               <el-input
                 v-model="searchKey.fileOldName"
@@ -56,6 +61,7 @@
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <el-table-column prop="platform" label="平台"></el-table-column>
         <el-table-column prop="fileType" label="文件类别"></el-table-column>
         <el-table-column prop="fileOldName" label="原始文件名"></el-table-column>
         <el-table-column prop="fileName" label="新文件名"></el-table-column>
@@ -106,6 +112,16 @@
       width="30%"
     >
       <el-form ref="form"  label-width="100px">
+        <el-form-item class="el-form-item" label="选择平台" >
+          <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
+            <el-option
+              v-for="item in platformOptions"
+              :key="item.platformId"
+              :label="item.platform"
+              :value="item.platformId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="新文件名">
           <el-input v-model="form.newFileName"></el-input>
         </el-form-item>
@@ -165,11 +181,12 @@ export default {
       strPropList: "",
       platformOptions: [],
       form: {
-        platformId: 0,
+        platformId: "",
         newFileName:"",
         fileDescribe:""
       },
       searchKey:{
+        platformId: "",
         fileOldName:"",
         fileName:""
       },
@@ -190,6 +207,8 @@ export default {
       idx:"",
       delVisible:false,
       delAllVisible:false,
+      strPlatform:"",
+      userId:"",
     };
   },
   components: {},
@@ -218,6 +237,9 @@ export default {
     this.inputFile = document.getElementById("inputFile");
   },
   methods: {
+    selectSearchKeyPlatform(){
+        this.getFileList(this.$gameId);
+    },
     deleteRow(){
         var item = this.tableData[this.idx];
         var fileName = item.fileName+"."+item.fileType;
@@ -312,14 +334,31 @@ export default {
           link.click();
           URL.revokeObjectURL(link.href) // 释放URL 对象
           document.body.removeChild(link);
-          this.getData();
+          this.addDownloadTime(item.id);
           this.uploadVisible = false;
+        })
+        .catch(failResponse => {});
+    },
+    addDownloadTime(id){
+        this.$axios
+        .post(this.url + "/api/file/addDownloadTime", {
+            id:id
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("下载次数修改成功");
+            this.getData();
+          } else {
+            console.log(this.responseResult);
+            console.log("下载次数修改成功");
+          }
         })
         .catch(failResponse => {});
     },
     HandleAddFile(){
       this.form={
-        platformId: 0,
+        platformId: "",
         newFileName:"",
         fileDescribe:""
       } 
@@ -331,27 +370,10 @@ export default {
       this.inputFile.click();
     },
     getData() {
-      this.getPlatformList(this.$gameId);
-      this.getFileList(this.$gameId);
-    },
-    getPlatformList(gameId) {
       var userData = JSON.parse(localStorage.getItem("userData"));
-      this.$axios
-        .post(this.url + "/getPlatformListForUserIdAndGameId", {
-          userId: userData.id,
-          gameId: gameId
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("平台列表获取成功");
-            this.platformOptions = successResponse.data.data.list;
-          } else {
-            console.log(this.responseResult);
-            console.log("平台列表获取失败");
-          }
-        })
-        .catch(failResponse => {});
+      this.userId = userData.id;
+      this.getPlatformList(this.userId);
+      
     },
     getFileList(gameId) {
       this.$axios
@@ -359,7 +381,9 @@ export default {
             pageNo:"1",
             pageSize:"10",
             fileOldName:this.searchKey.fileOldName,
-            fileName:this.searchKey.fileName
+            fileName:this.searchKey.fileName,
+            strPlatform:this.strPlatform,
+            platformId: this.searchKey.platformId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -373,35 +397,6 @@ export default {
           }
         })
         .catch(failResponse => {});
-    },
-    ImportDatabase() {
-      this.loading = this.$loading({
-        lock: true,
-        text: "数据导入中...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      this.$axios
-        .post(this.url + "/ImportProp", {
-          list: JSON.stringify(this.propList),
-          platformId: this.form.platformId,
-          gameId: this.$gameId
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            this.loading.close();
-            this.$message.success("道具导入成功");
-          } else {
-            this.loading.close();
-            console.log(this.responseResult);
-            this.$message.error("道具导入失败");
-          }
-        })
-        .catch(failResponse => {
-          this.loading.close();
-          console.log("error");
-        });
     },
     formatter(row, column) {
       //时间格式化
@@ -428,7 +423,38 @@ export default {
       this.form.fileDescribe = this.file.name.split('.')[0];
       this.fileSize = this.file.size;
     },
+    getPlatformList(userId) {
+      this.$axios
+        .post(this.url + "/getPlatformListForUserIdAndGameId", {
+          userId: userId,
+          gameId: this.$gameId
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("用户平台列表获取成功");
+            this.platformOptions = successResponse.data.data.list;
+            this.strPlatform = "";
+            for (var i = 0; i < this.platformOptions.length; i++) {
+              this.strPlatform += this.platformOptions[i].platformId + ",";
+            }
+            this.strPlatform = this.strPlatform.substring(  
+              0,
+              this.strPlatform.length - 1
+            );
+            this.getFileList(this.$gameId);
+          } else {
+            console.log(this.responseResult);
+            console.log("用户平台列表获取失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
     fileUpload() {
+      if(this.form.platformId == ""){
+        this.$message.error("请选择平台")
+          return;
+      }
       if(this.file == null){
         this.$message.error("请选择正确的文件")
           return;
@@ -439,6 +465,7 @@ export default {
       formData.append("fileSize", this.filterFileSize(this.fileSize));
       formData.append("fileDescribe", this.form.fileDescribe);
       formData.append("addUser", this.userName);
+      formData.append("platformId", this.form.platformId);
       let headers = { headers: { "Content-Type": "multipart/form-data" } };
       this.$axios
         .post(this.url + "/fileUpload", formData, headers)

@@ -10,9 +10,9 @@
     </div>
     <div class="container">
       <div class="plugins-tips">备注：
-        <br>（1）输入内容发送；不显示已下线的区服，已合服的只显示主服。未到开服时间的区服将不会发送广播。
-        <br>（2）只发送一次，如果发送失败，系统将持续发送24小时，直到成功或超过24小时；在没有发送成功时，管理员也可以取消发送；
-        <br>（3）设置了广播后，这些广播不会在日后开的新服生效，新服要单独设置广播。
+        <br>（1）消息类型分为聊天系统消息和滚屏消息
+        <br>（2）发送类型有即时发生和定时发送，定时消息需要设置时间间隔（秒）和循环次数
+        <br>（3）广播消息均为全服发送
       </div>
 
       <el-collapse v-model="activeNames">
@@ -39,7 +39,7 @@
                   class="grid-content bg-purple-light"
                   style="margin:16px;color:#888888"
                   v-show="!checkVisible"
-                >请先选择服务器</span>
+                >请先选择平台</span>
 
                 <el-checkbox-group
                   v-model="serverList"
@@ -64,33 +64,26 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="发送类型">
-                <el-select v-model="form.sendType" placeholder="请选择发送类型" style="width:180px">
+                <el-select v-model="form.sendType" placeholder="请选择发送类型" style="width:180px" @change="selectSendType">
                   <el-option
                     v-for="item in sendTypeList"
                     :key="item.id"
                     :label="item.sendType"
                     :value="item.id"
+                    
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="时间间隔">
+              <el-form-item label="时间间隔"  v-if="isTiming">
                 <el-input
                   style="width:180px"
                   placeholder="时间间隔"
                   v-model="form.timeInterval"
                   clearable
                 ></el-input>
-                <span
-                  class="grid-content bg-purple-light"
-                  style="margin:20px;color:#888888"
-                >单位秒，定时发送需要填写，默认为60秒间隔</span>
               </el-form-item>
-              <el-form-item label="循环次数">
+              <el-form-item label="循环次数" v-if="isTiming">
                 <el-input style="width:180px" placeholder="循环次数" v-model="form.cycleTime" clearable></el-input>
-                <span
-                  class="grid-content bg-purple-light"
-                  style="margin:20px;color:#888888"
-                >不填写 默认为1次</span>
               </el-form-item>
               <el-form-item label="公告内容">
                 <el-input
@@ -292,6 +285,7 @@ export default {
       strPlatform: "",
       maxLengthVisible:false,
       countMaxLength:600,
+      isTiming:true
     };
   },
   components: {
@@ -331,7 +325,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -344,7 +338,7 @@ export default {
             this.getNotice();
           } else {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -389,6 +383,14 @@ export default {
     },
     selectPlatform() {
       this.getServerList(this.platformValue);
+    },
+    selectSendType(){
+        if(this.form.sendType=="1"){
+            this.isTiming = false;
+        }
+        if(this.form.sendType=="2"){
+            this.isTiming = true;
+        }
     },
     changeContent(){
       if(this.form.noticeContent.length>this.countMaxLength){
@@ -507,19 +509,27 @@ export default {
         this.$message("请选择正确的发送类型");
         return;
       }
-      if (this.form.timeInterval == "") {
-        this.$message("请输入正确的时间间隔");
-        return;
+      
+      if(this.form.sendType=="2"){
+          
+          if (this.form.timeInterval == "") {
+            this.$message("请输入正确的时间间隔");
+            return;
+          }
+          if (this.form.cycleTime == "") {
+            this.$message("请输入正确的循环次数");
+            return;
+          }
+      }else if(this.form.sendType=="1"){
+          this.form.timeInterval = "60";
+          this.form.cycleTime = "1";
       }
-      if (this.form.cycleTime == "") {
-        this.$message("请输入正确的循环次数");
-        return;
-      }
+
       if (this.form.noticeContent == "") {
         this.$message("请输入正确的公告内容");
         return;
       }
-      if (this.form.noticeContent > this.countMaxLength) {
+      if (this.form.noticeContent.length > this.countMaxLength) {
         this.$message("内容长度超过最大限制"+this.countMaxLength);
         return;
       }
@@ -540,6 +550,7 @@ export default {
           if (successResponse.data.code === 200) {
             console.log("广播添加成功");
             this.$message.success("广播添加成功");
+            this.reset();
             this.getNotice();
           } else {
             console.log(this.responseResult);
@@ -575,15 +586,6 @@ export default {
         cycleTime: "",
         noticeContent: ""
       };
-    },
-    formatter(row, column) {
-      //时间格式化
-      var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
     },
     handleSend(index, row) {
       var item = this.tableData[index];

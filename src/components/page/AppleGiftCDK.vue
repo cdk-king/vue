@@ -67,6 +67,7 @@
         </el-form>
       </div>
       <div class="handle-box">
+        <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
         <span class="grid-content bg-purple-light">平台：</span>
         <el-select
           v-model="searchKey.platformId"
@@ -101,7 +102,8 @@
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
       </div>
-      <el-table :data="tableData" border class="table" ref="multipleTable">
+      <el-table :data="tableData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="couponId" label="礼包ID"></el-table-column>
         <el-table-column prop="couponCount" label="数量"></el-table-column>
         <el-table-column prop="couponTitle" label="标题"></el-table-column>
@@ -116,6 +118,12 @@
               icon="el-icon-download"
               @click="handleDownload(scope.$index, scope.row)"
             >下载</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-delete"
+              class="red"
+              @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -170,6 +178,22 @@
         <el-button type="primary" @click="exchangeVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteRow">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 批量删除提示框 -->
+    <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
+      <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delAllVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDelAll">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -187,6 +211,9 @@ export default {
       show: false,
       tableData: [],
       dialogVisible: false,
+      multipleSelection: [],
+      delVisible:false,
+      delAllVisible:false,
       platformOptions: [
       ],
       giftOptions: [],
@@ -197,6 +224,7 @@ export default {
       serverOptions: [],
       serverValue: "",
       serverLabel: "",
+      idx:"",
       form: {
         id: "",
         giftId: "",
@@ -259,6 +287,77 @@ export default {
     bus.$off("giftDataUpload");
   },
   methods: {
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    handleDelete(index, row){
+        this.idx = index;
+        this.delVisible = true;
+    },
+    deleteRow(){
+        var item = this.tableData[this.idx];
+        var len = item.fileUrl.split('/').length;
+        var fileName = item.fileUrl.split('/')[len-1];
+        var filePath = "";
+        for(var i = 0;i<len-1;i++){
+            filePath+=item.fileUrl.split('/')[i]+"/";
+        }
+        this.$axios
+        .post(this.url + "/api/cdk/deleteCDK", {
+            fileName:fileName,
+            filePath:filePath,
+            id:item.id
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          this.delVisible = false;
+          console.log("删除成功");
+          this.$message.success("删除成功");
+            this.getData();
+        })
+        .catch(failResponse => {});
+    },
+    delAll(){
+        this.delAllVisible = true;
+    },
+    saveDelAll(){
+      const length = this.multipleSelection.length;
+      if(length==0){
+        this.$message.info("请选择删除项");
+        return;
+      }
+      let str = "";
+      var fileName = "";
+      for (let i = 0; i < length; i++) {
+        str += this.multipleSelection[i].id + ",";
+        for(let j = 0;j<this.tableData.length;j++){
+            if(this.multipleSelection[i].id==this.tableData[j].id){
+                var len = this.tableData[j].fileUrl.split('/').length;
+                fileName += this.tableData[j].fileUrl.split('/')[len-1]+",";
+            }
+        }
+      }
+        fileName =fileName.substring(0,fileName.length-1);
+        str =str.substring(0,str.length-1);
+        var filePath = "cdk/";
+        console.log(fileName);
+        console.log(str);
+        this.$axios
+        .post(this.url + "/api/cdk/deleteAllCDK", {
+            fileName:fileName,
+            filePath:filePath,
+            id:str
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            this.delAllVisible = false;
+            console.log("批量删除成功");
+            this.$message.success("批量删除成功");
+            this.getData();
+        })
+        .catch(failResponse => {});
+    },
+
     handleDownload(index, row) {
         this.idx = index;
         var item = this.tableData[index];
@@ -410,8 +509,6 @@ export default {
         .catch(failResponse => {});
     },
     resetForm() {
-      bus.$emit("busEmit", "bus.$emit('busEmit','')");
-      this.$emit("increment1", "这个位子是可以加参数的");
       this.form = {
         id: "",
         giftId: "",
@@ -488,7 +585,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("渠道列表获取成功");
+            console.log("平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -501,7 +598,7 @@ export default {
             this.getCoupon();
           } else {
             console.log(this.responseResult);
-            console.log("渠道列表获取失败");
+            console.log("平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -528,17 +625,6 @@ export default {
     },
     search(){
       this.getCoupon();
-    },
-    selectServer() {
-      if (this.serverOptions.length > 0) {
-        for (let i = 0; i < this.serverOptions.length; i++) {
-          if (this.serverOptions[i].serverId == this.serverValue) {
-            this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
-            return;
-          }
-        }
-      }
     },
     getData() {
       this.getPlatformList(this.$gameId);

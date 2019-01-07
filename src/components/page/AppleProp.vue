@@ -164,7 +164,7 @@
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
-            <el-input style="width:215px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <el-input style="width:515px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input
@@ -389,7 +389,7 @@
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
-            <el-input style="width:215px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <el-input style="width:515px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input

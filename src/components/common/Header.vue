@@ -55,6 +55,7 @@
 </template>
 <script>
     import bus from '../common/bus';
+    import setLocalThisUrl from "../../code/setLocalThisUrl";
     export default {
         data() {
             return {
@@ -75,9 +76,7 @@
             }
         },
         created() {
-            if(this.$url!=null){
-                this.url = this.$url;
-            }
+            setLocalThisUrl(this);
             this.right();
         },
         methods:{
@@ -100,8 +99,9 @@
                     if (successResponse.data.code === 200) {
                         console.log("用户游戏列表获取成功");
                         this.options = successResponse.data.data.list;
+                        //默认选取第一个游戏
                         this.$setGameId(this.options[0].id);
-                        this.$message("已选择游戏："+this.options[0].gameName);
+                        console.log("已选择游戏："+this.options[0].gameName);
                         this.gameLabel = this.options[0].gameName;
                     } else {
                         console.log(this.responseResult);
@@ -169,10 +169,6 @@
                     gameId:command.id,
                     message:"已选择游戏："+command.gameName
                 });
-                //this.$emit('increment1',"这个位子是可以加参数的");
-                //this.$store.dispatch('modifyGameId',{gameId:command.id}); 
-                //this.$store.state.gameId=command.id;
-                //console.log(this.$store.state.gameId);
                 this.gameLabel = command.gameName;               
                 this.$message("已选择游戏："+command.gameName);       
             }

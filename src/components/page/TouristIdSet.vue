@@ -51,11 +51,11 @@ export default {
       userOptions: [],
       serverOptions: [],
       form: {
-        userId: 0,
-        platformId: 0,
-        serverId: 0
+        userId: "",
+        platformId:"",
+        serverId: ""
       },
-      userId: 0,
+      userId: "",
       userName: ""
     };
   },
@@ -90,7 +90,7 @@ export default {
             var touristName = successResponse.data.data.split("|")[1];
             if (touristId != "0" && touristId != "") {
               this.$setTouristId(parseInt(touristId));
-              this.$setTouristName(parseInt(touristName));
+              this.$setTouristName(touristName);
               this.userId = this.$touristId;
               this.setUserName();
             } else {
@@ -104,20 +104,26 @@ export default {
         .catch(failResponse => {});
     },
     setTourist() {
-      this.setUserName();
       //保存在数据库
+      var name = "";
+      for (var i = 0; i < this.userOptions.length; i++) {
+        if (this.form.userId == this.userOptions[i].id) {
+          name = this.userOptions[i].name;
+          break;
+        }
+      }
       this.$axios
         .post(this.url + "/api/login/setTourist", {
           userId: this.form.userId,
-          name: this.userName
+          name: name
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("用户列表获取成功");
-            //再次设置this.$touristId
             this.$setTouristId(this.form.userId);
             this.userId = this.$touristId;
+            this.setUserName();
           } else {
             console.log(this.responseResult);
             console.log("用户列表获取失败");
@@ -149,6 +155,7 @@ export default {
       for (var i = 0; i < this.userOptions.length; i++) {
         if (this.userId == this.userOptions[i].id) {
           this.userName = this.userOptions[i].name;
+          this.$setTouristName(this.userName);
           break;
         }
       }

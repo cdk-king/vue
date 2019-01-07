@@ -190,7 +190,7 @@
               class="grid-content bg-purple-light"
               style="margin:16px;color:#888888"
               v-show="!checkVisible"
-            >请先选择服务器</span>
+            >请先选择平台</span>
 
             <el-checkbox-group
               v-model="form.serverList"
@@ -205,7 +205,7 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:180px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
+            <el-input style="width:515px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="公告内容">

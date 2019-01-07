@@ -4,7 +4,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-calendar"></i> 文件中转
+          <i class="el-icon-lx-calendar"></i> 文件
         </el-breadcrumb-item>
         <el-breadcrumb-item>文件中转</el-breadcrumb-item>
       </el-breadcrumb>
@@ -14,8 +14,8 @@
 
       <div class="plugins-tips"></div>
       <el-form ref="form" :model="form" label-width="50px">
-        <el-form-item class="el-form-item" label="选择渠道" v-if="false">
-          <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+        <el-form-item class="el-form-item" label="选择平台" v-if="false">
+          <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
             <el-option
               v-for="item in platformOptions"
               :key="item.platformId"
@@ -24,11 +24,29 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-button type="primary" @click="HandleAddFile">添加文件</el-button>
+
       </el-form>
       
       <Divider/>
-
+      <div class="handle-box">
+              <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+              <span class="grid-content bg-purple-light">原文件名：</span>
+              <el-input
+                v-model="searchKey.fileOldName"
+                placeholder="筛选原文件名"
+                class="handle-input"
+                style="width:150px"
+              ></el-input>
+              <span class="grid-content bg-purple-light">新文件名：</span>
+              <el-input
+                v-model="searchKey.fileName"
+                placeholder="筛选新文件名"
+                class="handle-input"
+                style="width:150px"
+              ></el-input>
+              <el-button type="primary" icon="search" @click="search">搜索</el-button>
+              <el-button type="success" @click="HandleAddFile">添加文件</el-button>
+      </div>
       <el-table
         :data="data"
         border
@@ -56,7 +74,7 @@
           <template slot-scope="scope">
             <el-button
               type="text"
-              icon="el-icon-edit"
+              icon="el-icon-download"
               @click="handleDownload(scope.$index, scope.row)"
             >下载</el-button>
             <el-button
@@ -78,17 +96,6 @@
           :total="this.total"
         ></el-pagination>
       </div>
-
-      <!-- <form action="http://localhost:8011/fileUpload" method="post" enctype="multipart/form-data">
-            <p>选择文件: <input type="file" name="file"/></p>
-            <p><input type="submit" value="提交"/></p>
-      </form>-->
-      <!-- <form>
-            <input type="text" value="" v-model="name" placeholder="请输入用户名">
-            <input type="text" value="" v-model="age" placeholder="请输入年龄">
-            <input type="file" @change="getFile($event)">
-            <button @click="fileUpload">提交</button>
-      </form>-->
     
     <!-- 添加弹出框 -->
     <el-dialog
@@ -118,9 +125,22 @@
           </div>
         </el-form-item>
       </el-form>
+    </el-dialog>
+
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="uploadVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveUpload">确 定</el-button>
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteRow">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 批量删除提示框 -->
+    <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
+      <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delAllVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDelAll">确 定</el-button>
       </span>
     </el-dialog>
     </div>
@@ -132,6 +152,7 @@ import bus from "../common/bus";
 import Vue from "vue";
 import axios from "axios";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
+import formatDatetime from "../../code/formatDatetime";
 export default {
   name: "upload",
   data: function() {
@@ -148,6 +169,10 @@ export default {
         newFileName:"",
         fileDescribe:""
       },
+      searchKey:{
+        fileOldName:"",
+        fileName:""
+      },
       fullscreenLoading: false,
       loading: null,
       name: "",
@@ -161,7 +186,10 @@ export default {
       cur_page: 1,
       multipleSelection: [],
       inputFile: "",
-      uploadVisible:false
+      uploadVisible:false,
+      idx:"",
+      delVisible:false,
+      delAllVisible:false,
     };
   },
   components: {},
@@ -190,12 +218,8 @@ export default {
     this.inputFile = document.getElementById("inputFile");
   },
   methods: {
-    saveUpload(){
-      this.uploadVisible = false;
-    },
-    handleDelete(index, row){
-        this.idx = index;
-        var item = this.tableData[index];
+    deleteRow(){
+        var item = this.tableData[this.idx];
         var fileName = item.fileName+"."+item.fileType;
         var filePath = "file/";
         this.$axios
@@ -206,10 +230,58 @@ export default {
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-            console.log(successResponse.data);
+          this.delVisible = false;
+          console.log("删除成功");
+          this.$message.success("删除成功");
             this.getData();
         })
         .catch(failResponse => {});
+    },
+    saveDelAll(){
+      const length = this.multipleSelection.length;
+      if(length==0){
+        this.$message.info("请选择删除项");
+        return;
+      }
+      let str = "";
+      var fileName = "";
+      for (let i = 0; i < length; i++) {
+        str += this.multipleSelection[i].id + ",";
+        for(let j = 0;j<this.tableData.length;j++){
+            if(this.multipleSelection[i].id==this.tableData[j].id){
+                fileName +=this.tableData[j].fileName+"."+this.tableData[j].fileType+",";
+            }
+        }
+      }
+        fileName =fileName.substring(0,fileName.length-1);
+        str =str.substring(0,str.length-1);
+        var filePath = "file/";
+        console.log(fileName);
+        console.log(str);
+        this.$axios
+        .post(this.url + "/api/file/deleteAllFile", {
+            fileName:fileName,
+            filePath:filePath,
+            id:str
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          this.delAllVisible = false;
+          console.log("批量删除成功");
+          this.$message.success("批量删除成功");
+            this.getData();
+        })
+        .catch(failResponse => {});
+    },
+    search(){
+        this.getFileList(this.$gameId);
+    },
+    delAll(){
+        this.delAllVisible = true;
+    },
+    handleDelete(index, row){
+        this.idx = index;
+        this.delVisible = true;
     },
     handleDownload(index, row){
         this.idx = index;
@@ -218,7 +290,6 @@ export default {
         var filePath = "file/";
         console.log(fileName);
         console.log(filePath);
-        //window.location.href = "http://127.0.0.1:8011/download";
         let config = {
         responseType: "blob",
         headers:{
@@ -247,13 +318,19 @@ export default {
         .catch(failResponse => {});
     },
     HandleAddFile(){
-        this.uploadVisible = true;
+      this.form={
+        platformId: 0,
+        newFileName:"",
+        fileDescribe:""
+      } 
+      this.fileName = "";
+      this.fileSize = "";
+      this.uploadVisible = true;
     },
     clickInputFile() {
       this.inputFile.click();
     },
     getData() {
-      console.log("this.$gameId:" + this.$gameId);
       this.getPlatformList(this.$gameId);
       this.getFileList(this.$gameId);
     },
@@ -267,12 +344,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            console.log("渠道列表获取成功");
+            console.log("平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
-            console.log("渠道列表获取失败");
+            console.log("平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -281,12 +357,13 @@ export default {
       this.$axios
         .post(this.url + "/api/file/getFileList", {
             pageNo:"1",
-            pageSize:"10"
+            pageSize:"10",
+            fileOldName:this.searchKey.fileOldName,
+            fileName:this.searchKey.fileName
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             console.log("文件列表获取成功");
             this.tableData = successResponse.data.data.list;
             
@@ -298,7 +375,6 @@ export default {
         .catch(failResponse => {});
     },
     ImportDatabase() {
-      //this.fullscreenLoading = true;
       this.loading = this.$loading({
         lock: true,
         text: "数据导入中...",
@@ -314,12 +390,9 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
-            //this.fullscreenLoading = false;
             this.loading.close();
             this.$message.success("道具导入成功");
           } else {
-            console.log("error");
             this.loading.close();
             console.log(this.responseResult);
             this.$message.error("道具导入失败");
@@ -333,33 +406,27 @@ export default {
     formatter(row, column) {
       //时间格式化
       var date = row[column.property];
-      if (date == undefined) {
-        return "";
-      }
-      var tt = new Date(parseInt(date)).toLocaleString();
-      return tt;
+      return formatDatetime(date);
     },
     // 分页导航
     handleCurrentChange(val) {
       this.cur_page = val;
-      console.log("page:" + val);
       this.getData();
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     submitUpload() {
       this.$refs.upload.submit();
     },
     selectPlatform() {
-      console.log(this.form.platformId);
     },
     getFile(event) {
       this.file = event.target.files[0];
       this.fileName = this.file.name;
+      this.form.newFileName = this.file.name.split('.')[0];
+      this.form.fileDescribe = this.file.name.split('.')[0];
       this.fileSize = this.file.size;
-      console.log(this.file);
     },
     fileUpload() {
       if(this.file == null){
@@ -378,7 +445,6 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log(this.responseResult);
             this.$message.success("文件添加成功");
             this.getFileList(this.$gameId);
             this.uploadVisible = false;
@@ -466,6 +532,9 @@ export default {
 </script>
 
 <style scoped>
+.handle-box {
+  margin-bottom: 20px;
+}
 .content-title {
   font-weight: 400;
   line-height: 50px;

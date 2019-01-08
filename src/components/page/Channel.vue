@@ -3,13 +3,13 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>通道管理
+          <i class="el-icon-lx-cascades"></i>渠道管理
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
       <div class="plugins-tips">备注：
-        <br>一个通道对应一个且唯一的平台，在添加和修改通道的时候必须指定对应的平台。
+        <br>一个渠道对应一个且唯一的平台，在添加和修改渠道的时候必须指定对应的平台。
         <br>
       </div>
 
@@ -31,18 +31,18 @@
           ></el-option>
         </el-select>
 
-        <span class="grid-content bg-purple-light">通道名：</span>
+        <span class="grid-content bg-purple-light">渠道名：</span>
         <el-input
           v-model="searchKey.channelName"
-          placeholder="筛选通道名"
+          placeholder="筛选渠道名"
           class="handle-input"
           style="width:150px"
         ></el-input>
 
-        <span class="grid-content bg-purple-light">通道标识：</span>
+        <span class="grid-content bg-purple-light">渠道标识：</span>
         <el-input
           v-model="searchKey.channelTag"
-          placeholder="筛选通道标识"
+          placeholder="筛选渠道标识"
           class="handle-input"
           style="width:150px"
         ></el-input>
@@ -67,9 +67,9 @@
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="channelId" label="通道ID" width="80"></el-table-column>
-        <el-table-column prop="channelName" label="通道名称" width="160"></el-table-column>
-        <el-table-column prop="channelTag" label="通道标识"></el-table-column>
+        <el-table-column prop="channelId" label="渠道ID" width="80"></el-table-column>
+        <el-table-column prop="channelName" label="渠道名称" width="160"></el-table-column>
+        <el-table-column prop="channelTag" label="渠道标识"></el-table-column>
         <el-table-column prop="platform" label="所属平台" width="120"></el-table-column>
         <el-table-column prop="channel_describe" label="描述"></el-table-column>
         <el-table-column prop="state" label="状态" width="100" :formatter="formatState"></el-table-column>
@@ -108,23 +108,23 @@
 
     <!-- 添加弹出框 -->
     <el-dialog
-      title="添加通道"
+      title="添加渠道"
       :modal="false"
       :close-on-click-modal="false"
       :visible.sync="addchannelVisible"
       width="30%"
     >
       <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="通道名称">
+        <el-form-item label="渠道名称">
           <el-input v-model="form.channel"></el-input>
         </el-form-item>
-        <el-form-item label="通道ID">
+        <el-form-item label="渠道ID">
           <el-input v-model="form.channelId"></el-input>
         </el-form-item>
-        <el-form-item label="通道标识">
+        <el-form-item label="渠道标识">
           <el-input v-model="form.channelTag"></el-input>
         </el-form-item>
-        <el-form-item label="通道描述">
+        <el-form-item label="渠道描述">
           <el-input v-model="form.channel_describe"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
@@ -149,23 +149,23 @@
 
     <!-- 编辑弹出框 -->
     <el-dialog
-      title="编辑通道"
+      title="编辑渠道"
       :modal="false"
       :close-on-click-modal="false"
       :visible.sync="editVisible"
       width="30%"
     >
       <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="通道名称">
+        <el-form-item label="渠道名称">
           <el-input v-model="form.channel"></el-input>
         </el-form-item>
-        <el-form-item label="通道ID">
+        <el-form-item label="渠道ID">
           <el-input v-model="form.channelId"></el-input>
         </el-form-item>
-        <el-form-item label="通道标识">
+        <el-form-item label="渠道标识">
           <el-input v-model="form.channelTag"></el-input>
         </el-form-item>
-        <el-form-item label="通道描述">
+        <el-form-item label="渠道描述">
           <el-input v-model="form.channel_describe"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
@@ -190,7 +190,7 @@
 
     <!-- 编辑冻结提示框 -->
     <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
-      <div class="del-dialog-cnt">冻结后将停止通道使用，是否确定冻结？</div>
+      <div class="del-dialog-cnt">冻结后将停止渠道使用，是否确定冻结？</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="changeStateToFrozenVisible = false">取 消</el-button>
         <el-button type="primary" @click="changeStateToFrozen">确 定</el-button>
@@ -366,7 +366,7 @@ export default {
             this.total = successResponse.data.data.total;
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道列表获取失败");
+            this.$message.error("渠道列表获取失败");
           }
         });
     },
@@ -440,12 +440,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.$message.success("通道批量删除完成");
+            this.$message.success("渠道批量删除完成");
             this.multipleSelection = [];
             this.getData();
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道批量删除失败");
+            this.$message.error("渠道批量删除失败");
           }
         })
         .catch(failResponse => {});
@@ -475,8 +475,8 @@ export default {
     },
     saveAddchannel() {
       if (this.form.channel == "") {
-        console.log("通道名称不能为空");
-        this.$message.error("通道名称不能为空");
+        console.log("渠道名称不能为空");
+        this.$message.error("渠道名称不能为空");
       } else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
@@ -493,12 +493,12 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              this.$message.success("通道添加成功");
+              this.$message.success("渠道添加成功");
               this.tableData.push(this.form);
               this.getData();
             } else {
               console.log(this.responseResult);
-              this.$message.error("通道添加失败");
+              this.$message.error("渠道添加失败");
             }
           })
           .catch(failResponse => {});
@@ -520,11 +520,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.$message.success("通道信息修改成功");
+            this.$message.success("渠道信息修改成功");
             this.getData();
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道信息修改失败");
+            this.$message.error("渠道信息修改失败");
           }
         })
         .catch(failResponse => {});
@@ -539,11 +539,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.$message.success(`通道冻结成功`);
+            this.$message.success(`渠道冻结成功`);
             this.getData();
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道冻结失败");
+            this.$message.error("渠道冻结失败");
           }
         })
         .catch(failResponse => {});
@@ -559,11 +559,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.$message.success("通道解冻成功");
+            this.$message.success("渠道解冻成功");
             this.getData();
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道解冻失败");
+            this.$message.error("渠道解冻失败");
           }
         })
         .catch(failResponse => {});
@@ -579,11 +579,11 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.$message.success(`通道删除成功`);
+            this.$message.success(`渠道删除成功`);
             this.getData();
           } else {
             console.log(this.responseResult);
-            this.$message.error("通道删除失败");
+            this.$message.error("渠道删除失败");
           }
         })
         .catch(failResponse => {});

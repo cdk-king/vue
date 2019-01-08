@@ -10,18 +10,18 @@
     <div class="container">
       <div class="plugins-tips">备注：
         <br>一个服务器对应一个且唯一的渠道平台，在添加和修改服务器的时候必须指定对应的游渠道平台。
-        <br>
+        <br>筛选平台渠道时应先选择对应的筛选平台
       </div>
 
       <Divider/>
       <div class="handle-box">
-        <el-button type="primary" icon="search" @click="HandleAddAllChannel">添加通道</el-button>
+        <el-button type="primary" icon="search" @click="HandleAddAllChannel">添加渠道</el-button>
         <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
         <span class="grid-content bg-purple-light">状态：</span>
 
         <el-select
           v-model="searchKey.state"
-          placeholder="筛选"
+          placeholder="筛选状态"
           @change="stateSelect"
           class="handle-select mr10"
         >
@@ -37,7 +37,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectPlatform"
-          placeholder="请选择渠平台"
+          placeholder="请选择平台"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -46,6 +46,22 @@
             :key="item.platformId"
             :label="item.platform"
             :value="item.platformId"
+          ></el-option>
+        </el-select>
+
+        <span class="grid-content bg-purple-light">渠道：</span>
+        <el-select
+          v-model="searchKey.channelId"
+          @change="selectChannel"
+          placeholder="请选择渠道"
+          class="handle-select mr10"
+        >
+          <el-option key="0" label="全部" value="0"></el-option>
+          <el-option
+            v-for="item in allChannelFormPlatform"
+            :key="item.channelId"
+            :label="item.channelName"
+            :value="item.channelId"
           ></el-option>
         </el-select>
 
@@ -64,9 +80,10 @@
           class="handle-input"
           style="width:120px"
         ></el-input>
+
         <el-button type="primary" icon="search" @click="search">搜索</el-button>
-        <el-button type="primary" icon="search" @click="handleAddServer" v-if="false">添加</el-button>
         <el-button type="primary" icon="search" @click="handleSyn">同步</el-button>
+        <!-- <el-button type="primary" icon="search" @click="handleAddServer" v-if="false">添加</el-button> -->
         <!-- <el-button type="primary" icon="search" @click="handleGetList">获取列表</el-button> -->
       </div>
       <el-table
@@ -86,10 +103,10 @@
         <el-table-column prop="platform" label="所属平台"></el-table-column>
 
         <el-table-column prop="platformTag" label="平台标识"></el-table-column>
-        <el-table-column prop="channel" label="平台通道">
+        <el-table-column prop="channel" label="平台渠道">
           <template slot-scope="channel">
             <ul style="text-align:center">
-              <li v-for="item in channel.row.channel.split(',')" v-bind:key="item">{{item}}</li>
+              <li v-for="item in channel.row.channel.split(';')" v-bind:key="item">{{formatChannal(item.substring(1,item.length-1),channel.row.platformId)}}</li>
             </ul>
           </template>
         </el-table-column>
@@ -110,24 +127,27 @@
         <el-table-column prop="isDefault" width="50" label="是否默认" :formatter="formatIsDefault"></el-table-column>
         <el-table-column label="操作" align="center" v-if="handleVisible" width="120px" fixed="right">
           <template slot-scope="scope">
-            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)" v-if="handleEditVisible">编辑</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleChangeState(scope.$index, scope.row)"
+              v-if="handleSetStateVisible"
             >设置状态</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleSetDefault(scope.$index, scope.row)"
+              v-if="handleSetDefaultVisible"
             >设置默认</el-button>
             <el-button
               type="text"
               icon="el-icon-circle-plus-outline"
               @click="handleServerAddChannel(scope.$index, scope.row)"
-            >添加平台通道</el-button>
+              v-if="handleAddChannelVisible"
+            >添加平台渠道</el-button>
             
-            <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)" v-if="handleDeleteVisible">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -195,27 +215,28 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="服务器名称">
-          <el-input v-model="form.server"></el-input>
+          <el-input v-model="form.server" :disabled="editRight.server"></el-input>
         </el-form-item>
         <el-form-item label="服务器Id">
-          <el-input v-model="form.serverId"></el-input>
+          <el-input v-model="form.serverId" :disabled="editRight.serverId"></el-input>
         </el-form-item>
         <el-form-item label="服务器IP">
-          <el-input v-model="form.serverIp"></el-input>
+          <el-input v-model="form.serverIp" :disabled="editRight.serverIp"></el-input>
         </el-form-item>
         <el-form-item label="服务器端口">
-          <el-input v-model="form.serverPort"></el-input>
+          <el-input v-model="form.serverPort" :disabled="editRight.serverPort"></el-input>
         </el-form-item>
         <el-form-item label="服务器描述">
-          <el-input v-model="form.server_describe"></el-input>
+          <el-input v-model="form.server_describe" :disabled="editRight.server_describe"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
-          <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
+          <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台" :disabled="editRight.platformId">
             <el-option
               v-for="item in platformList"
               :key="item.platformId"
               :label="item.platform"
               :value="item.platformId"
+              :disabled="true"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -224,12 +245,13 @@
               <el-date-picker
               v-model="form.openServiceTime"
               type="datetime"
+              :disabled="editRight.openServiceTime"
               placeholder="选择日期时间">
             </el-date-picker>
         </el-form-item>
 
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" :disabled="editRight.addUser"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -238,7 +260,7 @@
       </span>
     </el-dialog>
 
-    <!-- 添加平台通道提示框 -->
+    <!-- 添加平台渠道提示框 -->
     <el-dialog title="提示" :visible.sync="ServerAddChannelVisible" width="580px" center>
       <template>
         <el-transfer
@@ -248,7 +270,7 @@
           label: 'desc'
         }"
           :data="otherChannelData"
-          :titles="['其他通道', '已选通道']"
+          :titles="['其他渠道', '已选渠道']"
           :button-texts="['移除', '添加']"
         ></el-transfer>
       </template>
@@ -345,6 +367,11 @@ export default {
       changeStateToNormalVisible: false,
       addServerVisible: false,
       handleVisible: true,
+      handleEditVisible: true,
+      handleSetStateVisible: true,
+      handleSetDefaultVisible: true,
+      handleAddChannelVisible: true,
+      handleDeleteVisible: true,
       delAllVisible: false,
       platformOptions: [],
       total: 0,
@@ -366,6 +393,16 @@ export default {
         role: "",
         openServiceTime:""
       },
+      editRight:{
+        server:false,
+        serverId:false,
+        serverIp:false,
+        serverPort:false,
+        server_describe:false,
+        platformId:false,
+        openServiceTime:false,
+        addUser:false
+      },
       searchKey: {
         id: "",
         server: "",
@@ -379,7 +416,8 @@ export default {
         state: "",
         gameName: "",
         platform: "",
-        openServiceTime:""
+        openServiceTime:"",
+        channelId:""
       },
       idx: -1,
       id: -1,
@@ -395,11 +433,13 @@ export default {
       channel: [],
       otherChannelData: [],
       checkchannelData: [],
-      allChannel: []
+      allChannel: [],
+      allChannelFormPlatform:{}
     };
   },
   created() {
     setLocalThisUrl(this);
+    this.getAllChannel();
     this.getAllPlatform();
     this.getData();
     this.right();
@@ -434,7 +474,7 @@ export default {
       var len = this.multipleSelection.length;
       var channel = "";
       for (var i = 0; i < this.checkchannelData.length; i++) {
-        channel += this.checkchannelData[i] + ",";
+        channel += "|"+this.checkchannelData[i] + "|;"; 
       }
       channel = channel.substring(0, channel.length - 1);
       if (len == 0) {
@@ -446,12 +486,12 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log("通道更新成功");
+              console.log("渠道更新成功");
               this.getData();
               this.ServerAddChannelVisible = false;
             } else {
               console.log(this.responseResult);
-              console.log("通道更新失败");
+              console.log("渠道更新失败");
             }
           })
           .catch(failResponse => {});
@@ -470,12 +510,12 @@ export default {
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
-              console.log("通道更新成功");
+              console.log("渠道更新成功");
               this.getData();
               this.ServerAddChannelVisible = false;
             } else {
               console.log(this.responseResult);
-              console.log("通道更新失败");
+              console.log("渠道更新失败");
             }
           })
           .catch(failResponse => {});
@@ -527,11 +567,11 @@ export default {
     getChannel(item) {
       var channelStr = item.channel;
       if (channelStr != null && channelStr != "") {
-        var len = channelStr.split(",").length;
+        var len = channelStr.split(";").length;
 
         const data = [];
         for (var i = 0; i < len; i++) {
-          data.push(parseInt(channelStr.split(",")[i]));
+          data.push(parseInt(channelStr.split(";")[i].substring(1,channelStr.split(";")[i].length-1)));
         }
         this.checkchannelData = data;
       }
@@ -570,6 +610,10 @@ export default {
         .catch(failResponse => {});
     },
     selectPlatform() {
+      this.getData();
+      this.getAllChannelFormPlatform(this.searchKey.platformId);
+    },
+    selectChannel(){
       this.getData();
     },
     handleGetList() {
@@ -633,10 +677,25 @@ export default {
       const right = localStorage.getItem("rightTags");
       if (right == null) {
         this.handleVisible = false;
-      } else if (right.indexOf("Server_management_Handle") == -1) {
-        this.handleVisible = false;
-      } else {
+        return;
+      }
+      if (right.indexOf("Server_management_Handle") != -1) {
         this.handleVisible = true;
+      }
+      if(right.indexOf("Server_State_Datetime_Handle") != -1){
+        this.handleVisible = true;
+        this.handleEditVisible= true;
+        this.handleSetStateVisible= true;
+        this.handleSetDefaultVisible= false;
+        this.handleAddChannelVisible= false;
+        this.handleDeleteVisible= false;
+        this.editRight.server = true;
+        this.editRight.serverId = true;
+        this.editRight.serverIp = true;
+        this.editRight.serverPort = true;
+        this.editRight.server_describe = true;
+        this.editRight.platformId = true;
+        this.editRight.addUser = true;
       }
     },
     //重置表单
@@ -663,7 +722,8 @@ export default {
           sort: this.searchKey.sort,
           addUser: "",
           addDatetime: "",
-          state: this.searchKey.state
+          state: this.searchKey.state,
+          channelId:this.searchKey.channelId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -974,6 +1034,13 @@ export default {
     },
     formatIsDefault: function(row, column, cellValue, index) {
       return row.isDefault == 1 ? "默认" : "";
+    },
+    formatChannal: function(value,platformId) { 
+      for(var i = 0;i<this.allChannel.length;i++){
+          if(this.allChannel[i].channelId==value && this.allChannel[i].platformId==platformId){
+              return this.allChannel[i].channelName;
+          }
+      }
     },
     formatState: function(row, column, cellValue, index) {
       var label = "";

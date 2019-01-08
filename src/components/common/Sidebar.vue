@@ -79,7 +79,7 @@
                             },
                             {
                                 index: 'Channel',
-                                title: '通道管理'
+                                title: '渠道管理'
                             },
                             {
                                 index: 'serverTable',
@@ -249,10 +249,7 @@
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             });
-
             this.mapData();
-            //this.createSide();
-            
             //todo 每次更新都执行addIsShow
             this.addIsShow(this.items);
         },
@@ -272,34 +269,6 @@
                         this.indexList.push(children[j].path);
                     }
                 }
-            },
-            createSide(){
-                var item = [];
-                if(this.isInclude("dashboard",this.indexList)){
-                    var a = {
-                        icon: 'el-icon-lx-home',
-                        index: 'dashboard',
-                        title: '系统首页'
-                    }
-                    item.push(a);
-                }
-                if(this.isInclude("userTable",this.indexList)){
-                    var a = {
-                        icon: 'el-icon-lx-cascades',
-                        index: 'userTable',
-                        title: '用户管理'
-                    }
-                    item.push(a);
-                }
-                if(this.isInclude("roleTable",this.indexList)){
-                    var a =  {
-                        icon: 'el-icon-lx-cascades',
-                        index: 'roleTable',
-                        title: '角色管理'
-                    }
-                    item.push(a);
-                }
-                this.items = item;
             },
             isInclude(key,list){
                 for(var i = 0;i<list.length;i++){
@@ -356,8 +325,5 @@
     }
     .sidebar > ul {
         height:100%;
-    }
-    .el-menu-item{
-        
     }
 </style>

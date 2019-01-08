@@ -423,7 +423,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -436,7 +436,7 @@ export default {
             this.getEmail();
           } else {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});

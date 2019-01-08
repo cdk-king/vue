@@ -115,7 +115,7 @@ function getchildren() {
      setNoRightRouterItem("/Center","用户中心","Center_View","Center.vue",children,right);
      setRouterItem("/Upload","文件上传","Upload_View","UploadFile.vue",children,right);
      setRouterItem("/Xlsx","Xlsx","Xlsx_View","Xlsx.vue",children,right);
-     setRouterItem("/Channel","通道管理","Channel_View","Channel.vue",children,right);
+     setRouterItem("/Channel","渠道管理","Channel_View","Channel.vue",children,right);
      setRouterItem("/GoodFlowLog","物品流通","GoodFlowLog_View","GoodFlowLog.vue",children,right);
      setRouterItem("/MoneyFlowLog","现金流","MoneyFlowLog_View","MoneyFlowLog.vue",children,right);
      setRouterItem("/CreateRoleLog","角色创建","CreateRoleLog_View","CreateRoleLog.vue",children,right);

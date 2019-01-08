@@ -239,7 +239,7 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log("渠道列表获取成功");
+                    console.log("平台列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
@@ -250,7 +250,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.getData();
                 } else {           
                     console.log(this.responseResult);
-                    console.log("渠道列表获取失败");
+                    console.log("平台列表获取失败");
                 }
                 })
                 .catch(failResponse => {});
@@ -280,7 +280,7 @@ import formatDatetime from "../../code/formatDatetime";
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
-                    console.log("渠道服务器列表获取成功");
+                    console.log("平台服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                     for(var i = 0;i<this.serverOptions.length;i++){
                         this.serverIdList  = "";
@@ -290,7 +290,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.getData(); 
                 } else {
                     console.log(this.responseResult);
-                    console.log("渠道服务器列表获取失败");
+                    console.log("平台服务器列表获取失败");
                 }
                 })
                 .catch(failResponse => {});

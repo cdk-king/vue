@@ -284,12 +284,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.getBanIp();
           } else {
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -302,12 +302,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("渠道服务器列表获取成功");
+            console.log("平台服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
             console.log(this.responseResult);
-            console.log("渠道服务器列表获取失败");
+            console.log("平台服务器列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -391,7 +391,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
             return;
           }
         }

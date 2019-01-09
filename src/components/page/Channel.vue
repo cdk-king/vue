@@ -226,6 +226,7 @@
 </template>
 
 <script>
+import bus from '../common/bus';
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
 export default {
@@ -290,6 +291,15 @@ export default {
     this.getPlatformList();
     this.getData();
     this.right();
+    bus.$on('changeGameId',function(obj){
+    console.log(obj.message);
+    this.getPlatformList();
+    this.getData();
+    this.right();
+    }.bind(this)) 
+  },
+  beforeDestroy() {
+    bus.$off("changeGameId");
   },
   computed: {
     data() {
@@ -302,18 +312,24 @@ export default {
   methods: {
     getPlatformList() {
       this.$axios
-        .post(this.url + "/getAllPlatformList", {})
+        .post(this.url + "/getAllPlatformList", {
+          gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("平台列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
+            this.platformList = [];
             console.log(this.responseResult);
             console.log("平台列表获取失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            this.platformList = [];
+            console.log("平台列表获取失败");
+        });
     },
     getRoleList() {
       this.$axios
@@ -324,11 +340,15 @@ export default {
             console.log("角色列表获取成功");
             this.roleList = successResponse.data.data;
           } else {
+            this.roleList = [];
             console.log(this.responseResult);
             console.log("角色列表获取失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+            this.roleList = [];
+            console.log("角色列表获取失败");
+        });
     },
     right() {
       const right = localStorage.getItem("rightTags");
@@ -350,6 +370,7 @@ export default {
     getData() {
       this.$axios
         .post(this.url + "/api/channel/getChannelTable", {
+          gameId:this.$gameId,
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
@@ -357,7 +378,7 @@ export default {
           channelName: this.searchKey.channel,
           platformId: this.searchKey.platformId,
           channelTag: this.searchKey.channelTag,
-          channel_describe: this.searchKey.channel_describe
+          channel_describe: this.searchKey.channel_describe,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -365,9 +386,15 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData =[];
+            this.total = 0;
             console.log(this.responseResult);
             this.$message.error("渠道列表获取失败");
           }
+        }).catch(failResponse => {
+            this.tableData =[];
+            this.total = 0;
+            this.$message.error("渠道列表获取失败");
         });
     },
     search() {
@@ -448,7 +475,9 @@ export default {
             this.$message.error("渠道批量删除失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.$message.error("渠道批量删除失败");
+        });
       this.delAllVisible = false;
     },
     handleSelectionChange(val) {
@@ -488,7 +517,8 @@ export default {
             channelTag: this.form.channelTag,
             channel_describe: this.form.channel_describe,
             addUser: this.form.addUser,
-            platformId: this.form.platformId
+            platformId: this.form.platformId,
+            gameId: this.$gameId
           })
           .then(successResponse => {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -501,7 +531,9 @@ export default {
               this.$message.error("渠道添加失败");
             }
           })
-          .catch(failResponse => {});
+          .catch(failResponse => {
+            this.$message.error("渠道添加失败");
+          });
         this.addchannelVisible = false;
       }
     },
@@ -515,7 +547,8 @@ export default {
           channelTag: this.form.channelTag,
           channel_describe: this.form.channel_describe,
           addUser: this.form.addUser,
-          platformId: this.form.platformId
+          platformId: this.form.platformId,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -527,7 +560,9 @@ export default {
             this.$message.error("渠道信息修改失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.$message.error("渠道信息修改失败");
+        });
       this.editVisible = false;
     },
     // 确定冻结
@@ -546,7 +581,9 @@ export default {
             this.$message.error("渠道冻结失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.$message.error("渠道冻结失败");
+        });
       this.changeStateToFrozenVisible = false;
       this.rest();
     },
@@ -566,7 +603,9 @@ export default {
             this.$message.error("渠道解冻失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.$message.error("渠道解冻失败");
+        });
       this.changeStateToNormalVisible = false;
       this.rest();
     },
@@ -586,7 +625,9 @@ export default {
             this.$message.error("渠道删除失败");
           }
         })
-        .catch(failResponse => {});
+        .catch(failResponse => {
+          this.$message.error("渠道删除失败");
+        });
 
       this.tableData.splice(this.idx, 1);
 

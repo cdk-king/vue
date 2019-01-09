@@ -421,544 +421,555 @@ import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
 export default {
-  name: "PlayerInfo",
-  data() {
-    return {
-        activeNames: ['1'],
-      show: false,
-      dialogVisible: false,
-      delAllVisible: false,
-      detailVisible: false,
-      cur_page: 1,
-      pageSize:10,
-      handleVisible: false,
-      multipleSelection:[],
-      platformOptions: [
-
-      ],
-      platformValue: "",
-      platformLabel: "",
-      serverOptions: [
-      ],
-      serverValue: "",
-      serverLabel: "",
-      form: {},
-      detail:{},
-      id: 0,
-      userId:0,
-      idx: 0,
-      serverIp: "",
-      tableData: [],
-      ChangeToProhibitSpeak: false,
-      ChangeProhibitSpeakToNormal: false,
-      ChangeToBan: false,
-      ChangeBanToNormal: false,
-      ChangeAllToProhibitSpeak: false,
-      ChangeAllProhibitSpeakToNormal: false,
-      ChangeAllToBan: false,
-      ChangeAllBanToNormal: false,
-      searchForm: {
-        playerName: "",
-        playerAccount: "",
-        playerId: "",
-        lastIp: "",
-        isOnline: "",
-        isProhibitSpeak: "",
-        isBan: "",
-        minVipLevel: "",
-        maxVipLevel: "",
-        minDiamond: "",
-        maxDiamond: "",
-        minRechargeAmount: "",
-        maxRechargeAmount: "",
-        minLevel: "",
-        maxLevel: "",
-        minRegistrationTime: "",
-        maxRegistrationTime: "",
-        minCombatPower: "",
-        maxCombatPower: "",
-      },
-      url:"http://localhost:8011",
-      total:0
-    };
-  },
-  components: {
-  },
-  computed: {
+    name: "PlayerInfo",
     data() {
-      return this.tableData;
+        return {
+            activeNames: ['1'],
+        show: false,
+        dialogVisible: false,
+        delAllVisible: false,
+        detailVisible: false,
+        cur_page: 1,
+        pageSize:10,
+        handleVisible: false,
+        multipleSelection:[],
+        platformOptions: [
+
+        ],
+        platformValue: "",
+        platformLabel: "",
+        serverOptions: [
+        ],
+        serverValue: "",
+        serverLabel: "",
+        form: {},
+        detail:{},
+        id: 0,
+        userId:0,
+        idx: 0,
+        serverIp: "",
+        tableData: [],
+        ChangeToProhibitSpeak: false,
+        ChangeProhibitSpeakToNormal: false,
+        ChangeToBan: false,
+        ChangeBanToNormal: false,
+        ChangeAllToProhibitSpeak: false,
+        ChangeAllProhibitSpeakToNormal: false,
+        ChangeAllToBan: false,
+        ChangeAllBanToNormal: false,
+        searchForm: {
+            playerName: "",
+            playerAccount: "",
+            playerId: "",
+            lastIp: "",
+            isOnline: "",
+            isProhibitSpeak: "",
+            isBan: "",
+            minVipLevel: "",
+            maxVipLevel: "",
+            minDiamond: "",
+            maxDiamond: "",
+            minRechargeAmount: "",
+            maxRechargeAmount: "",
+            minLevel: "",
+            maxLevel: "",
+            minRegistrationTime: "",
+            maxRegistrationTime: "",
+            minCombatPower: "",
+            maxCombatPower: "",
+        },
+        url:"http://localhost:8011",
+        total:0
+        };
     },
-    cdk: function() {
-      return this.$cdk;
+    components: {
     },
-    ms_username: function() {
-      const role = localStorage.getItem("ms_username");
-      return role;
-    },
-    getPlatformName(){
-        return function(platformId){
-            for(var i = 0;i<this.platformOptions.length;i++){
-                if(this.platformOptions[i].platformId==platformId){
-                    return this.platformOptions[i].platform;
+    computed: {
+        data() {
+        return this.tableData;
+        },
+        cdk: function() {
+        return this.$cdk;
+        },
+        ms_username: function() {
+        const role = localStorage.getItem("ms_username");
+        return role;
+        },
+        getPlatformName(){
+            return function(platformId){
+                for(var i = 0;i<this.platformOptions.length;i++){
+                    if(this.platformOptions[i].platformId==platformId){
+                        return this.platformOptions[i].platform;
+                    }
+                }
+            }
+        },
+        getServerName(){
+            return function(serverId){
+                for(var i = 0;i<this.serverOptions.length;i++){
+                    if(this.serverOptions[i].serverId==serverId){
+                        return this.serverOptions[i].serverName;
+                    }
                 }
             }
         }
     },
-    getServerName(){
-        return function(serverId){
-            for(var i = 0;i<this.serverOptions.length;i++){
-                if(this.serverOptions[i].serverId==serverId){
-                    return this.serverOptions[i].serverName;
-                }
-            }
-        }
-    }
-  },
-  created() {
-    setLocalThisUrl(this);
-    this.getData();
-    this.right();
-    bus.$on(
-      "changeGameId",
-      function(obj) {
-        var userData = JSON.parse(localStorage.getItem("userData"));
-        this.id = userData.id;
-        this.getPlatformList(this.id);
-        this.getPlayer();
-      }.bind(this)
-    );
-  },
+    created() {
+        setLocalThisUrl(this);
+        this.getData();
+        this.right();
+        bus.$on(
+        "changeGameId",
+        function(obj) {
+            var userData = JSON.parse(localStorage.getItem("userData"));
+            this.id = userData.id;
+            this.platformValue = "";
+            this.serverValue = "";
+            this.tableData = [];
+            this.getPlatformList(this.id);
+        }.bind(this)
+        );
+    },
     beforeDestroy () {
         bus.$off('changeGameId');
     },
-  methods: {
-    right(){
-        const right = localStorage.getItem('rightTags');
-        
-        if(right.indexOf('Player_Info_Handle')==-1){
-            this.handleVisible = false;
-        }else{
-            this.handleVisible = true;
-        }
-    },
-    getPlatformList(userId) {
-      this.$axios
-        .post(this.url+"/getPlatformListForUserIdAndGameId", {
-          userId: userId,
-          gameId: this.$gameId
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("用户平台列表获取成功");
-            this.platformOptions = successResponse.data.data.list;
-          } else {
-            console.log(this.responseResult);
-            console.log("用户平台列表获取失败");
-          }
-        })
-        .catch(failResponse => {});
-    },
-    getServerList(platformId) {
-      this.$axios
-        .post(this.url+"/getServerListForPlatform", {
-          platformId: platformId
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("渠道服务器列表获取成功");
-             this.serverOptions = [];
-            this.serverOptions = successResponse.data.data;
-          } else {
-            console.log(this.responseResult);
-            console.log("渠道服务器列表获取失败");
-          }
-        })
-        .catch(failResponse => {
-            this.serverOptions = [];
-        });
-    },
-    selectPlatform() {
-        this.serverValue = "";
-      this.getServerList(this.platformValue);
-    },
-    selectServer() {
-      if (this.serverOptions.length > 0) {
-        for (let i = 0; i < this.serverOptions.length; i++) {
-          if (this.serverOptions[i].serverId == this.serverValue) {
-            this.serverIp = this.serverOptions[i].serverIp;
-            break;
-          }
-        }
-      }else{
-          this.serverIp = "";
-      }
-
-      this.getPlayer();
-    },
-    getPlayer() {
-        if(this.platformValue==null || this.platformValue==""){
-            this.$message.error("请选择正确的平台");
-            return;
-        }
-        if(this.serverValue==null || this.serverValue==""){
-            this.$message.error("请选择正确的服务器");
-            return;
-        }
+    methods: {
+        right(){
+            const right = localStorage.getItem('rightTags');
+            
+            if(right.indexOf('Player_Info_Handle')==-1){
+                this.handleVisible = false;
+            }else{
+                this.handleVisible = true;
+            }
+        },
+        getPlatformList(userId) {
         this.$axios
-        .post(this.url+"/api/player/getPlayerFromServer", {
-          platformId: this.platformValue,
-          WorldID: this.serverValue,
-          pageNo: this.cur_page,
-          pageSize: 10,
-          isPage: "isPage",
-          AccountName:this.searchForm.playerAccount,
-          PlayerID:this.searchForm.playerId,
-          PlayerName:this.searchForm.playerName,
-          LoginBan:this.searchForm.isBan,
-          TalkBan:this.searchForm.isProhibitSpeak,
-        
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家列表获取成功");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-            this.mapData(successResponse.data.data);
-          } else {
-            console.log(this.responseResult);
-            console.log("玩家列表获取失败"); 
-            this.$message.error("玩家列表获取失败");
-          }
-        })
-        .catch(failResponse => {
-            this.tableData = [];
+            .post(this.url+"/getPlatformListForUserIdAndGameId", {
+            userId: userId,
+            gameId: this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("用户平台列表获取成功");
+                this.platformOptions = successResponse.data.data.list;
+            } else {
+                this.platformOptions = [];
+                console.log(this.responseResult);
+                console.log("用户平台列表获取失败");
+            }
+            })
+            .catch(failResponse => {});
+        },
+        getServerList(platformId) {
+        this.$axios
+            .post(this.url+"/getServerListForPlatform", {
+            platformId: platformId,
+            gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("平台服务器列表获取成功");
+                this.serverOptions = [];
+                this.serverOptions = successResponse.data.data;
+            } else {
+                this.serverOptions = [];
+                console.log(this.responseResult);
+                console.log("平台服务器列表获取失败");
+            }
+            })
+            .catch(failResponse => {
+                this.serverOptions = [];
+            });
+        },
+        selectPlatform() {
+            this.serverValue = "";
+        this.getServerList(this.platformValue);
+        },
+        selectServer() {
+        if (this.serverOptions.length > 0) {
+            for (let i = 0; i < this.serverOptions.length; i++) {
+            if (this.serverOptions[i].serverId == this.serverValue) {
+                this.serverIp = this.serverOptions[i].serverIp;
+                break;
+            }
+            }
+        }else{
+            this.serverIp = "";
+        }
+
+        this.getPlayer();
+        },
+        getPlayer() {
+            if(this.platformValue==null || this.platformValue==""){
+                this.$message.error("请选择正确的平台");
+                return;
+            }
             if(this.serverValue==null || this.serverValue==""){
                 this.$message.error("请选择正确的服务器");
+                return;
             }
-        });
-    },
-    mapData(data){
-        data = data.replace(/AccountName/g,"playerAccount");
-        data = data.replace(/PlayerID/g,"playerId");
-        data = data.replace(/PlayerName/g,"playerName");
-        data = data.replace(/TalkBan/g,"isProhibitSpeak");
-        data = data.replace(/TalkBanEndTime/g,"prohibitSpeakTime");
-        data = data.replace(/LoginBan/g,"isBan");
-        data = data.replace(/LoginBanEndTime/g,"banTime");
-        data = JSON.parse(data);
-        this.tableData = data.PlayerList;
-        this.total = this.tableData.length;
-        this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
-    },
-    getServerIp() {},
-    getData() {
-      var userData = JSON.parse(localStorage.getItem("userData"));
-      this.userId = userData.id;
-      this.getPlatformList(this.userId);
-    },
-    // 分页导航
-    handleCurrentChange(val) {
-      this.cur_page = val;
-      this.getPlayer();
-    },
-    formatter(row, column) {
-      //时间格式化
-      var date = row[column.property];
-      return formatDatetime(date);
-    },
-    testMessage() {
-      this.getPlayer();
-    },
-    testDialog() {
-      this.dialogVisible = true;
-    },
-    formatIsBan: function(row, column, cellValue, index) {
-      return row.isBan == 1 ? "已禁封" : "正常";
-    },
-    formatIsOnline: function(row, column, cellValue, index) {
-      return row.isOnline == 1 ? "在线" : "离线";
-    },
-    formatIsProhibitSpeak: function(row, column, cellValue, index) {
-      return row.isProhibitSpeak == 1 ? "已禁言" : "正常";
-    },
-    handleDetail(index, row){
-        this.detailVisible = true;
-        var item = this.tableData[index];
-        var PlayerID = item.playerId;
-
-        this.$axios
-        .post(this.url+"/api/player/getPlayerDetailInfo", {
-          platformId: this.platformValue,
-          WorldID: this.serverValue,
-          PlayerID:PlayerID,
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家详细信息获取成功");
-            this.detail = JSON.parse(successResponse.data.data);
-          } else {
-            console.log(this.responseResult);
-            console.log("玩家详细信息获取失败"); 
-            this.$message.error("玩家详细信息获取失败");
-          }
-        })
-        .catch(failResponse => {});
-    },
-    handleChangeToProhibitSpeak(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.id = this.tableData[index].id;
-      this.ChangeToProhibitSpeak = true;
-        
-    },
-    handleChangeProhibitSpeakToNormal(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.id = this.tableData[index].id;
-      this.ChangeProhibitSpeakToNormal = true;
-      
-    },
-    handleProhibitSpeakAll(){
-        this.ChangeAllToProhibitSpeak = true;
-    },
-    handleProhibitSpeakToNormalAll(){
-        this.ChangeAllProhibitSpeakToNormal = true;
-    },
-    handleBanAll(){
-        this.ChangeAllToBan = true;
-    },
-    handleBanToNormalAll(){
-        this.ChangeAllBanToNormal = true;
-    },
-    ToProhibitSpeak() {
-
-        this.form.prohibitSpeakTime = 0;
-        if(this.form.isForever==undefined || this.form.isForever == false){
-            //永久禁封
-            
-        }else if(this.form.isForever==true){
-            if(this.form.prohibitSpeakDay!=undefined && this.form.prohibitSpeakDay!="" && this.form.prohibitSpeakDay!="0" ){
-                if(!parseInt(this.form.prohibitSpeakDay)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakDay)*60*60*24;
-            }
-            if(this.form.prohibitSpeakHour!=undefined && this.form.prohibitSpeakHour!="" && this.form.prohibitSpeakHour!="0"){
-                if(!parseInt(this.form.prohibitSpeakHour)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakHour)*60*60;
-            }
-            if(this.form.prohibitSpeakMin!=undefined && this.form.prohibitSpeakMin!="" && this.form.prohibitSpeakMin!="0"){
-                if(!parseInt(this.form.prohibitSpeakMin)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakMin)*60;
-            }
-        }
-
-        this.$axios
-        .post(this.url+"/api/player/talkBan", {
+            this.$axios
+            .post(this.url+"/api/player/getPlayerFromServer", {
             platformId: this.platformValue,
             WorldID: this.serverValue,
-            PlayerID:this.tableData[this.idx].playerId,
-            PlayerAccount:this.tableData[this.idx].playerAccount,
-            PlayerName:this.tableData[this.idx].playerName,
-            Remove:0,
-            HowLong:this.form.prohibitSpeakTime,
-            userId:this.userId,
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家禁言成功");
-            this.$message.success("玩家禁言成功");
-            this.ChangeToProhibitSpeak = false;
-            this.getPlayer();
-          } else {
-            console.log(successResponse.data.message);
-            this.$message.error(successResponse.data.message);
-          }
-        })
-        .catch(failResponse => {});
-    },
-    AllToProhibitSpeak(){
-        this.ChangeAllToProhibitSpeak = false;
-    },
-    ProhibitSpeakToNormal() {
-        this.$axios
-        .post(this.url+"/api/player/talkBan", {
-            platformId: this.platformValue,
-            WorldID: this.serverValue,
-            PlayerID:this.tableData[this.idx].playerId,
-            PlayerAccount:this.tableData[this.idx].playerAccount,
-            PlayerName:this.tableData[this.idx].playerName,
-            Remove:1,
-            HowLong:this.form.prohibitSpeakTime,
-            userId:this.userId,
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家解除禁言成功");
-            this.$message.success("玩家解除禁言成功");
-            this.ChangeProhibitSpeakToNormal = false;
-            this.getPlayer();
-          } else {
-            console.log(successResponse.data.message);
-            this.$message.error(successResponse.data.message);
-          }
-        })
-        .catch(failResponse => {});
-    },
-    AllProhibitSpeakToNormal(){
-        this.ChangeAllProhibitSpeakToNormal = false;
-    },
-    handleChangeToBan(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.id = this.tableData[index].id;
-      this.ChangeToBan = true;
-    },
-    handleChangeBanToNormal(index, row) {
-      this.idx = index;
-      const item = this.tableData[index];
-      this.id = this.tableData[index].id;
-      this.ChangeBanToNormal = true;
-    },
-    ToBan() {
-        this.form.banTime = 0;
-        if(this.form.isForever==undefined || this.form.isForever == false){
-            //永久禁封
-            
-        }else if(this.form.isForever==true){
-            if(this.form.banDay!=undefined && this.form.banDay!="" && this.form.banDay!="0" ){
-                if(!parseInt(this.form.banDay)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.banTime += parseInt(this.form.banDay)*60*60*24;
-            }
-            if(this.form.banHour!=undefined && this.form.banHour!="" && this.form.banHour!="0"){
-                if(!parseInt(this.form.banHour)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.banTime += parseInt(this.form.banHour)*60*60;
-            }
-            if(this.form.banMin!=undefined && this.form.banMin!="" && this.form.banMin!="0"){
-                if(!parseInt(this.form.banMin)){
-                    console.log("请输入正确的数字");
-                    this.$message.error("请输入正确的数字");
-                    return;
-                }
-                this.form.banTime += parseInt(this.form.banMin)*60;
-            }
-        }
-
-        this.$axios
-        .post(this.url+"/api/player/Ban", {
-            platformId: this.platformValue,
-            WorldID: this.serverValue,
-            playerName:this.tableData[this.idx].playerName,
-            AccountName:this.tableData[this.idx].playerAccount,
-            PlayerIds:this.tableData[this.idx].playerId,
-            Remove:0,
-            HowLong:this.form.banTime,
-            userId:this.userId,
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家禁封成功");
-            this.$message.success("玩家禁封成功");
-            this.ChangeToBan = false;
-            this.getPlayer();
-          } else {
-            console.log(successResponse.data.message);
-            this.$message.error(successResponse.data.message);
-          }
-        })
-        .catch(failResponse => {});
-    },
-    AllToBan(){
-        this.ChangeAllToBan = false;
-    },
-    BanToNormal() {
-        this.$axios
-        .post(this.url+"/api/player/Ban", {
-            platformId: this.platformValue,
-            WorldID: this.serverValue,
-            playerName:this.tableData[this.idx].playerName,
-            AccountName:this.tableData[this.idx].playerAccount,
-            PlayerIds:this.tableData[this.idx].playerId,
-            Remove:1,
-            HowLong:this.form.banTime,
-            userId:this.userId,
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("玩家解除禁封成功");
-            this.$message.success("玩家解除禁封成功");
-            this.ChangeBanToNormal = false;
-            this.getPlayer();
-          } else {
-            console.log(successResponse.data.message);
-            this.$message.error(successResponse.data.message);
-          }
-        })
-        .catch(failResponse => {});
-    },
-    AllBanToNormal(){
-        this.ChangeAllBanToNormal = false;
-    },
-    handleSelectionChange(val){
-        this.multipleSelection = val;
-    },
-    handleDelAll(){
-      this.delAllVisible = true;
-    },
-    saveDelAll(){
-        const length = this.multipleSelection.length;
-        let str = '';
-        for (let i = 0; i < length; i++) {
-            str += this.multipleSelection[i].id + ',';
-        }
-        //批量删除处理
-        this.$axios.post('/',{
-                id: str
-        })
-        .then(successResponse =>{
-            this.responseResult ="\n"+ JSON.stringify(successResponse.data)
-            if(successResponse.data.code === 200){
-                this.$message.success("公告批量删除完成");
-                this.multipleSelection = []; 
-                this.getNotice();
-
-            }else{
+            pageNo: this.cur_page,
+            pageSize: 10,
+            isPage: "isPage",
+            AccountName:this.searchForm.playerAccount,
+            PlayerID:this.searchForm.playerId,
+            PlayerName:this.searchForm.playerName,
+            LoginBan:this.searchForm.isBan,
+            TalkBan:this.searchForm.isProhibitSpeak,
+            gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家列表获取成功");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                this.mapData(successResponse.data.data);
+            } else {
+                this.tableData = [];
                 console.log(this.responseResult);
-                this.$message.error("公告批量删除失败");
+                console.log("玩家列表获取失败"); 
+                this.$message.error(successResponse.data.message);
             }
-        })
-        .catch(failResponse => {})
+            })
+            .catch(failResponse => {
+                this.tableData = [];
+                if(this.serverValue==null || this.serverValue==""){
+                    this.$message.error("请选择正确的服务器");
+                }
+            });
+        },
+        mapData(data){
+            data = data.replace(/AccountName/g,"playerAccount");
+            data = data.replace(/PlayerID/g,"playerId");
+            data = data.replace(/PlayerName/g,"playerName");
+            data = data.replace(/TalkBan/g,"isProhibitSpeak");
+            data = data.replace(/TalkBanEndTime/g,"prohibitSpeakTime");
+            data = data.replace(/LoginBan/g,"isBan");
+            data = data.replace(/LoginBanEndTime/g,"banTime");
+            data = JSON.parse(data);
+            this.tableData = data.PlayerList;
+            this.total = this.tableData.length;
+            this.tableData  = this.tableData.splice((this.cur_page-1)*this.pageSize,this.pageSize);
+        },
+        getServerIp() {},
+        getData() {
+        var userData = JSON.parse(localStorage.getItem("userData"));
+        this.userId = userData.id;
+        this.getPlatformList(this.userId);
+        },
+        // 分页导航
+        handleCurrentChange(val) {
+        this.cur_page = val;
+        this.getPlayer();
+        },
+        formatter(row, column) {
+        //时间格式化
+        var date = row[column.property];
+        return formatDatetime(date);
+        },
+        testMessage() {
+        this.getPlayer();
+        },
+        testDialog() {
+        this.dialogVisible = true;
+        },
+        formatIsBan: function(row, column, cellValue, index) {
+        return row.isBan == 1 ? "已禁封" : "正常";
+        },
+        formatIsOnline: function(row, column, cellValue, index) {
+        return row.isOnline == 1 ? "在线" : "离线";
+        },
+        formatIsProhibitSpeak: function(row, column, cellValue, index) {
+        return row.isProhibitSpeak == 1 ? "已禁言" : "正常";
+        },
+        handleDetail(index, row){
+            this.detailVisible = true;
+            var item = this.tableData[index];
+            var PlayerID = item.playerId;
 
-      this.delAllVisible = false;
-    }
-  },
-  watch: {
-  },
-  filters:{
+            this.$axios
+            .post(this.url+"/api/player/getPlayerDetailInfo", {
+            platformId: this.platformValue,
+            WorldID: this.serverValue,
+            PlayerID:PlayerID,
+            gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家详细信息获取成功");
+                this.detail = JSON.parse(successResponse.data.data);
+            } else {
+                console.log(this.responseResult);
+                console.log("玩家详细信息获取失败"); 
+                this.$message.error("玩家详细信息获取失败");
+            }
+            })
+            .catch(failResponse => {});
+        },
+        handleChangeToProhibitSpeak(index, row) {
+        this.idx = index;
+        const item = this.tableData[index];
+        this.id = this.tableData[index].id;
+        this.ChangeToProhibitSpeak = true;
+            
+        },
+        handleChangeProhibitSpeakToNormal(index, row) {
+        this.idx = index;
+        const item = this.tableData[index];
+        this.id = this.tableData[index].id;
+        this.ChangeProhibitSpeakToNormal = true;
+        
+        },
+        handleProhibitSpeakAll(){
+            this.ChangeAllToProhibitSpeak = true;
+        },
+        handleProhibitSpeakToNormalAll(){
+            this.ChangeAllProhibitSpeakToNormal = true;
+        },
+        handleBanAll(){
+            this.ChangeAllToBan = true;
+        },
+        handleBanToNormalAll(){
+            this.ChangeAllBanToNormal = true;
+        },
+        ToProhibitSpeak() {
+
+            this.form.prohibitSpeakTime = 0;
+            if(this.form.isForever==undefined || this.form.isForever == false){
+                //永久禁封
+                
+            }else if(this.form.isForever==true){
+                if(this.form.prohibitSpeakDay!=undefined && this.form.prohibitSpeakDay!="" && this.form.prohibitSpeakDay!="0" ){
+                    if(!parseInt(this.form.prohibitSpeakDay)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakDay)*60*60*24;
+                }
+                if(this.form.prohibitSpeakHour!=undefined && this.form.prohibitSpeakHour!="" && this.form.prohibitSpeakHour!="0"){
+                    if(!parseInt(this.form.prohibitSpeakHour)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakHour)*60*60;
+                }
+                if(this.form.prohibitSpeakMin!=undefined && this.form.prohibitSpeakMin!="" && this.form.prohibitSpeakMin!="0"){
+                    if(!parseInt(this.form.prohibitSpeakMin)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.prohibitSpeakTime += parseInt(this.form.prohibitSpeakMin)*60;
+                }
+            }
+
+            this.$axios
+            .post(this.url+"/api/player/talkBan", {
+                platformId: this.platformValue,
+                WorldID: this.serverValue,
+                PlayerID:this.tableData[this.idx].playerId,
+                PlayerAccount:this.tableData[this.idx].playerAccount,
+                PlayerName:this.tableData[this.idx].playerName,
+                Remove:0,
+                HowLong:this.form.prohibitSpeakTime,
+                userId:this.userId,
+                gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家禁言成功");
+                this.$message.success("玩家禁言成功");
+                this.ChangeToProhibitSpeak = false;
+                this.getPlayer();
+            } else {
+                console.log(successResponse.data.message);
+                this.$message.error(successResponse.data.message);
+            }
+            })
+            .catch(failResponse => {});
+        },
+        AllToProhibitSpeak(){
+            this.ChangeAllToProhibitSpeak = false;
+        },
+        ProhibitSpeakToNormal() {
+            this.$axios
+            .post(this.url+"/api/player/talkBan", {
+                platformId: this.platformValue,
+                WorldID: this.serverValue,
+                PlayerID:this.tableData[this.idx].playerId,
+                PlayerAccount:this.tableData[this.idx].playerAccount,
+                PlayerName:this.tableData[this.idx].playerName,
+                Remove:1,
+                HowLong:this.form.prohibitSpeakTime,
+                userId:this.userId,
+                gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家解除禁言成功");
+                this.$message.success("玩家解除禁言成功");
+                this.ChangeProhibitSpeakToNormal = false;
+                this.getPlayer();
+            } else {
+                console.log(successResponse.data.message);
+                this.$message.error(successResponse.data.message);
+            }
+            })
+            .catch(failResponse => {});
+        },
+        AllProhibitSpeakToNormal(){
+            this.ChangeAllProhibitSpeakToNormal = false;
+        },
+        handleChangeToBan(index, row) {
+        this.idx = index;
+        const item = this.tableData[index];
+        this.id = this.tableData[index].id;
+        this.ChangeToBan = true;
+        },
+        handleChangeBanToNormal(index, row) {
+        this.idx = index;
+        const item = this.tableData[index];
+        this.id = this.tableData[index].id;
+        this.ChangeBanToNormal = true;
+        },
+        ToBan() {
+            this.form.banTime = 0;
+            if(this.form.isForever==undefined || this.form.isForever == false){
+                //永久禁封
+                
+            }else if(this.form.isForever==true){
+                if(this.form.banDay!=undefined && this.form.banDay!="" && this.form.banDay!="0" ){
+                    if(!parseInt(this.form.banDay)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.banTime += parseInt(this.form.banDay)*60*60*24;
+                }
+                if(this.form.banHour!=undefined && this.form.banHour!="" && this.form.banHour!="0"){
+                    if(!parseInt(this.form.banHour)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.banTime += parseInt(this.form.banHour)*60*60;
+                }
+                if(this.form.banMin!=undefined && this.form.banMin!="" && this.form.banMin!="0"){
+                    if(!parseInt(this.form.banMin)){
+                        console.log("请输入正确的数字");
+                        this.$message.error("请输入正确的数字");
+                        return;
+                    }
+                    this.form.banTime += parseInt(this.form.banMin)*60;
+                }
+            }
+
+            this.$axios
+            .post(this.url+"/api/player/Ban", {
+                platformId: this.platformValue,
+                WorldID: this.serverValue,
+                playerName:this.tableData[this.idx].playerName,
+                AccountName:this.tableData[this.idx].playerAccount,
+                PlayerIds:this.tableData[this.idx].playerId,
+                Remove:0,
+                HowLong:this.form.banTime,
+                userId:this.userId,
+                gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家禁封成功");
+                this.$message.success("玩家禁封成功");
+                this.ChangeToBan = false;
+                this.getPlayer();
+            } else {
+                console.log(successResponse.data.message);
+                this.$message.error(successResponse.data.message);
+            }
+            })
+            .catch(failResponse => {});
+        },
+        AllToBan(){
+            this.ChangeAllToBan = false;
+        },
+        BanToNormal() {
+            this.$axios
+            .post(this.url+"/api/player/Ban", {
+                platformId: this.platformValue,
+                WorldID: this.serverValue,
+                playerName:this.tableData[this.idx].playerName,
+                AccountName:this.tableData[this.idx].playerAccount,
+                PlayerIds:this.tableData[this.idx].playerId,
+                Remove:1,
+                HowLong:this.form.banTime,
+                userId:this.userId,
+                gameId:this.$gameId
+            })
+            .then(successResponse => {
+            this.responseResult = "\n" + JSON.stringify(successResponse.data);
+            if (successResponse.data.code === 200) {
+                console.log("玩家解除禁封成功");
+                this.$message.success("玩家解除禁封成功");
+                this.ChangeBanToNormal = false;
+                this.getPlayer();
+            } else {
+                console.log(successResponse.data.message);
+                this.$message.error(successResponse.data.message);
+            }
+            })
+            .catch(failResponse => {});
+        },
+        AllBanToNormal(){
+            this.ChangeAllBanToNormal = false;
+        },
+        handleSelectionChange(val){
+            this.multipleSelection = val;
+        },
+        handleDelAll(){
+        this.delAllVisible = true;
+        },
+        saveDelAll(){
+            const length = this.multipleSelection.length;
+            let str = '';
+            for (let i = 0; i < length; i++) {
+                str += this.multipleSelection[i].id + ',';
+            }
+            //批量删除处理
+            this.$axios.post('/',{
+                    id: str
+            })
+            .then(successResponse =>{
+                this.responseResult ="\n"+ JSON.stringify(successResponse.data)
+                if(successResponse.data.code === 200){
+                    this.$message.success("公告批量删除完成");
+                    this.multipleSelection = []; 
+                    this.getNotice();
+
+                }else{
+                    console.log(this.responseResult);
+                    this.$message.error("公告批量删除失败");
+                }
+            })
+            .catch(failResponse => {})
+
+        this.delAllVisible = false;
+        }
+    },
+    watch: {
+    },
+    filters:{
     //这里不能访问this  
         filtersIsOnline:function (arg) {
             return arg == 1 ? "在线" : "离线";

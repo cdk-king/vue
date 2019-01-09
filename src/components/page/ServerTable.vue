@@ -346,6 +346,7 @@
 </template>
 
 <script>
+import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
 export default {
@@ -443,6 +444,20 @@ export default {
     this.getAllPlatform();
     this.getData();
     this.right();
+    bus.$on(
+      "changeGameId",
+      function(obj) {
+        var userData = JSON.parse(localStorage.getItem("userData"));
+        this.id = userData.id;
+        this.getAllChannel();
+        this.getAllPlatform();
+        this.getData();
+        this.right();
+      }.bind(this)
+    );
+  },
+  beforeDestroy() {
+    bus.$off("changeGameId");
   },
   computed: {
     data() {
@@ -548,7 +563,12 @@ export default {
           this.multipleSelection[0].platformId
         ) {
           this.$message.error("请选择相同平台的服务器");
+          return;
         }
+        // if(this.multipleSelection[i].gameId !=
+        //   this.multipleSelection[0].gameId){
+        //   this.$message.error("请选择相同游戏的服务器");
+        // }
       }
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
@@ -579,7 +599,8 @@ export default {
     getAllChannelFormPlatform(platformId) {
       this.$axios
         .post(this.url + "/api/channel/getAllChannelFormPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -596,7 +617,9 @@ export default {
     },
     getAllChannel() {
       this.$axios
-        .post(this.url + "/api/channel/getAllChannel", {})
+        .post(this.url + "/api/channel/getAllChannel", {
+            gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -631,27 +654,37 @@ export default {
     },
     handleSyn() {
       this.$axios
-        .post(this.url + "/api/server/SynServerList", {})
+        .post(this.url + "/api/server/SynServerList", {
+          gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data != "") {
+          if (successResponse.data.code === 200) {
             console.log("服务器列表同步成功");
             this.synServerList = JSON.parse(successResponse.data.data);
             console.log(this.synServerList);
             this.getData();
+          }else{
+            this.synServerList = [];
+            console.log("服务器列表同步失败");
+            console.log(successResponse.data.message);
+            this.$message.error(successResponse.data.message);
           }
         })
         .catch(failResponse => {});
     },
     getGameList() {
       this.$axios
-        .post(this.url + "/getAllGameList", {})
+        .post(this.url + "/getAllGameList", {
+
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("游戏列表获取成功");
             this.gameList = successResponse.data.data;
           } else {
+            this.gameList = [];
             console.log(this.responseResult);
             console.log("游戏列表获取失败");
           }
@@ -660,13 +693,16 @@ export default {
     },
     getPlatformList() {
       this.$axios
-        .post(this.url + "/getAllPlatformList", {})
+        .post(this.url + "/getAllPlatformList", {   
+              gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("平台列表获取成功");
             this.platformList = successResponse.data.data;
           } else {
+            this.platformList = [];
             console.log(this.responseResult);
             console.log("平台列表获取失败");
           }
@@ -713,8 +749,7 @@ export default {
           isPage: "isPage",
           id: "",
           server: this.searchKey.server,
-          gameId: "",
-          gameName: this.searchKey.gameName,
+           gameName: this.searchKey.gameName,
           platformId: this.searchKey.platformId,
           platform: this.searchKey.platform,
           serverIp: this.searchKey.serverIp,
@@ -723,7 +758,8 @@ export default {
           addUser: "",
           addDatetime: "",
           state: this.searchKey.state,
-          channelId:this.searchKey.channelId
+          channelId:this.searchKey.channelId,
+          gameId: this.$gameId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -731,6 +767,8 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             this.$message.error("服务器列表获取失败");
           }
@@ -898,8 +936,8 @@ export default {
         console.log("服务器名称不能为空");
         this.$message.error("服务器名称不能为空");
       } else if (this.form.platformId == "") {
-        console.log("所属渠道不能为空");
-        this.$message.error("所属渠道不能为空");
+        console.log("所属平台不能为空");
+        this.$message.error("所属平台不能为空");
       } else {
         this.$axios
           .post(this.url + "/addServer", {
@@ -910,7 +948,7 @@ export default {
             sort: this.form.sort,
             addUser: this.form.addUser,
             state: this.form.state,
-            gameId: "",
+            gameId: this.$gameId,
             platformId: this.form.platformId,
             serverPort: this.form.serverPort
           })
@@ -942,7 +980,7 @@ export default {
           addUser: this.form.addUser,
           addDatetime: this.form.addDatetime,
           state: this.form.state,
-          gameId: "",
+          gameId: this.$gameId,
           platformId: this.form.platformId,
           serverPort: this.form.serverPort,
           openServiceTime:this.GMTToStr(this.form.openServiceTime)

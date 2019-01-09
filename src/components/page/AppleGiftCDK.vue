@@ -272,6 +272,9 @@ export default {
       "changeGameId",
       function(obj) {
         console.log(obj.message);
+        this.form.platformId = "";
+        this.form.giftId = "";
+        this.searchKey.platformId = "";
         this.getData();
       }.bind(this)
     );
@@ -446,6 +449,7 @@ export default {
             this.exchangeResult = successResponse.data.data;
             this.exchangeVisible = true;
           } else {
+            this.exchangeResult =[];
             console.log(this.responseResult);
             console.log("CDK解析失败");
           }
@@ -488,7 +492,8 @@ export default {
           endDatetime: this.form.endDatetime,
           addUser: this.form.addUser,
           addDatetime: this.form.addDatetime,
-          sign: sign
+          sign: sign,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -597,6 +602,8 @@ export default {
             );
             this.getCoupon();
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("平台列表获取失败");
           }
@@ -606,7 +613,8 @@ export default {
     getGiftList(platformId) {
       this.$axios
         .post(this.url + "/getNewGiftListForPlatformId", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -614,6 +622,7 @@ export default {
             console.log("礼包列表获取成功");
             this.giftOptions = successResponse.data.data.list;
           } else {
+            this.giftOptions = [];
             console.log(this.responseResult);
             console.log("礼包列表获取失败");
           }
@@ -638,7 +647,8 @@ export default {
           giftId:this.searchKey.giftId,
           giftName:this.searchKey.giftName,
           platformId: this.searchKey.platformId,
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -647,6 +657,8 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             this.$message.error("列表获取失败");
           }

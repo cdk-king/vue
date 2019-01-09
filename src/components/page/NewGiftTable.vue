@@ -211,6 +211,7 @@ import formatDatetime from "../../code/formatDatetime";
             this.getPlatformList(this.$gameId);
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
+                this.searchKey.platformId="";
                 this.getPlatformList(this.$gameId);
             }.bind(this)) 
             bus.$on('giftDataUpload',function(obj){
@@ -259,7 +260,8 @@ import formatDatetime from "../../code/formatDatetime";
                     giftName:this.searchKey.giftName,
                     giftTag:this.searchKey.giftTag,
                     platformId:this.searchKey.platformId,
-                    strPlatform:this.strPlatform
+                    strPlatform:this.strPlatform,
+                    gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -267,6 +269,8 @@ import formatDatetime from "../../code/formatDatetime";
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                     }else{
+                        this.tableData = [];
+                        this.total = 0;
                         console.log(this.responseResult);
                         this.$message.error("礼包列表获取失败");
                     }
@@ -292,6 +296,8 @@ import formatDatetime from "../../code/formatDatetime";
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
+                    this.platformOptions = [];
+                    this.strPlatform = "";
                     console.log(this.responseResult);
                     console.log("平台列表获取失败");
                 }
@@ -414,6 +420,7 @@ import formatDatetime from "../../code/formatDatetime";
                         addUser: this.form.addUser,
                         state:this.form.state,
                         platformId:this.form.platformId,
+                        gameId:this.$gameId
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -441,6 +448,8 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
+                    platformId:this.form.platformId,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)

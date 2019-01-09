@@ -91,6 +91,8 @@
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
+                this.form.platformId = "";
+                this.strPropList= ""; 
                 this.getData();
             }.bind(this))
         },
@@ -115,6 +117,7 @@
                     console.log("平台列表获取成功");
                     this.platformOptions = successResponse.data.data.list;
                 } else {
+                    this.platformOptions = [];
                     console.log(this.responseResult);
                     console.log("平台列表获取失败");
                 }

@@ -158,7 +158,8 @@ import formatDatetime from "../../code/formatDatetime";
                     platformId:this.searchKey.platformId,
                     serverId:this.searchKey.serverId,
                     isToProhibitSpeak:this.searchKey.isToProhibitSpeak,
-                    strPlatform:this.strPlatform
+                    strPlatform:this.strPlatform,
+                    gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -166,10 +167,17 @@ import formatDatetime from "../../code/formatDatetime";
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                     }else{
+                        this.tableData = [];
+                        this.total = 0;
                         console.log(this.responseResult);
                         this.$message.error("禁言记录获取失败");
                     }
-                })
+                }).catch(failResponse => {
+                        this.tableData = [];
+                        this.total = 0;
+                        console.log(this.responseResult);
+                        this.$message.error("禁言记录获取失败");
+                });
             },
             //当前游戏的平台
             getPlatformList(gameId) {
@@ -191,17 +199,24 @@ import formatDatetime from "../../code/formatDatetime";
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
-                    
+                    this.platformOptions = [];
+                    this.strPlatform="";
                     console.log(this.responseResult);
                     console.log("平台列表获取失败");
                 }
                 })
-                .catch(failResponse => {});
+                .catch(failResponse => {
+                    this.platformOptions = [];
+                    this.strPlatform="";
+                    console.log(this.responseResult);
+                    console.log("平台列表获取失败");
+                });
             },
             getServerList(platformId) {
                 this.$axios
                 .post(this.url+"/getServerListForPlatform", {
-                platformId: platformId
+                platformId: platformId,
+                gameId:this.$gameId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -209,11 +224,16 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("平台服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
                 } else {
+                    this.serverOptions = [];
                     console.log(this.responseResult);
                     console.log("平台服务器列表获取失败");
                 }
                 })
-                .catch(failResponse => {});
+                .catch(failResponse => {
+                    this.serverOptions = [];
+                    console.log(this.responseResult);
+                    console.log("平台服务器列表获取失败");
+                });
             },
             search() {
                 this.is_search = true;

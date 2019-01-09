@@ -706,6 +706,10 @@ export default {
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
+        this.searchKey.platformId = "";
+        this.searchKey.serverId = "";
+        this.form.platformId = "";
+        this.form.serverId = "";
         this.getPlatformList(this.id);
         this.getPropTypeList(this.$gameId);
         this.getMoneyTypeList();
@@ -734,6 +738,7 @@ export default {
             console.log("道具类别列表获取成功");
             this.propTypeList = successResponse.data.data.list;
           } else {
+            this.propTypeList = [];
             console.log(this.responseResult);
             console.log("道具类别列表获取失败");
           }
@@ -858,6 +863,7 @@ export default {
             console.log("货币类型列表获取成功");
             this.moneyTypeOptions = successResponse.data.data.list;
           } else {
+            this.moneyTypeOptions = [];
             console.log(this.responseResult);
             this.$message.error("货币类型列表获取失败");
           }
@@ -874,6 +880,7 @@ export default {
             console.log("品质类型列表获取成功");
             this.propQualityOptions = successResponse.data.data.list;
           } else {
+            this.propQualityOptions = [];
             console.log(this.responseResult);
             this.$message.error("品质类型列表获取失败");
           }
@@ -887,7 +894,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -895,11 +903,13 @@ export default {
             console.log("申请道具列表获取成功");
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
-            //获取table后关闭所有窗口，避免闪烁
+            //获取table后再关闭所有窗口，避免闪烁
             this.editVisible = false;
             this.showApplyVisible = false;
             this.addVisible = false;
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             this.$message.error("申请道具列表获取失败");
           }
@@ -914,6 +924,7 @@ export default {
             console.log("玩家类型列表获取成功");
             this.playerTypeOptions = successResponse.data.data.list;
           } else {
+            this.playerTypeOptions = [];
             console.log(this.responseResult);
             this.$message.error("玩家类型列表获取失败");
           }
@@ -939,7 +950,8 @@ export default {
           pageSize: 10,
           isPage: "",
           platformId: 0,
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -947,6 +959,7 @@ export default {
             console.log("道具列表获取成功");
             this.allPropOptions = successResponse.data.data.list;
           } else {
+            this.allPropOptions = [];
             console.log(this.responseResult);
             this.$message.error("道具列表获取失败");
           }
@@ -961,7 +974,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("用户渠道列表获取成功");
+            console.log("用户平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -975,8 +988,10 @@ export default {
             this.getAllPropList();
             this.getApplyProp();
           } else { 
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
-            console.log("用户渠道列表获取失败");
+            console.log("用户平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -984,17 +999,19 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("渠道服务器列表获取成功");
+            console.log("平台服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
+            this.serverOptions = [];
             console.log(this.responseResult);
-            console.log("渠道服务器列表获取失败");
+            console.log("平台服务器列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -1002,7 +1019,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1010,6 +1028,7 @@ export default {
             console.log("服务器列表获取成功");
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions = [];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -1068,8 +1087,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            console.log("当前serverIp:" + this.serverIp);
-            this.$message.success("当前serverIp:" + this.serverIp);
             return;
           }
         }
@@ -1176,7 +1193,8 @@ export default {
           applyUser: this.form.applyUser,
           applyReason: this.form.applyReason,
           addUser: this.id,
-          moneyList: moneyList
+          moneyList: moneyList,
+          gameId:this.$gameId
         };
         if(this.form.playerNameList=="" && this.form.playerIdList==""){
             this.$message("请输入其中一项角色信息");
@@ -1194,7 +1212,8 @@ export default {
           applyUser: this.form.applyUser,
           applyReason: this.form.applyReason,
           addUser: this.id,
-          moneyList: moneyList
+          moneyList: moneyList,
+          gameId:this.$gameId
         };
       }
       this.$axios
@@ -1361,7 +1380,8 @@ export default {
           applyUser: this.form.applyUser,
           applyReason: this.form.applyReason,
           addUser: this.id,
-          moneyList: moneyList
+          moneyList: moneyList,
+          gameId:this.$gameId
         };
       }
       if (this.editableTabsValue == "2") {
@@ -1376,7 +1396,8 @@ export default {
           applyUser: this.form.applyUser,
           applyReason: this.form.applyReason,
           addUser: this.id,
-          moneyList: moneyList
+          moneyList: moneyList,
+          gameId:this.$gameId
         };
       }
       this.$axios
@@ -1447,7 +1468,8 @@ export default {
           Title: item.releaseTitle,
           Content: item.releaseContent,
           ItemList: itemList,
-          Money: money
+          Money: money,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

@@ -154,29 +154,13 @@
 
 <script>
 let id = 1000;
+import bus from "../common/bus";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 export default {
   data() {
     var data2 = [
       {
-        id: 1,
-        label: "一级 1",
-        children: [
-          {
-            id: 4,
-            label: "二级 1-1",
-            children: [
-              {
-                id: 9,
-                label: "三级 1-1-1"
-              },
-              {
-                id: 10,
-                label: "三级 1-1-2"
-              }
-            ]
-          }
-        ]
+        
       }
     ];
     return {
@@ -212,11 +196,24 @@ export default {
   created() {
     setLocalThisUrl(this);
     this.getData();
+        bus.$on(
+      "changeGameId",
+      function(obj) {
+        var userData = JSON.parse(localStorage.getItem("userData"));
+        this.id = userData.id;
+        this.getData();
+      }.bind(this)
+    );
+  },
+  beforeDestroy() {
+    bus.$off("changeGameId");
   },
   methods: {
     getPlatformList() {
       this.$axios
-        .post(this.url+"/getAllPlatformList", {})
+        .post(this.url+"/getAllPlatformList", {
+          gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -231,7 +228,9 @@ export default {
     },
     getData() {
       this.$axios
-        .post(this.url+"/getServerTree", {})
+        .post(this.url+"/getServerTree", {
+          gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -239,6 +238,8 @@ export default {
             this.TreeList = successResponse.data.data;
             this.MapData(this.TreeList);
           } else {
+            this.TreeList =[];
+            this.MapData(this.TreeList);
             console.log(this.responseResult);
             console.log("服务器树状结构获取失败");
           }
@@ -253,7 +254,7 @@ export default {
           id: "",
           server: "",
           serverId: "",
-          gameId: "",
+          gameId: this.$gameId,
           platformId: "",
           platform: "",
           serverIp: "",
@@ -336,7 +337,7 @@ export default {
           addUser: this.form.addUser,
           addDatetime: this.form.addDatetime,
           state: this.form.state,
-          gameId: "",
+          gameId: this.$gameId,
           platformId: this.form.platformId
         })
         .then(successResponse => {
@@ -372,7 +373,7 @@ export default {
             sort:this.form.sort,
             addUser: this.form.addUser,
             state:this.form.state,
-            gameId:"",
+            gameId:this.$gameId,
             platformId:this.form.platformId
         })
         .then(successResponse =>{

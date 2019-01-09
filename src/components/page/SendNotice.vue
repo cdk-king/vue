@@ -308,6 +308,10 @@ export default {
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
+        this.platformValue="";
+        this.serverList=[];
+        this.searchKey.platformId="";
+        this.searchKey.serverName="";
         this.getPlatformList(this.id);
       }.bind(this)
     );
@@ -337,6 +341,8 @@ export default {
             );
             this.getNotice();
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("用户平台列表获取失败");
           }
@@ -346,7 +352,8 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -355,6 +362,7 @@ export default {
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
+            this.serverOptions = [];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -367,7 +375,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -375,6 +384,7 @@ export default {
             console.log("服务器列表获取成功");
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions =[];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -405,7 +415,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
@@ -422,7 +431,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -432,6 +442,8 @@ export default {
             this.total = successResponse.data.data.total;
             this.mapDate();
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             console.log("公告列表获取失败");
             this.$message.error("公告列表获取失败");
@@ -448,6 +460,7 @@ export default {
             console.log("公告发送类别获取成功");
             this.sendTypeList = successResponse.data.data.list;
           } else {
+            this.sendTypeList = [];
             console.log(this.responseResult);
             console.log("公告发送类别获取失败");
             this.$message.error("公告发送类别获取失败");
@@ -464,6 +477,7 @@ export default {
             console.log("公告消息类别获取成功");
             this.noticeTypeList = successResponse.data.data.list;
           } else {
+            this.noticeTypeList = [];
             console.log(this.responseResult);
             console.log("公告消息类别获取失败");
             this.$message.error("公告消息类别获取失败");
@@ -543,7 +557,8 @@ export default {
           timeInterval: this.form.timeInterval,
           cycleTime: this.form.cycleTime,
           noticeContent: this.form.noticeContent,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -609,7 +624,8 @@ export default {
           noticeType: item.noticeType,
           timeInterval: item.timeInterval,
           cycleTime: item.cycleTime,
-          Content: item.noticeContent
+          Content: item.noticeContent,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

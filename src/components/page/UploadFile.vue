@@ -226,6 +226,7 @@ export default {
       "changeGameId",
       function(obj) {
         console.log(obj.message);
+        this.searchKey.platformId = "";
         this.getData();
       }.bind(this)
     );
@@ -384,6 +385,7 @@ export default {
             fileName:this.searchKey.fileName,
             strPlatform:this.strPlatform,
             platformId: this.searchKey.platformId,
+            gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -392,6 +394,7 @@ export default {
             this.tableData = successResponse.data.data.list;
             
           } else {
+            this.tableData = [];
             console.log(this.responseResult);
             console.log("文件列表获取失败");
           }
@@ -444,6 +447,8 @@ export default {
             );
             this.getFileList(this.$gameId);
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("用户平台列表获取失败");
           }
@@ -466,6 +471,7 @@ export default {
       formData.append("fileDescribe", this.form.fileDescribe);
       formData.append("addUser", this.userName);
       formData.append("platformId", this.form.platformId);
+      formData.append("gameId", this.$gameId);
       let headers = { headers: { "Content-Type": "multipart/form-data" } };
       this.$axios
         .post(this.url + "/fileUpload", formData, headers)

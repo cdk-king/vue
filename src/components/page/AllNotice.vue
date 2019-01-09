@@ -21,7 +21,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -607,6 +607,10 @@ export default {
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
+        this.searchKey.platformId = "";
+        this.searchKey.serverName = "";
+        this.form.platformId = "";
+        this.form.serverList = [];
         this.getPlatformList(this.id);
         this.getMoneyTypeList(this.$gameId);
         this.getPropTypeList(this.$gameId);
@@ -705,6 +709,7 @@ export default {
             this.moneyTypeOptions = successResponse.data.data.list;
           } else {
             console.log(this.responseResult);
+            this.moneyTypeOptions =[];
             this.$message.error("货币类型列表获取失败");
           }
         });
@@ -720,6 +725,7 @@ export default {
             console.log("道具类别列表获取成功");
             this.propTypeList = successResponse.data.data.list;
           } else {
+            this.propTypeList =[];
             console.log(this.responseResult);
             console.log("道具类别列表获取失败");
           }
@@ -748,6 +754,8 @@ export default {
             this.getPlatformNotice();
             this.getAllPropList();
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("用户渠道列表获取失败");
           }
@@ -761,7 +769,8 @@ export default {
           pageSize: 10,
           isPage: "",
           platformId: 0,
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -769,6 +778,7 @@ export default {
             console.log("全平台道具列表获取成功");
             this.allPropOptions = successResponse.data.data.list;
           } else {
+            this.allPropOptions = [];
             console.log(this.responseResult);
             this.$message.error("全平台道具列表获取失败");
           }
@@ -777,7 +787,8 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -786,6 +797,8 @@ export default {
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
+             this.serverOptions = [];
+             this.form.serverList = "";
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -798,7 +811,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          id: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -807,6 +821,7 @@ export default {
 
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions =[];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -827,7 +842,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
@@ -843,7 +857,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -855,6 +870,8 @@ export default {
             this.editPlatformNoticeVisible = false;
             this.addPlatformNoticeVisible = false;
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             console.log("公告列表获取失败");
             this.$message.error("公告列表获取失败");
@@ -1054,7 +1071,8 @@ export default {
           endDatetime: this.form.endDatetime,
           addUser: this.userId,
           moneyList: moneyList,
-          propList: list
+          propList: list,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1151,7 +1169,8 @@ export default {
           endDatetime: this.form.endDatetime,
           addUser: this.userId,
           moneyList: moneyList,
-          propList: list
+          propList: list,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1192,7 +1211,8 @@ export default {
           noticeContent: item.noticeContent,
           propList: item.propList,
           moneyList: item.moneyList,
-          startDatetime: item.startDatetime
+          startDatetime: item.startDatetime,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1234,7 +1254,8 @@ export default {
           noticeContent: item.noticeContent,
           propList: item.propList,
           moneyList: item.moneyList,
-          startDatetime: item.startDatetime
+          startDatetime: item.startDatetime,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

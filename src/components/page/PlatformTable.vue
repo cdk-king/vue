@@ -39,8 +39,8 @@
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center">
                 </el-table-column>
-                <el-table-column prop="id" label="ID"  width="80">
-                </el-table-column>
+                <!-- <el-table-column prop="id" label="ID"  width="80">
+                </el-table-column> -->
                 <el-table-column prop="platformId" label="平台ID"  width="80">
                 </el-table-column>
                 <el-table-column prop="platform" label="平台名称" width="160">
@@ -63,8 +63,8 @@
                 </el-table-column>
                 <el-table-column prop="addUser"  label="添加人" >
                 </el-table-column>
-                <el-table-column prop="sort" width="50" label="排序" >
-                </el-table-column>
+                <!-- <el-table-column prop="sort" width="50" label="排序" >
+                </el-table-column> -->
                 <el-table-column label="操作"  align="center" v-if="handleVisible" fixed="right">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -209,6 +209,7 @@
 </template>
 
 <script>
+import bus from '../common/bus';
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
     export default {
@@ -277,6 +278,10 @@ import formatDatetime from "../../code/formatDatetime";
             setLocalThisUrl(this);
             this.getData();
             this.right();
+            bus.$on('changeGameId',function(obj){
+                console.log(obj.message);
+                this.getData();
+            }.bind(this)) 
         },
         computed: {
             data() {
@@ -354,7 +359,7 @@ import formatDatetime from "../../code/formatDatetime";
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
-                        console.log("平台列表获取成功");
+                        console.log("平台列表获取成功"); 
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                     }else{

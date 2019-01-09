@@ -288,6 +288,7 @@ export default {
             this.platformOptions = successResponse.data.data.list;
             this.getBanIp();
           } else {
+            this.platformOptions =[];
             console.log(this.responseResult);
             console.log("用户平台列表获取失败");
           }
@@ -297,15 +298,16 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             console.log("平台服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
-            this.checkVisible = true;
           } else {
+            this.serverOptions =[];
             console.log(this.responseResult);
             console.log("平台服务器列表获取失败");
           }
@@ -315,7 +317,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -324,6 +327,7 @@ export default {
 
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions = [];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -347,7 +351,8 @@ export default {
           isPage: "isPage",
           platformId: this.searchKey.platformId,
           serverId: this.searchKey.serverId,
-          strPlatform: strPlatform
+          strPlatform: strPlatform,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -356,9 +361,10 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
-            console.log(this.responseResult);
-            console.log("IP封禁列表获取失败");
-            this.$message.error("IP封禁列表获取成功");
+            this.tableData =[];
+            this.total =0;
+            console.log(this.responseResult); 
+            this.$message.error("IP封禁列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -409,7 +415,8 @@ export default {
           ip: this.form.ip,
           banLong: this.form.banLong,
           note: this.form.note,
-          addUser: this.form.addUser
+          addUser: this.form.addUser,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -433,7 +440,8 @@ export default {
           remove: 0,
           ip: item.ip,
           banLong: item.banLong,
-          note: item.note
+          note: item.note,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -457,7 +465,8 @@ export default {
           remove: 1,
           ip: item.ip,
           banLong: item.banLong,
-          note: item.note
+          note: item.note,
+          gameId: this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -469,24 +478,6 @@ export default {
             console.log(this.responseResult);
             console.log("IP解除禁封失败");
             this.$message.error("IP解除禁封失败");
-          }
-        });
-    },
-    handleConfirm(index, row) {
-      this.$axios
-        .post(this.url + "/confirmApplyProp", {
-          id: this.tableData[index].id,
-          addUser: this.id
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("道具申请审核通过成功");
-            this.$message.success("道具申请审核通过成功");
-          } else {
-            console.log(this.responseResult);
-            console.log("道具申请审核通过失败");
-            this.$message.error("道具申请审核通过失败");
           }
         });
     },

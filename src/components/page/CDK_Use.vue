@@ -189,6 +189,8 @@ export default {
       "changeGameId",
       function(obj) {
         console.log(obj.message);
+        this.form.platformId = "";
+        this.searchKey.platformId = "";
         this.getPlatformList(this.$gameId);
       }.bind(this)
     );
@@ -235,7 +237,8 @@ export default {
           giftName: this.searchKey.giftName,
           giftId: this.searchKey.giftId,
           platformId: this.searchKey.platformId,
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -244,6 +247,8 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData = [];
+            this.total = 0;
             console.log(this.responseResult);
             this.$message.error("激活码列表获取失败");
           }
@@ -260,7 +265,7 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("渠道列表获取成功");
+            console.log("平台列表获取成功");
             this.platformOptions = successResponse.data.data.list;
             this.strPlatform = "";
             for (var i = 0; i < this.platformOptions.length; i++) {
@@ -272,8 +277,10 @@ export default {
             );
             this.getData();
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
-            console.log("渠道列表获取失败");
+            console.log("平台列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -378,7 +385,8 @@ export default {
       this.$axios
         .post(this.url + "/exchangeCDK", {
           cdk: this.form.cdk,
-          platformId: this.form.platformId
+          platformId: this.form.platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -389,6 +397,7 @@ export default {
             this.exchangeVisible = true;
             this.getData();
           } else {
+            this.exchangeResult = [];
             console.log(this.responseResult);
             this.$message.error(successResponse.data.message);
           }
@@ -399,7 +408,8 @@ export default {
       this.$axios
         .post(this.url + "/api/cdk/checkCDKIsUse", {
           cdk: this.form.cdk,
-          platformId: this.form.platformId
+          platformId: this.form.platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

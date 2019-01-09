@@ -167,6 +167,7 @@
 </template>
 
 <script>
+import bus from '../common/bus';
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
     export default {
@@ -218,6 +219,14 @@ import formatDatetime from "../../code/formatDatetime";
             this.getAllPlatform();
             this.getData();
             this.right();
+            bus.$on('changeGameId',function(obj){
+                console.log(obj.message);
+                this.getAllPlatform();
+                this.getData();
+            }.bind(this)) 
+        },
+        beforeDestroy() {
+            bus.$off("changeGameId");
         },
         computed: {
             data() {
@@ -239,11 +248,15 @@ import formatDatetime from "../../code/formatDatetime";
                         console.log("平台获取成功");
                         this.platformOptions = successResponse.data.data.list;
                     } else {
+                        this.platformOptions=[];
                         console.log(this.responseResult);
                         console.log("平台获取失败");
                     }
                 })
-                .catch(failResponse => {});
+                .catch(failResponse => {
+                    this.platformOptions=[];
+                    console.log("平台获取失败");
+                });
             },
             right(){
                 const right = localStorage.getItem('rightTags');
@@ -269,17 +282,31 @@ import formatDatetime from "../../code/formatDatetime";
                     isPage:"isPage",
                     id:'',
                     platformId:this.searchKey.platformId,
+                    gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log("数据源列表获取成功");
-                        this.tableData = successResponse.data.data.list;
-                        this.total = successResponse.data.data.total;
+                        if(!successResponse.data.data.list==""){
+                            this.tableData = successResponse.data.data.list;
+                            this.total = successResponse.data.data.total;
+                        }else{
+                            this.tableData =[];
+                            this.total = 0;
+                        }
+                        
                     }else{
+                        this.tableData =[];
+                        this.total = 0;
                         console.log(this.responseResult);
                         this.$message.error("数据源列表获取失败");
                     }
                 })
+                .catch(failResponse => {
+                        this.tableData =[];
+                        this.total = 0;
+                        this.$message.error("数据源列表获取失败");
+                });
             },
             search() {
                 this.is_search = true;
@@ -306,7 +333,8 @@ import formatDatetime from "../../code/formatDatetime";
                 background: 'rgba(0, 0, 0, 0.7)'
                 });
                 this.$axios.post(this.url+'/api/db/testDataSource',{
-                        platformId: item.platformId
+                        platformId: item.platformId,
+                        gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -320,7 +348,10 @@ import formatDatetime from "../../code/formatDatetime";
                         this.$message.error("数据源测试失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                        loading.close();
+                        this.$message.error("数据源测试失败");
+                })
             },
             handleEdit(index, row) {
                 this.idx = index;
@@ -369,7 +400,9 @@ import formatDatetime from "../../code/formatDatetime";
                         this.$message.error("数据源批量删除失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                    this.$message.error("数据源批量删除失败");
+                })
                 this.delAllVisible = false;
             }, 
             selectPlatform(){
@@ -379,6 +412,9 @@ import formatDatetime from "../../code/formatDatetime";
                 this.multipleSelection = val;
             },
             mapPlatform(){
+                if(this.tableData.length==0){
+                    return;
+                }
                 for(var i = 0;i<this.tableData.length;i++){
                     for(var j = 0;j<this.platformOptions.length;j++){
                         if(this.tableData[i].platformId==this.platformOptions[j].platformId){
@@ -399,6 +435,9 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: '',
                     addDatetime: '',
                     isDelete:''
+                }
+                if(this.platformOptions==undefined){
+                    return;
                 }
                 if(this.platformOptions.length==0){
                     this.$message.info("暂无可添加数据源的平台");
@@ -421,7 +460,8 @@ import formatDatetime from "../../code/formatDatetime";
                         dataSource_id:this.form.dataSource_id,
                         dataSource_url:this.form.dataSource_url,
                         dataSource_name:this.form.dataSource_name,
-                        dataSource_password:this.form.dataSource_password
+                        dataSource_password:this.form.dataSource_password,
+                        gameId:this.$gameId
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -434,7 +474,9 @@ import formatDatetime from "../../code/formatDatetime";
                             this.$message.error("数据源添加失败");
                         }
                     })
-                    .catch(failResponse => {})
+                    .catch(failResponse => {
+                        this.$message.error("数据源添加失败");
+                    })
                     this.addplatformVisible = false; 
                 }               
             },
@@ -447,7 +489,8 @@ import formatDatetime from "../../code/formatDatetime";
                     dataSource_id:this.form.dataSource_id,
                     dataSource_url:this.form.dataSource_url,
                     dataSource_name:this.form.dataSource_name,
-                    dataSource_password:this.form.dataSource_password
+                    dataSource_password:this.form.dataSource_passwordl,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -459,7 +502,9 @@ import formatDatetime from "../../code/formatDatetime";
                         this.$message.error("数据源信息修改失败");
                     }
                 })
-                .catch(failResponse => {})
+                .catch(failResponse => {
+                    this.$message.error("数据源信息修改失败");
+                })
                 this.editVisible = false;  
             },
             // 确定删除
@@ -477,7 +522,9 @@ import formatDatetime from "../../code/formatDatetime";
                             this.$message.error('数据源删除失败');
                         }
                     })
-                    .catch(failResponse => {})    
+                    .catch(failResponse => {
+                        this.$message.error('数据源删除失败');
+                    })    
                 this.tableData.splice(this.idx, 1);
                 this.delVisible = false;
             },

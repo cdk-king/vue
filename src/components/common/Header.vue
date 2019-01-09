@@ -78,6 +78,17 @@
         created() {
             setLocalThisUrl(this);
             this.right();
+            bus.$on(
+            "changeGame",
+            function(obj) {
+                var userData = JSON.parse(localStorage.getItem("userData"));
+                this.id = userData.id;
+                this.getData();
+            }.bind(this)
+            );
+        },
+        beforeDestroy () {
+            bus.$off('changeGame');
         },
         methods:{
             right(){
@@ -98,6 +109,7 @@
                     this.responseResult = "\n" + JSON.stringify(successResponse.data);
                     if (successResponse.data.code === 200) {
                         console.log("用户游戏列表获取成功");
+                        console.log( this.responseResult);
                         this.options = successResponse.data.data.list;
                         //默认选取第一个游戏
                         this.$setGameId(this.options[0].id);

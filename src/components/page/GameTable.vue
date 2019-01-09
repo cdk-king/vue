@@ -38,13 +38,13 @@
                 </el-table-column> 
                 <el-table-column prop="gameEncryptSign" label="加密标识" >
                 </el-table-column> 
+                <el-table-column prop="serverApi" label="服务器接口" width="210" >
+                </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
                 </el-table-column>
                 <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter" value-format="YYYY-MM-DD HH:mm:ss">
                 </el-table-column>
                 <el-table-column prop="addUser"  label="添加人" >
-                </el-table-column>
-                <el-table-column prop="sort" width="50" label="排序" >
                 </el-table-column>
                 <el-table-column label="操作"  align="center" v-if="handleVisible" fixed="right">
                     <template slot-scope="scope">
@@ -77,6 +77,9 @@
                 <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
                 </el-form-item>
+                <el-form-item label="服务器接口">
+                    <el-input v-model="form.serverApi" ></el-input>
+                </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
                 </el-form-item>
@@ -101,6 +104,9 @@
                 </el-form-item>
                 <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
+                </el-form-item>
+                <el-form-item label="服务器接口">
+                    <el-input v-model="form.serverApi"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
                     <el-input v-model="form.addUser"></el-input>
@@ -181,6 +187,7 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    serverApi:''
                 },
                 searchKey: {
                     id:'',
@@ -192,6 +199,7 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    serverApi:''
                 },
                 idx: -1,
                 responseResult:[],
@@ -323,7 +331,10 @@ import formatDatetime from "../../code/formatDatetime";
                         this.$message.success("游戏批量删除完成");
                         this.multipleSelection = []; 
                         this.getData();
-
+                        //添加组件通讯
+                        bus.$emit('changeGame', {
+                        message:"游戏列表改变"
+                        });
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("游戏批量删除失败");
@@ -369,8 +380,8 @@ import formatDatetime from "../../code/formatDatetime";
                         sort:this.form.sort,
                         addUser: this.form.addUser,
                         state:this.form.state,
-                        gameEncryptSign:this.form.gameEncryptSign
-                        
+                        gameEncryptSign:this.form.gameEncryptSign,
+                        serverApi:this.form.serverApi
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -378,6 +389,10 @@ import formatDatetime from "../../code/formatDatetime";
                             this.$message.success("游戏添加成功");
                             this.tableData.push(this.form);
                             this.getData();
+                            //添加组件通讯
+                            bus.$emit('changeGame', {
+                            message:"游戏列表改变"
+                            });
                         }else{
                             console.log(this.responseResult);
                             this.$message.error("游戏添加失败");
@@ -400,13 +415,18 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
-                    gameEncryptSign:this.form.gameEncryptSign
+                    gameEncryptSign:this.form.gameEncryptSign,
+                    serverApi:this.form.serverApi
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         this.$message.success("游戏信息修改成功");
                         this.getData();
+                        //添加组件通讯
+                        bus.$emit('changeGame', {
+                        message:"游戏列表改变"
+                        });
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("游戏信息修改失败");
@@ -465,6 +485,10 @@ import formatDatetime from "../../code/formatDatetime";
                         if(successResponse.data.code === 200){
                             this.$message.success(`游戏删除成功`);
                             this.getData();
+                            //添加组件通讯
+                            bus.$emit('changeGame', {
+                            message:"游戏列表改变"
+                            });
                         }else{
                             console.log(this.responseResult);
                             this.$message.error('游戏删除失败');

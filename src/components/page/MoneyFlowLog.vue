@@ -128,6 +128,8 @@ import formatDatetime from "../../code/formatDatetime";
             this.getData();
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
+                this.searchKey.platformId = "";
+                this.searchKey.serverId = "";
                 this.getPlatformList(this.$gameId);
             }.bind(this))
         },
@@ -135,6 +137,9 @@ import formatDatetime from "../../code/formatDatetime";
             data() {
                 return this.tableData;
             }
+        },
+        beforeDestroy() {
+            bus.$off("changeGameId");
         },
         mounted() {
         },
@@ -181,6 +186,7 @@ import formatDatetime from "../../code/formatDatetime";
                     iUin:this.searchKey.iUin,
                     iRoleId:this.searchKey.iRoleId,
                     vRoleName:this.searchKey.vRoleName,
+                    gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
@@ -190,6 +196,7 @@ import formatDatetime from "../../code/formatDatetime";
                         loading.close();
                     }else{
                         loading.close();
+                        this.tableData=[];
                         console.log(this.responseResult);
                         this.$message.error("现金流日志获取失败");
                     }
@@ -227,11 +234,12 @@ import formatDatetime from "../../code/formatDatetime";
                     this.strPlatform = "";
                     for(var i = 0;i<this.platformOptions.length;i++){
                         this.strPlatform += this.platformOptions[i].platformId+",";
-                        
                     }
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {           
+                    this.platformOptions = [];
+                    this.strPlatform="";
                     console.log(this.responseResult);
                     console.log("平台列表获取失败");
                 }
@@ -244,12 +252,14 @@ import formatDatetime from "../../code/formatDatetime";
                     pageNo: this.cur_page,
                     pageSize: 10,
                     isPage: "",
+                    gameId:this.$gameId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                     if (successResponse.data.code === 200) {
                         this.serverList = successResponse.data.data.list;
                     } else {
+                        this.serverList = [];
                         console.log(this.responseResult);
                         this.$message.error("服务器列表获取失败");
                     }
@@ -258,20 +268,23 @@ import formatDatetime from "../../code/formatDatetime";
             getServerList(platformId) {
                 this.$axios
                 .post(this.url+"/getServerListForPlatform", {
-                platformId: platformId
+                platformId: platformId,
+                gameId:this.$gameId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
                 if (successResponse.data.code === 200) {
                     console.log("平台服务器列表获取成功");
                     this.serverOptions = successResponse.data.data;
+                    this.serverIdList  = "";
                     for(var i = 0;i<this.serverOptions.length;i++){
-                        this.serverIdList  = "";
+                        
                         this.serverIdList += this.serverOptions[i].serverId+",";
                     }
                     this.serverIdList = this.serverIdList.substring(0,this.serverIdList.length-1);
                     this.getData(); 
                 } else {
+                    this.serverOptions = [];
                     console.log(this.responseResult);
                     console.log("平台服务器列表获取失败");
                 }

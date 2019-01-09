@@ -262,7 +262,7 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:180px" placeholder="标题" v-model="form.emailTitle" clearable></el-input>
+            <el-input style="width:515px" placeholder="标题" v-model="form.emailTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="邮件内容">
@@ -387,6 +387,10 @@ export default {
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
+        this.searchKey.platformId = "";
+        this.searchKey.serverName = "";
+        this.form.serverList =  [];
+        this.form.platformId = "";
         this.getPlatformList(this.id);
       }.bind(this)
     );
@@ -404,12 +408,15 @@ export default {
     },
     getAllServer() {
       this.$axios
-        .post(this.url + "/getAllServer", {})
+        .post(this.url + "/getAllServer", {
+          gameId:this.$gameId
+        })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
             this.allServerList = successResponse.data.data.list;
           } else {
+            this.allServerList =[];
             console.log(this.responseResult);
           }
         })
@@ -436,6 +443,8 @@ export default {
             );
             this.getPlatformEmail();
           } else {
+            this.platformOptions = [];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("用户平台列表获取失败");
           }
@@ -445,7 +454,8 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -454,6 +464,8 @@ export default {
             this.serverOptions = successResponse.data.data;
             this.checkVisible = true;
           } else {
+            this.form.serverList = [];
+            this.serverOptions = [];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -466,7 +478,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -475,6 +488,7 @@ export default {
 
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions = [];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -491,12 +505,10 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
       }
-
       this.getPlatformEmail();
     },
     getPlatformEmail() {
@@ -508,7 +520,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -517,6 +530,8 @@ export default {
             this.tableData = successResponse.data.data.list;
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData = [];
+            this.total =0;
             console.log(this.responseResult);
             console.log("邮件列表获取失败");
             this.$message.error("邮件列表获取失败");
@@ -592,7 +607,8 @@ export default {
           sendReason: this.form.sendReason,
           startDatetime: this.form.startDatetime,
           endDatetime: this.form.endDatetime,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -639,7 +655,8 @@ export default {
           sendReason: this.form.sendReason,
           startDatetime: this.form.startDatetime,
           endDatetime: this.form.endDatetime,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -691,7 +708,8 @@ export default {
           sendReason: item.sendReason,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
-          addUser: item.userId
+          addUser: item.userId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -717,7 +735,8 @@ export default {
           sendReason: item.sendReason,
           startDatetime: item.startDatetime,
           endDatetime: item.endDatetime,
-          addUser: item.userId
+          addUser: item.userId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

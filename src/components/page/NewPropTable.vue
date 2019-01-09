@@ -226,6 +226,7 @@ import formatDatetime from "../../code/formatDatetime";
 
             bus.$on('changeGameId',function(obj){
                 console.log(obj.message);
+                this.searchKey.platformId = "";
                 this.getPlatformList(this.$gameId);
                 this.getPropTypeList(this.$gameId);
             }.bind(this))
@@ -277,7 +278,8 @@ import formatDatetime from "../../code/formatDatetime";
                     propName:this.searchKey.propName,
                     propType:this.searchKey.propTypeId,
                     platformId:this.searchKey.platformId,
-                    strPlatform:this.strPlatform
+                    strPlatform:this.strPlatform,
+                    gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data);
                     if(successResponse.data.code === 200){
@@ -285,6 +287,8 @@ import formatDatetime from "../../code/formatDatetime";
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                     }else{
+                        this.tableData = [];
+                        this.total = 0;
                         console.log(this.responseResult);
                         this.$message.error("道具列表获取失败");
                     }
@@ -310,6 +314,8 @@ import formatDatetime from "../../code/formatDatetime";
                     this.strPlatform=this.strPlatform.substring(0,this.strPlatform.length-1);
                     this.getData();
                 } else {
+                    this.platformOptions = [];
+                    this.strPlatform = "";
                     console.log(this.responseResult);
                     console.log("平台列表获取失败");
                 }
@@ -320,7 +326,7 @@ import formatDatetime from "../../code/formatDatetime";
                 
                 this.$axios
                 .post(this.url+"/api/newProp/getPropTypeList", {
-                gameId:gameId
+                    gameId:gameId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -328,6 +334,7 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("道具类别列表获取成功");
                     this.propTypeList = successResponse.data.data.list;
                 } else {
+                    this.propTypeList = [];
                     console.log(this.responseResult);
                     console.log("道具类别列表获取失败");
                 }
@@ -457,6 +464,7 @@ import formatDatetime from "../../code/formatDatetime";
                         addUser: this.form.addUser,
                         state:this.form.state,
                         platformId:this.form.platformId,
+                        gameId:this.$gameId
                     })
                     .then(successResponse =>{
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -485,7 +493,8 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: this.form.addUser,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
-
+                    platformId:this.form.platformId,
+                    gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)

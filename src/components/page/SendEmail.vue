@@ -125,7 +125,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择渠道平台"
+          placeholder="请选择平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -406,6 +406,10 @@ export default {
       function(obj) {
         var userData = JSON.parse(localStorage.getItem("userData"));
         this.id = userData.id;
+        this.form.platformId="";
+        this.form.serverId="";
+        this.searchKey.platformId="";
+        this.searchKey.serverId="";
         this.getPlatformList(this.id);
       }.bind(this)
     );
@@ -435,6 +439,8 @@ export default {
             );
             this.getEmail();
           } else {
+            this.platformOptions =[];
+            this.strPlatform = "";
             console.log(this.responseResult);
             console.log("用户平台列表获取失败");
           }
@@ -444,7 +450,8 @@ export default {
     getServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -452,6 +459,8 @@ export default {
             console.log("服务器列表获取成功");
             this.serverOptions = successResponse.data.data;
           } else {
+            this.serverOptions =[];
+            this.form.serverId = "";
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -464,7 +473,8 @@ export default {
     getSearchKeyServerList(platformId) {
       this.$axios
         .post(this.url + "/getServerListForPlatform", {
-          platformId: platformId
+          platformId: platformId,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -472,6 +482,7 @@ export default {
             console.log("服务器列表获取成功");
             this.searchKeyServerOptions = successResponse.data.data;
           } else {
+            this.searchKeyServerOptions =[];
             console.log(this.responseResult);
             console.log("服务器列表获取失败");
           }
@@ -486,7 +497,6 @@ export default {
         for (let i = 0; i < this.serverOptions.length; i++) {
           if (this.serverOptions[i].serverId == this.serverValue) {
             this.serverIp = this.serverOptions[i].serverIp;
-            this.$message.success("当前serverIp:" + this.serverIp);
             break;
           }
         }
@@ -503,7 +513,8 @@ export default {
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",
-          strPlatform: this.strPlatform
+          strPlatform: this.strPlatform,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -513,45 +524,14 @@ export default {
             this.total = successResponse.data.data.total;
             this.mapDate();
           } else {
+            this.tableData =[];
+            this.total =0;
             console.log(this.responseResult);
             console.log("邮件列表获取失败");
           }
         })
         .catch(failResponse => {});
     },
-    getSendType() {
-      this.$axios
-        .post(this.url + "/getSendEmailSendType", {})
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("邮件发送类别获取成功");
-            this.sendTypeList = successResponse.data.data.list;
-          } else {
-            console.log(this.responseResult);
-            console.log("邮件发送类别获取失败");
-            this.$message.error("邮件发送类别获取失败");
-          }
-        })
-        .catch(failResponse => {});
-    },
-    getEmailType() {
-      this.$axios
-        .post(this.url + "/getSendEmailEmailType", {})
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("邮件消息类别获取成功");
-            this.EmailTypeList = successResponse.data.data.list;
-          } else {
-            console.log(this.responseResult);
-            console.log("邮件消息类别获取失败");
-            this.$message.error("邮件消息类别获取失败");
-          }
-        })
-        .catch(failResponse => {});
-    },
-    getServerIp() {},
     getData() {
       var userData = JSON.parse(localStorage.getItem("userData"));
       this.userId = userData.id;
@@ -612,7 +592,8 @@ export default {
           playerAccountList: this.form.playerAccountList,
           playerIdList: this.form.playerIdList,
 
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         };
         if(this.form.playerNameList=="" && this.form.playerIdList==""){
             this.$message("请输入其中一项角色信息");
@@ -627,7 +608,8 @@ export default {
           emailContent: this.form.emailContent,
           sendReason: this.form.sendReason,
           sendType: 3,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         };
       }
       this.$axios
@@ -680,7 +662,8 @@ export default {
           playerNameList: this.form.playerNameList,
           playerAccountList: this.form.playerAccountList,
           playerIdList: this.form.playerIdList,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         };
       }
       if (this.form.sendType == 3) {
@@ -692,7 +675,8 @@ export default {
           emailContent: this.form.emailContent,
           sendReason: this.form.sendReason,
           sendType: 3,
-          addUser: this.userId
+          addUser: this.userId,
+          gameId:this.$gameId
         };
       }
       this.$axios
@@ -797,7 +781,8 @@ export default {
           emailContent: item.emailContent,
           sendType: item.sendType,
           playerNameList: item.playerNameList,
-          playerIdList: item.playerIdList
+          playerIdList: item.playerIdList,
+          gameId:this.$gameId
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

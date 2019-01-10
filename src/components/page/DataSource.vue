@@ -20,7 +20,7 @@
                 <el-select
                 v-model="searchKey.platformId"
                 @change="selectPlatform"
-                placeholder="请选择平台"
+                placeholder="筛选平台"
                 class="handle-select mr10"
                 >
                 <el-option key="0" label="全部" value="0"></el-option>
@@ -35,9 +35,9 @@
                 <span class="grid-content bg-purple-light">数据源地址：</span>
                 <el-input
                 v-model="searchKey.dataSource_url"
-                placeholder="数据源地址"
+                placeholder="筛选数据源地址"
                 class="handle-input"
-                style="width:120px"
+                style="width:320px"
                 ></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
@@ -282,6 +282,7 @@ import formatDatetime from "../../code/formatDatetime";
                     isPage:"isPage",
                     id:'',
                     platformId:this.searchKey.platformId,
+                    dataSource_url:this.searchKey.dataSource_url,
                     gameId:this.$gameId
                 }).then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
@@ -436,6 +437,7 @@ import formatDatetime from "../../code/formatDatetime";
                     addDatetime: '',
                     isDelete:''
                 }
+                this.mapPlatform();
                 if(this.platformOptions==undefined){
                     return;
                 }
@@ -443,17 +445,45 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.info("暂无可添加数据源的平台");
                     return;
                 }
-                this.mapPlatform();
+                
                 this.addplatformVisible = true;
+            },
+            checkDataSourceId(dataSourceId,platformId,id){
+                for(var i = 0;i<this.tableData.length;i++){
+                    if(id!=null){
+                        if(dataSourceId==this.tableData[i].dataSource_id && platformId == this.tableData[i].platformId && this.tableData[i].id!=id){
+                            return false;
+                        }
+                    }else{
+                        if(dataSourceId==this.tableData[i].dataSource_id && platformId == this.tableData[i].platformId){
+                            return false;
+                        }
+                    }
+                }
+                return true;
             },
             saveAddplatform(){
                 if(this.form.dataSource_id==""){
                     console.log("数据源Id不能为空");
                     this.$message.error("数据源Id不能为空");
+                    return;
                 }else if(this.form.dataSource_url==""){
                     console.log("数据源地址不能为空");
                     this.$message.error("数据源地址不能为空");
+                    return;
+                }
+                else if(this.form.platformId==""){
+                    console.log("平台Id不能为空");
+                    this.$message.error("平台Id不能为空");
+                    return;
                 }else{
+
+                    if(!this.checkDataSourceId(this.form.dataSource_id,this.form.platformId)){
+                        console.log("数据源Id重复");
+                        this.$message.error("数据源Id重复");
+                        return;
+                    }
+
                     this.$axios.post(this.url+'/api/db/addDataSource',{
                         platformId: this.form.platformId,
                         addUser:this.form.addUser,
@@ -482,6 +512,26 @@ import formatDatetime from "../../code/formatDatetime";
             },
             // 保存编辑
             saveEdit() {
+                if(this.form.dataSource_id==""){
+                    console.log("数据源Id不能为空");
+                    this.$message.error("数据源Id不能为空");
+                    return;
+                }else if(this.form.dataSource_url==""){
+                    console.log("数据源地址不能为空");
+                    this.$message.error("数据源地址不能为空");
+                    return;
+                }
+                else if(this.form.platformId==""){
+                    console.log("平台Id不能为空");
+                    this.$message.error("平台Id不能为空");
+                    return;
+                }else{
+
+                    if(!this.checkDataSourceId(this.form.dataSource_id,this.form.platformId,this.form.id)){
+                        console.log("数据源Id重复");
+                        this.$message.error("数据源Id重复");
+                        return;
+                    }
                 this.$axios.post(this.url+'/api/db/editDataSource',{
                     id:this.form.id,
                     platformId: this.form.platformId,
@@ -489,7 +539,7 @@ import formatDatetime from "../../code/formatDatetime";
                     dataSource_id:this.form.dataSource_id,
                     dataSource_url:this.form.dataSource_url,
                     dataSource_name:this.form.dataSource_name,
-                    dataSource_password:this.form.dataSource_passwordl,
+                    dataSource_password:this.form.dataSource_password,
                     gameId:this.$gameId
                 })
                 .then(successResponse =>{
@@ -506,6 +556,7 @@ import formatDatetime from "../../code/formatDatetime";
                     this.$message.error("数据源信息修改失败");
                 })
                 this.editVisible = false;  
+                }
             },
             // 确定删除
             deleteRow(){

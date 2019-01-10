@@ -81,7 +81,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="noticeTitle" label="标题"></el-table-column>
+        <el-table-column prop="noticeTitle" label="标题" width="200"></el-table-column>
         <el-table-column prop="noticeContent" label="内容" width="300"></el-table-column>
         <el-table-column prop="propList" label="道具列表" width="175">
           <template slot-scope="scope">
@@ -205,12 +205,12 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:515px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
+            <el-input style="width:575px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
-              style="width:515px"
+              style="width:575px"
               placeholder="请输入发送内容"
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
@@ -382,12 +382,12 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:180px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
+            <el-input style="width:575px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
-              style="width:515px"
+              style="width:575px"
               placeholder="请输入发送内容"
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"

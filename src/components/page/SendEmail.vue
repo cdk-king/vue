@@ -51,7 +51,7 @@
 
               <el-form-item label="标题">
                 <el-input
-                  style="width:515px"
+                  style="width:430px"
                   placeholder="请输入标题"
                   v-model="form.emailTitle"
                   clearable
@@ -59,10 +59,10 @@
               </el-form-item>
               <el-form-item label="邮件内容">
                 <el-input
-                  style="width:515px"
+                  style="width:430px"
                   placeholder="请输入说明"
                   type="textarea"
-                  :autosize="{ minRows:4, maxRows: 10}"
+                  :autosize="{ minRows:6, maxRows: 10}"
                   v-model="form.emailContent"
                   v-on:change="changeContent"
                   clearable
@@ -252,14 +252,14 @@
         </el-form-item>
 
         <el-form-item label="标题">
-          <el-input style="width:515px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
+          <el-input style="width:430px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
         </el-form-item>
         <el-form-item label="邮件内容">
           <el-input
-            style="width:515px"
+            style="width:430px"
             placeholder="请输入邮件内容"
             type="textarea"
-            :autosize="{ minRows:4, maxRows: 10}"
+            :autosize="{ minRows:6, maxRows: 10}"
             v-model="form.emailContent"
             v-on:change="changeContent"
             clearable

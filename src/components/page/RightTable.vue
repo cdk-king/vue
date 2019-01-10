@@ -14,7 +14,7 @@
 
         <el-select
           v-model="searchKey.state"
-          placeholder="筛选"
+          placeholder="筛选状态"
           @change="stateSelect"
           class="handle-select mr10"
         >

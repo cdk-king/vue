@@ -14,7 +14,7 @@
 
         <el-select
           v-model="searchKey.state"
-          placeholder="筛选"
+          placeholder="筛选状态"
           @change="stateSelect"
           class="handle-select mr10"
         >
@@ -69,18 +69,28 @@
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
         <el-table-column prop="addUser" width="120" label="添加人"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
+        <el-table-column label="操作" align="center" v-if="handleVisible" width="400" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleManageRight(scope.$index, scope.row)"
-            >管理权限</el-button>
+            >拖拽管理权限</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="handleTransferRight(scope.$index, scope.row)"
+            >穿梭管理权限</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
             >编辑</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="handleEditRight(scope.$index, scope.row)"
+            >编辑权限</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
@@ -210,6 +220,53 @@
       </span>
     </el-dialog>
 
+    <!-- 编辑权限弹出框 -->
+    <el-dialog
+      title="编辑角色权限"
+      :modal="false"
+      :close-on-click-modal="false"
+      :visible.sync="editRightVisible"
+      width="800px"
+    >
+    <el-form ref="form" :model="form" label-width="100px">
+        <el-form-item label="权限">
+          <el-input
+            style="width:600px"
+            type="textarea"
+            :autosize="{ minRows:10, maxRows: 20}"
+            v-model="editRights"
+            clearable
+          ></el-input>
+          </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editRightVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveEditRight">确 定</el-button>
+      </span>
+    </el-dialog>
+
+        <!-- 添加权限穿梭框 -->
+    <el-dialog title="管理权限" :visible.sync="roleAddRightVisible" width="600px" center>
+      <template >
+        <el-transfer
+          filterable
+          v-model="checkRightData"
+          :props="{
+          key: 'value',
+          label: 'desc'
+        }"
+          :data="otherRightData"
+          :titles="['其他权限', '已选权限']"
+          :button-texts="['移除', '添加']"
+        ></el-transfer>
+      </template>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="roleAddRightVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveCheckRight">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 编辑冻结提示框 -->
     <el-dialog title="冻结提示" :visible.sync="changeStateToFrozenVisible" width="300px" center>
       <div class="del-dialog-cnt">冻结后将停止角色使用，是否确定冻结？</div>
@@ -280,7 +337,8 @@ export default {
         role_describe: "",
         addUser: "",
         addDatetime: "",
-        state: ""
+        state: "",
+        rights:""
       },
       searchKey: {
         id: "",
@@ -302,7 +360,12 @@ export default {
       },
       todo: [],
       doing: [],
-      done: []
+      done: [],
+      editRightVisible:false,
+      editRights:"",
+      otherRightData: [],
+      checkRightData: [],
+      roleAddRightVisible:false
     };
   },
   components: {
@@ -373,6 +436,8 @@ export default {
             this.tableData = this.mapData(successResponse.data.data.list);
             this.total = successResponse.data.data.total;
           } else {
+            this.tableData = [];
+            this.total =0;
             console.log(this.responseResult);
             this.$message.error("角色列表获取失败");
           }
@@ -394,7 +459,11 @@ export default {
                 }
               }
             }
+          }else{
+            item.rights = [];
           }
+        }else{
+          item.rights = [];
         }
       });
       return obj;
@@ -413,6 +482,89 @@ export default {
     },
     filterTag(value, row) {
       return row.tag === value;
+    },
+    saveCheckRight(){
+      const item = this.tableData[this.idx];
+      var data = [];
+      if(item.rights!=null){
+        for(var i = 0;i<item.rights.length;i++){
+            data.push(parseInt( item.rights[i].split("#cdk#")[0]));
+        }
+      }
+
+        var deleteRoleRights = "";
+        var InsertRoleRights = "";
+        var list = this.checkRightData;
+        var oldList = data;
+
+        for(var j = 0;j<oldList.length;j++){
+            for(i = 0;i<list.length;i++){
+                if(oldList[j]==list[i]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+            }
+        }
+
+        for (i = 0; i < list.length; i++) {
+              InsertRoleRights += list[i];
+          if (i != list.length - 1) {
+            InsertRoleRights += ",";
+          }
+        }
+
+        for (i = 0; i < oldList.length; i++) {
+          deleteRoleRights += oldList[i];
+          if (i != oldList.length - 1) {
+            deleteRoleRights += ",";
+          }
+        }
+        console.log(InsertRoleRights);
+        console.log(deleteRoleRights);
+
+        this.InsertRoleRights(InsertRoleRights,deleteRoleRights);
+        this.roleAddRightVisible = false;
+    },
+    handleEditRight(index, row){
+        this.idx = index;
+        this.form.id = this.tableData[index].id;
+        var item = this.tableData[index];
+        if(item.rights=="" || item.rights ==null){
+          this.editRights = "";
+        }else{
+          this.editRights = item.rights.toString().replace(/#cdk#/g,"-");
+        }
+        
+        this.editRightVisible = true;
+    },
+    handleTransferRight(index, row){
+        this.idx = index;
+        const item = this.tableData[index];
+        this.form.id = this.tableData[index].id;
+        this.id = item.id;
+        this.generateAllRightData();
+        var data = [];
+        if(item.rights!=null){
+          for(var i = 0;i<item.rights.length;i++){
+              data.push(parseInt( item.rights[i].split("#cdk#")[0]));
+          }
+        }
+        this.checkRightData = data;
+        this.roleAddRightVisible = true;
+    },
+    generateAllRightData() {
+      var len = this.rightData.length;
+      const data = [];
+      for (let i = 0; i < len; i++) {
+        data.push({
+          value: this.rightData[i].id,
+          desc: this.rightData[i].rightName + "",
+          disabled: false
+        });
+      }
+      this.otherRightData = data;
     },
     handleManageRight(index, row) {
       this.getData();
@@ -537,6 +689,95 @@ export default {
         state: ""
       };
     },
+    saveEditRight(){
+        const item = this.tableData[this.idx];
+        var deleteRoleRights = "";
+        var InsertRoleRights = "";
+        var temp = "";
+        if(this.editRights!="" && this.editRights!=null){
+            var list = this.editRights.split(',');
+        }else{
+          var list = [];
+        }
+        if(item.rights!="" && item.rights!=null){
+            var oldList = item.rights;
+        }else{
+          var oldList = [];
+        }
+        
+        //去重
+        var hash=[];
+        for (var i = 0; i < list.length; i++) {
+          for (var j = i+1; j < list.length; j++) {
+            var a = "";
+            var b = "";
+            if(!list[i].indexOf("-")){
+                a = list[i];
+            }else{
+                a = list[i].split("-")[0];
+            }
+            if(!list[j].indexOf("-")){
+                b = list[j];
+            }else{
+                b = list[j].split("-")[0];
+            }
+
+            if(a==b){
+              ++i;
+            }
+          }
+          hash.push(list[i]);
+        }
+        list = hash;
+        console.log(JSON.stringify(list));
+
+        for(j = 0;j<oldList.length;j++){
+            for(i = 0;i<list.length;i++){
+              if( !list[i].indexOf("-")){
+                temp += list[i]+",";
+                if(oldList[j].split("#cdk#")[0]==list[i]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+              }else{
+                temp += list[i].split("-")[0]+",";
+                if(oldList[j].split("#cdk#")[0]==list[i].split("-")[0]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+              }
+            }
+        }
+
+        for (i = 0; i < list.length; i++) {
+
+          if(!list[i].indexOf("-")){
+              InsertRoleRights += list[i];
+          }else{
+              InsertRoleRights += list[i].split("-")[0];
+          }
+
+          if (i != list.length - 1) {
+            InsertRoleRights += ",";
+          }
+        }
+
+        for (i = 0; i < oldList.length; i++) {
+          deleteRoleRights += oldList[i].split("#cdk#")[0];
+          if (i != oldList.length - 1) {
+            deleteRoleRights += ",";
+          }
+        }
+        console.log(InsertRoleRights);
+        console.log(deleteRoleRights);
+
+        this.InsertRoleRights(InsertRoleRights,deleteRoleRights);
+        this.editRightVisible = false;
+    },
     saveManageRight() {
       var deleteRoleRights = "";
       var InsertRoleRights = "";
@@ -612,6 +853,7 @@ export default {
             this.getData();
             var userId = JSON.parse(localStorage.getItem("userData")).id;
             Utils.getUserAllRight(userId, this.url);
+            
           } else {
             console.log(this.responseResult);
             this.$message.error("角色权限删除失败");

@@ -8,7 +8,7 @@
         <div class="container">
             <div class="handle-box">
                 <span class="grid-content bg-purple-light">平台：</span>
-                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="请选择平台" class="handle-select mr10">
+                <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="筛选平台" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
                         <el-option
                         v-for="item in platformOptions"
@@ -18,7 +18,7 @@
                         </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">选择服务器</span>
-                <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="请选择服务器" style="width:150px">
+                <el-select v-model="searchKey.serverId" @change="selectServer" placeholder="筛选服务器" style="width:150px">
                     <el-option
                     v-for="item in serverOptions"
                     :key="item.serverId"

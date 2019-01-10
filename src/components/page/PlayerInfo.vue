@@ -115,18 +115,18 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="platform"  label="平台" >
-                    <template slot-scope="">
-                            <span  style="color:#000000">{{getPlatformName(platformValue)}}</span>
+                    <template slot-scope="scope">
+                            <span  style="color:#000000" >{{getPlatformName(platformValue,scope)}}</span>
 
                     </template>
                 </el-table-column>
                 <el-table-column prop="server"  label="服务器" >
-                    <template slot-scope="">
-                            <span style="color:#000000">{{getServerName(serverValue) }}</span>
+                    <template slot-scope="scope">
+                            <span style="color:#000000">{{getServerName(serverValue,scope) }}</span>
                     </template>
                 </el-table-column>
                 
-                <el-table-column label="操作"  align="center" v-if="handleVisible">
+                <el-table-column label="操作"  align="center" v-if="handleVisible" >
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-info" @click="handleDetail(scope.$index, scope.row)" >详细信息</el-button>
                         
@@ -488,24 +488,22 @@ export default {
         data() {
         return this.tableData;
         },
-        cdk: function() {
-        return this.$cdk;
-        },
         ms_username: function() {
         const role = localStorage.getItem("ms_username");
         return role;
         },
         getPlatformName(){
-            return function(platformId){
+            return function(platformId,scope){
                 for(var i = 0;i<this.platformOptions.length;i++){
                     if(this.platformOptions[i].platformId==platformId){
                         return this.platformOptions[i].platform;
                     }
                 }
+                return "1231"
             }
         },
         getServerName(){
-            return function(serverId){
+            return function(serverId,scope){
                 for(var i = 0;i<this.serverOptions.length;i++){
                     if(this.serverOptions[i].serverId==serverId){
                         return this.serverOptions[i].serverName;

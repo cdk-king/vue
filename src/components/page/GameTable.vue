@@ -289,7 +289,8 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: item.addUser,
                     addDatetime: item.addDatetime,
                     state:item.state,
-                    gameEncryptSign:item.gameEncryptSign
+                    gameEncryptSign:item.gameEncryptSign,
+                    serverApi:item.serverApi
                 }
                 this.editVisible = true;
             },
@@ -360,7 +361,8 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: '',
                     addDatetime: '',
                     state:'',
-                    gameEncryptSign:''
+                    gameEncryptSign:'',
+                    serverApi:''
                 }
             },
             saveAddGame(){

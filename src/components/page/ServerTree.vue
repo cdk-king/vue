@@ -7,20 +7,20 @@
         </div>
         <div class="container">
           <div class="custom-tree-container">
-  <div class="block">
-    <p>树形结构列表</p>
-    <el-tree  class="el-tree"
-      :data="treeData"
-      show-checkbox
-      node-key="id"
-      default-expand-all
-      :expand-on-click-node="false"
-      :render-content="renderContent">
-    </el-tree>
-  </div>
-</div>
+          <div class="block">
+            <p>树形结构列表</p>
+            <el-tree  class="el-tree"
+              :data="treeData"
+              show-checkbox
+              node-key="id"
+              default-expand-all
+              :expand-on-click-node="false"
+              :render-content="renderContent">
+            </el-tree>
+          </div>
+        </div>
 
-<el-dialog title="具体信息" :visible.sync="showVisible">
+        <el-dialog title="具体信息" :visible.sync="showVisible">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
                 <span>{{form.gameName}}/{{form.platform}}</span>
@@ -55,11 +55,11 @@
 
 
             </el-card>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="showVisible = false">取 消</el-button>
-    <el-button type="primary" @click="showVisible = false">确 定</el-button>
-  </div>
-</el-dialog>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="showVisible = false">取 消</el-button>
+              <el-button type="primary" @click="showVisible = false">确 定</el-button>
+            </div>
+          </el-dialog>
 
 
         <!-- 编辑弹出框 -->
@@ -561,7 +561,7 @@ export default {
           <span style="font-size:16px">{node.label}</span>
           <span>
             <el-button
-              style="position: absolute;right:350px;font-size:14px;vertical-align: middle;"
+              style="position: absolute;right:250px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"
               on-click={() => this.watch(node, data)}
@@ -570,22 +570,13 @@ export default {
               查看
             </el-button>
             <el-button
-              style="position: absolute;right:250px;font-size:14px;vertical-align: middle;"
+              style="position: absolute;right:150px;font-size:14px;vertical-align: middle;"
               size="mini"
               type="text"
               on-click={() => this.edit(node, data)}
               icon="el-icon-edit"
             >
               编辑
-            </el-button>
-            <el-button
-              style="position: absolute;right:150px;font-size:14px;vertical-align: middle;"
-              size="mini"
-              type="text"
-              on-click={() => this.append(node,data)}
-              icon="el-icon-circle-plus-outline"
-            >
-              添加
             </el-button>
             <el-button
               class="red"

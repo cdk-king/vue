@@ -14,7 +14,7 @@
 
         <el-select
           v-model="searchKey.state"
-          placeholder="筛选"
+          placeholder="筛选状态"
           @change="stateSelect"
           class="handle-select mr10"
         >
@@ -51,9 +51,9 @@
       >
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="account" label="账号" width="100"></el-table-column>
-        <el-table-column prop="name" label="用户名" width="100"></el-table-column>
-        <el-table-column label="角色" width="120">
+        <el-table-column prop="account" label="账号"></el-table-column>
+        <el-table-column prop="name" label="用户名"></el-table-column>
+        <el-table-column label="角色" >
           <template slot-scope="role">
             <ul>
               <li v-for="item in role.row.roles" v-bind:key="item">{{ item | filters_roleItem }}</li>
@@ -61,34 +61,42 @@
           </template>
         </el-table-column>
         <el-table-column prop="state" label="状态" width="80" :formatter="formatState"></el-table-column>
-        <el-table-column prop="phone" label="手机" width="120"></el-table-column>
-        <el-table-column prop="email" label="邮箱" width="120"></el-table-column>
+        <el-table-column prop="phone" label="手机" width="120" ></el-table-column>
+        <el-table-column prop="email" label="邮箱" ></el-table-column>
         <el-table-column
           prop="addDatetime"
-          width="120"
           label="创建时间"
           :formatter="formatter"
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
         <el-table-column
           prop="lastDatetime"
-          width="120"
           label="更新时间"
           :formatter="formatter"
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
+        <el-table-column label="操作" align="center" width="400" v-if="handleVisible" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleManageRole(scope.$index, scope.row)"
-            >管理角色</el-button>
+            >拖拽管理角色</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="handleTransferRole(scope.$index, scope.row)"
+            >穿梭管理角色</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
             >编辑</el-button>
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="handleEditRole(scope.$index, scope.row)"
+            >编辑权限</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
@@ -230,6 +238,53 @@
       </span>
     </el-dialog>
 
+    <!-- 编辑角色弹出框 -->
+    <el-dialog
+      title="编辑用户角色"
+      :modal="false"
+      :close-on-click-modal="false"
+      :visible.sync="editRoleVisible"
+      width="800px"
+    >
+    <el-form ref="form" :model="form" label-width="100px">
+        <el-form-item label="角色">
+          <el-input
+            style="width:600px"
+            type="textarea"
+            :autosize="{ minRows:10, maxRows: 20}"
+            v-model="editRoles"
+            clearable
+          ></el-input>
+          </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editRoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveEditRole">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 添加角色穿梭框 -->
+    <el-dialog title="管理角色" :visible.sync="userAddRoleVisible" width="600px" center>
+      <template >
+        <el-transfer
+          filterable
+          v-model="checkRoleData"
+          :props="{
+          key: 'value',
+          label: 'desc'
+        }"
+          :data="otherRoleData"
+          :titles="['其他角色', '已选角色']"
+          :button-texts="['移除', '添加']"
+        ></el-transfer>
+      </template>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="userAddRoleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveCheckRole">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 编辑密码弹出框 -->
     <el-dialog
       title="修改密码"
@@ -292,6 +347,7 @@
 <script>
 import draggable from "vuedraggable";
 import md5 from "js-md5";
+import Utils from "../../UtilsJs/Utils";
 import setLocalThisUrl from "../../code/setLocalThisUrl";
 import formatDatetime from "../../code/formatDatetime";
 export default {
@@ -359,7 +415,12 @@ export default {
       ],
       done: [
 
-      ]
+      ],
+      editRoles:"",
+      editRoleVisible:false,
+      checkRoleData:[],
+      otherRoleData:[],
+      userAddRoleVisible:false
     };
   },
   components: {
@@ -462,7 +523,11 @@ export default {
                 }
               }
             }
+          }else{
+            item.roles =[];
           }
+        }else{
+            item.roles =[];
         }
       });
       return obj;
@@ -482,6 +547,18 @@ export default {
     },
     filterTag(value, row) {
       return row.tag === value;
+    },
+    handleEditRole(index, row){
+        this.idx = index;
+        this.form.id = this.tableData[index].id;
+        var item = this.tableData[index];
+        if(item.roles=="" || item.roles ==null){
+          this.editRoles = "";
+        }else{
+          this.editRoles = item.roles.toString().replace(/#cdk#/g,"-");
+        }
+        
+        this.editRoleVisible = true;
     },
     handleManageRole(index, row) {
       this.idx = index;
@@ -618,6 +695,209 @@ export default {
         email: ""
       };
     },
+    handleTransferRole(index, row){
+        this.idx = index;
+        const item = this.tableData[index];
+        this.form.id = this.tableData[index].id;
+        this.id = item.id;
+        this.generateAllRoleData();
+        var data = [];
+        if(item.roles!=null){
+          for(var i = 0;i<item.roles.length;i++){
+              data.push(parseInt( item.roles[i].split("#cdk#")[0]));
+          }
+        }
+        this.checkRoleData = data;
+        this.userAddRoleVisible = true;
+    },
+    generateAllRoleData() {
+      var len = this.roleData.length;
+      const data = [];
+      for (let i = 0; i < len; i++) {
+        data.push({
+          value: this.roleData[i].id,
+          desc: this.roleData[i].role + "",
+          disabled: false
+        });
+      }
+      this.otherRoleData = data;
+    },
+    saveCheckRole(){
+      const item = this.tableData[this.idx];
+      var data = [];
+      if(item.roles!=null){
+        for(var i = 0;i<item.roles.length;i++){
+            data.push(parseInt( item.roles[i].split("#cdk#")[0]));
+        }
+      }
+
+        var deleteUserRoles = "";
+        var InsertUserRoles = "";
+        var list = this.checkRoleData;
+        var oldList = data;
+
+        for(var j = 0;j<oldList.length;j++){
+            for(i = 0;i<list.length;i++){
+                if(oldList[j]==list[i]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+            }
+        }
+
+        for (i = 0; i < list.length; i++) {
+              InsertUserRoles += list[i];
+          if (i != list.length - 1) {
+            InsertUserRoles += ",";
+          }
+        }
+
+        for (i = 0; i < oldList.length; i++) {
+          deleteUserRoles += oldList[i];
+          if (i != oldList.length - 1) {
+            deleteUserRoles += ",";
+          }
+        }
+        console.log(InsertUserRoles);
+        console.log(deleteUserRoles);
+
+        this.InsertUserRoles(InsertUserRoles,deleteUserRoles);
+        this.roleAddRightVisible = false;
+        
+    },
+    saveEditRole(){
+        const item = this.tableData[this.idx];
+        var deleteUserRoles = "";
+        var InsertUserRoles = "";
+        var temp = "";
+        if(this.editRoles!="" && this.editRoles!=null){
+            var list = this.editRoles.split(',');
+        }else{
+          var list = [];
+        }
+        if(item.roles!="" && item.roles!=null){
+            var oldList = item.roles;
+        }else{
+          var oldList = [];
+        }
+        
+        //去重
+        var hash=[];
+        for (var i = 0; i < list.length; i++) {
+          for (var j = i+1; j < list.length; j++) {
+            var a = "";
+            var b = "";
+            if(!list[i].indexOf("-")){
+                a = list[i];
+            }else{
+                a = list[i].split("-")[0];
+            }
+            if(!list[j].indexOf("-")){
+                b = list[j];
+            }else{
+                b = list[j].split("-")[0];
+            }
+
+            if(a==b){
+              ++i;
+            }
+          }
+          hash.push(list[i]);
+        }
+        list = hash;
+        console.log(JSON.stringify(list));
+
+        for(j = 0;j<oldList.length;j++){
+            for(i = 0;i<list.length;i++){
+              if( !list[i].indexOf("-")){
+                temp += list[i]+",";
+                if(oldList[j].split("#cdk#")[0]==list[i]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+              }else{
+                temp += list[i].split("-")[0]+",";
+                if(oldList[j].split("#cdk#")[0]==list[i].split("-")[0]){
+                    oldList.splice(j,1);
+                    list.splice(i,1);
+                    j--;
+                    i = list.length;
+                }
+              }
+            }
+        }
+
+        for (i = 0; i < list.length; i++) {
+
+          if(!list[i].indexOf("-")){
+              InsertUserRoles += list[i];
+          }else{
+              InsertUserRoles += list[i].split("-")[0];
+          }
+
+          if (i != list.length - 1) {
+            InsertUserRoles += ",";
+          }
+        }
+
+        for (i = 0; i < oldList.length; i++) {
+          deleteUserRoles += oldList[i].split("#cdk#")[0];
+          if (i != oldList.length - 1) {
+            deleteUserRoles += ",";
+          }
+        }
+        console.log(InsertUserRoles);
+        console.log(deleteUserRoles);
+
+        this.InsertUserRoles(InsertUserRoles,deleteUserRoles);
+        this.editRoleVisible = false;
+    },
+    InsertUserRoles(InsertUserRoles,deleteUserRoles){
+        //添加角色处理
+      this.$axios
+        .post(this.url + "/insertUserRoles", {
+          id: this.form.id,
+          InsertUserRoles: InsertUserRoles
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            console.log("用户角色添加成功");
+            this.$message.success("用户角色添加成功");
+            this.deleteUserRoles(deleteUserRoles);
+          } else {
+            console.log(this.responseResult);
+            this.$message.error("用户角色添加失败");
+          }
+        })
+        .catch(failResponse => {});
+    },
+    deleteUserRoles(deleteUserRoles){
+        //删除角色处理
+      this.$axios
+        .post(this.url + "/deleteUserRoles", {
+          id: this.form.id,
+          deleteUserRoles: deleteUserRoles
+        })
+        .then(successResponse => {
+          this.responseResult = "\n" + JSON.stringify(successResponse.data);
+          if (successResponse.data.code === 200) {
+            this.$message.success("用户角色编辑完成");
+            this.getData();
+            var userId = JSON.parse(localStorage.getItem("userData")).id;
+            Utils.getUserAllRight(userId, this.url);
+          } else {
+            console.log(this.responseResult);
+            this.$message.error("用户角色删除失败");
+          }
+        })
+        .catch(failResponse => {});
+      
+    },
     saveManageRole() {
       var deleteUserRoles = "";
       var InsertUserRoles = "";
@@ -654,41 +934,7 @@ export default {
       //还原操作前的数据
       this.doing = oldDoing;
       this.done = olddone;
-      //添加角色处理
-      this.$axios
-        .post(this.url + "/insertUserRoles", {
-          id: this.form.id,
-          InsertUserRoles: InsertUserRoles
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            console.log("用户角色添加成功");
-            this.$message.success("用户角色添加成功");
-            this.getData();
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("用户角色添加失败");
-          }
-        })
-        .catch(failResponse => {});
-      //删除角色处理
-      this.$axios
-        .post(this.url + "/deleteUserRoles", {
-          id: this.form.id,
-          deleteUserRoles: deleteUserRoles
-        })
-        .then(successResponse => {
-          this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          if (successResponse.data.code === 200) {
-            this.$message.success("用户角色编辑完成");
-            this.getData();
-          } else {
-            console.log(this.responseResult);
-            this.$message.error("用户角色删除失败");
-          }
-        })
-        .catch(failResponse => {});
+      this.InsertUserRoles(InsertUserRoles,deleteUserRoles);
       this.ManageRoleVisible = false;
     },
     saveAddUser() {

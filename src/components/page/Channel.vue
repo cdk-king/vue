@@ -21,7 +21,7 @@
           class="handle-select mr10"
           v-model="searchKey.platformId"
           filterable
-          placeholder="请选择平台"
+          placeholder="筛选平台"
         >
           <el-option
             v-for="item in platformList"
@@ -459,6 +459,7 @@ export default {
       for (let i = 0; i < length; i++) {
         str += this.multipleSelection[i].id + ",";
       }
+      str = str.substring(0,str.length-1);
       //批量删除处理
       this.$axios
         .post(this.url + "/api/channel/deleteChannel", {
@@ -502,14 +503,41 @@ export default {
       this.selectGame = "";
       this.selectRole = "";
     },
+    checkChannelId(channelId,platformId,id){
+      for(var i = 0;i<this.tableData.length;i++){
+          if(id!=null){
+              if(channelId==this.tableData[i].channelId && platformId == this.tableData[i].platformId && this.tableData[i].id!=id){
+                return false;
+              }
+          }else{
+              if(channelId==this.tableData[i].channelId && platformId == this.tableData[i].platformId){
+                return false;
+              }
+          }
+          
+      }
+      return true;
+    },
     saveAddchannel() {
       if (this.form.channel == "") {
         console.log("渠道名称不能为空");
         this.$message.error("渠道名称不能为空");
+        return;
+      } 
+      else if (this.form.channelId == "") {
+        console.log("渠道ID不能为空");
+        this.$message.error("渠道ID不能为空");
+        return;
       } else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
+        return;
       } else {
+        if(!this.checkChannelId(this.form.channelId,this.form.platformId)){
+            console.log("渠道Id重复");
+            this.$message.error("渠道Id重复");
+            return;
+        }
         this.$axios
           .post(this.url + "/api/channel/addChannel", {
             channelId: this.form.channelId,
@@ -539,6 +567,25 @@ export default {
     },
     // 保存编辑
     saveEdit() {
+      if (this.form.channel == "") {
+        console.log("渠道名称不能为空");
+        this.$message.error("渠道名称不能为空");
+        return;
+      } 
+      else if (this.form.channelId == "") {
+        console.log("渠道ID不能为空");
+        this.$message.error("渠道ID不能为空");
+        return;
+      } else if (this.form.platformId == "") {
+        console.log("所属平台不能为空");
+        this.$message.error("所属平台不能为空");
+        return;
+      } else {
+          if(!this.checkChannelId(this.form.channelId,this.form.platformId,this.form.id)){
+              console.log("渠道Id重复");
+              this.$message.error("渠道Id重复");
+              return;
+          }
       this.$axios
         .post(this.url + "/api/channel/editChannel", {
           id: this.form.id,
@@ -564,6 +611,7 @@ export default {
           this.$message.error("渠道信息修改失败");
         });
       this.editVisible = false;
+      }
     },
     // 确定冻结
     changeStateToFrozen() {

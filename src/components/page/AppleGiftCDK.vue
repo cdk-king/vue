@@ -18,8 +18,8 @@
 
       <div class="form-box">
         <el-form ref="form" :model="form" label-width="150px">
-          <el-form-item class="el-form-item" label="选择渠道">
-            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择渠道平台">
+          <el-form-item class="el-form-item" label="选择平台">
+            <el-select v-model="form.platformId" @change="selectPlatform" placeholder="请选择平台">
               <el-option
                 v-for="item in platformOptions"
                 :key="item.platformId"
@@ -72,7 +72,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectPlatform"
-          placeholder="请选择平台"
+          placeholder="筛选平台"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>

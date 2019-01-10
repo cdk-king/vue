@@ -70,8 +70,8 @@
 
         <el-table-column prop="server" label="服务器"></el-table-column>
 
-        <el-table-column prop="releaseTitle" label="标题"></el-table-column>
-        <el-table-column prop="releaseContent" label="内容" width="260px"></el-table-column>
+        <el-table-column prop="releaseTitle" label="标题" width="200px"></el-table-column>
+        <el-table-column prop="releaseContent" label="内容" width="300px"></el-table-column>
         <el-table-column prop="propList" label="道具列表" width="175px">
           <template slot-scope="scope">
             <p
@@ -164,13 +164,13 @@
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
-            <el-input style="width:515px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <el-input style="width:430px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input
-              style="width:515px"
+              style="width:430px"
               type="textarea"
-              :autosize="{ minRows:4, maxRows: 10}"
+              :autosize="{ minRows:6, maxRows: 10}"
               placeholder="请输入邮件内容"
               v-model="form.releaseContent"
               v-on:change="changeContent"
@@ -389,13 +389,13 @@
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
-            <el-input style="width:515px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <el-input style="width:430px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input
-              style="width:515px"
+              style="width:430px"
               type="textarea"
-              :autosize="{ minRows:4, maxRows: 10}"
+              :autosize="{ minRows:6, maxRows: 10}"
               placeholder="请输入邮件内容"
               v-model="form.releaseContent"
               v-on:change="changeContent"

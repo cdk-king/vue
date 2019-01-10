@@ -37,7 +37,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectPlatform"
-          placeholder="请选择平台"
+          placeholder="筛选平台"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -53,7 +53,7 @@
         <el-select
           v-model="searchKey.channelId"
           @change="selectChannel"
-          placeholder="请选择渠道"
+          placeholder="筛选渠道"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -261,9 +261,10 @@
     </el-dialog>
 
     <!-- 添加平台渠道提示框 -->
-    <el-dialog title="提示" :visible.sync="ServerAddChannelVisible" width="580px" center>
+    <el-dialog title="管理渠道" :visible.sync="ServerAddChannelVisible" width="580px" center>
       <template>
         <el-transfer
+          filterable
           v-model="checkchannelData"
           :props="{
           key: 'value',

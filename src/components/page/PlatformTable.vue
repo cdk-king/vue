@@ -16,9 +16,24 @@
                 <Divider />
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
+                <span class="grid-content bg-purple-light">游戏：</span>
+                <el-select
+                v-model="searchKey.gameId"
+                @change="selectGameChange"
+                placeholder="筛选游戏"
+                style="width:150px"
+                >
+                <el-option key="0" label="全部" value=""></el-option>
+                <el-option
+                    v-for="item in gameList"
+                    :key="item.id"
+                    :label="item.gameName"
+                    :value="item.id"
+                ></el-option>
+                </el-select>
                 <span class="grid-content bg-purple-light">状态：</span>
                 
-                <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
+                <el-select v-model="searchKey.state" placeholder="筛选状态" @change="stateSelect" class="handle-select mr10">
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>
@@ -29,10 +44,6 @@
 
                 <span class="grid-content bg-purple-light">平台标识：</span>
                 <el-input v-model="searchKey.platformTag" placeholder="筛选平台标识" class="handle-input " style="width:150px"></el-input>
-
-                <span class="grid-content bg-purple-light">游戏：</span>
-                <el-input v-model="searchKey.gameName" placeholder="筛选游戏" class="handle-input " style="width:150px"></el-input>
-
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleAddplatform">添加</el-button>
             </div>
@@ -260,6 +271,7 @@ import formatDatetime from "../../code/formatDatetime";
                     addDatetime: '',
                     state:'',
                     gameName:'',
+                    gameId:''
                 },
                 idx: -1,
                 responseResult:[],
@@ -276,6 +288,7 @@ import formatDatetime from "../../code/formatDatetime";
         },
         created() {
             setLocalThisUrl(this);
+            this.getGameList();
             this.getData();
             this.right();
             bus.$on('changeGameId',function(obj){
@@ -339,6 +352,9 @@ import formatDatetime from "../../code/formatDatetime";
                 this.cur_page = val;
                 this.getData();
             },
+            selectGameChange(){
+                this.getData();
+            },
             getData() {
                 this.$axios.post(this.url+'/getAllPlatform', {
                     pageNo: this.cur_page,
@@ -347,7 +363,7 @@ import formatDatetime from "../../code/formatDatetime";
                     platformId:'',
                     id:'',
                     platform:this.searchKey.platform,
-                    gameId:'',
+                    gameId:this.searchKey.gameId,
                     roleId:'',
                     platformTag:this.searchKey.platformTag,
                     platform_describe: this.searchKey.platform_describe,
@@ -470,17 +486,42 @@ import formatDatetime from "../../code/formatDatetime";
                 this.selectGame="";
                 this.selectRole="";
             },
+            checkPlatformId(gameId,platformId,id){
+                for(var i = 0;i<this.tableData.length;i++){
+                    if(id!=null){
+                        if(gameId==this.tableData[i].gameId && platformId == this.tableData[i].platformId && this.tableData[i].id!=id){
+                            return false;
+                        }
+                    }else{
+                        if(gameId==this.tableData[i].gameId && platformId == this.tableData[i].platformId){
+                            return false;
+                        }
+                    }
+                    
+                }
+                return true;
+            },
             saveAddplatform(){
                 if(this.form.platform==""){
                     console.log("平台名称不能为空");
                     this.$message.error("平台名称不能为空");
+                    return;
                 }else if(this.form.gameId==""){
                     console.log("所属游戏不能为空");
                     this.$message.error("所属游戏不能为空");
+                    return;
                 }else if(this.form.roleId==""){
                     console.log("对应角色不能为空");
                     this.$message.error("对应角色不能为空");
+                    return;
                 }else{
+
+                    if(!this.checkPlatformId(this.form.gameId,this.form.platformId)){
+                        console.log("平台Id重复");
+                        this.$message.error("平台Id重复");
+                        return;
+                    }
+
                     this.$axios.post(this.url+'/addPlatform',{
                         platformId: this.form.platformId,
                         platform:this.form.platform,
@@ -509,6 +550,25 @@ import formatDatetime from "../../code/formatDatetime";
             },
             // 保存编辑
             saveEdit() {
+                if(this.form.platform==""){
+                    console.log("平台名称不能为空");
+                    this.$message.error("平台名称不能为空");
+                    return;
+                }else if(this.form.gameId==""){
+                    console.log("所属游戏不能为空");
+                    this.$message.error("所属游戏不能为空");
+                    return;
+                }else if(this.form.roleId==""){
+                    console.log("对应角色不能为空");
+                    this.$message.error("对应角色不能为空");
+                    return;
+                }else{
+
+                    if(!this.checkPlatformId(this.form.gameId,this.form.platformId,this.form.id)){
+                        console.log("平台Id重复");
+                        this.$message.error("平台Id重复");
+                        return;
+                    }
                 this.$axios.post(this.url+'/editPlatform',{
                     id:this.form.id,
                     platformId: this.form.platformId,
@@ -534,6 +594,7 @@ import formatDatetime from "../../code/formatDatetime";
                 })
                 .catch(failResponse => {})
                 this.editVisible = false;  
+                }
             },
             // 确定冻结
             changeStateToFrozen(){

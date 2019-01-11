@@ -60,7 +60,7 @@
               <el-form-item label="邮件内容">
                 <el-input
                   style="width:430px"
-                  placeholder="请输入说明"
+                  placeholder="请输入邮件内容"
                   type="textarea"
                   :autosize="{ minRows:6, maxRows: 10}"
                   v-model="form.emailContent"
@@ -125,7 +125,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择平台"
+          placeholder="筛选平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -140,7 +140,7 @@
         <el-select
           v-model="searchKey.serverName"
           @change="selectSearchKeyServer"
-          placeholder="请选择服务器"
+          placeholder="筛选服务器"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>

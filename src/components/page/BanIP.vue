@@ -11,9 +11,9 @@
     <div class="container">
       <div class="plugins-tips">备注：
         <br>
-        （1）封禁物理IP地址；
+        封禁物理IP地址；
         <br>
-        （2）封禁操作为永久禁封,请谨慎操作；
+        时长单位为秒，不输入则为永久禁封；
       </div>
       <el-collapse v-model="activeNames"  v-if="handleVisible">
         <el-collapse-item title="折叠" name="1">
@@ -39,7 +39,6 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <Divider/>
               <el-form-item label="IP">
                 <el-input style="width:215px" placeholder="请输入IP" v-model="form.ip" clearable></el-input>
               </el-form-item>

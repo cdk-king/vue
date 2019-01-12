@@ -289,7 +289,7 @@
                 </span>
             </el-dialog>
             <!-- 编辑提示框 -->
-            <el-dialog title="提示" :visible.sync="dialogVisible" width="300px" center>
+            <el-dialog title="编辑提示" :visible.sync="dialogVisible" width="300px" center>
                 <div class="del-dialog-cnt">是否确定？</div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -297,7 +297,7 @@
                 </span>
             </el-dialog>
         <!-- 禁言提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
+        <el-dialog title="禁言提示" :visible.sync="ChangeToProhibitSpeak" width="300px" center>
             <div class="del-dialog-cnt" style="text-align:center;margin-bottom:20px;">是否确定禁言？</div>
 
             <el-form ref="form" :model="form" label-width="50px">
@@ -325,7 +325,7 @@
             </span>
         </el-dialog>
         <!-- 批量禁言提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeAllToProhibitSpeak" width="300px" center>
+        <el-dialog title="批量禁言提示" :visible.sync="ChangeAllToProhibitSpeak" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量禁言？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeAllToProhibitSpeak = false">取 消</el-button>
@@ -334,7 +334,7 @@
         </el-dialog>
 
         <!-- 解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
+        <el-dialog title="解除禁言提示" :visible.sync="ChangeProhibitSpeakToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定解除禁言？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeProhibitSpeakToNormal = false">取 消</el-button>
@@ -342,7 +342,7 @@
             </span>
         </el-dialog>
         <!-- 批量解除禁言提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeAllProhibitSpeakToNormal" width="300px" center>
+        <el-dialog title="批量解除禁言" :visible.sync="ChangeAllProhibitSpeakToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量解除禁言？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeAllProhibitSpeakToNormal = false">取 消</el-button>
@@ -351,7 +351,7 @@
         </el-dialog>
 
         <!-- 禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeToBan" width="300px" center>
+        <el-dialog title="禁封提示" :visible.sync="ChangeToBan" width="300px" center>
             <div class="del-dialog-cnt" style="text-align:center;margin-bottom:20px;">是否确定禁封？</div>
 
 
@@ -380,7 +380,7 @@
             </span>
         </el-dialog>
         <!-- 批量禁封提示框 -->
-        <el-dialog title="冻结提示" :visible.sync="ChangeAllToBan" width="300px" center>
+        <el-dialog title="批量禁封提示" :visible.sync="ChangeAllToBan" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量禁封？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeAllToBan = false">取 消</el-button>
@@ -389,7 +389,7 @@
         </el-dialog>
 
         <!-- 解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeBanToNormal" width="300px" center>
+        <el-dialog title="解除禁封提示" :visible.sync="ChangeBanToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定解除禁封？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeBanToNormal = false">取 消</el-button>
@@ -397,7 +397,7 @@
             </span>
         </el-dialog>  
         <!-- 批量解除禁封提示框 -->
-        <el-dialog title="解冻提示" :visible.sync="ChangeAllBanToNormal" width="300px" center>
+        <el-dialog title="批量解除禁封提示" :visible.sync="ChangeAllBanToNormal" width="300px" center>
             <div class="del-dialog-cnt">是否确定批量解除禁封？</div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="ChangeAllBanToNormal = false">取 消</el-button>

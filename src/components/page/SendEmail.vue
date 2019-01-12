@@ -218,7 +218,7 @@
       </div>
     </div>
     <!-- 编辑提示框 -->
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="900px" center>
+    <el-dialog title="编辑邮件" :visible.sync="dialogVisible" width="900px" center>
       <el-form ref="form" :model="form" label-width="250px">
         <el-form-item class="el-form-item" label="选择平台">
           <el-select
@@ -309,7 +309,7 @@
           </el-form-item>
         </div>
         <el-form-item label>
-          <el-button type="primary" icon="search" @click="saveEdit">提交</el-button>
+          <el-button type="primary" icon="search" @click="saveEdit">编辑</el-button>
           <el-button type="primary" icon="search" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>

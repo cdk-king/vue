@@ -395,6 +395,7 @@ import formatDatetime from "../../code/formatDatetime";
                     if(successResponse.data.code === 200){
                         this.$message.success("数据源批量删除成功");
                         this.multipleSelection = []; 
+                        this.getAllPlatform();
                         this.getData();
                     }else{
                         console.log(this.responseResult);
@@ -567,6 +568,7 @@ import formatDatetime from "../../code/formatDatetime";
                         this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                         if(successResponse.data.code === 200){
                             this.$message.success(`数据源删除成功`);
+                            this.getAllPlatform();
                             this.getData();
                         }else{
                             console.log(this.responseResult);

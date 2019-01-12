@@ -383,18 +383,23 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            this.tableData = successResponse.data.data.list;
-            this.total = successResponse.data.data.total;
+            if(successResponse.data.data.list.length==0){
+               this.tableData = [];
+               this.total =0;
+               
+            }else{
+              this.tableData = successResponse.data.data.list;
+              this.total = successResponse.data.data.total;
+            }
           } else {
             this.tableData =[];
             this.total = 0;
-            console.log(this.responseResult);
-            this.$message.error("渠道列表获取失败");
+            this.$message.success("渠道列表为空");
           }
         }).catch(failResponse => {
             this.tableData =[];
             this.total = 0;
-            this.$message.error("渠道列表获取失败");
+            //this.$message.error("渠道列表获取失败");
         });
     },
     search() {

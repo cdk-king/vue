@@ -553,4 +553,7 @@ export default {
 .form-box {
   width: 100%;
 }
+.red{
+    color: #ff0000;
+}
 </style>

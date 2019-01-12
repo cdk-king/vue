@@ -36,10 +36,10 @@
                     <div class="content-title">密码修改</div>
                     <el-form ref="form" :model="passwordform" label-width="100px" style="width:100%">
                         <el-form-item label="输入新密码">
-                            <el-input v-model="passwordform.newPassword" style="width:300px;float:left"></el-input>
+                            <el-input type="password" v-model="passwordform.newPassword" style="width:300px;float:left"></el-input>
                         </el-form-item>
                         <el-form-item label="确认新密码">
-                            <el-input v-model="passwordform.checkPassword" style="width:300px;float:left"></el-input>
+                            <el-input type="password" v-model="passwordform.checkPassword" style="width:300px;float:left"></el-input>
                         </el-form-item>
 
                     </el-form>

@@ -10,7 +10,7 @@
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">状态：</span>
                 
-                <el-select v-model="searchKey.state" placeholder="筛选" @change="stateSelect" class="handle-select mr10">
+                <el-select v-model="searchKey.state" placeholder="筛选状态" @change="stateSelect" class="handle-select mr10">
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="冻结" value="1"></el-option>
                      <el-option key="3" label="未冻结" value="2"></el-option>

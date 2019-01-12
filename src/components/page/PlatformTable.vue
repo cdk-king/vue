@@ -376,9 +376,16 @@ import formatDatetime from "../../code/formatDatetime";
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)
                     if(successResponse.data.code === 200){
                         console.log("平台列表获取成功"); 
-                        this.tableData = successResponse.data.data.list;
-                        this.total = successResponse.data.data.total;
+                        if(successResponse.data.data.list.length==0){
+                            this.tableData = [];
+                            this.total = 0;
+                        }else{
+                            this.tableData = successResponse.data.data.list;
+                            this.total = successResponse.data.data.total;
+                        }   
                     }else{
+                        this.tableData = [];
+                        this.total = 0;
                         console.log(this.responseResult);
                         this.$message.error("平台列表获取失败");
                     }

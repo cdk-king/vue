@@ -96,7 +96,7 @@
               type="text"
               icon="el-icon-edit"
               @click="handleEditRole(scope.$index, scope.row)"
-            >编辑权限</el-button>
+            >编辑角色</el-button>
             <el-button
               type="text"
               icon="el-icon-edit"
@@ -295,10 +295,10 @@
     >
       <el-form ref="form" :model="passwordform" label-width="100px">
         <el-form-item label="输入新密码">
-          <el-input v-model="passwordform.newPassword"></el-input>
+          <el-input type="password" v-model="passwordform.newPassword"></el-input>
         </el-form-item>
         <el-form-item label="确认新密码">
-          <el-input v-model="passwordform.checkPassword"></el-input>
+          <el-input type="password" v-model="passwordform.checkPassword"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

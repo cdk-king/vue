@@ -318,7 +318,7 @@
       </span>
     </el-dialog>
     <!-- 设置服务器状态提示框 -->
-    <el-dialog title="提示" :visible.sync="ChangeStateVisible" width="400px" center>
+    <el-dialog title="设置服务器状态" :visible.sync="ChangeStateVisible" width="400px" center>
       <el-form ref="form" :model="form" label-width="150px">
         <el-form-item class="el-form-item" label="设置服务器状态：">
           <el-select v-model="form.state" placeholder="设置服务器状态" class="handle-select mr10">
@@ -970,6 +970,13 @@ export default {
     },
     // 保存编辑
     saveEdit() {
+      if (this.form.server == "") {
+        console.log("服务器名称不能为空");
+        this.$message.error("服务器名称不能为空");
+      } else if (this.form.platformId == "") {
+        console.log("所属平台不能为空");
+        this.$message.error("所属平台不能为空");
+      } else {
       this.$axios
         .post(this.url + "/editServer", {
           id: this.form.id,
@@ -998,6 +1005,7 @@ export default {
         })
         .catch(failResponse => {});
       this.editVisible = false;
+      }
     },
     GMTToStr(time){
         let date = new Date(time)

@@ -36,8 +36,8 @@
                 </el-table-column>
                 <el-table-column prop="game_describe" label="描述" >
                 </el-table-column> 
-                <el-table-column prop="gameEncryptSign" label="加密标识" >
-                </el-table-column> 
+                <!-- <el-table-column prop="gameEncryptSign" label="加密标识" >
+                </el-table-column>  -->
                 <el-table-column prop="serverApi" label="服务器接口" width="210" >
                 </el-table-column> 
                 <el-table-column prop="state" label="状态" width="100" :formatter="formatState">
@@ -74,9 +74,9 @@
                 <el-form-item label="游戏描述">
                     <el-input v-model="form.game_describe"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏加密标识">
+                <!-- <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="服务器接口">
                     <el-input v-model="form.serverApi" ></el-input>
                 </el-form-item>
@@ -102,9 +102,9 @@
                 <el-form-item label="游戏描述">
                     <el-input v-model="form.game_describe"></el-input>
                 </el-form-item>
-                <el-form-item label="游戏加密标识">
+                <!-- <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="服务器接口">
                     <el-input v-model="form.serverApi"></el-input>
                 </el-form-item>
@@ -391,6 +391,7 @@ import formatDatetime from "../../code/formatDatetime";
                             this.$message.success("游戏添加成功");
                             this.tableData.push(this.form);
                             this.getData();
+                            this.addGameVisible = false;
                             //添加组件通讯
                             bus.$emit('changeGame', {
                             message:"游戏列表改变"
@@ -403,7 +404,7 @@ import formatDatetime from "../../code/formatDatetime";
                     .catch(failResponse => {})
                     
                 }               
-                this.addGameVisible = false;   
+                   
             },
             // 保存编辑
             saveEdit() {

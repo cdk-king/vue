@@ -533,7 +533,17 @@ export default {
         console.log("渠道ID不能为空");
         this.$message.error("渠道ID不能为空");
         return;
-      } else if (this.form.platformId == "") {
+      }else if(!parseInt(this.form.channelId)){
+          console.log("渠道ID格式不正确");
+          this.$message.error("渠道ID格式不正确");
+          return;
+      } 
+      else if (this.form.channelTag == "") {
+        console.log("渠道标识不能为空");
+        this.$message.error("渠道标识不能为空");
+        return;
+      }
+      else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
         return;
@@ -559,6 +569,7 @@ export default {
               this.$message.success("渠道添加成功");
               this.tableData.push(this.form);
               this.getData();
+              bus.$emit('changeChannel', {});
             } else {
               console.log(this.responseResult);
               this.$message.error("渠道添加失败");
@@ -581,7 +592,18 @@ export default {
         console.log("渠道ID不能为空");
         this.$message.error("渠道ID不能为空");
         return;
-      } else if (this.form.platformId == "") {
+      } 
+      else if(!parseInt(this.form.channelId)){
+          console.log("渠道ID格式不正确");
+          this.$message.error("渠道ID格式不正确");
+          return;
+      } 
+      else if (this.form.channelTag == "") {
+        console.log("渠道标识不能为空");
+        this.$message.error("渠道标识不能为空");
+        return;
+      }
+      else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
         return;
@@ -607,6 +629,7 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success("渠道信息修改成功");
             this.getData();
+            bus.$emit('changeChannel', {});
           } else {
             console.log(this.responseResult);
             this.$message.error("渠道信息修改失败");
@@ -673,6 +696,7 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success(`渠道删除成功`);
             this.getData();
+            bus.$emit('changeChannel', {});
           } else {
             console.log(this.responseResult);
             this.$message.error("渠道删除失败");

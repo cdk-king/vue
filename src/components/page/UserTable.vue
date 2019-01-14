@@ -958,6 +958,7 @@ export default {
             if (successResponse.data.code === 200) {
               this.$message.success("用户添加成功");
               this.getData();
+              this.addUserVisible = false;
             } else {
               console.log(this.responseResult);
               this.$message.error("用户添加失败");
@@ -965,10 +966,15 @@ export default {
           })
           .catch(failResponse => {});
       }
-      this.addUserVisible = false;
+      
     },
     // 保存编辑
     saveEdit() {
+      if (this.form.account == "") {
+        this.$message.error("账号不能为空");
+      } else if (this.form.name == "") {
+        this.$message.error("用户名不能为空");
+      } else {
       this.$axios
         .post(this.url + "/editUser", {
           id: this.form.id,
@@ -985,13 +991,15 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success("用户信息编辑成功");
             this.getData();
+            this.editVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("用户信息编辑失败");
           }
         })
         .catch(failResponse => {});
-      this.editVisible = false;
+      
+      }
     },
     saveEditPassword() {
       if (this.passwordform.newPassword == "") {
@@ -1014,6 +1022,7 @@ export default {
             this.responseResult = "\n" + JSON.stringify(successResponse.data);
             if (successResponse.data.code === 200) {
               this.$message.success("密码修改成功");
+              this.editPasswordVisible = false;
             } else {
               console.log(this.responseResult);
               this.$message.error("密码修改失败");
@@ -1021,7 +1030,7 @@ export default {
           })
           .catch(failResponse => {});
       }
-      this.editPasswordVisible = false;
+      
     },
     // 确定冻结
     changeStateToFrozen() {

@@ -456,9 +456,16 @@ export default {
         this.right();
       }.bind(this)
     );
+    bus.$on(
+      "changeChannel",
+      function(obj) {
+        this.getAllChannel();
+      }.bind(this)
+    );
   },
   beforeDestroy() {
     bus.$off("changeGameId");
+    bus.$off("changeChannel");
   },
   computed: {
     data() {

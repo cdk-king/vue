@@ -481,6 +481,7 @@ import formatDatetime from "../../code/formatDatetime";
                 this.form = {
                     id:'',
                     platformId: '',
+                    platform:'',
                     platformName:'',
                     platformTag:'',
                     platform_describe: '',
@@ -489,6 +490,8 @@ import formatDatetime from "../../code/formatDatetime";
                     addUser: '',
                     addDatetime: '',
                     state:'',
+                    gameId:'',
+                    roleId:''
                 }
                 this.selectGame="";
                 this.selectRole="";
@@ -513,7 +516,22 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("平台名称不能为空");
                     this.$message.error("平台名称不能为空");
                     return;
-                }else if(this.form.gameId==""){
+                }else if(this.form.platformId==""){
+                    console.log("平台Id不能为空");
+                    this.$message.error("平台Id不能为空");
+                    return;
+                }
+                else if(!parseInt(this.form.platformId)){
+                    console.log("平台Id格式不正确");
+                    this.$message.error("平台Id格式不正确");
+                    return;
+                }
+                else if(this.form.platformTag==""){
+                    console.log("平台标识不能为空");
+                    this.$message.error("平台标识不能为空");
+                    return;
+                }
+                else if(this.form.gameId==""){
                     console.log("所属游戏不能为空");
                     this.$message.error("所属游戏不能为空");
                     return;
@@ -561,7 +579,22 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("平台名称不能为空");
                     this.$message.error("平台名称不能为空");
                     return;
-                }else if(this.form.gameId==""){
+                }else if(this.form.platformId==""){
+                    console.log("平台Id不能为空");
+                    this.$message.error("平台Id不能为空");
+                    return;
+                }
+                else if(!parseInt(this.form.platformId)){
+                    console.log("平台Id格式不正确");
+                    this.$message.error("平台Id格式不正确");
+                    return;
+                }
+                else if(this.form.platformTag==""){
+                    console.log("平台标识不能为空");
+                    this.$message.error("平台标识不能为空");
+                    return;
+                }
+                else if(this.form.gameId==""){
                     console.log("所属游戏不能为空");
                     this.$message.error("所属游戏不能为空");
                     return;

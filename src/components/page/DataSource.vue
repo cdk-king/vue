@@ -468,9 +468,25 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("数据源Id不能为空");
                     this.$message.error("数据源Id不能为空");
                     return;
-                }else if(this.form.dataSource_url==""){
+                }
+                else if(!parseInt(this.form.dataSource_id)){
+                    console.log("数据源Id格式不正确");
+                    this.$message.error("数据源Id格式不正确");
+                    return;
+                } 
+                else if(this.form.dataSource_url==""){
                     console.log("数据源地址不能为空");
                     this.$message.error("数据源地址不能为空");
+                    return;
+                }
+                else if(this.form.dataSource_name==""){
+                    console.log("数据源用户名不能为空");
+                    this.$message.error("数据源用户名不能为空");
+                    return;
+                }
+                else if(this.form.dataSource_password==""){
+                    console.log("数据源密码不能为空");
+                    this.$message.error("数据源密码不能为空");
                     return;
                 }
                 else if(this.form.platformId==""){
@@ -517,9 +533,25 @@ import formatDatetime from "../../code/formatDatetime";
                     console.log("数据源Id不能为空");
                     this.$message.error("数据源Id不能为空");
                     return;
-                }else if(this.form.dataSource_url==""){
+                }
+                else if(!parseInt(this.form.dataSource_id)){
+                    console.log("数据源Id格式不正确");
+                    this.$message.error("数据源Id格式不正确");
+                    return;
+                }
+                else if(this.form.dataSource_url==""){
                     console.log("数据源地址不能为空");
                     this.$message.error("数据源地址不能为空");
+                    return;
+                }
+                else if(this.form.dataSource_name==""){
+                    console.log("数据源用户名不能为空");
+                    this.$message.error("数据源用户名不能为空");
+                    return;
+                }
+                else if(this.form.dataSource_password==""){
+                    console.log("数据源密码不能为空");
+                    this.$message.error("数据源密码不能为空");
                     return;
                 }
                 else if(this.form.platformId==""){

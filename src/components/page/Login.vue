@@ -204,7 +204,7 @@ export default {
                 this.getUserAllRole(successResponse.data.data.id);
 
                 this.$message.success("登录成功");
-                localStorage.setItem("ms_username", this.ruleForm.username);
+                localStorage.setItem("ms_username", successResponse.data.data.name);
 
                 //只能储存字符串
                 //roleTable、giftUpload、giftTable...需要获取userId、userName

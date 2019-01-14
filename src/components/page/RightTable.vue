@@ -428,6 +428,7 @@ export default {
               this.$message.success("权限添加成功");
               this.tableData.push(this.form);
               this.getData();
+              this.addRightVisible = false;
             } else {
               console.log(this.responseResult);
               this.$message.error("权限添加失败");
@@ -435,10 +436,17 @@ export default {
           })
           .catch(failResponse => {});
       }
-      this.addRightVisible = false;
+      
     },
     // 保存编辑
     saveEdit() {
+      if (this.form.rightName == "") {
+        console.log("权限名称不能为空");
+        this.$message.error("权限名称不能为空");
+      } else if (this.form.rightTag == "") {
+        console.log("权限标识不能为空");
+        this.$message.error("权限标识不能为空");
+      } else {
       this.$axios
         .post(this.url + "/editRight", {
           id: this.form.id,
@@ -457,13 +465,15 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success("权限信息修改成功");
             this.getData();
+            this.editVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("权限信息修改失败");
           }
         })
         .catch(failResponse => {});
-      this.editVisible = false;
+      
+      }
     },
     // 确定冻结
     changeStateToFrozen() {

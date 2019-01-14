@@ -880,17 +880,23 @@ export default {
               this.$message.success("角色添加成功");
               this.tableData.push(this.form);
               this.getData();
+              this.addRoleVisible = false;
             } else {
               console.log(this.responseResult);
               this.$message.error("角色添加失败");
             }
           })
           .catch(failResponse => {});
+          
       }
-      this.addRoleVisible = false;
+      
     },
     // 保存编辑
     saveEdit() {
+      if (this.form.role == "") {
+        console.log("角色名称不能为空");
+        this.$message.error("角色名称不能为空");
+      } else {
       this.$axios
         .post(this.url + "/editRole", {
           id: this.form.id,
@@ -905,13 +911,15 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success("角色信息修改成功");
             this.getData();
+            this.editVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("角色信息修改失败");
           }
         })
         .catch(failResponse => {});
-      this.editVisible = false;
+      
+      }
     },
     // 确定冻结
     changeStateToFrozen() {

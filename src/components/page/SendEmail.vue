@@ -300,7 +300,7 @@
           <el-form-item label="角色ID">
             <el-input
               style="width:515px"
-              placeholder="请输入"
+              placeholder="请输入角色ID"
               type="textarea"
               :autosize="{ minRows:2, maxRows: 10}"
               v-model="form.playerIdList"

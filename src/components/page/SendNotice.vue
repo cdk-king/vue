@@ -77,13 +77,13 @@
               <el-form-item label="时间间隔"  v-if="isTiming">
                 <el-input
                   style="width:180px"
-                  placeholder="时间间隔"
+                  placeholder="请输入时间间隔"
                   v-model="form.timeInterval"
                   clearable
                 ></el-input>
               </el-form-item>
               <el-form-item label="循环次数" v-if="isTiming">
-                <el-input style="width:180px" placeholder="循环次数" v-model="form.cycleTime" clearable></el-input>
+                <el-input style="width:180px" placeholder="请输入循环次数" v-model="form.cycleTime" clearable></el-input>
               </el-form-item>
               <el-form-item label="公告内容">
                 <el-input

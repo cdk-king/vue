@@ -39,7 +39,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectPlatform"
-          placeholder="请选择平台"
+          placeholder="筛选平台"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>

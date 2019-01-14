@@ -27,7 +27,7 @@
                     </el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light">操作类型：</span>
-                    <el-select  placeholder="请选择" @change="selectisToProhibitSpeak"  v-model="searchKey.isToProhibitSpeak" class="handle-select mr10" style="width:150px">
+                    <el-select  placeholder="筛选操作类型" @change="selectisToProhibitSpeak"  v-model="searchKey.isToProhibitSpeak" class="handle-select mr10" style="width:150px">
                     <el-option key="1" label="全部" value="0"></el-option>
                     <el-option key="2" label="解除禁言" value="1"></el-option>
                     <el-option key="3" label="禁言" value="2"></el-option>

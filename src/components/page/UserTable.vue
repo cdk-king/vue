@@ -267,6 +267,7 @@
     <el-dialog title="管理角色" :visible.sync="userAddRoleVisible" width="600px" center>
       <template >
         <el-transfer
+        class="transfer-class"
           filterable
           v-model="checkRoleData"
           :props="{

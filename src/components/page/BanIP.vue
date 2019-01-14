@@ -43,7 +43,7 @@
                 <el-input style="width:215px" placeholder="请输入IP" v-model="form.ip" clearable></el-input>
               </el-form-item>
               <el-form-item label="时长">
-                <el-input style="width:215px" placeholder="请输入" v-model="form.banLong" clearable></el-input>
+                <el-input style="width:215px" placeholder="请输入时长" v-model="form.banLong" clearable></el-input>
               </el-form-item>
               <el-form-item label="备注">
                 <el-input
@@ -56,7 +56,7 @@
                 ></el-input>
               </el-form-item>
               <el-form-item label="添加人">
-                <el-input style="width:215px" placeholder="请输入" v-model="form.addUser" clearable></el-input>
+                <el-input style="width:215px" placeholder="请输入添加人" v-model="form.addUser" clearable></el-input>
               </el-form-item>
               <el-form-item label>
                 <el-button type="primary" icon="addBanIp" @click="addBanIp">提交</el-button>

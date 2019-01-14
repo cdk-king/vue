@@ -78,7 +78,7 @@
         </div>
 
         <!-- 添加弹出框 -->
-        <el-dialog title="添加平台" :modal="false"  :close-on-click-modal="false" :visible.sync="addplatformVisible" width="30%">
+        <el-dialog title="添加数据源" :modal="false"  :close-on-click-modal="false" :visible.sync="addplatformVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="数据源ID">
                     <el-input v-model="form.dataSource_id"></el-input>
@@ -93,7 +93,7 @@
                     <el-input v-model="form.dataSource_password"></el-input>
                 </el-form-item>
                 <el-form-item label="所属平台">
-                <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
+                <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
                     <el-option
                     v-for="item in platformOptions"
                     :key="item.platformId"
@@ -113,7 +113,7 @@
         </el-dialog>
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑平台" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
+        <el-dialog title="编辑数据源" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="数据源ID">
                     <el-input v-model="form.dataSource_id"></el-input>
@@ -128,7 +128,7 @@
                     <el-input v-model="form.dataSource_password"></el-input>
                 </el-form-item>
                 <el-form-item label="所属平台">
-                <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
+                <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
                     <el-option
                     v-for="item in platformOptions"
                     :key="item.platformId"

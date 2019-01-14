@@ -24,7 +24,7 @@
               <el-select
                 v-model="searchKey.platformId"
                 @change="selectSearchKeyPlatform"
-                placeholder="请选择平台"
+                placeholder="筛选平台"
                 style="width:150px"
               >
                 <el-option key="0" label="全部" value="0"></el-option>

@@ -161,7 +161,7 @@
     </div>
     <!-- 添加框 -->
     <el-dialog
-      title="添加"
+      title="添加全服公告申请"
       :visible.sync="addPlatformNoticeVisible"
       width="1100px"
       center
@@ -174,7 +174,7 @@
             <el-select
               v-model="form.platformId"
               @change="selectPlatform"
-              placeholder="请选择渠道平台"
+              placeholder="请选择平台"
               style="width:180px"
             >
               <el-option
@@ -205,13 +205,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:575px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
+            <el-input style="width:575px" placeholder="请输入标题" v-model="form.noticeTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
               style="width:575px"
-              placeholder="请输入发送内容"
+              placeholder="请输入公告内容"
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.noticeContent"
@@ -339,7 +339,7 @@
 
     <!-- 编辑框 -->
     <el-dialog
-      title="编辑"
+      title="编辑全服公告申请"
       :visible.sync="editPlatformNoticeVisible"
       width="1100px"
       center
@@ -368,7 +368,7 @@
               class="grid-content bg-purple-light"
               style="margin:16px;color:#888888"
               v-show="!checkVisible"
-            >请先选择服务器</span>
+            >请先选择平台</span>
             <el-checkbox-group
               v-model="form.serverList"
               @change="handleCheckedServer"
@@ -382,13 +382,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:575px" placeholder="标题" v-model="form.noticeTitle" clearable></el-input>
+            <el-input style="width:575px" placeholder="请输入标题" v-model="form.noticeTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
               style="width:575px"
-              placeholder="请输入发送内容"
+              placeholder="请输入公告内容"
               type="textarea"
               :autosize="{ minRows:4, maxRows: 10}"
               v-model="form.noticeContent"

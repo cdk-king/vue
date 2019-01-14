@@ -6,7 +6,7 @@
           <div class="user-info">
             <img src="dist/static/img/img.jpg" @click="goCenter" class="user-avator" alt>
             <div class="user-info-cont">
-              <div class="user-info-name hoverCursor" @click="goCenter">{{name}}</div>
+              <div class="user-info-name hoverCursor" @click="goCenter">{{account}}</div>
               <div>{{role}}</div>
             </div>
           </div>
@@ -106,6 +106,7 @@ export default {
   data() {
     return {
       name: localStorage.getItem("ms_username"),
+      account:JSON.parse(localStorage.getItem("userData")).account,
       todoList: [
 
       ],

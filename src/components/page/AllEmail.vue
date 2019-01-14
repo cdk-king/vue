@@ -139,7 +139,7 @@
     </div>
     <!-- 添加框 -->
     <el-dialog
-      title="添加"
+      title="添加全服邮件申请"
       :visible.sync="addPlatformEmailVisible"
       width="900px"
       center
@@ -183,13 +183,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:430px" placeholder="标题" v-model="form.emailTitle" clearable></el-input>
+            <el-input style="width:430px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="邮件内容">
             <el-input
               style="width:430px"
-              placeholder="请输入发送内容"
+              placeholder="请输入邮件内容"
               type="textarea"
               :autosize="{ minRows:6, maxRows: 10}"
               v-model="form.emailContent"
@@ -218,7 +218,7 @@
 
     <!-- 编辑框 -->
     <el-dialog
-      title="编辑"
+      title="编辑全服邮件申请"
       :visible.sync="editPlatformEmailVisible"
       width="900px"
       center
@@ -247,7 +247,7 @@
               class="grid-content bg-purple-light"
               style="margin:16px;color:#888888"
               v-show="!checkVisible"
-            >请先选择服务器</span>
+            >请先选择平台</span>
 
             <el-checkbox-group
               v-model="form.serverList"
@@ -262,13 +262,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input style="width:430px" placeholder="标题" v-model="form.emailTitle" clearable></el-input>
+            <el-input style="width:430px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
             <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
           </el-form-item>
           <el-form-item label="邮件内容">
             <el-input
               style="width:430px"
-              placeholder="请输入发送内容"
+              placeholder="请输入邮件内容"
               type="textarea"
               :autosize="{ minRows:6, maxRows: 10}"
               v-model="form.emailContent"

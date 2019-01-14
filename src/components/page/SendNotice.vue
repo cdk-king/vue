@@ -527,11 +527,27 @@ export default {
       if(this.form.sendType=="2"){
           
           if (this.form.timeInterval == "") {
-            this.$message("请输入正确的时间间隔");
+            this.$message("时间间隔不能为空");
+            return;
+          }
+          if(!parseInt(this.form.timeInterval)){
+            this.$message("时间间隔格式不正确");
+            return;
+          }
+          if(parseInt(this.form.timeInterval)<=0){
+            this.$message("时间间隔不能小于等于0");
             return;
           }
           if (this.form.cycleTime == "") {
-            this.$message("请输入正确的循环次数");
+            this.$message("循环次数不能为空");
+            return;
+          }
+          if(!parseInt(this.form.cycleTime)){
+            this.$message("循环次数格式不正确");
+            return;
+          }
+          if(parseInt(this.form.cycleTime)<=0){
+            this.$message("循环次数不能小于等于0");
             return;
           }
       }else if(this.form.sendType=="1"){
@@ -540,7 +556,7 @@ export default {
       }
 
       if (this.form.noticeContent == "") {
-        this.$message("请输入正确的公告内容");
+        this.$message("公告内容不能为空");
         return;
       }
       if (this.form.noticeContent.length > this.countMaxLength) {

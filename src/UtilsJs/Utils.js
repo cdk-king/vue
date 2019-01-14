@@ -28,7 +28,7 @@ Utils.getUserAllRight = function (id,url) {
         })
         .catch(failResponse => { })
 };
-
+//vue-router 有方法router.addRoutes(routes) 动态添加更多的路由规则。暂无删减路由api
 Utils.addRouter = function () {
     var dfr = defaultRouter();
     var router = getRouter();

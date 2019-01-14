@@ -120,10 +120,6 @@ export default {
     register() {
       this.$message.info("暂不支持注册");
       console.log("暂不支持注册");
-      //todo   localStorage.setItem('userData'
-      //路由跳转钩子函数会判断有无ms_username
-      //localStorage.setItem('ms_username',"admin");
-      //this.$router.push('/register');
     },
     loginInTourist() {
       localStorage.removeItem('ms_username');
@@ -204,15 +200,14 @@ export default {
                 this.getUserAllRole(successResponse.data.data.id);
 
                 this.$message.success("登录成功");
+                //localStorage只能储存字符串
                 localStorage.setItem("ms_username", successResponse.data.data.name);
 
-                //只能储存字符串
                 //roleTable、giftUpload、giftTable...需要获取userId、userName
                 localStorage.setItem(
                   "userData",
                   JSON.stringify(successResponse.data.data)
                 );
-                //this.getUserAllRole(successResponse.data.data.id);
               } else {
                 this.$message.error(successResponse.data.message);
                 console.log(this.responseResult);
@@ -273,13 +268,6 @@ export default {
         .catch(failResponse => {});
     },
     addRouter() {
-      const right = localStorage.getItem("rightTags");
-      var dfr = defaultRouter();
-      //实验显示这样修改参数对实际路由没用任何影响
-      this.$router.options.routes = dfr;
-
-      //vue-router 有方法router.addRoutes(routes) 动态添加更多的路由规则。暂无删减路由api
-
       var router = getRouter();
       //重启vue
       new Vue({
@@ -289,7 +277,6 @@ export default {
           this.$router.push("/");
         }
       }).$mount("#app");
-
       console.log("Vue重启成功");
     }
   }

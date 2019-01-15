@@ -25,6 +25,7 @@
                 action="XXX"
                 :auto-upload="false"
                 :on-change="handleChangeXlsx"
+                :file-list="fileList"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -70,7 +71,6 @@
                 imgSrc: '',
                 cropImg: '',
                 dialogVisible: false,
-                fileList: [],
                 giftList: [],
                 strGiftList: "",
                 platformOptions: [
@@ -107,8 +107,8 @@
                 this.$axios
                 .post(this.url+"/getPlatformListForUserIdAndGameId", {
                 
-                userId:userData.id,
-                gameId: gameId
+                    userId:userData.id,
+                    gameId: gameId
                 })
                 .then(successResponse => {
                 this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -124,6 +124,14 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
+                if(this.form.platformId=="" || this.form.platformId==null){
+                    this.$message.info("请选择平台");
+                    return;
+                }
+                if(this.giftList.length==0){
+                    this.$message.info("导入数据不能为空");
+                    return;  
+                }
                 this.loading = this.$loading({
                         lock: true,
                         text: '数据导入中...',
@@ -140,6 +148,9 @@
                     if(successResponse.data.code === 200){
                         this.loading.close();
                         this.$message.success("礼包导入成功");
+                        this.giftList = "";
+                        this.fileList = [];
+                        this.strGiftList = "";
                         //添加组件通讯
                         bus.$emit('giftDataUpload', {
                             gameId:this.$gameId,

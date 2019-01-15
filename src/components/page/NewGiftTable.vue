@@ -7,7 +7,7 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <!-- <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button> -->
+                <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
                 <span class="grid-content bg-purple-light">平台：</span>
                 <el-select v-model="searchKey.platformId" @change="selectPlatform" placeholder="筛选平台" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
@@ -138,7 +138,19 @@
         </el-dialog>
         <!-- 批量删除提示框 -->
         <el-dialog title="批量删除提示" :visible.sync="delAllVisible" width="300px" center>
-            <div class="del-dialog-cnt">批量删除不可恢复，是否确定批量删除？</div>
+            <div class="del-dialog-cnt" style="margin-bottom:20px">请选择需要删除的平台数据</div>
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="选择平台">
+                    <el-select v-model="selectDelPlatformId"  placeholder="请选择平台" class="handle-select mr10">
+                        <el-option
+                        v-for="item in platformOptions"
+                        :key="item.platformId"
+                        :label="item.platform"
+                        :value="item.platformId">
+                        </el-option>
+                </el-select>
+                </el-form-item>
+            </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delAllVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveDelAll">确 定</el-button>
@@ -204,6 +216,7 @@ import formatDatetime from "../../code/formatDatetime";
                 responseResult:[],
                 id:"",
                 strPlatform:"",
+                selectDelPlatformId:""
             }
         },
         created() {
@@ -359,14 +372,14 @@ import formatDatetime from "../../code/formatDatetime";
                 this.delAllVisible = true;
             },
             saveDelAll(){
-                const length = this.multipleSelection.length;
-                let str = '';
-                for (let i = 0; i < length; i++) {
-                    str += this.multipleSelection[i].id + ',';
+                if(this.selectDelPlatformId==""){
+                    this.$message.info("请选择平台");
+                    return;
                 }
                 //批量删除处理
-                this.$axios.post(this.url+'/deleteAllGift',{
-                        id: str
+                this.$axios.post(this.url+'/api/newGift/deleteAllGiftForPlatform',{
+                        platformId: this.selectDelPlatformId,
+                        gameId:this.$gameId
                 })
                 .then(successResponse =>{
                     this.responseResult ="\n"+ JSON.stringify(successResponse.data)

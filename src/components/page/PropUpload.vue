@@ -25,6 +25,7 @@
                 action="XXX"
                 :auto-upload="false"
                 :on-change="handleChangeXlsx"
+                :file-list="fileList"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -70,7 +71,6 @@
                 imgSrc: '',
                 cropImg: '',
                 dialogVisible: false,
-                fileList: [],
                 propList: [],
                 strPropList: "",
                 platformOptions: [
@@ -125,6 +125,14 @@
                 .catch(failResponse => {});
             },
             ImportDatabase(){
+                if(this.form.platformId=="" || this.form.platformId==null){
+                    this.$message.info("请选择平台");
+                    return;
+                }
+                if(this.propList.length==0){
+                    this.$message.info("导入数据不能为空");
+                    return;  
+                }
                 this.loading = this.$loading({
                         lock: true,
                         text: '数据导入中...',
@@ -141,6 +149,9 @@
                     if(successResponse.data.code === 200){
                         this.loading.close();
                         this.$message.success("道具信息导入成功");
+                        this.propList = "";
+                        this.strPropList = "";
+                        this.fileList = [];
                         //添加组件通讯
                         bus.$emit('propDataUpload', {
                             gameId:this.$gameId,

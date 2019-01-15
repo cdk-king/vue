@@ -2,7 +2,8 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>服务器管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-document"></i>区服管理</el-breadcrumb-item>
+                <el-breadcrumb-item>服务器树形管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">

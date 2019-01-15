@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-calendar"></i> 系统设置
+          <i class="el-icon-document"></i> 系统设置
         </el-breadcrumb-item>
         <el-breadcrumb-item>游客账号设置</el-breadcrumb-item>
       </el-breadcrumb>

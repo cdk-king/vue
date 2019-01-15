@@ -3,9 +3,9 @@
   <div class="table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>发送道具邮件
-        </el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-document"></i>运营管理</el-breadcrumb-item>
+        <el-breadcrumb-item>道具管理</el-breadcrumb-item>
+        <el-breadcrumb-item>发送道具邮件</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
@@ -20,7 +20,7 @@
         <el-select
           v-model="searchKey.platformId"
           @change="selectSearchKeyPlatform"
-          placeholder="请选择平台"
+          placeholder="筛选平台"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -35,7 +35,7 @@
         <el-select
           v-model="searchKey.serverId"
           @change="selectSearchKeyServer"
-          placeholder="请选择服务器"
+          placeholder="筛选服务器"
           style="width:150px"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -893,6 +893,7 @@ export default {
         .post(this.url + "/getApplyProp", {
           platformId: this.searchKey.platformId,
           serverId: this.searchKey.serverId,
+          releaseContent:this.searchKey.releaseContent,
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",

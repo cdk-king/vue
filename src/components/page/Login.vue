@@ -81,7 +81,8 @@ export default {
       },
       responseResult: [],
       url: "http://localhost:8011",
-      footVisible: true
+      footVisible: true,
+      datetime:"2019-1-1"
     };
   },
   created() {
@@ -120,6 +121,8 @@ export default {
     register() {
       this.$message.info("暂不支持注册");
       console.log("暂不支持注册");
+      //localStorage.setItem('ms_username',"admin");
+      //this.$router.push('/register');
     },
     loginInTourist() {
       localStorage.removeItem('ms_username');
@@ -198,6 +201,10 @@ export default {
               this.responseResult = "\n" + JSON.stringify(successResponse.data);
               if (successResponse.data.code === 200) {
                 this.getUserAllRole(successResponse.data.data.id);
+
+                //设置登录时间
+                this.datetime =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+                localStorage.setItem("lastLoginDatetime", this.datetime);
 
                 this.$message.success("登录成功");
                 //localStorage只能储存字符串

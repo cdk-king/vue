@@ -3,9 +3,9 @@
   <div class="table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>全服邮件
-        </el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-document"></i>运营管理</el-breadcrumb-item>
+        <el-breadcrumb-item>系统公告管理</el-breadcrumb-item>
+        <el-breadcrumb-item>全服邮件</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
@@ -50,7 +50,7 @@
         </el-select>
         <span class="grid-content bg-purple-light">内容：</span>
         <el-input
-          v-model="searchKey.EmailContent"
+          v-model="searchKey.emailContent"
           placeholder="筛选内容"
           class="handle-input"
           style="width:150px"
@@ -105,6 +105,7 @@
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
+              v-if="scope.row.sendState!=1 && scope.row.sendState!=2"
             >编辑</el-button>
             <el-button
               type="text"
@@ -162,6 +163,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="选择服务器">
             <span
@@ -184,7 +186,7 @@
           </el-form-item>
           <el-form-item label="标题">
             <el-input style="width:430px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="邮件内容">
             <el-input
@@ -196,6 +198,7 @@
               v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <p class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</p>
           </el-form-item>
           <el-form-item label="发送原因">
@@ -241,6 +244,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="选择服务器">
             <span
@@ -248,7 +252,6 @@
               style="margin:16px;color:#888888"
               v-show="!checkVisible"
             >请先选择平台</span>
-
             <el-checkbox-group
               v-model="form.serverList"
               @change="handleCheckedServer"
@@ -263,7 +266,7 @@
           </el-form-item>
           <el-form-item label="标题">
             <el-input style="width:430px" placeholder="请输入标题" v-model="form.emailTitle" clearable></el-input>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="邮件内容">
             <el-input
@@ -275,6 +278,7 @@
               v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <p class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</p>
           </el-form-item>
           <el-form-item label="发送原因">
@@ -516,7 +520,7 @@ export default {
         .post(this.url + "/getPlatformEmail", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
-          EmailContent: this.searchKey.EmailContent,
+          emailContent: this.searchKey.emailContent, 
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",

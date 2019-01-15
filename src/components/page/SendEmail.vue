@@ -3,9 +3,9 @@
   <div class="table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>发送邮件
-        </el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-document"></i>运营管理</el-breadcrumb-item>
+        <el-breadcrumb-item>系统公告管理</el-breadcrumb-item>
+        <el-breadcrumb-item>发送邮件</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
@@ -509,7 +509,7 @@ export default {
         .post(this.url + "/getEmail", {
           platformId: this.searchKey.platformId,
           serverName: this.searchKey.serverName,
-          EmailContent: this.searchKey.emailContent,
+          emailContent: this.searchKey.emailContent,
           pageNo: this.cur_page,
           pageSize: 10,
           isPage: "isPage",

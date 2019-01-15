@@ -6,17 +6,18 @@
         </div>
         <div class="logo">游戏管理系统</div>
             <i class="el-icon-lx-sort el-select"></i>
-            <el-dropdown class="el-select" @command="handleChangGame">
+            <el-dropdown class="el-select" @command="handleChangGame" trigger="click">
             
                 <span class="el-dropdown-link" style="">
                     {{gameLabel}}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
-                <el-dropdown-menu class="el-dropdown-menu" slot="dropdown" >
-                    <el-dropdown-item class="el-dropdown-item" 
+                <el-dropdown-menu class="el-dropdown-menu" slot="dropdown"  >
+                    <el-dropdown-item class="el-dropdown-item"  
                     :key="item.id" 
                     :value="item.id"  
                     v-for="item in options"
-                    :command="item" >
+                    
+                    :command="item" divided>
                     {{item.gameName}}</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -45,7 +46,7 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="center">个人中心</el-dropdown-item>
+                        <el-dropdown-item command="center">个人中心</el-dropdown-item>
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -270,12 +271,12 @@
         font-size:20px;
     }
     .el-dropdown-menu{
-        width: 100px;
-
+        width: 150px;
     }
     .el-dropdown-item{
         font-size: 15px;
-        
+        width:140px;
+        margin:5px;
     }
     .hoverCursor:hover{
         cursor:pointer;

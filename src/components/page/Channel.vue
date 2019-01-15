@@ -2,9 +2,8 @@
   <div class="table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>渠道管理
-        </el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-document"></i>区服管理</el-breadcrumb-item>
+        <el-breadcrumb-item>渠道管理</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
@@ -43,14 +42,6 @@
         <el-input
           v-model="searchKey.channelTag"
           placeholder="筛选渠道标识"
-          class="handle-input"
-          style="width:150px"
-        ></el-input>
-
-        <span class="grid-content bg-purple-light">平台：</span>
-        <el-input
-          v-model="searchKey.platform"
-          placeholder="筛选平台"
           class="handle-input"
           style="width:150px"
         ></el-input>

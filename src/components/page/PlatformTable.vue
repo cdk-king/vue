@@ -2,7 +2,8 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>平台管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-document"></i>区服管理</el-breadcrumb-item>
+                <el-breadcrumb-item>平台管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -40,7 +41,7 @@
                 </el-select>
 
                 <span class="grid-content bg-purple-light">平台名：</span>
-                <el-input v-model="searchKey.platformName" placeholder="筛选平台名" class="handle-input " style="width:150px"></el-input>
+                <el-input v-model="searchKey.platform" placeholder="筛选平台名" class="handle-input " style="width:150px"></el-input>
 
                 <span class="grid-content bg-purple-light">平台标识：</span>
                 <el-input v-model="searchKey.platformTag" placeholder="筛选平台标识" class="handle-input " style="width:150px"></el-input>

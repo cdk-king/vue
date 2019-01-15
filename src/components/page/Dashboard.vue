@@ -145,7 +145,7 @@ export default {
     setLocalThisUrl(this); 
     this.handleListener();
     this.changeDate();
-    this.date =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+    this.date = localStorage.getItem("lastLoginDatetime");
     if(localStorage.getItem("roles")!=null && localStorage.getItem("roles")!=""){
       this.roleId = localStorage.getItem("roles").split(",")[0];
       this.getRoleName();

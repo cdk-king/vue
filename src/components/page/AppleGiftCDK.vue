@@ -4,8 +4,10 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>申请礼包激活码
+          <i class="el-icon-lx-cascades"></i>运营管理
         </el-breadcrumb-item>
+        <el-breadcrumb-item>礼包管理</el-breadcrumb-item>
+        <el-breadcrumb-item>申请礼包激活码</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">

@@ -2,7 +2,9 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>道具管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-document"></i>运营管理</el-breadcrumb-item>
+                <el-breadcrumb-item>道具管理</el-breadcrumb-item>
+                <el-breadcrumb-item>道具导入信息</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -18,14 +20,6 @@
                         :value="item.platformId">
                         </el-option>
                 </el-select>
-                <span class="grid-content bg-purple-light">状态：</span>
-
-                <span class="grid-content bg-purple-light">道具ID：</span>
-                <el-input v-model="searchKey.propId" placeholder="筛选道具ID" class="handle-input " style="width:150px"></el-input>
-
-                <span class="grid-content bg-purple-light">道具名：</span>
-                <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
-
                 <span class="grid-content bg-purple-light">道具类别：</span> 
                 <el-select v-model="searchKey.propTypeId" @change="selectPropType" style="width:150px" placeholder="筛选道具类别" class="handle-select mr10">
                         <el-option key="0" label="全部" value="0"></el-option>
@@ -36,6 +30,13 @@
                         :value="item.propTypeId">
                         </el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light">道具ID：</span>
+                <el-input v-model="searchKey.propId" placeholder="筛选道具ID" class="handle-input " style="width:150px"></el-input>
+
+                <span class="grid-content bg-purple-light">道具名：</span>
+                <el-input v-model="searchKey.propName" placeholder="筛选道具名" class="handle-input " style="width:150px"></el-input>
+
+                
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleImportProp">导入道具信息</el-button>
             </div>

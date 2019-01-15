@@ -4,7 +4,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-calendar"></i> 文件
+          <i class="el-icon-document"></i> 系统设置
         </el-breadcrumb-item>
         <el-breadcrumb-item>文件中转</el-breadcrumb-item>
       </el-breadcrumb>

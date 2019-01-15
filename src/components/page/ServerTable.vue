@@ -2,9 +2,8 @@
   <div class="table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>服务器管理
-        </el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-document"></i>区服管理</el-breadcrumb-item>
+        <el-breadcrumb-item>服务器管理</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="container">
@@ -613,12 +612,12 @@ export default {
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("列表获取成功");
+            console.log("渠道列表获取成功");
             this.allChannelFormPlatform = successResponse.data.data.list;
             this.generateAllChannelData(this.allChannelFormPlatform);
           } else {
             console.log(this.responseResult);
-            console.log("列表获取失败");
+            console.log("渠道列表获取失败");
           }
         })
         .catch(failResponse => {});
@@ -650,7 +649,8 @@ export default {
     handleGetList() {
       this.$axios
         .post(this.url + "/api/server/getServerList", {
-          platform: "muzhi"
+          platform: "muzhi",
+          gameId:this.$gameId,
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);

@@ -2,7 +2,9 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>礼包管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i>运营管理</el-breadcrumb-item>
+                <el-breadcrumb-item>礼包管理</el-breadcrumb-item>
+                <el-breadcrumb-item>礼包导入信息</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -22,8 +24,8 @@
                 <span class="grid-content bg-purple-light">礼包名：</span>
                 <el-input v-model="searchKey.giftName" placeholder="筛选礼包名" class="handle-input " style="width:150px"></el-input>
 
-                <span class="grid-content bg-purple-light">礼包标识：</span>
-                <el-input v-model="searchKey.giftTag" placeholder="筛选礼包标识" class="handle-input " style="width:150px"></el-input>
+                <span class="grid-content bg-purple-light">礼包描述：</span>
+                <el-input v-model="searchKey.gift_describe" placeholder="筛选礼包标识" class="handle-input " style="width:150px"></el-input>
 
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="search" @click="handleImportGift">导入礼包信息</el-button>
@@ -276,7 +278,7 @@ import formatDatetime from "../../code/formatDatetime";
                     isPage:"isPage",
                     id:'',
                     giftName:this.searchKey.giftName,
-                    giftTag:this.searchKey.giftTag,
+                    gift_describe:this.searchKey.gift_describe,
                     platformId:this.searchKey.platformId,
                     strPlatform:this.strPlatform,
                     gameId:this.$gameId

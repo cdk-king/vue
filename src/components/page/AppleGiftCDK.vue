@@ -12,7 +12,7 @@
       <div class="plugins-tips">
         备注：{{value}}
         <br>（1）请先选择渠道平台后再选择礼包
-        <br>（2）渠道平台、礼包、数量为必填项
+        <br>（2）平台、礼包、数量为必填项
       </div>
       <Divider/>
 

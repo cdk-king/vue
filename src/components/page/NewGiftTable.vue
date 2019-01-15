@@ -48,7 +48,12 @@
                 </el-table-column>
                 
                 
-                <el-table-column prop="goods_prize1" label="道具内容" >
+                <el-table-column prop="goods_prize1" label="道具内容" width="220px">
+                    <template slot-scope="scope">
+                        <ul>
+                            <li v-for="item in scope.row.goods_prize1.split('#')" v-bind:key="item">{{ item }}</li>
+                        </ul>
+                     </template>
                 </el-table-column> 
                 <el-table-column prop="value_prize1" label="货币" >
                 </el-table-column> 

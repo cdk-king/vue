@@ -837,6 +837,7 @@ export default {
         }
       }
       //否则添加新的道具
+      if(this.form.propId!= "" && this.form.propId!=null){
       var item = {};
       for (var j = 0; j < this.propOptions.length; j++) {
         if (this.propOptions[j].propId == this.form.propId) {
@@ -850,6 +851,7 @@ export default {
           this.propData.push(item);
       }else{
           this.$message.info("超过最大品种数量5");
+      }
       }
     },
     getMoneyTypeList() {

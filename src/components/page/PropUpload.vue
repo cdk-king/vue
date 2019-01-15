@@ -149,7 +149,7 @@
                     if(successResponse.data.code === 200){
                         this.loading.close();
                         this.$message.success("道具信息导入成功");
-                        this.propList = "";
+                        this.propList = [];
                         this.strPropList = "";
                         this.fileList = [];
                         //添加组件通讯

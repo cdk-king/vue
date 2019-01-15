@@ -148,7 +148,7 @@
                     if(successResponse.data.code === 200){
                         this.loading.close();
                         this.$message.success("礼包导入成功");
-                        this.giftList = "";
+                        this.giftList = [];
                         this.fileList = [];
                         this.strGiftList = "";
                         //添加组件通讯
@@ -230,6 +230,11 @@
                         map.limit = json[i].limit ? json[i].limit: "";
                         map.expire_time = json[i].expire_time ? json[i].expire_time: "";
                         map.goods_prize1 = json[i].goods_prize1 ? json[i].goods_prize1: "";
+                        for(var j = 2;j<6;j++){
+                            if(eval("json[i].goods_prize"+j)!=null && eval("json[i].goods_prize"+j)!=""){
+                                map.goods_prize1+="#"+eval("json[i].goods_prize"+j);
+                            }
+                        }
                         map.value_prize1 = json[i].value_prize1 ? json[i].value_prize1: "";
                         map.giftName = json[i].name ? json[i].name: "";
                         map.giftDescribe = json[i].describe ? json[i].describe: "";

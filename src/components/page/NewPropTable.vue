@@ -46,11 +46,11 @@
                 </el-table-column>
                 <el-table-column prop="propName" label="道具名称" >
                 </el-table-column>
-                <el-table-column prop="propTypeName" label="道具类别" >
+                <el-table-column prop="propTypeName" label="道具类别" width="220">
                 </el-table-column>
                 
                 
-                <el-table-column prop="propDescribe" label="描述" >
+                <el-table-column prop="propDescribe" label="描述" width="400">
                 </el-table-column> 
                 <el-table-column prop="propMaxCount" label="最大堆叠数量" >
                 </el-table-column> 

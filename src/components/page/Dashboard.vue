@@ -145,10 +145,26 @@ export default {
     setLocalThisUrl(this); 
     this.handleListener();
     this.changeDate();
-    this.date = localStorage.getItem("lastLoginDatetime");
+    this.date = localStorage.getItem("lastLoginDatetime").split("#")[0];
     if(localStorage.getItem("roles")!=null && localStorage.getItem("roles")!=""){
       this.roleId = localStorage.getItem("roles").split(",")[0];
       this.getRoleName();
+    }
+            
+    var lastLoginDatetime = "";
+    lastLoginDatetime = localStorage.getItem("lastLoginDatetime");
+    var d2=new Date().getTime();//取今天的日期  
+    var d1 = new Date(parseInt(lastLoginDatetime.split("#")[1])).getTime();
+    if((((d2-d1)/1000)/86400)>1){
+            //清除缓存信息
+            localStorage.removeItem('ms_username');
+            localStorage.setItem("rightTags", "");
+            localStorage.removeItem('rightTags');
+            localStorage.removeItem('roles');
+            localStorage.removeItem('userData');
+            //跳转到登录界面
+            this.$router.push('/login');
+            return;
     }
     
   },

@@ -4,7 +4,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-lx-cascades"></i>运营管理
+          <i class="el-icon-document"></i>运营管理
         </el-breadcrumb-item>
         <el-breadcrumb-item>礼包管理</el-breadcrumb-item>
         <el-breadcrumb-item>申请礼包激活码</el-breadcrumb-item>
@@ -15,6 +15,7 @@
         备注：{{value}}
         <br>（1）请先选择渠道平台后再选择礼包
         <br>（2）平台、礼包、数量为必填项
+        <br>（3）通用激活码全平台通用,可以多人使用
       </div>
       <Divider/>
 
@@ -40,6 +41,14 @@
               ></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item class="el-form-item" label="是否通用">
+            <el-switch
+            v-model="isCommonCDK"
+            active-text="通用"
+            @change="changeIsCommon()"
+            inactive-text="不通用">
+            </el-switch>
+          </el-form-item>
           <Divider/>
           <el-form-item label="标题">
             <el-input style="width:215px" placeholder="请输入标题" v-model="form.couponTitle" clearable></el-input>
@@ -54,9 +63,9 @@
               clearable
             ></el-input>
           </el-form-item>
-          <Divider/>
-          <el-form-item label="数量">
-            <el-input style="width:215px" placeholder="请输入数量" v-model="form.couponCount" clearable></el-input>
+          <!-- <Divider/> -->
+          <el-form-item label="数量" >
+            <el-input style="width:215px" placeholder="请输入数量" v-model="form.couponCount" :disabled="isCommonCDK==true" clearable></el-input>
           </el-form-item>
           <el-form-item label="申请人">
             <el-input style="width:215px" placeholder="请输入申请人" v-model="form.addUser" clearable></el-input>
@@ -75,6 +84,7 @@
           v-model="searchKey.platformId"
           @change="selectPlatform"
           placeholder="筛选平台"
+          style="width:150px"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -85,7 +95,18 @@
             :value="item.platformId"
           ></el-option>
         </el-select>
-
+        <span class="grid-content bg-purple-light">是否通用：</span>
+        <el-select
+          v-model="searchKey.isCommonCDK"
+           @change="selectIsCommon"
+          placeholder="是否通用"
+          style="width:150px"
+          class="handle-select mr10"
+        >
+          <el-option key="0" label="全部" value="0"></el-option>
+          <el-option key="1" label="不通用" value="1"></el-option>
+          <el-option key="2" label="通用" value="2"></el-option>
+        </el-select>
         <span class="grid-content bg-purple-light">礼包ID：</span>
         <el-input
           v-model="searchKey.giftId"
@@ -107,6 +128,7 @@
       <el-table :data="tableData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="couponId" label="礼包ID"></el-table-column>
+        <el-table-column prop="isCommonCDK" label="是否通用" :formatter="formatIsCommonCDK"></el-table-column>
         <el-table-column prop="couponCount" label="数量"></el-table-column>
         <el-table-column prop="couponTitle" label="标题"></el-table-column>
 
@@ -237,12 +259,13 @@ export default {
         addUser: "",
         addDatetime: "",
         startDatetime: "",
-        endDatetime: ""
+        endDatetime: "",
       },
       searchKey: {
         platformId: "",
         giftId:"",
-        giftName:""
+        giftName:"",
+        isCommonCDK:""
       },
       id: 0,
       serverIp: "",
@@ -256,7 +279,8 @@ export default {
       url: "http://localhost:8011",
       strPlatform: "",
       cur_page: 1,
-      total: 0
+      total: 0,
+      isCommonCDK:false
     };
   },
   components: {
@@ -458,6 +482,13 @@ export default {
         })
         .catch(failResponse => {});
     },
+    changeIsCommon(){ 
+      if(this.isCommonCDK==true){
+          this.form.couponCount = "1";
+      }else{
+          this.form.couponCount = "";
+      }
+    },
     generateCDK() {
       //表单验证
 
@@ -469,9 +500,17 @@ export default {
         this.$message.error("请选择正确的礼包");
         return;
       }
-      if (this.form.couponCount == "") {
+      console.log(this.form.couponCount);
+      if (this.form.couponCount == "" && this.isCommonCDK==false) {
         this.$message.error("请输入生成数量");
         return;
+      }
+      if(!parseInt(this.form.couponCount) && this.isCommonCDK==false){
+          this.$message.error("生成数量格式不正确");
+          return;
+      } 
+      if(this.isCommonCDK==true){
+          this.form.couponCount = "1";
       }
       var type = 0;
       var CouponID = parseInt(this.form.giftId.toString()) * 1;
@@ -495,6 +534,7 @@ export default {
           addUser: this.form.addUser,
           addDatetime: this.form.addDatetime,
           sign: sign,
+          isCommonCDK:this.isCommonCDK==true ? "1":"0",
           gameId:this.$gameId
         })
         .then(successResponse => {
@@ -634,6 +674,9 @@ export default {
     selectPlatform() {
       this.getGiftList(this.form.platformId);
     },
+    selectIsCommon(){
+      this.getCoupon();
+    },
     search(){
       this.getCoupon();
     },
@@ -641,6 +684,12 @@ export default {
       this.getPlatformList(this.$gameId);
     },
     getCoupon() {
+      var isCommonCDK = "";
+      if(this.searchKey.isCommonCDK=="1"){
+        isCommonCDK = "0";
+      }else if(this.searchKey.isCommonCDK=="2"){
+        isCommonCDK = "1";
+      }
       this.$axios
         .post(this.url + "/api/cdk/getCoupon", {
           pageNo: this.cur_page,
@@ -648,6 +697,7 @@ export default {
           isPage: "isPage",
           giftId:this.searchKey.giftId,
           giftName:this.searchKey.giftName,
+          isCommonCDK:isCommonCDK,
           platformId: this.searchKey.platformId,
           strPlatform: this.strPlatform,
           gameId:this.$gameId
@@ -668,7 +718,10 @@ export default {
     },
     testDialog() {
       this.dialogVisible = true;
-    }
+    },
+    formatIsCommonCDK: function(row, column, cellValue, index) {
+      return row.isCommonCDK == "1" ? "通用" : "不通用";
+    },
   },
   watch: {
   }

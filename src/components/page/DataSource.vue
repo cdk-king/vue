@@ -22,6 +22,7 @@
                 v-model="searchKey.platformId"
                 @change="selectPlatform"
                 placeholder="筛选平台"
+                style="width:150px"
                 class="handle-select mr10"
                 >
                 <el-option key="0" label="全部" value="0"></el-option>

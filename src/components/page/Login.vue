@@ -203,7 +203,7 @@ export default {
                 this.getUserAllRole(successResponse.data.data.id);
 
                 //设置登录时间
-                this.datetime =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+                this.datetime =new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()+"#"+new Date().getTime();
                 localStorage.setItem("lastLoginDatetime", this.datetime);
 
                 this.$message.success("登录成功");

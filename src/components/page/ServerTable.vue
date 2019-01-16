@@ -37,6 +37,7 @@
           v-model="searchKey.platformId"
           @change="selectPlatform"
           placeholder="筛选平台"
+          style="width:150px"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -53,6 +54,7 @@
           v-model="searchKey.channelId"
           @change="selectChannel"
           placeholder="筛选渠道"
+          style="width:150px"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -69,7 +71,7 @@
           v-model="searchKey.server"
           placeholder="筛选服务器名"
           class="handle-input"
-          style="width:120px"
+          style="width:150px"
         ></el-input>
 
         <span class="grid-content bg-purple-light">服务器IP：</span>
@@ -77,7 +79,7 @@
           v-model="searchKey.serverIp"
           placeholder="筛选服务器IP"
           class="handle-input"
-          style="width:120px"
+          style="width:150px"
         ></el-input>
 
         <el-button type="primary" icon="search" @click="search">搜索</el-button>

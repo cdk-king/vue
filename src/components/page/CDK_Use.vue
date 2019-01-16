@@ -10,7 +10,10 @@
     </div>
     <div class="container">
       <div class="handle-box">
-        <div class="plugins-tips">提示：激活码兑换后将永久失效</div>
+        <div class="plugins-tips">备注：
+          <br/>不通用激活码兑换后将永久失效
+          <br/>通用激活码全平台通用,可以多人使用
+        </div>
 
         <Divider/>
         <div class="form-box" v-if="true">
@@ -41,6 +44,7 @@
           v-model="searchKey.platformId"
           @change="selectPlatform"
           placeholder="筛选平台"
+          style="width:150px"
           class="handle-select mr10"
         >
           <el-option key="0" label="全部" value="0"></el-option>
@@ -52,13 +56,34 @@
           ></el-option>
         </el-select>
 
+        <span class="grid-content bg-purple-light">是否通用：</span>
+        <el-select
+          v-model="searchKey.isCommonCDK"
+           @change="selectIsCommon"
+          placeholder="是否通用"
+          style="width:150px"
+          class="handle-select mr10"
+        >
+          <el-option key="0" label="全部" value="0"></el-option>
+          <el-option key="1" label="不通用" value="1"></el-option>
+          <el-option key="2" label="通用" value="2"></el-option>
+        </el-select>
+
+        <span class="grid-content bg-purple-light">激活码：</span>
+        <el-input
+          v-model="searchKey.cdk"
+          placeholder="筛选激活码"
+          class="handle-input"
+          style="width:150px"
+        ></el-input>
+
         <span class="grid-content bg-purple-light">礼包ID：</span>
         <el-input
           v-model="searchKey.giftId"
           placeholder="筛选礼包ID"
           class="handle-input"
           style="width:150px"
-        ></el-input>
+        ></el-input> 
 
         <span class="grid-content bg-purple-light">礼包名：</span>
         <el-input
@@ -79,6 +104,7 @@
       >
         <el-table-column prop="id" label="ID"></el-table-column>
         <el-table-column prop="cdk" label="CDK"></el-table-column>
+        <el-table-column prop="isCommonCDK" label="是否通用" :formatter="formatIsCommonCDK"></el-table-column>
         <el-table-column prop="couponId" label="礼包ID" :formatter="formatCouponId"></el-table-column>
         <el-table-column prop="giftName" label="礼包名" ></el-table-column>
         <el-table-column prop="sequenceId" label="序列号"></el-table-column>
@@ -171,7 +197,9 @@ export default {
         addDatetime: "",
         state: "",
         platformId: "",
-        platform: ""
+        platform: "",
+        isCommonCDK:"",
+        cdk:""
       },
       platformOptions: [
       ],
@@ -229,6 +257,12 @@ export default {
     },
     //筛选当前用户游戏的礼包
     getData() {
+      var isCommonCDK = "";
+      if(this.searchKey.isCommonCDK=="1"){
+        isCommonCDK = "0";
+      }else if(this.searchKey.isCommonCDK=="2"){
+        isCommonCDK = "1";
+      }
       this.$axios
         .post(this.url + "/getCDK", {
           pageNo: this.cur_page,
@@ -239,6 +273,8 @@ export default {
           giftId: this.searchKey.giftId,
           platformId: this.searchKey.platformId,
           strPlatform: this.strPlatform,
+          cdk:this.searchKey.cdk,
+          isCommonCDK:isCommonCDK,
           gameId:this.$gameId
         })
         .then(successResponse => {
@@ -294,6 +330,9 @@ export default {
       this.getData();
     },
     selectPlatform() {
+      this.getData();
+    },
+    selectIsCommon(){
       this.getData();
     },
     formatter(row, column) {
@@ -430,7 +469,10 @@ export default {
     resetForm() {
       this.form.cdk = "";
       this.form.platformId = "";
-    }
+    },
+    formatIsCommonCDK: function(row, column, cellValue, index) {
+      return row.isCommonCDK == "1" ? "通用" : "不通用";
+    },
   }
 };
 </script>

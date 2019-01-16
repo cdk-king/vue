@@ -45,9 +45,6 @@
             bus.$on('busEmit',function(msg){
                     console.log(msg);
             })
-            // bus.$on('increment1', function(){
-            //     console.log("cdkckdklckdclkdclkdlcd");
-            // })
             // 只有在标签页列表里的页面才使用keep-alive，即关闭标签之后就不保存到内存中了。
             bus.$on('tags', msg => {
                 let arr = [];
@@ -58,10 +55,10 @@
             })
         },
         methods:{
-                //这个回调在父组件监听到事件时，执行的，其参数为触发事件时传递的
-                increment1(str){
-                    console.log(str);
-                },
+            //这个回调在父组件监听到事件时执行，其参数为触发事件时传递的
+            increment1(str){
+                console.log(str);
+            },
         }
     }
 </script>

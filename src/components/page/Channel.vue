@@ -20,6 +20,7 @@
           class="handle-select mr10"
           v-model="searchKey.platformId"
           filterable
+          style="width:150px"
           placeholder="筛选平台"
         >
           <el-option

@@ -97,16 +97,19 @@
         <el-dialog title="添加平台" :modal="false"  :close-on-click-modal="false" :visible.sync="addplatformVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
-                    <el-input v-model="form.platform"></el-input>
+                    <el-input v-model="form.platform" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台ID">
-                    <el-input v-model="form.platformId"></el-input>
+                    <el-input v-model="form.platformId" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台标识">
-                    <el-input v-model="form.platformTag"></el-input>
+                    <el-input v-model="form.platformTag" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台描述">
-                    <el-input v-model="form.platform_describe"></el-input>
+                    <el-input v-model="form.platform_describe" style="width:90%"></el-input>
                 </el-form-item>
                 <el-form-item label="所属游戏">
                     <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
@@ -117,6 +120,7 @@
                         :value="item.id">
                         </el-option>
                     </el-select>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="对应角色">
                     <el-select class="el-select" v-model="form.roleId" filterable placeholder="请选择角色">
@@ -127,9 +131,10 @@
                         :value="item.id">
                         </el-option>
                     </el-select>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
+                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -142,16 +147,19 @@
         <el-dialog title="编辑平台" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="平台名称">
-                    <el-input v-model="form.platform"></el-input>
+                    <el-input v-model="form.platform" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台ID">
-                    <el-input v-model="form.platformId"></el-input>
+                    <el-input v-model="form.platformId" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台标识">
-                    <el-input v-model="form.platformTag"></el-input>
+                    <el-input v-model="form.platformTag" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="平台描述">
-                    <el-input v-model="form.platform_describe"></el-input>
+                    <el-input v-model="form.platform_describe" style="width:90%"></el-input>
                 </el-form-item>
                 <el-form-item label="所属游戏">
                     <el-select class="el-select" v-model="form.gameId" filterable placeholder="请选择游戏">
@@ -162,6 +170,7 @@
                         :value="item.id">
                         </el-option>
                     </el-select>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="对应角色">
                     <el-select class="el-select" v-model="form.roleId" filterable placeholder="请选择角色">
@@ -172,9 +181,10 @@
                         :value="item.id">
                         </el-option>
                     </el-select>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
+                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -565,13 +575,14 @@ import formatDatetime from "../../code/formatDatetime";
                             this.$message.success("平台添加成功");
                             this.tableData.push(this.form);
                             this.getData();
+                            this.addplatformVisible = false;
                         }else{
                             console.log(this.responseResult);
                             this.$message.error("平台添加失败");
                         }
                     })
                     .catch(failResponse => {})
-                    this.addplatformVisible = false; 
+                    
                 }               
             },
             // 保存编辑
@@ -628,13 +639,14 @@ import formatDatetime from "../../code/formatDatetime";
                     if(successResponse.data.code === 200){
                         this.$message.success("平台信息修改成功");
                         this.getData();
+                        this.editVisible = false;  
                     }else{
                         console.log(this.responseResult);
                         this.$message.error("平台信息修改失败");
                     }
                 })
                 .catch(failResponse => {})
-                this.editVisible = false;  
+                
                 }
             },
             // 确定冻结

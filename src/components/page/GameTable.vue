@@ -67,22 +67,24 @@
         <el-dialog title="添加游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="addGameVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
-                    <el-input v-model="form.gameName"></el-input>
+                    <el-input v-model="form.gameName" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="游戏标识">
-                    <el-input v-model="form.gameTag"></el-input>
+                    <el-input v-model="form.gameTag" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="游戏描述">
-                    <el-input v-model="form.game_describe"></el-input>
+                    <el-input v-model="form.game_describe" style="width:90%"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
                 </el-form-item> -->
                 <el-form-item label="服务器接口">
-                    <el-input v-model="form.serverApi" ></el-input>
+                    <el-input v-model="form.serverApi" style="width:90%"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
+                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -95,22 +97,24 @@
         <el-dialog title="编辑游戏" :modal="false"  :close-on-click-modal="false" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="游戏名称">
-                    <el-input v-model="form.gameName"></el-input>
+                    <el-input v-model="form.gameName" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="游戏标识">
-                    <el-input v-model="form.gameTag"></el-input>
+                    <el-input v-model="form.gameTag" style="width:90%"></el-input>
+                    <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
                 <el-form-item label="游戏描述">
-                    <el-input v-model="form.game_describe"></el-input>
+                    <el-input v-model="form.game_describe" style="width:90%"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="游戏加密标识">
                     <el-input v-model="form.gameEncryptSign"></el-input>
                 </el-form-item> -->
                 <el-form-item label="服务器接口">
-                    <el-input v-model="form.serverApi"></el-input>
+                    <el-input v-model="form.serverApi" style="width:90%"></el-input>
                 </el-form-item>
                 <el-form-item label="添加人">
-                    <el-input v-model="form.addUser"></el-input>
+                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -409,7 +413,13 @@ import formatDatetime from "../../code/formatDatetime";
             },
             // 保存编辑
             saveEdit() {
-
+                if(this.form.gameName==""){
+                    console.log("游戏名称不能为空");
+                    this.$message.error("游戏名称不能为空");
+                }else if(this.form.gameTag==""){
+                    console.log("游戏标识不能为空");
+                    this.$message.error("游戏标识不能为空");
+                }else{
                 this.$axios.post(this.url+'/editGame',{
                     id:this.form.id,
                     gameName:this.form.gameName,
@@ -427,6 +437,7 @@ import formatDatetime from "../../code/formatDatetime";
                     if(successResponse.data.code === 200){
                         this.$message.success("游戏信息修改成功");
                         this.getData();
+                        this.editVisible = false;
                         //添加组件通讯
                         bus.$emit('changeGame', {
                         message:"游戏列表改变"
@@ -437,7 +448,8 @@ import formatDatetime from "../../code/formatDatetime";
                     }
                 })
                 .catch(failResponse => {})
-                this.editVisible = false;
+                
+                } 
             },
             // 确定冻结
             changeStateToFrozen(){

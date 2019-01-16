@@ -4,3 +4,4 @@ dist/
 npm-debug.log
 example.html
 screenshots
+/dist/index.html

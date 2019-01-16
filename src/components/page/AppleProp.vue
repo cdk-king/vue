@@ -151,6 +151,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item class="el-form-item" label="选择服务器">
             <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器">
@@ -161,10 +162,12 @@
                 :value="item.serverId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
             <el-input style="width:430px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input
@@ -176,6 +179,7 @@
               v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
           <Divider/>
@@ -189,6 +193,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空,品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">
@@ -376,6 +381,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item class="el-form-item" label="选择服务器">
             <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器">
@@ -386,10 +392,12 @@
                 :value="item.serverId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
             <el-input style="width:430px" placeholder="请输入标题" v-model="form.releaseTitle" clearable></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="道具邮件内容">
             <el-input
@@ -401,6 +409,7 @@
               v-on:change="changeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
           <Divider/>
@@ -414,6 +423,7 @@
               ></el-option>
             </el-select>
             <el-button type="primary" icon="search" @click="addPropToList">添加道具</el-button>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red">道具不能为空,品种数量限制为5个 </span>
           </el-form-item>
           <el-form-item label="已选择道具列表">

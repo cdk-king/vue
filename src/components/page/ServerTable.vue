@@ -172,19 +172,21 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="服务器名称">
-          <el-input v-model="form.server"></el-input>
+          <el-input v-model="form.server" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="服务器Id">
-          <el-input v-model="form.serverId"></el-input>
+          <el-input v-model="form.serverId" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="服务器IP">
-          <el-input v-model="form.serverIp"></el-input>
+          <el-input v-model="form.serverIp" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="服务器端口">
-          <el-input v-model="form.serverPort"></el-input>
+          <el-input v-model="form.serverPort" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="服务器描述">
-          <el-input v-model="form.server_describe"></el-input>
+          <el-input v-model="form.server_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="所属渠道">
           <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择渠道">
@@ -195,9 +197,10 @@
               :value="item.platformId"
             ></el-option>
           </el-select>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -216,19 +219,21 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="服务器名称">
-          <el-input v-model="form.server" :disabled="editRight.server"></el-input>
+          <el-input v-model="form.server" :disabled="editRight.server" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="服务器Id">
-          <el-input v-model="form.serverId" :disabled="editRight.serverId"></el-input>
+          <el-input v-model="form.serverId" :disabled="editRight.serverId" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="服务器IP">
-          <el-input v-model="form.serverIp" :disabled="editRight.serverIp"></el-input>
+          <el-input v-model="form.serverIp" :disabled="editRight.serverIp" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="服务器端口">
-          <el-input v-model="form.serverPort" :disabled="editRight.serverPort"></el-input>
+          <el-input v-model="form.serverPort" :disabled="editRight.serverPort" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="服务器描述">
-          <el-input v-model="form.server_describe" :disabled="editRight.server_describe"></el-input>
+          <el-input v-model="form.server_describe" :disabled="editRight.server_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
           <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台" :disabled="editRight.platformId">
@@ -240,6 +245,7 @@
               :disabled="true"
             ></el-option>
           </el-select>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
 
         <el-form-item label="开服时间">
@@ -252,7 +258,7 @@
         </el-form-item>
 
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser" :disabled="editRight.addUser"></el-input>
+          <el-input v-model="form.addUser" :disabled="editRight.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -945,7 +951,16 @@ export default {
       if (this.form.server == "") {
         console.log("服务器名称不能为空");
         this.$message.error("服务器名称不能为空");
-      } else if (this.form.platformId == "") {
+      }
+      else if (this.form.serverId == "") {
+        console.log("服务器Id不能为空");
+        this.$message.error("服务器Id不能为空");
+      }
+      else if (!parseInt(this.form.serverId)) {
+        console.log("服务器Id格式不正确");
+        this.$message.error("服务器Id格式不正确");
+      } 
+      else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
       } else {
@@ -968,13 +983,13 @@ export default {
               this.$message.success("服务器添加成功");
               this.tableData.push(this.form);
               this.getData();
+              this.addServerVisible = false;
             } else {
               console.log(this.responseResult);
               this.$message.error("服务器添加失败");
             }
           })
-          .catch(failResponse => {});
-        this.addServerVisible = false;
+          .catch(failResponse => {});      
       }
     },
     // 保存编辑
@@ -982,7 +997,16 @@ export default {
       if (this.form.server == "") {
         console.log("服务器名称不能为空");
         this.$message.error("服务器名称不能为空");
-      } else if (this.form.platformId == "") {
+      } 
+      else if (this.form.serverId == "") {
+        console.log("服务器Id不能为空");
+        this.$message.error("服务器Id不能为空");
+      }
+      else if (!parseInt(this.form.serverId)) {
+        console.log("服务器Id格式不正确");
+        this.$message.error("服务器Id格式不正确");
+      }
+      else if (this.form.platformId == "") {
         console.log("所属平台不能为空");
         this.$message.error("所属平台不能为空");
       } else {
@@ -1007,13 +1031,13 @@ export default {
           if (successResponse.data.code === 200) {
             this.$message.success("服务器信息修改成功");
             this.getData();
+            this.editVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("服务器信息修改失败");
           }
         })
         .catch(failResponse => {});
-      this.editVisible = false;
       }
     },
     GMTToStr(time){

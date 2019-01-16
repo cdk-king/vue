@@ -2,7 +2,7 @@
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-calendar"></i> 运营管理</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-document"></i> 运营管理</el-breadcrumb-item>
                 <el-breadcrumb-item>道具管理</el-breadcrumb-item>
                 <el-breadcrumb-item>道具导入</el-breadcrumb-item>
             </el-breadcrumb>

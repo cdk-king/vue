@@ -30,6 +30,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item class="el-form-item" label="选择礼包">
             <el-select v-model="form.giftId" filterable @change="selectGift" placeholder="请选择礼包">
@@ -40,6 +41,7 @@
                 :value="item.giftId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item class="el-form-item" label="是否通用">
             <el-switch
@@ -48,10 +50,11 @@
             @change="changeIsCommon()"
             inactive-text="不通用">
             </el-switch>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <Divider/>
           <el-form-item label="标题">
-            <el-input style="width:215px" placeholder="请输入标题" v-model="form.couponTitle" clearable></el-input>
+            <el-input style="width:515px" placeholder="请输入标题" v-model="form.couponTitle" clearable></el-input>
           </el-form-item>
           <el-form-item label="说明">
             <el-input
@@ -66,10 +69,11 @@
           <!-- <Divider/> -->
           <el-form-item label="数量" >
             <el-input style="width:215px" placeholder="请输入数量" v-model="form.couponCount" :disabled="isCommonCDK==true" clearable></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
-          <el-form-item label="申请人">
+          <!-- <el-form-item label="申请人">
             <el-input style="width:215px" placeholder="请输入申请人" v-model="form.addUser" clearable></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label>
             <el-button type="primary" @click="generateCDK">生成激活码</el-button>
             <el-button @click="resetForm">重置</el-button>
@@ -130,12 +134,12 @@
         <el-table-column prop="couponId" label="礼包ID"></el-table-column>
         <el-table-column prop="isCommonCDK" label="是否通用" :formatter="formatIsCommonCDK"></el-table-column>
         <el-table-column prop="couponCount" label="数量"></el-table-column>
-        <el-table-column prop="couponTitle" label="标题"></el-table-column>
-
-        <el-table-column prop="coupon_describe" label="描述"></el-table-column>
+        <el-table-column prop="couponTitle" label="标题" width="200px"></el-table-column>
+        <el-table-column prop="coupon_describe" label="说明" width="250px"></el-table-column>
         <el-table-column prop="platform" label="平台"></el-table-column>
+        <el-table-column prop="addUser" label="申请人"></el-table-column>
         <el-table-column prop="fileUrl" label="文件名"></el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -500,7 +504,6 @@ export default {
         this.$message.error("请选择正确的礼包");
         return;
       }
-      console.log(this.form.couponCount);
       if (this.form.couponCount == "" && this.isCommonCDK==false) {
         this.$message.error("请输入生成数量");
         return;
@@ -531,7 +534,7 @@ export default {
           couponCount: this.form.couponCount.trim(),
           startDatetime: this.form.startDatetime,
           endDatetime: this.form.endDatetime,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           addDatetime: this.form.addDatetime,
           sign: sign,
           isCommonCDK:this.isCommonCDK==true ? "1":"0",

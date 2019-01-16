@@ -190,18 +190,20 @@
       :visible.sync="addUserVisible"
       width="30%"
     >
-      <el-form ref="form" :model="form" label-width="100px">
+      <el-form ref="form" :model="form" label-width="100px"  >
         <el-form-item label="账号">
-          <el-input v-model="form.account"></el-input>
+          <el-input v-model="form.account" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label=" 用户名">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="手机">
-          <el-input v-model="form.phone"></el-input>
+          <el-input v-model="form.phone" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input v-model="form.email"></el-input>
+          <el-input v-model="form.email" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -212,7 +214,7 @@
 
     <!-- 编辑弹出框 -->
     <el-dialog
-      title="编辑"
+      title="编辑用户"
       :modal="false"
       :close-on-click-modal="false"
       :visible.sync="editVisible"
@@ -220,16 +222,18 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="账号">
-          <el-input v-model="form.account"></el-input>
+          <el-input v-model="form.account" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label=" 用户名">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="手机">
-          <el-input v-model="form.phone"></el-input>
+          <el-input v-model="form.phone" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
-          <el-input v-model="form.email"></el-input>
+          <el-input v-model="form.email" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -244,17 +248,18 @@
       :modal="false"
       :close-on-click-modal="false"
       :visible.sync="editRoleVisible"
-      width="800px"
+      width="40%"
     >
     <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="角色">
           <el-input
-            style="width:600px"
+            style="width:90%"
             type="textarea"
             :autosize="{ minRows:10, maxRows: 20}"
             v-model="editRoles"
             clearable
           ></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -296,10 +301,12 @@
     >
       <el-form ref="form" :model="passwordform" label-width="100px">
         <el-form-item label="输入新密码">
-          <el-input type="password" v-model="passwordform.newPassword"></el-input>
+          <el-input type="password" v-model="passwordform.newPassword" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="确认新密码">
-          <el-input type="password" v-model="passwordform.checkPassword"></el-input>
+          <el-input type="password" v-model="passwordform.checkPassword" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

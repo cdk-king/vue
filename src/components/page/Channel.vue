@@ -108,16 +108,19 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="渠道名称">
-          <el-input v-model="form.channel"></el-input>
+          <el-input v-model="form.channel" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道ID">
-          <el-input v-model="form.channelId"></el-input>
+          <el-input v-model="form.channelId" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道标识">
-          <el-input v-model="form.channelTag"></el-input>
+          <el-input v-model="form.channelTag" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道描述">
-          <el-input v-model="form.channel_describe"></el-input>
+          <el-input v-model="form.channel_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
           <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
@@ -128,9 +131,10 @@
               :value="item.platformId"
             ></el-option>
           </el-select>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -149,16 +153,19 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="渠道名称">
-          <el-input v-model="form.channel"></el-input>
+          <el-input v-model="form.channel" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道ID">
-          <el-input v-model="form.channelId"></el-input>
+          <el-input v-model="form.channelId" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道标识">
-          <el-input v-model="form.channelTag"></el-input>
+          <el-input v-model="form.channelTag" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="渠道描述">
-          <el-input v-model="form.channel_describe"></el-input>
+          <el-input v-model="form.channel_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="所属平台">
           <el-select class="el-select" v-model="form.platformId" filterable placeholder="请选择平台">
@@ -169,9 +176,10 @@
               :value="item.platformId"
             ></el-option>
           </el-select>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

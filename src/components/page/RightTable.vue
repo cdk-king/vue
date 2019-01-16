@@ -111,16 +111,18 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="权限名称">
-          <el-input v-model="form.rightName"></el-input>
+          <el-input v-model="form.rightName" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="权限标识">
-          <el-input v-model="form.rightTag"></el-input>
+          <el-input v-model="form.rightTag" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="权限描述">
-          <el-input v-model="form.right_describe"></el-input>
+          <el-input v-model="form.right_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -139,19 +141,21 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="权限名称">
-          <el-input v-model="form.rightName"></el-input>
+          <el-input v-model="form.rightName" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="权限标识">
-          <el-input v-model="form.rightTag"></el-input>
+          <el-input v-model="form.rightTag" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="权限描述">
-          <el-input v-model="form.right_describe"></el-input>
+          <el-input v-model="form.right_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="排序">
-          <el-input v-model="form.rightSort"></el-input>
+          <el-input v-model="form.rightSort" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

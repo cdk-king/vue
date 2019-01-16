@@ -33,6 +33,7 @@
                     :value="item.platformId"
                   ></el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="选择服务器">
                 <span
@@ -62,6 +63,7 @@
                     :value="item.id"
                   ></el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="发送类型">
                 <el-select v-model="form.sendType" placeholder="请选择发送类型" style="width:180px" @change="selectSendType">
@@ -73,6 +75,7 @@
                     
                   ></el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="时间间隔"  v-if="isTiming">
                 <el-input
@@ -81,9 +84,11 @@
                   v-model="form.timeInterval"
                   clearable
                 ></el-input>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="循环次数" v-if="isTiming">
                 <el-input style="width:180px" placeholder="请输入循环次数" v-model="form.cycleTime" clearable></el-input>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="公告内容">
                 <el-input
@@ -95,7 +100,7 @@
                   v-on:change="changeContent"
                   clearable
                 ></el-input>
-
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
               </el-form-item>
 

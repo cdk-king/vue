@@ -180,13 +180,14 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="角色名称">
-          <el-input v-model="form.role"></el-input>
+          <el-input v-model="form.role"  style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="form.role_describe"></el-input>
+          <el-input v-model="form.role_describe"  style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser"  style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -205,13 +206,14 @@
     >
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="角色名称">
-          <el-input v-model="form.role"></el-input>
+          <el-input v-model="form.role" style="width:90%"></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input v-model="form.role_describe"></el-input>
+          <el-input v-model="form.role_describe" style="width:90%"></el-input>
         </el-form-item>
         <el-form-item label="添加人">
-          <el-input v-model="form.addUser"></el-input>
+          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -226,17 +228,18 @@
       :modal="false"
       :close-on-click-modal="false"
       :visible.sync="editRightVisible"
-      width="800px"
+      width="40%"
     >
     <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="权限">
           <el-input
-            style="width:600px"
+            style="width:90%"
             type="textarea"
             :autosize="{ minRows:10, maxRows: 20}"
             v-model="editRights"
             clearable
           ></el-input>
+          <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

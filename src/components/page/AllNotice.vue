@@ -184,6 +184,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="选择服务器">
             <span
@@ -206,7 +207,7 @@
           </el-form-item>
           <el-form-item label="标题">
             <el-input style="width:575px" placeholder="请输入标题" v-model="form.noticeTitle" clearable></el-input>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
@@ -218,6 +219,7 @@
               v-on:change="changeNoticeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">{{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
 
@@ -362,6 +364,7 @@
                 :value="item.platformId"
               ></el-option>
             </el-select>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="选择服务器">
             <span
@@ -383,7 +386,7 @@
           </el-form-item>
           <el-form-item label="标题">
             <el-input style="width:575px" placeholder="请输入标题" v-model="form.noticeTitle" clearable></el-input>
-            <span class="grid-content bg-purple-light" style="margin:20px;color:#888888">必须填写</span>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
           </el-form-item>
           <el-form-item label="公告内容">
             <el-input
@@ -395,6 +398,7 @@
               v-on:change="changeNoticeContent"
               clearable
             ></el-input>
+            <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
             <span class="grid-content bg-purple-light" style="margin:20px;color:red" v-show="maxLengthVisible">  {{"超过最大字符长度"+countMaxLength}}</span>
           </el-form-item>
 

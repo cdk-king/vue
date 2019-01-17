@@ -94,9 +94,6 @@
                     </el-select>
                     <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
-                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -135,9 +132,6 @@
                         </el-option>
                     </el-select>
                     <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
-                </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -357,7 +351,7 @@ export default {
           serverPort:this.form.serverPort,
           server_describe: this.form.server_describe,
           sort: this.form.sort,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           addDatetime: this.form.addDatetime,
           state: this.form.state,
           gameId: this.$gameId,
@@ -404,7 +398,7 @@ export default {
             serverPort:this.form.serverPort,
             server_describe: this.form.server_describe,
             sort:this.form.sort,
-            addUser: this.form.addUser,
+            addUser: JSON.parse(localStorage.getItem("userData")).name,
             state:this.form.state,
             gameId:this.$gameId,
             platformId:this.form.platformId

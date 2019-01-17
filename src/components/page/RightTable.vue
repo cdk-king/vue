@@ -121,9 +121,6 @@
         <el-form-item label="权限描述">
           <el-input v-model="form.right_describe" style="width:90%"></el-input>
         </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addRightVisible = false">取 消</el-button>
@@ -150,12 +147,6 @@
         </el-form-item>
         <el-form-item label="权限描述">
           <el-input v-model="form.right_describe" style="width:90%"></el-input>
-        </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
-        </el-form-item>
-        <el-form-item label="排序">
-          <el-input v-model="form.rightSort" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -423,7 +414,7 @@ export default {
             right_describe: this.form.right_describe,
             rightParentId: this.form.rightParentId,
             rightSort: this.form.rightSort,
-            addUser: this.form.addUser,
+            addUser: JSON.parse(localStorage.getItem("userData")).name,
             state: this.form.state
           })
           .then(successResponse => {
@@ -459,7 +450,7 @@ export default {
           right_describe: this.form.right_describe,
           rightParentId: this.form.rightParentId,
           rightSort: this.form.rightSort,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           addDatetime: this.form.addDatetime,
           state: this.form.state,
           sort: this.form.sort

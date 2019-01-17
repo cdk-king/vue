@@ -186,9 +186,6 @@
         <el-form-item label="角色描述">
           <el-input v-model="form.role_describe"  style="width:90%"></el-input>
         </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser"  style="width:90%"></el-input>
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addRoleVisible = false">取 消</el-button>
@@ -211,9 +208,6 @@
         </el-form-item>
         <el-form-item label="角色描述">
           <el-input v-model="form.role_describe" style="width:90%"></el-input>
-        </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -874,7 +868,7 @@ export default {
             id: this.form.id,
             role: this.form.role,
             role_describe: this.form.role_describe,
-            addUser: this.form.addUser,
+            addUser: JSON.parse(localStorage.getItem("userData")).name,
             state: this.form.state
           })
           .then(successResponse => {
@@ -905,7 +899,7 @@ export default {
           id: this.form.id,
           role: this.form.role,
           role_describe: this.form.role_describe,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           addDatetime: this.form.addDatetime,
           state: this.form.state
         })

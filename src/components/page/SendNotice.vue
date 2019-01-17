@@ -575,7 +575,7 @@ export default {
             return;
           }
       }else if(this.form.sendType=="1"){
-          this.form.timeInterval = "60";
+          this.form.timeInterval = "1";
           this.form.cycleTime = "1";
       }
 

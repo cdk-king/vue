@@ -133,9 +133,6 @@
           </el-select>
           <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addchannelVisible = false">取 消</el-button>
@@ -177,9 +174,6 @@
             ></el-option>
           </el-select>
           <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
-        </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -559,7 +553,7 @@ export default {
             channelName: this.form.channel,
             channelTag: this.form.channelTag,
             channel_describe: this.form.channel_describe,
-            addUser: this.form.addUser,
+            addUser: JSON.parse(localStorage.getItem("userData")).name,
             platformId: this.form.platformId,
             gameId: this.$gameId
           })
@@ -620,7 +614,7 @@ export default {
           channelName: this.form.channel,
           channelTag: this.form.channelTag,
           channel_describe: this.form.channel_describe,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           platformId: this.form.platformId,
           gameId: this.$gameId
         })

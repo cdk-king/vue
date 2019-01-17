@@ -109,9 +109,6 @@
                 </el-select>
                 <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
                 </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
-                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addplatformVisible = false">取 消</el-button>
@@ -148,9 +145,6 @@
                     ></el-option>
                 </el-select>
                 <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
-                </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -515,7 +509,7 @@ import formatDatetime from "../../code/formatDatetime";
 
                     this.$axios.post(this.url+'/api/db/addDataSource',{
                         platformId: this.form.platformId,
-                        addUser:this.form.addUser,
+                        addUser:JSON.parse(localStorage.getItem("userData")).name,
                         dataSource_id:this.form.dataSource_id,
                         dataSource_url:this.form.dataSource_url,
                         dataSource_name:this.form.dataSource_name,
@@ -580,7 +574,7 @@ import formatDatetime from "../../code/formatDatetime";
                 this.$axios.post(this.url+'/api/db/editDataSource',{
                     id:this.form.id,
                     platformId: this.form.platformId,
-                    addUser:this.form.addUser,
+                    addUser:JSON.parse(localStorage.getItem("userData")).name,
                     dataSource_id:this.form.dataSource_id,
                     dataSource_url:this.form.dataSource_url,
                     dataSource_name:this.form.dataSource_name,

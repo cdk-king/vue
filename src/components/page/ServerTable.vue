@@ -199,9 +199,6 @@
           </el-select>
           <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
         </el-form-item>
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" style="width:90%"></el-input>
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addServerVisible = false">取 消</el-button>
@@ -255,10 +252,6 @@
               :disabled="editRight.openServiceTime"
               placeholder="选择日期时间">
             </el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="添加人">
-          <el-input v-model="form.addUser" :disabled="editRight.addUser" style="width:90%"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -671,7 +664,8 @@ export default {
     handleSyn() {
       this.$axios
         .post(this.url + "/api/server/SynServerList", {
-          gameId:this.$gameId
+          gameId:this.$gameId,
+          addUser:JSON.parse(localStorage.getItem("userData")).name
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -971,7 +965,7 @@ export default {
             serverIp: this.form.serverIp,
             server_describe: this.form.server_describe,
             sort: this.form.sort,
-            addUser: this.form.addUser,
+            addUser: JSON.parse(localStorage.getItem("userData")).name,
             state: this.form.state,
             gameId: this.$gameId,
             platformId: this.form.platformId,
@@ -1018,7 +1012,7 @@ export default {
           serverIp: this.form.serverIp,
           server_describe: this.form.server_describe,
           sort: this.form.sort,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           addDatetime: this.form.addDatetime,
           state: this.form.state,
           gameId: this.$gameId,

@@ -30,6 +30,7 @@
                     :value="item.platformId"
                   ></el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item class="el-form-item" label="选择服务器">
                 <el-select v-model="form.serverId" @change="selectServer" placeholder="请选择服务器">
@@ -40,12 +41,15 @@
                     :value="item.serverId"
                   ></el-option>
                 </el-select>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="IP">
                 <el-input style="width:215px" placeholder="请输入IP" v-model="form.ip" clearable></el-input>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="时长">
                 <el-input style="width:215px" placeholder="请输入时长" v-model="form.banLong" clearable></el-input>
+                <span class="grid-content bg-purple-light" style="margin:10px;color:red">*</span>
               </el-form-item>
               <el-form-item label="备注">
                 <el-input
@@ -56,9 +60,6 @@
                   v-model="form.note"
                   clearable
                 ></el-input>
-              </el-form-item>
-              <el-form-item label="添加人">
-                <el-input style="width:215px" placeholder="请输入添加人" v-model="form.addUser" clearable></el-input>
               </el-form-item>
               <el-form-item label>
                 <el-button type="primary" icon="addBanIp" @click="addBanIp">提交</el-button>
@@ -409,6 +410,22 @@ export default {
       this.getPlatformList(this.id);
     },
     addBanIp() {
+      if (this.form.platformId == "" || this.form.platformId == undefined) {
+        this.$message("请选择正确的平台");
+        return;
+      }
+      if (this.form.serverId == "" || this.form.serverId == undefined) {
+        this.$message("请选择正确的服务器");
+        return;
+      }
+      if (this.form.ip == "") {
+        this.$message("IP不能为空");
+        return;
+      }
+      if (this.form.banLong != "" && !parseInt(this.form.banLong)) {
+        this.$message("请输入正确格式的时间长度");
+        return;
+      }
       this.$axios
         .post(this.url + "/api/ip/addBanIp", {
           platformId: this.form.platformId,
@@ -416,7 +433,7 @@ export default {
           ip: this.form.ip,
           banLong: this.form.banLong,
           note: this.form.note,
-          addUser: this.form.addUser,
+          addUser: JSON.parse(localStorage.getItem("userData")).name,
           gameId: this.$gameId
         })
         .then(successResponse => {

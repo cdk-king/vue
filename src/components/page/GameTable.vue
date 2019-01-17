@@ -83,9 +83,6 @@
                 <el-form-item label="服务器接口">
                     <el-input v-model="form.serverApi" style="width:90%"></el-input>
                 </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
-                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addGameVisible = false">取 消</el-button>
@@ -112,9 +109,6 @@
                 </el-form-item> -->
                 <el-form-item label="服务器接口">
                     <el-input v-model="form.serverApi" style="width:90%"></el-input>
-                </el-form-item>
-                <el-form-item label="添加人">
-                    <el-input v-model="form.addUser" style="width:90%"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -385,7 +379,7 @@ import formatDatetime from "../../code/formatDatetime";
                         gameTag:this.form.gameTag,
                         game_describe: this.form.game_describe,
                         sort:this.form.sort,
-                        addUser: this.form.addUser,
+                        addUser: JSON.parse(localStorage.getItem("userData")).name,
                         state:this.form.state,
                         gameEncryptSign:this.form.gameEncryptSign,
                         serverApi:this.form.serverApi
@@ -424,7 +418,7 @@ import formatDatetime from "../../code/formatDatetime";
                     gameTag:this.form.gameTag,
                     game_describe: this.form.game_describe,
                     sort:this.form.sort,
-                    addUser: this.form.addUser,
+                    addUser: JSON.parse(localStorage.getItem("userData")).name,
                     addDatetime: this.form.addDatetime,
                     state:this.form.state,
                     gameEncryptSign:this.form.gameEncryptSign,

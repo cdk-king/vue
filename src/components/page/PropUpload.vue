@@ -27,6 +27,7 @@
                 :auto-upload="false"
                 :on-change="handleChangeXlsx"
                 :file-list="fileList"
+                :on-remove="handleRemove"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -194,6 +195,11 @@
                         }
                         this.strPropList = JSON.stringify(this.propList);
                     }.bind(this)
+            },
+            handleRemove(file, fileList){
+                this.propList = [];
+                this.strPropList = "";
+                this.fileList = [];
             },
             handleChangeXlsx(file,fileList){
                  var self = this;

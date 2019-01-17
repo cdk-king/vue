@@ -606,14 +606,23 @@
       </span>
     </el-dialog>
 
-    <!-- 发送道具申请邮件提示框 -->
-    <el-dialog title="发送道具申请" :visible.sync="showApplyVisible" width="300px" center>
-      <div class="del-dialog-cnt">道具申请邮件申请后将不可撤销，是否确定发送？</div>
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showApplyVisible = false">取 消</el-button>
-        <el-button type="primary" @click="Apply">确 定</el-button>
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDel">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 发送提示框 -->
+    <el-dialog title="发送提示" :visible.sync="sendVisible" width="300px" center>
+      <div class="del-dialog-cnt">发送后不能修改撤回，是否确定发送？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="sendVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSend">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -682,7 +691,8 @@ export default {
       moneyTypeOptions: [],
       propQualityOptions: [],
       moneyList: [],
-      showApplyVisible: false,
+      sendVisible: false,
+      delVisible:false,
       idx: 0,
       cur_page: 1,
       total: 0,
@@ -918,7 +928,7 @@ export default {
             this.total = successResponse.data.data.total;
             //获取table后再关闭所有窗口，避免闪烁
             this.editVisible = false;
-            this.showApplyVisible = false;
+            this.sendVisible = false;
             this.addVisible = false;
           } else {
             this.tableData = [];
@@ -1451,9 +1461,9 @@ export default {
     },
     handleApply(index, row) {
       this.idx = index;
-      this.showApplyVisible = true;
+      this.sendVisible = true;
     },
-    Apply() {
+    saveSend() {
       var item = this.tableData[this.idx];
       var money = item.moneyList;
       var propList = item.propList;
@@ -1489,13 +1499,12 @@ export default {
           if (successResponse.data.code === 200) {
             console.log("道具申请邮件发送成功");
             this.$message.success("道具申请邮件发送成功");
-            
             this.getApplyProp();
-            
           } else {
             console.log(this.responseResult);
             console.log("道具申请邮件发送失败");
             this.$message.error("道具申请邮件发送失败");
+            this.getApplyProp();
           }
         });
     },
@@ -1567,23 +1576,28 @@ export default {
         });
     },
     handleDelete(index, row) {
-      this.$axios
+      this.idx = index;
+      this.delVisible = true;
+    },
+    saveDel(){
+       this.$axios
         .post(this.url + "/deleteApplyProp", {
-          id: this.tableData[index].id,
+          id: this.tableData[this.idx].id,
           addUser: this.id
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
-            console.log("道具申请添加成功");
-            this.$message.success("道具申请添加成功");
+            console.log("道具申请删除成功");
+            this.$message.success("道具申请删除成功");
             this.getApplyProp();
           } else {
             console.log(this.responseResult);
-            console.log("道具申请添加失败");
-            this.$message.error("道具申请添加失败");
+            console.log("道具申请删除失败");
+            this.$message.error("道具申请删除失败");
           }
         });
+        this.delVisible = false;
     },
     resetForm() {
       this.form = {

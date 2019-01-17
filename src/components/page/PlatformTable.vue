@@ -24,7 +24,7 @@
                 placeholder="筛选游戏"
                 style="width:150px"
                 >
-                <el-option key="0" label="全部" value=""></el-option>
+                <el-option key="0" label="全部" value="0"></el-option>
                 <el-option
                     v-for="item in gameList"
                     :key="item.id"

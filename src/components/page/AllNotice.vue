@@ -120,13 +120,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="userName" label="申请人"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right" width="130px">
           <template slot-scope="scope">
             <el-button
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-if="scope.row.sendState!=1"
+              v-if="scope.row.sendState==0"
             >编辑</el-button>
             <el-button
               type="text"
@@ -524,6 +524,24 @@
         <el-button type="primary" @click="saveDelAll">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 发送提示框 -->
+    <el-dialog title="发送提示" :visible.sync="sendVisible" width="300px" center>
+      <div class="del-dialog-cnt">发送后不能修改撤回，是否确定发送？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="sendVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSend">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -541,6 +559,8 @@ export default {
       cur_page: 1,
       total: 0,
       handleVisible: true,
+      delVisible:false,
+      sendVisible:false,
       checkVisible: false,
       addPlatformNoticeVisible: false,
       editPlatformNoticeVisible: false,
@@ -1225,6 +1245,8 @@ export default {
             var error = successResponse.data.data.error;
             if (error.length != 0) {
               //发送失败，返回失败服务器ID列表
+              console.log("公告重新发送失败");
+              console.log("失败列表："+error);
               this.$message.error("公告重新发送失败");
             } else {
               this.$message.success("公告重新发送完成");
@@ -1238,7 +1260,12 @@ export default {
         .catch(failResponse => {});
     },
     handleSend(index, row) {
-      var item = this.tableData[index];
+      this.idx = index;
+      this.sendVisible = true;
+
+    },
+    saveSend(){
+      var item = this.tableData[this.idx];
       var serverList = item.serverList
         .substring(1, item.serverList.length - 1)
         .split(",");
@@ -1274,9 +1301,10 @@ export default {
               //this.errorList[index] = error.split(',');
             } else {
               this.$message.success("全服公告发送完成");
+              
             }
-
             this.getPlatformNotice();
+            this.sendVisible = false;
           } else {
             console.log(this.responseResult);
             this.$message.error("全服公告发送失败");
@@ -1285,9 +1313,13 @@ export default {
         .catch(failResponse => {});
     },
     handleDelete(index, row) {
+      this.idx = index;
+      this.delVisible = true;
+    },
+    saveDel(){
       this.$axios
         .post(this.url + "/deletePlatformNotice", {
-          id: this.tableData[index].id
+          id: this.tableData[this.idx].id
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
@@ -1300,6 +1332,7 @@ export default {
           }
         })
         .catch(failResponse => {});
+        this.delVisible = false;
     },
     timestampToStr(timestamp) {
       var d = new Date(timestamp); //根据时间戳生成的时间对象

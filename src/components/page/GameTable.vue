@@ -262,6 +262,8 @@ import formatDatetime from "../../code/formatDatetime";
                         this.tableData = successResponse.data.data.list;
                         this.total = successResponse.data.data.total;
                     }else{
+                        this.tableData = [];
+                        this.total =0;
                         console.log(this.responseResult);
                         this.$message.error("游戏列表获取失败");
                     }
@@ -347,9 +349,7 @@ import formatDatetime from "../../code/formatDatetime";
                     }
                 })
                 .catch(failResponse => {})
-                 
                 this.delAllVisible = false;
-
             }, 
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -407,9 +407,7 @@ import formatDatetime from "../../code/formatDatetime";
                         }
                     })
                     .catch(failResponse => {})
-                    
-                }               
-                   
+                }                         
             },
             // 保存编辑
             saveEdit() {

@@ -187,7 +187,7 @@
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendState" label="状态" :formatter="formatIsSend"></el-table-column>
         <el-table-column prop="userName" label="编辑人"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right" width="130px">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -330,6 +330,22 @@
         <el-button type="primary" @click="saveDelAll">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 发送提示框 -->
+    <el-dialog title="发送提示" :visible.sync="sendVisible" width="300px" center>
+      <div class="del-dialog-cnt">发送后不能修改撤回，是否确定发送？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="sendVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSend">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -349,6 +365,8 @@ export default {
       cur_page: 1,
       total: 0,
       handleVisible: true,
+      delVisible:false,
+      sendVisible:false,
       checkVisible: false,
       platformOptions: [
       ],
@@ -779,11 +797,15 @@ export default {
       return tt;
     },
     handleSend(index, row) {
-      var item = this.tableData[index];
-      this.$axios
+      this.idx = index;
+      this.sendVisible = true;
+    },
+    saveSend(){
+        var item = this.tableData[this.idx];
+        this.$axios
         .post(this.url + "/sendEmail", {
-          id: this.tableData[index].id,
-          platformId: this.tableData[index].platformId,
+          id: item.id,
+          platformId: item.platformId,
           serverId: item.serverId,
           emailTitle: item.emailTitle,
           emailContent: item.emailContent,
@@ -800,15 +822,21 @@ export default {
           } else {
             console.log(this.responseResult);
             this.$message.error("邮件发送失败");
+            this.getEmail();
           }
         })
         .catch(failResponse => {});
+        this.sendVisible = false;
     },
     handleDelete(index, row) {
-      this.$axios
-        .post(this.url + "/deleteEmail", {
-          id: this.tableData[index].id
-        })
+        this.idx = index;
+        this.delVisible = true;
+    },
+    saveDel(){
+        this.$axios
+          .post(this.url + "/deleteEmail", {
+            id: this.tableData[this.idx].id
+          })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
           if (successResponse.data.code === 200) {
@@ -820,6 +848,7 @@ export default {
           }
         })
         .catch(failResponse => {});
+        this.delVisible = false;
     },
     search() {
       this.getEmail();

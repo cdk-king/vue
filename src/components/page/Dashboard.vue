@@ -155,6 +155,7 @@ export default {
     lastLoginDatetime = localStorage.getItem("lastLoginDatetime");
     var d2=new Date().getTime();//取今天的日期  
     var d1 = new Date(parseInt(lastLoginDatetime.split("#")[1])).getTime();
+    //登录时长超过一天超时
     if((((d2-d1)/1000)/86400)>1){
             //清除缓存信息
             localStorage.removeItem('ms_username');

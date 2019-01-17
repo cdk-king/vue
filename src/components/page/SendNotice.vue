@@ -186,7 +186,7 @@
         <el-table-column prop="addUser" label="编辑人"></el-table-column>
         <el-table-column prop="addDatetime" label="添加时间" :formatter="formatter"></el-table-column>
         <el-table-column prop="sendDatetime" label="发送时间" :formatter="formatter"></el-table-column>
-        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right">
+        <el-table-column label="操作" align="center" v-if="handleVisible" fixed="right" width="130px">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -230,6 +230,23 @@
         <el-button type="primary" @click="saveDelAll">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 删除提示框 -->
+    <el-dialog title="删除提示" :visible.sync="delVisible" width="300px" center>
+      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="delVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveDel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 发送提示框 -->
+    <el-dialog title="发送提示" :visible.sync="sendVisible" width="300px" center>
+      <div class="del-dialog-cnt">发送后不能修改撤回，是否确定发送？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="sendVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveSend">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -248,6 +265,8 @@ export default {
       cur_page: 1,
       total: 0,
       handleVisible: true,
+      delVisible:false,
+      sendVisible:false,
       checkVisible: false,
       platformOptions: [
       ],
@@ -624,6 +643,7 @@ export default {
       };
     },
     handleSend(index, row) {
+      this.idx = index;
       var item = this.tableData[index];
       var serverList = item.serverList
         .substring(1, item.serverList.length - 1)
@@ -650,14 +670,24 @@ export default {
         })
         .then(successResponse => {
           this.responseResult = "\n" + JSON.stringify(successResponse.data);
-          console.log("公告已发送");
-          this.$message.success("公告已发送");
-          this.getNotice();
+          console.log(this.responseResult)
+          if(successResponse.data.code === 200){
+              console.log("公告已发送");
+              this.$message.success("公告已发送");
+              this.getNotice();
+          }else{
+              console.log("公告发送失败");
+              this.$message.error("公告发送失败");
+              this.getNotice();
+          }
         })
         .catch(failResponse => {
           console.log("公告发送失败");
           this.$message.error("公告发送失败");
         });
+    },
+    saveSend(){
+        this.sendVisible = false;
     },
     search() {
       this.getNotice();
@@ -687,7 +717,12 @@ export default {
       this.delAllVisible = true;
     },
     handleDel(index, row) {
-      var item = this.tableData[index];
+      this.idx = index;
+      this.delVisible = true;
+
+    },
+    saveDel(){
+      var item = this.tableData[this.idx];
       this.$axios
         .post(this.url + "/deleteAllNotice", {
           id: item.id
@@ -704,6 +739,7 @@ export default {
           }
         })
         .catch(failResponse => {});
+        this.delVisible = false;
     },
     saveDelAll() {
       const length = this.multipleSelection.length;

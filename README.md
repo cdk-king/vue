@@ -279,12 +279,15 @@ IP禁封
 ## 相关技术 ##
 
     前端技术栈：
+    
 编程语言：html5、js、css
 开发工具：Visual Studio Code
 开发框架：vue + axios
 包管理工具:npm
 打包工具：webpack
+
     后端技术栈：
+    
 编程语言：java
 开发工具：IntelliJ IDEA
 开发框架：spring boot
@@ -294,130 +297,180 @@ IP禁封
 
 ## 本地开发 ##
 
-	// 开启服务器，浏览器访问 http://localhost:8080
-	npm run dev
+    前端开发流程
+
+1、安装node.js：
+
+下载相应版本的node.js,下载地址：https://nodejs.org/en/download/，下载完双击安装，点击下一步直到安装完成
+
+2、安装npm的国内镜像：
+
+安装完成后，附件里选择命令提示符（或者在开始的搜索框里输入cmd回车调出命令面板）输入：node -v回车，出现相应版本证明安装成功， node环境已经安装完成，由于有些npm有些资源被屏蔽或者是国外资源的原因，经常会导致用npm安装依赖包的时候失败，所有我还需要npm的国内镜像---cnpm。在命令行中输入：npm install -g cnpm –registry=https://registry.npm.taobao.org回车，大约需要3分钟，如果报错或没反应，则卸掉node.js重新安装
+
+3、安装全局vue-cli脚手架：
+
+vue-cli脚手架用于帮助搭建所需的模板框架。输入命令：cnpm install -g vue-cli回车等待完成。
+
+4、安装webpack：
+
+//全局安装
+cnpm install -g webpack
+//安装到你的项目目录
+cnpm install --save-dev webpack
+
+5、安装项目所需的依赖包：
+
+首先输入：cd 项目名回车，然后输入：cnpm install回车等待安装，安装完成之后，会在我们的项目目录文件夹中多出一个node_modules文件夹，这里边就是我们项目需要的依赖包资源。安装完依赖包之后，就可以运行整个项目了。
+
+6、测试环境是否搭建成功：
+
+在cmd里输入：cnpm run dev回车，项目运行成功后，浏览器打开localhost:8080（如果浏览器没有自动打开，可以手动输入）查看项目效果。
+
+7、打包：
+
+在cmd里输入：cnpm run build回车，打包完成后会在项目根目录生成dist文件夹
+
+
+    后端开发流程
+
+1、安装JDK1.8并配置好JAVA_HOME环境变量.
+
+2、安装maven依赖（jar包管理）
+
+3、将打包好的前端文件dist放在\src\main\resources\static\目录下，
+
+4、配置数据库源
+
+在根目录的application.properties文件下添加
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/gm?serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=123456
+
+5、初始化springboot项目
+
+运行后端springboot项目，浏览器打开localhost:8011/dist/index.html即可看到项目效果
+
+6、打包:
+
+在项目目录下用cmd命令行输入mvn package spring-boot:repackage
+打包完成后会在项目根目录下的target文件夹下生成game-web-server.jar文件
+
 
 ## 构建生产 ##
 
-	// 执行构建命令，生成的dist文件夹放在服务器下即可访问
-	npm run build
+    前端
 
-## 组件使用说明与演示 ##
+// 执行构建命令，生成的dist文件夹放在服务器下即可访问
+npm run build
 
-### vue-schart ###
-vue.js封装sChart.js的图表组件。访问地址：[vue-schart](https://github.com/linxin/vue-schart)
-<p><a href="https://www.npmjs.com/package/vue-schart"><img src="https://img.shields.io/npm/dm/vue-schart.svg" alt="Downloads"></a></p>
+    后端
 
-```html
-<template>
-    <div>
-        <schart  class="wrapper"
-				:canvasId="canvasId"
-				:type="type"
-				:data="data"
-				:options="options"
-		></schart>
-    </div>
-</template>
-	
-<script>
-    import Schart from 'vue-schart';        // 导入Schart组件
-    export default {
-        data: function(){
-            return {
-                canvasId: 'myCanvas',       // canvas的id
-                type: 'bar',                // 图表类型
-                data: [
-                    {name: '2014', value: 1342},
-                    {name: '2015', value: 2123},
-                    {name: '2016', value: 1654},
-                    {name: '2017', value: 1795},
-                ],
-                options: {                  // 图表可选参数
-                    title: 'Total sales of stores in recent years'
-                }
-            }
-        },
-        components: {
-            Schart
-        }
-    }
-</script>
-<style>
-.wrapper{
-	width: 7rem;
-	height: 5rem;
-}
-</style>
-```
+在项目目录下用cmd命令行输入mvn package spring-boot:repackage
+打包完成后会在项目根目录下的target文件夹下生成game-web-server.jar文件
 
-### element-ui ###
-一套基于vue.js2.0的桌面组件库。访问地址：[element](http://element.eleme.io/#/zh-CN/component/layout)
 
-### Vue-Quill-Editor ###
-基于Quill、适用于Vue2的富文本编辑器。访问地址：[vue-quill-editor](https://github.com/surmon-china/vue-quill-editor)
+## 功能开发 ##
 
-（IE10及以下不支持）
+    权限系统
 
-### mavonEditor ###
-基于Vue的markdown编辑器。访问地址：[mavonEditor](https://github.com/hinesboy/mavonEditor)
+权限控制系统采用了类似RBAC模型
+系统中包括用户、角色、权限模块，一个用户拥有若干角色，每一个角色拥有若干权限。一般是多对多的关系
+ 
+权限绑定前端的路由系统，前端的路由采用了动态路由，每个路由都有自己的权限标识，只有当用户拥有该权限时才会添加该路由，同时主界面的菜单栏也根据路由动态的显示和隐藏。
+操作权限的判定需要在组件页面里动态实现显示或者隐藏，下边是操作权限实现的一个示例：
+ 
+    区服管理系统
 
-### vue-cropperjs ###
-一个封装了 cropperjs 的 Vue 组件，用于裁剪图片。访问地址：[vue-cropperjs](https://github.com/Agontuk/vue-cropperjs)
+区服管理主要包括游戏管理，平台管理，服务器管理，渠道管理，数据源管理
+一个游戏有若干个平台，一个平台有若干个服务器，一个平台有若干个渠道，都是一对多的关系，一个平台有且只有唯一的一个数据源，一个游戏有且只有一个服务器列表接口，关系图如下：
+ 
+其中一个平台绑定一个角色Id，系统通过判断用户所拥有的角色Id来判断用户对应那个平台，再通过平台来判断对应哪个游戏，哪些服务器。
+用户进入系统后可以自行切换已关联的游戏，切换游戏后，用户将只能看到当前游戏下，自己拥有的平台的数据。
 
-## 其他注意事项 ##
-### 一、如果我不想用到上面的某些组件呢，那我怎么在模板中删除掉不影响到其他功能呢？ ###
+    日志系统
 
-举个栗子，我不想用 Vue-Quill-Editor 这个组件，那我需要分四步走。
+日志系统主要包括物品流通日志、现金流日志、角色创建日志、角色登录日志、充值流水日志、充值消费日志。
+日志系统的数据全部来自平台数据源接口的数据，不同的平台有不同的数据源，具体数据源需要在区服管理里的数据源管理页面中去配置。
+不同的日志数据对应着数据源数据库里的一张数据表，除了平台和服务器字段，其他的字段名均储存在一个xml文件中，前端通过接口获取到xml文件的json数据，再把不同日志的字段名映射到日志页面中。
+ 
+日志系统的所有接口都写在后端控制层的PlayerLogTableController.class文件中，其中
+getLogXml方法是获取日志字段的接口，下边将展示添加新日志的大致步骤：
 
-第一步：删除该组件的路由，在目录 src/router/index.js 中，找到引入改组件的路由，删除下面这段代码。
+添加前端日志组件
+需要有平台筛选框、服务器筛选框、角色信息筛选框、查询按钮、数据表格、分页器
+效果图如下：
+ 
+获取字段信息
+通过接口/api/log/getLogXml获取数据源数据库表字段，获取对应的数据表的字段，将字段逐一映射到表格中。
 
-```JavaScript
-{
-    // 富文本编辑器组件
-    path: '/editor',
-    component: resolve => require(['../components/page/VueEditor.vue'], resolve) 
+添加获取表格数据接口
+在后端控制层的PlayerLogTableController.class文件中添加新的获取数据接口，首先通过游戏Id和平台Id获取相应的数据源地址、数据源用户名和数据源密码，再通过数据源信息创建新的数据源连接，通过相应的sql语句查询对应数据库表的数据，最后添加数据筛选和数据分页。
+
+前端组件通过接口显示数据
+前端组件通过 axios 的post请求从接口获取数据并将数据显示在表格中。
+添加路由和权限
+
+在前端的vue Router中的dynamicRouter.js中添加权限路由，示例：
+setRouterItem("/Shop","充值消费","Shop_View","Shop.vue",children,right);
+最后在权限管理中添加相应的权限即可。
+
+    礼包激活码
+
+激活码生成流程图：
+ 
+激活码兑换流程图：
+ 
+    激活码生成
+    
+激活码的生成需要获取游戏id、平台Id、礼包Id以及生成激活码的数量，在前端向后端传输数据时需要进行MD5加密，通过生成数量确认每个激活码对应且唯一的序列，再结合礼包Id、平台Id和随机生成的salt通过位算法生成激活码，将激活码逐一储存在文件中，最后生成一条保存礼包Id、游戏Id、平台Id、salt、开始序列、结束序列、文件地址的数据库记录。
+
+    激活码兑换
+    
+兑换激活码时，首先判读激活码的格式和能否从激活码中读取礼包Id和序列号，再通过礼包Id查询当前玩家角色是否超过该礼包的领取限制、若没有超过上限，继续判断是否有相同游戏平台相同礼包Id和相同序列范围的生成记录，如果有则继续判断使用该序列号、礼包Id、平台Id、salt和相同算法生成的激活码和要兑换的激活码是否相同，如果相同则判断再激活码兑换记录中是否有该激活码的兑换记录，如果没有则说明该激活码有效，兑换成功。
+
+    接口开发
+
+后端接口的实现主要在Controller层
+1)	定义控制器
+使用 @RestController注解 定义一个 Controller 控制器
+@RestController注解相当于@ResponseBody ＋ @Controller
+大多数情况我们只需要返回json格式的字符串而不需要返回json对象，所以加上@Responsebody就行了
+2)	设置接口url
+使用 @RequestMapping注解 来映射 Request 请求与处理器
+3)	获取数据
+使用@requestBody注解常用来处理application/json类型。
+当使用表单上传数据时，使用@RequestParam注解获取表单参数
+当使用get请求时，使用（HttpServletRequest request）获取接收到的参数
+
+    前端组件开发
+
+系统里的各个页面都在单页面里边，都统称为组件(Component)，所有的 Vue 组件同时也都是 Vue 的实例，所以可接受相同的选项对象 (除了一些根级特有的选项) 并提供相同的生命周期钩子。
+前端所有的组件都放在src/component/目录下，其中common文件夹下是一些公用组件，包括系统的父组件，头部组件，菜单栏组件和标签页组件，和一个bus.js（vue的组件通讯Event Bus）。Example文件夹下是一些vue-manage-system模板下的一些示例组件。Page文件夹下是系统各个功能的组件，新开发的组件统一写在page文件夹下。
+
+    前端组件通讯
+
+前端组件间的通讯主要用了官方推荐的Event Bus，核心文件是common文件夹下的bus.js。
+实现通讯的过程是注册Event Bus事件和广播消息
+导入Event bus
+import bus from "../common/bus";
+注册事件
+created() {
+    bus.$on("changeGameId",function(obj){
+this.form.platformId = "";
+        this.getData();
+    }.bind(this))   
+  },
+触发事件
+bus.$emit('changeGameId', {
+    gameId:command.id,
+    message:"已选择游戏："+command.gameName
+});
+销毁事件
+beforeDestroy () {
+    bus.$off('changeGame');
 },
-```
-
-第二步：删除引入该组件的文件。在目录 src/components/page/ 删除 VueEditor.vue 文件。
-
-第三步：删除该页面的入口。在目录 src/components/common/Sidebar.vue 中，找到该入口，删除下面这段代码。
-	
-```js
-{
-	index: 'editor',
-	title: '富文本编辑器'
-},
-```
-
-第四步：卸载该组件。执行以下命令：
-	
-	npm un vue-quill-editor -S
-
-完成。
-
-### 二、如何切换主题色呢？ ###
-
-第一步：打开 src/main.js 文件，找到引入 element 样式的地方，换成浅绿色主题。
-
-```javascript
-import 'element-ui/lib/theme-default/index.css';    // 默认主题
-// import '../static/css/theme-green/index.css';       // 浅绿色主题
-```
-
-第二步：打开 src/App.vue 文件，找到 style 标签引入样式的地方，切换成浅绿色主题。
-
-```javascript
-@import "../static/css/main.css";
-@import "../static/css/color-dark.css";     /*深色主题*/
-/*@import "../static/css/theme-green/color-green.css";   !*浅绿色主题*!*/
-```
-
-第三步：打开 src/components/common/Sidebar.vue 文件，找到 el-menu 标签，把 background-color/text-color/active-text-color 属性去掉即可。
+这个$on事件是不会自动清楚销毁的，需要我们手动来销毁
 
 ## 项目截图 ##
 
-=======
-# GmWebBrowser
->>>>>>> c6fd5a6a9ec4e5b4a7d7dfb7879971812f8a72b1
+

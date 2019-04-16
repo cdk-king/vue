@@ -455,7 +455,9 @@ setRouterItem("/Shop","充值消费","Shop_View","Shop.vue",children,right);
 当使用表单上传数据时，使用@RequestParam注解获取表单参数
 当使用get请求时，使用（HttpServletRequest request）获取接收到的参数
 
+
     前端组件开发
+
 
 系统里的各个页面都在单页面里边，都统称为组件(Component)，所有的 Vue 组件同时也都是 Vue 的实例，所以可接受相同的选项对象 (除了一些根级特有的选项) 并提供相同的生命周期钩子。
 前端所有的组件都放在src/component/目录下，其中common文件夹下是一些公用组件，包括系统的父组件，头部组件，菜单栏组件和标签页组件，和一个bus.js（vue的组件通讯Event Bus）。Example文件夹下是一些vue-manage-system模板下的一些示例组件。Page文件夹下是系统各个功能的组件，新开发的组件统一写在page文件夹下。
@@ -488,6 +490,7 @@ bus.$emit('changeGameId', {
 beforeDestroy () {
     bus.$off('changeGame');
 },
+
 这个$on事件是不会自动清楚销毁的，需要我们手动来销毁
 
 ## 项目截图 ##

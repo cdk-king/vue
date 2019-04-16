@@ -134,144 +134,145 @@ IP禁封
 
 ## 目录结构介绍 ##
 
-|-- build                            // webpack配置文件
-|-- config                           // 项目打包路径
-|-- src                              // 源码目录
-|   |-- code                   		// 代码块
-|       |-- formatDatetime.js       // 时间格式转换
-|       |-- setLocalThisUrl.js      // 设置接口地址
-|   |-- components                   // 组件
-|       |-- common                   // 公共组件
-|           |-- bus.js           	// Event Bus
-|           |-- Header.vue           // 公共头部
-|           |-- Home.vue             // 公共路由入口
-|           |-- Sidebar.vue          // 公共左边栏
-|           |-- Tags.vue             // 页面切换标签组件
-|       |-- example                  // 示例组件
-|           |-- BaseCharts.vue       // 基础图表
-|           |-- BaseForm.vue         // 基础表单
-|           |-- BaseTable.vue        // 基础表格
-|           |-- DragList.vue         // 拖拽列表组件
-|           |-- Icon.vue		// 自定义图标组件
-|           |-- Login.vue            // 登录
-|           |-- Markdown.vue         // markdown组件
-|           |-- Premission.vue       // 权限测试组件
-|           |-- Upload.vue           // 图片上传
-|           |-- VueEditor.vue        // 富文本编辑器
-|       |-- page                   	// 主要路由页面
-|           |-- 403.vue		//403
-|           |-- 404.vue		//404
-|           |-- AllEmail.vue         // 全服邮件
-|           |-- AllNotice.vue        // 全服更新公告
-|           |-- AppleProp.vue        // 申请道具邮件
-|           |-- BackDoor.vue         // 系统后门
-|           |-- BanIP.vue            // IP禁封
-|           |-- CDK_Use.vue          // 激活码使用情况
-|           |-- Center.vue           // 用户中心
-|           |-- Channel.vue          // 通道管理
-|           |-- CreateRoleLog.vue   // 角色创建日志记录
-|           |-- Dashboard.vue        // 系统首页
-|           |-- DataSource.vue       // 数据源管理 
-|           |-- GameTable.vue        // 游戏管理
-|           |-- GiftTable.vue        // 礼包管理(未)
-|           |-- GiftUpload.vue       // 礼包导入
-|           |-- GoodFlowLog.vue      // 物品流通日志
-|           |-- Login.vue		// 用户登录
-|           |-- MoneyFlowLog.vue    // 现金流日志管理
-|           |-- NewGiftTable.vue    // 礼包导入信息管理
-|           |-- NewPropTable.vue    // 道具导入信息管理
-|           |-- PlatformTable.vue   // 平台管理
-|           |-- PlayerBanLog.vue    // 玩家禁封日志
-|           |-- PlayerInfo.vue      // 玩家信息查询
-|           |-- PlayerProhibitSpeakLog.vue    // 玩家禁言日志
-|           |-- PlayerUpload.vue    // 玩家信息导入
-|           |-- PropTable.vue    	// 道具管理(未)
-|           |-- PropUpload.vue    	// 道具信息导入
-|           |-- ReCharge.vue    	// 充值流水日志
-|           |-- Register.vue    	// 用户注册(未)
-|           |-- RightTable.vue   	// 权限管理
-|           |-- RoleLoginLog.vue    	// 角色登录日志
-|           |-- RoleTable.vue    	// 角色管理
-|           |-- SendEmail.vue  	// 发送邮件
-|           |-- SendNotice.vue    	// 发送广播
-|           |-- ServerTable.vue    	// 服务器树形管理
-|           |-- Shop.vue    		// 充值消费日志
-|           |-- SystemConfig.vue   	// 系统配置(未)
-|           |-- TouristIdSet.vue    	// 游客账号设置
-|           |-- UploadFile.vue    	// 文件中转
-|           |-- UserTable.vue    	// 用户管理
-|           |-- Xlsx.vue    		// Xlsx文件导入(未)
-|   |-- router                       // 路由
-|       |-- defaultRouter.js      	// 默认路由
-|       |-- dynamicRouter.js      	// 动态路由
-|       |-- index.js      		// 设置路由
-|   |-- store                      	// vuex
-|       |-- actions.js      	// 
-|       |-- getters.js      	// 
-|       |-- index.js      	// 
-|       |-- mutations.js      	// 
-|   |-- UtilsJs                      // 工具
-|       |-- Utils.js      	// 工具
-|   |-- App.vue                      // 页面入口文件
-|   |-- main.js                      // 程序入口文件，加载各种公共组件
-|-- .babelrc                         // ES6语法编译配置
-|-- .editorconfig                    // 代码编写规格
-|-- .gitignore                       // 忽略的文件
-|-- index.html                       // 入口html文件
-|-- package.json                     // 项目及工具的依赖配置文件
-|-- README.md                        // 说明
+1.	|-- build                            // webpack配置文件
+2.	|-- config                           // 项目打包路径
+3.	|-- src                              // 源码目录
+4.	|   |-- code                   		// 代码块
+5.	|       |-- formatDatetime.js       // 时间格式转换
+6.	|       |-- setLocalThisUrl.js      // 设置接口地址
+7.	|   |-- components                   // 组件
+8.	|       |-- common                   // 公共组件
+9.	|           |-- bus.js           	// Event Bus
+10.	|           |-- Header.vue           // 公共头部
+11.	|           |-- Home.vue             // 公共路由入口
+12.	|           |-- Sidebar.vue          // 公共左边栏
+13.	|           |-- Tags.vue             // 页面切换标签组件
+14.	|       |-- example                  // 示例组件
+15.	|           |-- BaseCharts.vue       // 基础图表
+16.	|           |-- BaseForm.vue         // 基础表单
+17.	|           |-- BaseTable.vue        // 基础表格
+18.	|           |-- DragList.vue         // 拖拽列表组件
+19.	|           |-- Icon.vue		// 自定义图标组件
+20.	|           |-- Login.vue            // 登录
+21.	|           |-- Markdown.vue         // markdown组件
+22.	|           |-- Premission.vue       // 权限测试组件
+23.	|           |-- Upload.vue           // 图片上传
+24.	|           |-- VueEditor.vue        // 富文本编辑器
+25.	|       |-- page                   	// 主要路由页面
+26.	|           |-- 403.vue		//403
+27.	|           |-- 404.vue		//404
+28.	|           |-- AllEmail.vue         // 全服邮件
+29.	|           |-- AllNotice.vue        // 全服更新公告
+30.	|           |-- AppleProp.vue        // 申请道具邮件
+31.	|           |-- BackDoor.vue         // 系统后门
+32.	|           |-- BanIP.vue            // IP禁封
+33.	|           |-- CDK_Use.vue          // 激活码使用情况
+34.	|           |-- Center.vue           // 用户中心
+35.	|           |-- Channel.vue          // 通道管理
+36.	|           |-- CreateRoleLog.vue   // 角色创建日志记录
+37.	|           |-- Dashboard.vue        // 系统首页
+38.	|           |-- DataSource.vue       // 数据源管理 
+39.	|           |-- GameTable.vue        // 游戏管理
+40.	|           |-- GiftTable.vue        // 礼包管理(未)
+41.	|           |-- GiftUpload.vue       // 礼包导入
+42.	|           |-- GoodFlowLog.vue      // 物品流通日志
+43.	|           |-- Login.vue		// 用户登录
+44.	|           |-- MoneyFlowLog.vue    // 现金流日志管理
+45.	|           |-- NewGiftTable.vue    // 礼包导入信息管理
+46.	|           |-- NewPropTable.vue    // 道具导入信息管理
+47.	|           |-- PlatformTable.vue   // 平台管理
+48.	|           |-- PlayerBanLog.vue    // 玩家禁封日志
+49.	|           |-- PlayerInfo.vue      // 玩家信息查询
+50.	|           |-- PlayerProhibitSpeakLog.vue    // 玩家禁言日志
+51.	|           |-- PlayerUpload.vue    // 玩家信息导入
+52.	|           |-- PropTable.vue    	// 道具管理(未)
+53.	|           |-- PropUpload.vue    	// 道具信息导入
+54.	|           |-- ReCharge.vue    	// 充值流水日志
+55.	|           |-- Register.vue    	// 用户注册(未)
+56.	|           |-- RightTable.vue   	// 权限管理
+57.	|           |-- RoleLoginLog.vue    	// 角色登录日志
+58.	|           |-- RoleTable.vue    	// 角色管理
+59.	|           |-- SendEmail.vue  	// 发送邮件
+60.	|           |-- SendNotice.vue    	// 发送广播
+61.	|           |-- ServerTable.vue    	// 服务器树形管理
+62.	|           |-- Shop.vue    		// 充值消费日志
+63.	|           |-- SystemConfig.vue   	// 系统配置(未)
+64.	|           |-- TouristIdSet.vue    	// 游客账号设置
+65.	|           |-- UploadFile.vue    	// 文件中转
+66.	|           |-- UserTable.vue    	// 用户管理
+67.	|           |-- Xlsx.vue    		// Xlsx文件导入(未)
+68.	|   |-- router                       // 路由
+69.	|       |-- defaultRouter.js      	// 默认路由
+70.	|       |-- dynamicRouter.js      	// 动态路由
+71.	|       |-- index.js      		// 设置路由
+72.	|   |-- store                      	// vuex
+73.	|       |-- actions.js      	// 
+74.	|       |-- getters.js      	// 
+75.	|       |-- index.js      	// 
+76.	|       |-- mutations.js      	// 
+77.	|   |-- UtilsJs                      // 工具
+78.	|       |-- Utils.js      	// 工具
+79.	|   |-- App.vue                      // 页面入口文件
+80.	|   |-- main.js                      // 程序入口文件，加载各种公共组件
+81.	|-- .babelrc                         // ES6语法编译配置
+82.	|-- .editorconfig                    // 代码编写规格
+83.	|-- .gitignore                       // 忽略的文件
+84.	|-- index.html                       // 入口html文件
+85.	|-- package.json                     // 项目及工具的依赖配置文件
+86.	|-- README.md                        // 说明
 
 
 后端目录结构
-|-- log                            	// 日志
-|-- META-INF                         // 
-|   |-- MANIFEST.MF                  // 
-|-- src                              // src
-|   |-- main                         // main
-|       |-- java          		// java
-|           |--com           	// Event Bus
-|           	|--cdk           	// Event Bus
-|           	|--app           	// Event Bus
-|           	|--configLoader           	// 配置加载器
-|           	|--controller           	// controller层
-|           	|--dao           		// dao层
-|           	|--entity           	// 实体类
-|           	|--result           	// 返回消息
-|           	|--service           	// server类
-|           	|--timer           	// 定时器
-|           	|--util           	// 工具类
-|           	|--XssFilter           	// 跨站脚本攻击过滤器
-|           	|--Main.java           	// 项目主入口
-|       |-- resources       		// resources
-|           |-- META-INF           	// META-INF
-|           	|--MANIFEST.MF      // MANIFEST.MF
-|           |-- static           	// static
-|           	|--dist              // 前端打包文件
-|           	|--favicon.ico      // 项目图标(暂)
-|           |-- templates           	// templates
-|           |-- banner.txt           // banner.txt
-|           |-- logback.xml          // logback.xml
-|       |-- webapp       		// webapp
-|           |-- WEB-INF           	// WEB-INF
-|           	|--jsp           	// jsp
-|           	|--index.jsp    // index.jsp
-|-- target                           // 打包文件夹
-|   |-- classes                      // classes
-|   |-- classes                      // classes
-|   |-- generated-sources           // generated-sources
-|   |-- maven-archiver              // maven-archiver
-|   |-- maven-status                // maven-status
-|   |-- game-web-server.jar        // 打包文件
-|-- .gitignore                       // 
-|-- application.properties          //外部配置文件
-|-- gm.sql                           // 数据库生成文件
-|-- info.txt                         // 信息文件 
-|-- pom.xml                          // maven配置文件
-|-- README.md                        // 说明
-|-- tlog.xml                         // 日志表字段说明
-|-- 道具表示例.xls                    //道具表示例.xls
-|-- 礼包表示例.xls                    // 礼包表示例.xls
-|-- 执行当前目录game-web-server程序.bat   // 打包文件执行命令
+1.	|-- log                            	// 日志
+2.	|-- META-INF                         // 
+3.	|   |-- MANIFEST.MF                  // 
+4.	|-- src                              // src
+5.	|   |-- main                         // main
+6.	|       |-- java          		// java
+7.	|           |--com           	// Event Bus
+8.	|           	|--cdk           	// Event Bus
+9.	|           	|--app           	// Event Bus
+10.	|           	|--configLoader           	// 配置加载器
+11.	|           	|--controller           	// controller层
+12.	|           	|--dao           		// dao层
+13.	|           	|--entity           	// 实体类
+14.	|           	|--result           	// 返回消息
+15.	|           	|--service           	// server类
+16.	|           	|--timer           	// 定时器
+17.	|           	|--util           	// 工具类
+18.	|           	|--XssFilter           	// 跨站脚本攻击过滤器
+19.	|           	|--Main.java           	// 项目主入口
+20.	|       |-- resources       		// resources
+21.	|           |-- META-INF           	// META-INF
+22.	|           	|--MANIFEST.MF      // MANIFEST.MF
+23.	|           |-- static           	// static
+24.	|           	|--dist              // 前端打包文件
+25.	|           	|--favicon.ico      // 项目图标(暂)
+26.	|           |-- templates           	// templates
+27.	|           |-- banner.txt           // banner.txt
+28.	|           |-- logback.xml          // logback.xml
+29.	|       |-- webapp       		// webapp
+30.	|           |-- WEB-INF           	// WEB-INF
+31.	|           	|--jsp           	// jsp
+32.	|           	|--index.jsp    // index.jsp
+33.	|-- target                           // 打包文件夹
+34.	|   |-- classes                      // classes
+35.	|   |-- classes                      // classes
+36.	|   |-- generated-sources           // generated-sources
+37.	|   |-- maven-archiver              // maven-archiver
+38.	|   |-- maven-status                // maven-status
+39.	|   |-- game-web-server.jar        // 打包文件
+40.	|-- .gitignore                       // 
+41.	|-- application.properties          //外部配置文件
+42.	|-- gm.sql                           // 数据库生成文件
+43.	|-- info.txt                         // 信息文件 
+44.	|-- pom.xml                          // maven配置文件
+45.	|-- README.md                        // 说明
+46.	|-- tlog.xml                         // 日志表字段说明
+47.	|-- 道具表示例.xls                    //道具表示例.xls
+48.	|-- 礼包表示例.xls                    // 礼包表示例.xls
+49.	|-- 执行当前目录game-web-server程序.bat   // 打包文件执行命令
+
 
 
 

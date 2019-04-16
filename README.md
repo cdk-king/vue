@@ -281,17 +281,25 @@ IP禁封
     前端技术栈：
     
 编程语言：html5、js、css
+
 开发工具：Visual Studio Code
+
 开发框架：vue + axios
+
 包管理工具:npm
+
 打包工具：webpack
 
     后端技术栈：
     
 编程语言：java
+
 开发工具：IntelliJ IDEA
+
 开发框架：spring boot
+
 包管理工具: maven资源库
+
 打包工具：spring-boot-maven-plugin
 
 
@@ -397,17 +405,22 @@ npm run build
 getLogXml方法是获取日志字段的接口，下边将展示添加新日志的大致步骤：
 
 添加前端日志组件
+
 需要有平台筛选框、服务器筛选框、角色信息筛选框、查询按钮、数据表格、分页器
 效果图如下：
  
 获取字段信息
+
 通过接口/api/log/getLogXml获取数据源数据库表字段，获取对应的数据表的字段，将字段逐一映射到表格中。
 
 添加获取表格数据接口
+
 在后端控制层的PlayerLogTableController.class文件中添加新的获取数据接口，首先通过游戏Id和平台Id获取相应的数据源地址、数据源用户名和数据源密码，再通过数据源信息创建新的数据源连接，通过相应的sql语句查询对应数据库表的数据，最后添加数据筛选和数据分页。
 
 前端组件通过接口显示数据
+
 前端组件通过 axios 的post请求从接口获取数据并将数据显示在表格中。
+
 添加路由和权限
 
 在前端的vue Router中的dynamicRouter.js中添加权限路由，示例：
@@ -453,19 +466,25 @@ setRouterItem("/Shop","充值消费","Shop_View","Shop.vue",children,right);
 实现通讯的过程是注册Event Bus事件和广播消息
 导入Event bus
 import bus from "../common/bus";
+
 注册事件
+
 created() {
     bus.$on("changeGameId",function(obj){
 this.form.platformId = "";
         this.getData();
     }.bind(this))   
   },
+  
 触发事件
+
 bus.$emit('changeGameId', {
     gameId:command.id,
     message:"已选择游戏："+command.gameName
 });
+
 销毁事件
+
 beforeDestroy () {
     bus.$off('changeGame');
 },
